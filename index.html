@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Operator Room v0.1</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="panel" aria-label="Operator room control panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operator Room</p>
+            <h1>Filter Line Control</h1>
+            <p class="phase-line"><span id="phaseName">Startup</span> / <span id="phaseFeed">Warm prime</span></p>
+          </div>
+          <div class="shift-readout">
+            <span id="timeLeft">05:00</span>
+            <strong id="statusText">STABLE</strong>
+          </div>
+        </header>
+
+        <canvas id="roomCanvas" width="1120" height="420" aria-label="Animated machine room"></canvas>
+
+        <div class="gauges" aria-label="Machine gauges">
+          <article class="gauge-card" data-zone="safe">
+            <canvas class="gauge" id="pressureGauge" width="220" height="150"></canvas>
+            <span>Pressure</span>
+            <strong id="pressureValue">50</strong>
+          </article>
+          <article class="gauge-card" data-zone="safe">
+            <canvas class="gauge" id="tempGauge" width="220" height="150"></canvas>
+            <span>Temp</span>
+            <strong id="tempValue">60</strong>
+          </article>
+          <article class="gauge-card" data-zone="usable">
+            <canvas class="gauge" id="flowGauge" width="220" height="150"></canvas>
+            <span>Flow</span>
+            <strong id="flowValue">50</strong>
+          </article>
+        </div>
+
+        <div class="controls" aria-label="Machine controls">
+          <label class="slider-control">
+            <span>Pump <strong id="pumpValue">50%</strong></span>
+            <input id="pump" type="range" min="0" max="100" value="50" />
+          </label>
+          <label class="slider-control">
+            <span>Coolant <strong id="coolantValue">45%</strong></span>
+            <input id="coolant" type="range" min="0" max="100" value="45" />
+          </label>
+          <label class="slider-control">
+            <span>Output Valve <strong id="valveValue">55%</strong></span>
+            <input id="outputValve" type="range" min="0" max="100" value="55" />
+          </label>
+          <button id="flushButton" class="flush-button" type="button">
+            <span>Hold To Flush Filter</span>
+            <i id="flushFill"></i>
+          </button>
+        </div>
+
+        <footer class="metrics">
+          <span>Production <strong id="productionValue">0</strong></span>
+          <span>Purity <strong id="purityValue">82%</strong></span>
+          <span>Avg Purity <strong id="avgPurityValue">82%</strong></span>
+          <span>Filter Clog <strong id="clogValue">10%</strong></span>
+          <span>Filter Wear <strong id="filterWearValue">0%</strong></span>
+          <span>Filter Temp <strong id="filterTempValue">62°</strong></span>
+          <span>Flush Reserve <strong id="flushReserveValue">100%</strong></span>
+          <span>Damage <strong id="damageValue">0%</strong></span>
+        </footer>
+      </section>
+
+      <aside class="side-panel">
+        <section class="process-panel">
+          <div class="phase-card">
+            <p class="eyebrow">Current Batch</p>
+            <h2 id="currentBatch">Startup</h2>
+            <p id="currentPhase">Warm prime feed</p>
+          </div>
+
+          <div class="feed-card">
+            <p class="eyebrow">Input Feed</p>
+            <div class="feed-grid">
+              <span>Feed Temp <strong id="inputFeedTemp">62°</strong></span>
+              <span>After Prewarm <strong id="preFilterTemp">62°</strong></span>
+              <span>Viscosity <strong id="viscosityValue">Normal</strong></span>
+              <span>Solids <strong id="solidsValue">Low</strong></span>
+            </div>
+            <p id="filterTempTarget">Filter target 58-74°</p>
+          </div>
+
+          <div class="filter-card">
+            <div class="lamp-row">
+              <h2>Filter Load</h2>
+              <span id="filterLamp" class="warning-lamp">FILTER DP HIGH</span>
+            </div>
+            <div class="filter-meter" aria-label="Filter load gauge">
+              <i id="filterLoadFill"></i>
+            </div>
+            <p id="lineResistanceText">Line resistance nominal</p>
+          </div>
+
+          <div class="quality-panel">
+            <h2>Quality Breakdown</h2>
+            <div class="quality-row"><span>Pressure</span><meter id="pressureQuality" min="0" max="100" value="80"></meter><strong id="pressureQualityValue">80%</strong></div>
+            <div class="quality-row"><span>Temperature</span><meter id="temperatureQuality" min="0" max="100" value="80"></meter><strong id="temperatureQualityValue">80%</strong></div>
+            <div class="quality-row"><span>Flow</span><meter id="flowQuality" min="0" max="100" value="80"></meter><strong id="flowQualityValue">80%</strong></div>
+            <div class="quality-row"><span>Filter</span><meter id="filterQuality" min="0" max="100" value="80"></meter><strong id="filterQualityValue">80%</strong></div>
+          </div>
+        </section>
+
+        <section class="manual">
+          <h2>Operator Manual</h2>
+          <p>Shift target: 5 minutes, 320 units, average purity 75+, damage below 100%.</p>
+          <p>Each batch has its own pressure, temperature, and flow target bands.</p>
+          <ol>
+            <li>Green gauge bands show where the current batch makes best product.</li>
+            <li>Filter load rises from high pump, dirty feed, cold mix, and high flow.</li>
+            <li>Short service washes can prevent dirty feed from choking the line.</li>
+            <li>Valve and coolant targets drift between batches.</li>
+          </ol>
+        </section>
+
+        <section class="event-log">
+          <div class="log-heading">
+            <h2>Event Feed</h2>
+            <div class="log-actions">
+              <button id="recordButton" type="button">Record Gameplay</button>
+              <button id="restartButton" type="button">Restart</button>
+            </div>
+          </div>
+          <div id="eventLog" class="log-lines" aria-live="polite"></div>
+        </section>
+      </aside>
+    </main>
+
+    <div id="resultOverlay" class="result-overlay" hidden>
+      <section class="result-card">
+        <p id="resultKicker">Shift Complete</p>
+        <h2 id="resultTitle">System Held</h2>
+        <dl>
+          <div><dt>Production</dt><dd id="resultProduction">0 units</dd></div>
+          <div><dt>Average Purity</dt><dd id="resultPurity">0%</dd></div>
+          <div><dt>Damage</dt><dd id="resultDamage">0%</dd></div>
+          <div><dt>Max Pressure</dt><dd id="resultPressure">0</dd></div>
+          <div><dt>Max Temperature</dt><dd id="resultTemperature">0</dd></div>
+        </dl>
+        <button id="overlayRestartButton" type="button">Run Another Shift</button>
+      </section>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
