@@ -51,6 +51,41 @@ body {
   white-space: pre;
 }
 
+.fps-meter {
+  position: fixed;
+  z-index: 2;
+  top: 16px;
+  right: 16px;
+  min-width: 86px;
+  border: 1px solid rgba(103, 215, 135, 0.35);
+  background: rgba(3, 7, 5, 0.72);
+  color: #67d787;
+  padding: 9px 11px;
+  text-align: right;
+  font: 800 0.82rem "Cascadia Mono", Consolas, monospace;
+  pointer-events: none;
+}
+
+.control-tooltip {
+  position: fixed;
+  z-index: 4;
+  transform: translate(-50%, -120%);
+  border: 1px solid rgba(103, 215, 135, 0.72);
+  background: rgba(3, 8, 6, 0.78);
+  box-shadow: 0 0 14px rgba(103, 215, 135, 0.22);
+  color: #73e895;
+  padding: 5px 8px;
+  font: 900 0.74rem "Cascadia Mono", Consolas, monospace;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.control-tooltip[hidden] {
+  display: none;
+}
+
 .hud strong {
   font-size: 0.9rem;
   text-transform: uppercase;

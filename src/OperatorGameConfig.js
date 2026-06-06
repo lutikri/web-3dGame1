@@ -23,6 +23,35 @@ export const CONFIG = {
     jitterFrequency: 16,
     overshootDegrees: 4,
   },
+  controls: {
+    wheelPercentPerDelta: 0.025,
+    wheelMaxStepPercent: 2.5,
+    knobRotationDegrees: 360,
+    knobRotationAxis: "y",
+    labelYOffset: 0.1,
+    knobs: {
+      Control_Knob_FuelInjection: {
+        label: "FUEL INJECTION",
+        initialPercent: 35,
+      },
+      Control_Knob_MagneticField: {
+        label: "MAGNETIC FIELD",
+        initialPercent: 55,
+      },
+      Control_Knob_CoolantFlow: {
+        label: "COOLANT FLOW",
+        initialPercent: 40,
+      },
+    },
+    buttons: {
+      Control_Btn_Vent: {
+        label: "EMERGENCY VENT / PURGE",
+        pressAxis: "y",
+        pressDistance: -0.025,
+        pressSpeed: 18,
+      },
+    },
+  },
 
 // operatorGameDebug.listNeedles()
 // operatorGameDebug.setNeedleRotation(0, "x", 45)
@@ -33,6 +62,8 @@ export const CONFIG = {
 // operatorGameDebug.findObject("GaugeSmall_Arrow_TargetOutput")
 // operatorGameDebug.resumeNeedles()
 // operatorGameDebug.setTestActive(true)
+//window.operatorGameDebug.getPerformance()
+
 
 
   room: {
