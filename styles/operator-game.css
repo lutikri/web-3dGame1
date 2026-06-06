@@ -1,0 +1,89 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #050607;
+  color: #edf1f2;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#app,
+#scene {
+  width: 100vw;
+  height: 100vh;
+}
+
+#scene {
+  display: block;
+}
+
+.hud {
+  position: fixed;
+  z-index: 2;
+  top: 16px;
+  left: 16px;
+  display: grid;
+  gap: 4px;
+  width: min(360px, calc(100vw - 32px));
+  border: 1px solid rgba(145, 161, 170, 0.35);
+  background: rgba(7, 10, 12, 0.72);
+  padding: 12px 14px;
+  pointer-events: none;
+}
+
+.debug-overlay {
+  position: fixed;
+  z-index: 2;
+  top: 104px;
+  left: 16px;
+  min-width: 270px;
+  margin: 0;
+  border: 1px solid rgba(103, 215, 135, 0.3);
+  background: rgba(3, 7, 5, 0.72);
+  color: #67d787;
+  padding: 10px 12px;
+  font: 700 0.78rem "Cascadia Mono", Consolas, monospace;
+  line-height: 1.5;
+  pointer-events: none;
+  white-space: pre;
+}
+
+.hud strong {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.hud span {
+  color: #aeb9bd;
+  font-size: 0.82rem;
+}
+
+.crosshair {
+  position: fixed;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(237, 241, 242, 0.82);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#lockButton {
+  position: fixed;
+  z-index: 3;
+  right: 16px;
+  bottom: 16px;
+  border: 1px solid #60717c;
+  background: #1b252c;
+  color: #edf1f2;
+  padding: 11px 14px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}

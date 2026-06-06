@@ -1,0 +1,2 @@
+[dev-server] http://localhost:5173/
+[dev-server] live reload watching src/, styles/, assets/, index.html, README.md, AGENTS.md
