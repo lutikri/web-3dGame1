@@ -171,6 +171,12 @@ export const CONFIG = {
       needleJitterDegrees: 40,
       cameraShake: 0.004,
     },
+    thermalEmergency: {
+      lampFlickerFrequency: 16,
+      cameraShake: 0.0035,
+      bloomBoost: 0.42,
+      chromaticBoost: 0.0045,
+    },
     outputLow: {
       lightFlicker: 0.1,
       lampFlickerFrequency: 10,

@@ -74,7 +74,7 @@ function drawStandby(ctx) {
   ctx.fillStyle = "#4f8067";
   ctx.font = "700 30px Consolas, monospace";
   ctx.fillText("STANDBY", 56, 168);
-  ctx.fillText("PRESS Button_Test", 56, 220);
+  ctx.fillText("PRESS START", 56, 220);
 }
 
 function drawStatus(ctx, data) {
@@ -100,12 +100,44 @@ function drawStatus(ctx, data) {
   drawRow(ctx, "OUTPUT", `${Math.round(data.powerOutput)} / ${Math.round(data.targetOutput)} MW`, 294, data.warning.outputLow);
   drawRow(ctx, "EFF", `${Math.round(data.reactionEfficiency)}%`, 346, data.reactionEfficiency < 55);
   drawRow(ctx, "CORE STRESS", `${Math.round(data.coreStress)}%`, 398, data.warning.coreStress);
+  drawEmergencyBanner(ctx, data);
 
   ctx.fillStyle = warning ? "#ff5d55" : data.status.includes("STABLE") || complete ? "#45ff92" : "#ffcf5a";
   ctx.font = "700 32px Consolas, monospace";
   ctx.fillText(`STATUS: ${data.status}`, 48, 462);
 
   ctx.shadowBlur = 0;
+}
+
+function drawEmergencyBanner(ctx, data) {
+  const meltdown =
+    data.mode === "failed" ||
+    data.coreStress > 88 ||
+    data.thermalSoak > 82 ||
+    (data.warning.tempCritical && data.warning.outputSurge);
+  const runaway = data.plasmaTemp > 165 || data.warning.thermalSoak || data.warning.coreStress;
+  if (!meltdown && !runaway) return;
+
+  const blink = Math.floor(performance.now() / 160) % 2 === 0;
+  if (!blink && data.mode !== "failed") return;
+
+  ctx.save();
+  ctx.fillStyle = "rgba(8, 0, 0, 0.82)";
+  ctx.fillRect(32, 154, SCREEN_W - 64, 172);
+  ctx.strokeStyle = meltdown ? "#ff3428" : "#ffcf5a";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(38, 160, SCREEN_W - 76, 160);
+
+  ctx.shadowColor = meltdown ? "#ff3428" : "#ffcf5a";
+  ctx.shadowBlur = 22;
+  ctx.fillStyle = meltdown ? "#ff5d55" : "#ffcf5a";
+  ctx.font = "900 64px Consolas, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(meltdown ? "MELTDOWN IMMINENT" : "THERMAL RUNAWAY", SCREEN_W / 2, 236);
+
+  ctx.font = "700 30px Consolas, monospace";
+  ctx.fillText(`TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`, SCREEN_W / 2, 286);
+  ctx.restore();
 }
 
 function drawBackground(ctx) {

@@ -35,7 +35,7 @@ This scene is moving toward a first-person Fusion Core operator game, not a refi
 
 Main panel gauges:
 
-- `PLASMA TEMP`: large gauge, unit `MK`, range about `0-180 MK`. Normal burn should often live around `85-125 MK`, with quench risk below roughly `55 MK`, warning high around `140+ MK`, and critical around `160+ MK`.
+- `PLASMA TEMP`: large gauge, unit `MK`, range about `0-180 MK`. Early phases can run safely lower, but late high-output play should deliberately push hotter. Warning high starts around `140+ MK`, critical behavior starts around `155+ MK`, and deep red/near-end gauge readings should feel dangerous.
 - `CONTAINMENT` / `STABILITY`: large gauge, unit `%`, range `0-100%`. Higher is safer, but excessive magnetic field should reduce useful output efficiency.
 - `POWER OUTPUT`: large gauge, unit `MW`, range about `0-1200 MW`. The ideal band should follow current grid demand, so max output is not always the best answer.
 
@@ -43,8 +43,16 @@ Player controls should stay limited and cause-based:
 
 - `Fuel Injection`: increases power and heat, consumes fuel faster, and tends to reduce stability when field strength is insufficient.
 - `Magnetic Field`: improves containment/stability, but consumes energy and can reduce net output efficiency when overused.
-- `Coolant Flow`: lowers plasma temperature and slows heat-related stress, but too much cooling can quench the plasma and drop output.
-- `Emergency Vent` / `Purge`: hold-style emergency action that quickly reduces temperature/pressure-like stress, pauses or heavily reduces production, and costs stability/resources. It should not become a periodic optimal button press.
+- `Coolant Flow`: lowers plasma temperature and slows heat-related stress, but too much cooling can quench the plasma and drop output. It should not instantly erase a hot core state.
+- `Emergency Vent` / `Purge`: hold-style emergency action that quickly reduces temperature/pressure-like stress, pauses or heavily reduces production, and costs stability/resources. It should be useful as short emergency pulses, not a periodic optimal button press.
+
+Thermal/gameplay behavior:
+
+- Hot late-game operation is intentional: safe low temperatures should be stable but often unable to meet final demand. The high-output sweet spot should sit closer to roughly `150-170 MK`, with meaningful risk.
+- `thermalSoak` represents accumulated heat in the core/structure. It should make cooling less instant, feed `CORE STRESS`, and create a sense that overheated machinery stays dangerous for a while.
+- Turning fuel down should reduce heating, but should not immediately drop plasma temperature. Cooling rate should depend on coolant, vent, heat sink capacity, and thermal soak.
+- `outputSurge` represents unstable bus output when temperature is deep in the red or containment is weak. In that state output may fluctuate, warning lamps may blink, and post-processing/camera feedback can intensify.
+- `CORE STRESS` should build non-linearly: mild high temperature can be survivable, while deep red temperature, heat soak, poor containment, and emergency vent stress should escalate quickly.
 
 Secondary meters and screen values should use engineering language:
 
@@ -58,6 +66,8 @@ Secondary meters and screen values should use engineering language:
   - `LightCase1_Light_FuelQuality`: green for now; future fuel quality mechanic can drive it.
   - `LightCase1_Light_COREDAMAGE`, `LightCase1_Light_QUENCHRISK`, `LightCase1_Light_INSTABILITY`, `LightCase1_Light_FIELDWEAK`, `LightCase1_Light_TEMPHIGH`: keep as direct warning lamps.
 - Current Panel1 control button mesh names are `Control_Btn_Start`, `Control_Btn_Reset`, `Control_Btn_Test`, and `Control_Btn_Vent`. `Control_Btn_Test` is an indicator test, not the gameplay start button.
+- Startup feedback should feel like a diagnostic sequence, not random noise: lamps show red, then yellow, then green, then two short green blinks before returning to real status.
+- In thermal emergency states, fast-blink relevant warning lamps (`TEMP HIGH`, `INSTABILITY`, `CORE STRESS`), add stronger needle jitter, and allow subtle camera shake plus bloom/chromatic aberration boost. Avoid making normal under-demand shake the camera.
 
 Operation phases should be called phases or burn phases, not batches:
 
@@ -68,6 +78,14 @@ Operation phases should be called phases or burn phases, not batches:
 - `SUSTAINED HIGH LOAD`: final high-stress phase with heat sink and core stress pressure.
 
 Small screens may show exact target bands, such as target plasma temp and grid demand, while warning/status text should describe symptoms rather than direct instructions.
+
+Shift result/operator profile behavior:
+
+- The shift recorder should classify behavior from current mechanics, not obsolete refinery-style metrics.
+- Do not classify normal late-game hot operation as `REDLINE PHILOSOPHER` merely because temperature was above `140 MK`; reserve it for real heat soak, very high temperatures, or repeated dangerous redline behavior.
+- `NERVOUS PURGE TECH` should be reachable through multiple short vent pulses, not only by holding vent for a large percentage of the shift.
+- Useful behavior metrics include average demand error, average efficiency, average output/temp, over/under-demand time, critical-temperature time, thermal-soak time, output-surge time, core-stress time, quench time, instability time, vent hold time, vent activations, knob movement, and average fuel/field/coolant settings.
+- Current operator profile names include `CONTAINMENT POSTMORTEM`, `NERVOUS PURGE TECH`, `FIELD PHYSICIST`, `HIGH LOAD SPECIALIST`, `REDLINE PHILOSOPHER`, `BUS SURGE CONDUCTOR`, `GRID OVERFEEDER`, `FUEL INTO NOISE`, `MAGNETIC ACCOUNTANT`, `HEAT SINK GAMBLER`, `COOLANT INTERN`, `UNDERPOWERED OPTIMIST`, `WHY IS THIS LAMP BLINKING`, `CONTROL ROOM STATUE`, `EDGE WALKER`, `UNSCHEDULED EXPERIMENT`, `SHIFT OPERATOR`, `PEAK OUTPUT TOURIST`, `REACTION POET`, and `PANEL APPRENTICE`.
 
 ## Verification
 

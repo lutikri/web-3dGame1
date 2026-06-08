@@ -1,1 +1,6 @@
 3dGameAssetsDev/
+logs/
+server-*.log
+server-*.err.log
+screenshots/
+recordings/

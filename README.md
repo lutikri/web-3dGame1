@@ -11,10 +11,28 @@ Run locally with live reload:
 
 Main runtime files:
 
+- `index.html`
 - `src/OperatorGame.js`
 - `src/OperatorGameConfig.js`
 - `styles/operator-game.css`
 - `assets/Panel1.glb`
+- `assets/T_Panel1_BaseColor.ktx2`
+- `assets/T_Panel1_Normal.ktx2`
+- `assets/T_Panel1_OcclusionRoughnessMetallic.ktx2`
+
+Runtime folders should stay small and browser-facing:
+
+- `src/`: game code
+- `styles/`: browser styling
+- `assets/`: compressed runtime assets loaded by the game
+
+Development/support material is kept outside the runtime path:
+
+- `3dGameAssetsDev/`: ignored source art, Blender/Substance files, and original texture PNGs
+- `tools/`: tracked helper scripts
+- `recordings/`: generated gameplay captures
+- `screenshots/`: generated visual checks
+- `logs/`: local dev-server output
 
 Legacy prototype:
 
@@ -24,6 +42,16 @@ Generated artifacts:
 
 - `recordings/`
 - `screenshots/`
+
+## Texture Compression
+
+Original runtime texture PNGs live in `3dGameAssetsDev/RuntimeTextureSources/`.
+
+Run this after changing those source textures:
+
+- `tools/compress-panel-textures.bat`
+
+The script uses Khronos `toktx.exe` to write compressed KTX2 textures into `assets/`.
 
 ## Scene Knobs
 

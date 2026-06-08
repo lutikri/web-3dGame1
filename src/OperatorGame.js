@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
@@ -43,7 +44,9 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = CONFIG.shadows.enabled;
 renderer.shadowMap.type = CONFIG.shadows.type;
 
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new KTX2Loader()
+  .setTranscoderPath("https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/basis/")
+  .detectSupport(renderer);
 const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 
 const clock = new THREE.Clock();
@@ -92,7 +95,7 @@ let resultsTimer = 0;
 let resultsSnapshot = null;
 let resultsVisible = false;
 
-const panelTextureMaps = createPanelTextureMaps();
+const panelTextureMaps = await createPanelTextureMaps();
 const chromaticAberrationShader = {
   uniforms: {
     tDiffuse: { value: null },
@@ -172,12 +175,12 @@ const LAMP_WARNING_KEYS = {
   LightCase1_Light_TEMPHIGH: "tempHigh",
 };
 
-function createPanelTextureMaps() {
-  const map = loadPanelTexture("assets/T_Panel1_BaseColor.png", {
+async function createPanelTextureMaps() {
+  const map = await loadPanelTexture("assets/T_Panel1_BaseColor.ktx2", {
     colorSpace: THREE.SRGBColorSpace,
   });
-  const normalMap = loadPanelTexture("assets/T_Panel1_Normal.png");
-  const ormMap = loadPanelTexture("assets/T_Panel1_OcclusionRoughnessMetallic.png");
+  const normalMap = await loadPanelTexture("assets/T_Panel1_Normal.ktx2");
+  const ormMap = await loadPanelTexture("assets/T_Panel1_OcclusionRoughnessMetallic.ktx2");
 
   return { map, normalMap, ormMap };
 }
@@ -198,21 +201,18 @@ function createPanelPbrMaterial(name, overrides = {}) {
   });
 }
 
-function loadPanelTexture(path, options = {}) {
-  const texture = textureLoader.load(
-    path,
-    () => {
-      setLoadingProgress(Math.max(loadingProgress, 18));
-    },
-    undefined,
-    () => {
-      setLoadingStatus("TEXTURE MAP WARNING");
-    },
-  );
-  texture.flipY = false;
-  texture.colorSpace = options.colorSpace ?? THREE.NoColorSpace;
-  texture.anisotropy = maxAnisotropy;
-  return texture;
+async function loadPanelTexture(path, options = {}) {
+  try {
+    const texture = await textureLoader.loadAsync(path);
+    texture.flipY = false;
+    texture.colorSpace = options.colorSpace ?? THREE.NoColorSpace;
+    texture.anisotropy = maxAnisotropy;
+    setLoadingProgress(Math.max(loadingProgress, 18));
+    return texture;
+  } catch (error) {
+    setLoadingStatus("TEXTURE MAP WARNING");
+    throw error;
+  }
 }
 
 init();
@@ -653,11 +653,7 @@ function updatePanel(dt) {
   });
 
   lamps.forEach((lamp) => {
-    const startup = getStartupFeedbackAmount();
-    const startupOn =
-      startup > 0 &&
-      flickerWave(CONFIG.feedback.startup.lampFrequency + lamps.indexOf(lamp) * 1.7, lamps.indexOf(lamp)) > 0.35;
-    lamp.material = startupOn ? getIndicatorTestMaterial(lamps.indexOf(lamp)) : getLampMaterial(lamp, snapshot);
+    lamp.material = getStartupLampMaterial(lamps.indexOf(lamp)) ?? getLampMaterial(lamp, snapshot);
     lamp.scale.copy(lamp.userData.initialScale);
   });
 }
@@ -679,6 +675,7 @@ function getLampMaterial(lamp, snapshot) {
 
   if (lamp.name === "LightCase1_Light_ReactionEfficiency") {
     if (snapshot.mode === "standby") return materials.lampOff;
+    if (snapshot.warning?.outputSurge && flickerWave(13, 2.4) < 0.38) return materials.lampOff;
     if (snapshot.reactionEfficiency >= 72) return materials.lampGreen;
     if (snapshot.reactionEfficiency >= 45) return materials.lampAmber;
     if (snapshot.reactionEfficiency >= 20) return materials.lampRed;
@@ -691,15 +688,19 @@ function getLampMaterial(lamp, snapshot) {
 
   const warningKey = LAMP_WARNING_KEYS[lamp.name];
   if (!warningKey) return materials.lampOff;
+  const warningActive = Boolean(snapshot.warning?.[warningKey]);
+  if (!warningActive) return materials.lampOff;
+
+  const emergencyBlink = shouldFastBlinkWarning(warningKey, snapshot);
+  if (emergencyBlink && flickerWave(CONFIG.feedback.thermalEmergency.lampFlickerFrequency, lamps.indexOf(lamp)) < 0.48) {
+    return materials.lampOff;
+  }
+
   const outputLowFlicker =
-    warningKey === "outputLow" && snapshot.warning?.outputLow
-      ? flickerWave(CONFIG.feedback.outputLow.lampFlickerFrequency, 1.8) > 0.22
-      : Boolean(snapshot.warning?.[warningKey]);
-  return outputLowFlicker
-    ? warningKey === "coreStress" || warningKey === "tempHigh"
-      ? materials.lampRed
-      : materials.lampAmber
-    : materials.lampOff;
+    warningKey === "outputLow" ? flickerWave(CONFIG.feedback.outputLow.lampFlickerFrequency, 1.8) > 0.22 : true;
+  if (!outputLowFlicker) return materials.lampOff;
+
+  return warningKey === "coreStress" || warningKey === "tempHigh" ? materials.lampRed : materials.lampAmber;
 }
 
 function getIndicatorTestMaterial(index) {
@@ -707,6 +708,30 @@ function getIndicatorTestMaterial(index) {
   if (phase === 0) return materials.lampGreen;
   if (phase === 1) return materials.lampAmber;
   return materials.lampRed;
+}
+
+function getStartupLampMaterial(index) {
+  if (startupFeedbackTimer <= 0) return null;
+
+  const elapsed = CONFIG.feedback.startup.duration - startupFeedbackTimer;
+  if (elapsed < 0.2) return materials.lampRed;
+  if (elapsed < 0.4) return materials.lampAmber;
+  if (elapsed < 0.62) return materials.lampGreen;
+
+  const blinkWindow = elapsed - 0.62;
+  if (blinkWindow < 0.7) {
+    const blinkOn = Math.floor(blinkWindow / 0.175) % 2 === 0;
+    return blinkOn ? materials.lampGreen : materials.lampOff;
+  }
+
+  return null;
+}
+
+function shouldFastBlinkWarning(warningKey, snapshot) {
+  if (warningKey === "tempHigh") return Boolean(snapshot.warning?.tempCritical || snapshot.warning?.thermalSoak);
+  if (warningKey === "coreStress") return Boolean(snapshot.warning?.coreStress);
+  if (warningKey === "instability") return Boolean(snapshot.warning?.tempCritical || snapshot.warning?.outputSurge);
+  return false;
 }
 
 function createShiftRecorder() {
@@ -722,11 +747,20 @@ function createShiftRecorder() {
     underDemandTime: 0,
     overDemandTime: 0,
     tempHighTime: 0,
+    tempCriticalTime: 0,
+    thermalSoakTime: 0,
+    outputSurgeTime: 0,
+    coreStressTime: 0,
     quenchTime: 0,
     instabilityTime: 0,
     ventTime: 0,
+    ventActivations: 0,
+    fuelSum: 0,
+    fieldSum: 0,
+    coolantSum: 0,
     maxTemp: 0,
     maxCoreStress: 0,
+    maxThermalSoak: 0,
     maxOutput: 0,
     knobMovement: 0,
     previousControls: null,
@@ -747,15 +781,23 @@ function updateShiftRecorder(dt, snapshot, controls) {
   shiftRecorder.efficiencySum += snapshot.reactionEfficiency * dt;
   shiftRecorder.tempSum += snapshot.plasmaTemp * dt;
   shiftRecorder.outputSum += snapshot.powerOutput * dt;
+  shiftRecorder.fuelSum += controls.fuelInjection * dt;
+  shiftRecorder.fieldSum += controls.magneticField * dt;
+  shiftRecorder.coolantSum += controls.coolantFlow * dt;
   if (snapshot.warning?.underDemand) shiftRecorder.underDemandTime += dt;
   if (snapshot.warning?.overDemand) shiftRecorder.overDemandTime += dt;
   if (snapshot.warning?.tempHigh) shiftRecorder.tempHighTime += dt;
+  if (snapshot.warning?.tempCritical) shiftRecorder.tempCriticalTime += dt;
+  if (snapshot.warning?.thermalSoak) shiftRecorder.thermalSoakTime += dt;
+  if (snapshot.warning?.outputSurge) shiftRecorder.outputSurgeTime += dt;
+  if (snapshot.warning?.coreStress) shiftRecorder.coreStressTime += dt;
   if (snapshot.warning?.quenchRisk) shiftRecorder.quenchTime += dt;
   if (snapshot.warning?.instability) shiftRecorder.instabilityTime += dt;
   if (controls.ventActive) shiftRecorder.ventTime += dt;
 
   shiftRecorder.maxTemp = Math.max(shiftRecorder.maxTemp, snapshot.plasmaTemp);
   shiftRecorder.maxCoreStress = Math.max(shiftRecorder.maxCoreStress, snapshot.coreStress);
+  shiftRecorder.maxThermalSoak = Math.max(shiftRecorder.maxThermalSoak, snapshot.thermalSoak ?? 0);
   shiftRecorder.maxOutput = Math.max(shiftRecorder.maxOutput, snapshot.powerOutput);
 
   if (shiftRecorder.previousControls) {
@@ -763,6 +805,9 @@ function updateShiftRecorder(dt, snapshot, controls) {
       Math.abs(controls.fuelInjection - shiftRecorder.previousControls.fuelInjection) +
       Math.abs(controls.magneticField - shiftRecorder.previousControls.magneticField) +
       Math.abs(controls.coolantFlow - shiftRecorder.previousControls.coolantFlow);
+    if (controls.ventActive && !shiftRecorder.previousControls.ventActive) shiftRecorder.ventActivations += 1;
+  } else if (controls.ventActive) {
+    shiftRecorder.ventActivations += 1;
   }
   shiftRecorder.previousControls = { ...controls };
 
@@ -823,20 +868,41 @@ function buildShiftReport(snapshot) {
   const overRatio = shiftRecorder.overDemandTime / duration;
   const underRatio = shiftRecorder.underDemandTime / duration;
   const tempHighRatio = shiftRecorder.tempHighTime / duration;
+  const tempCriticalRatio = shiftRecorder.tempCriticalTime / duration;
+  const thermalSoakRatio = shiftRecorder.thermalSoakTime / duration;
+  const outputSurgeRatio = shiftRecorder.outputSurgeTime / duration;
+  const coreStressRatio = shiftRecorder.coreStressTime / duration;
   const quenchRatio = shiftRecorder.quenchTime / duration;
   const instabilityRatio = shiftRecorder.instabilityTime / duration;
   const ventRatio = shiftRecorder.ventTime / duration;
   const movementRate = shiftRecorder.knobMovement / duration;
+  const avgFuel = shiftRecorder.fuelSum / duration;
+  const avgField = shiftRecorder.fieldSum / duration;
+  const avgCoolant = shiftRecorder.coolantSum / duration;
   const profile = pickOperatorProfile({
     avgDemandError,
     avgEfficiency,
+    avgOutput,
+    avgTemp,
+    avgFuel,
+    avgField,
+    avgCoolant,
     overRatio,
     underRatio,
     tempHighRatio,
+    tempCriticalRatio,
+    thermalSoakRatio,
+    outputSurgeRatio,
+    coreStressRatio,
     quenchRatio,
     instabilityRatio,
     ventRatio,
+    ventActivations: shiftRecorder.ventActivations,
     movementRate,
+    maxTemp: shiftRecorder.maxTemp,
+    maxCoreStress: shiftRecorder.maxCoreStress,
+    maxThermalSoak: shiftRecorder.maxThermalSoak,
+    maxOutput: shiftRecorder.maxOutput,
     snapshot,
   });
 
@@ -850,10 +916,14 @@ function buildShiftReport(snapshot) {
       ["AVG DEMAND ERROR", `${Math.round(avgDemandError * 100)}%`],
       ["MAX TEMP", `${Math.round(shiftRecorder.maxTemp)} MK`],
       ["MAX CORE STRESS", `${Math.round(shiftRecorder.maxCoreStress)}%`],
+      ["MAX HEAT SOAK", `${Math.round(shiftRecorder.maxThermalSoak)}%`],
+      ["CRITICAL TEMP", `${Math.round(tempCriticalRatio * 100)}%`],
+      ["OUTPUT SURGE", `${Math.round(outputSurgeRatio * 100)}%`],
       ["OVER DEMAND", `${Math.round(overRatio * 100)}%`],
       ["UNDER DEMAND", `${Math.round(underRatio * 100)}%`],
       ["QUENCH RISK", `${Math.round(quenchRatio * 100)}%`],
       ["VENT HELD", `${Math.round(ventRatio * 100)}%`],
+      ["VENT PULSES", `${shiftRecorder.ventActivations}`],
       ["AVG TEMP", `${Math.round(avgTemp)} MK`],
       ["CONTROL MOTION", `${Math.round(movementRate)}%/s`],
     ],
@@ -861,34 +931,94 @@ function buildShiftReport(snapshot) {
 }
 
 function pickOperatorProfile(stats) {
-  if (stats.ventRatio > 0.18) {
+  if (stats.snapshot.mode === "failed" && stats.maxCoreStress > 96 && stats.maxTemp > 178) {
+    return {
+      title: "OPERATOR TYPE: CONTAINMENT POSTMORTEM",
+      summary: "You found the part of the operating envelope that writes reports in all caps.",
+    };
+  }
+  if (stats.ventActivations >= 4 || (stats.ventRatio > 0.06 && stats.maxTemp > 155)) {
     return {
       title: "OPERATOR TYPE: NERVOUS PURGE TECH",
-      summary: "You survived by reaching for the vent early and often. The core noticed. So did the paperwork.",
+      summary: "Short purge pulses solved several problems and created several new entries in the logbook.",
     };
   }
-  if (stats.tempHighRatio > 0.2 || stats.overRatio > 0.28) {
+  if (stats.avgEfficiency > 82 && stats.avgDemandError < 0.12 && stats.maxCoreStress < 55 && stats.instabilityRatio < 0.08) {
+    return {
+      title: "OPERATOR TYPE: FIELD PHYSICIST",
+      summary: "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.",
+    };
+  }
+  if (stats.avgOutput > 720 && stats.avgDemandError < 0.18 && stats.tempCriticalRatio > 0.04 && stats.coreStressRatio < 0.14) {
+    return {
+      title: "OPERATOR TYPE: HIGH LOAD SPECIALIST",
+      summary: "You ran the burn hot on purpose and mostly convinced the machinery it was planned.",
+    };
+  }
+  if (stats.thermalSoakRatio > 0.12 || stats.maxThermalSoak > 75 || stats.maxTemp > 185) {
     return {
       title: "OPERATOR TYPE: REDLINE PHILOSOPHER",
-      summary: "You treated the safe operating band as a suggestion and asked whether heat is really a problem. It is.",
+      summary: "You treated heat soak as a philosophical disagreement between you and the panel. The panel had evidence.",
     };
   }
-  if (stats.quenchRatio > 0.22 || stats.underRatio > 0.35) {
+  if (stats.outputSurgeRatio > 0.08) {
+    return {
+      title: "OPERATOR TYPE: BUS SURGE CONDUCTOR",
+      summary: "The grid received power in expressive waves. Some of them were even useful.",
+    };
+  }
+  if (stats.overRatio > 0.32) {
+    return {
+      title: "OPERATOR TYPE: GRID OVERFEEDER",
+      summary: "Demand was a target. You interpreted it as a lower bound.",
+    };
+  }
+  if (stats.avgFuel > 84 && stats.avgOutput < 650) {
+    return {
+      title: "OPERATOR TYPE: FUEL INTO NOISE",
+      summary: "A lot of fuel became heat, alarms, and character development before it became grid power.",
+    };
+  }
+  if (stats.avgField > 86 && stats.avgOutput < 820) {
+    return {
+      title: "OPERATOR TYPE: MAGNETIC ACCOUNTANT",
+      summary: "Containment was extremely well filed. Net output was less impressed.",
+    };
+  }
+  if (stats.avgCoolant < 28 && stats.maxTemp > 160 && stats.maxCoreStress < 75) {
+    return {
+      title: "OPERATOR TYPE: HEAT SINK GAMBLER",
+      summary: "You trusted the thermal mass longer than the manual recommends, but the lights stayed on.",
+    };
+  }
+  if (stats.quenchRatio > 0.18 || (stats.avgCoolant > 72 && stats.avgTemp < 110)) {
     return {
       title: "OPERATOR TYPE: COOLANT INTERN",
       summary: "The plasma spent much of the shift wondering why it was being refrigerated instead of operated.",
     };
   }
-  if (stats.movementRate > 10) {
+  if (stats.underRatio > 0.42) {
+    return {
+      title: "OPERATOR TYPE: UNDERPOWERED OPTIMIST",
+      summary: "The grid kept asking for more. You maintained a tasteful distance from the request.",
+    };
+  }
+  if (stats.movementRate > 12) {
     return {
       title: "OPERATOR TYPE: WHY IS THIS LAMP BLINKING",
       summary: "You made many corrections and at least some of them were related to the problem at hand.",
     };
   }
-  if (stats.avgEfficiency > 76 && stats.avgDemandError < 0.16 && stats.instabilityRatio < 0.08) {
+  if (stats.movementRate < 1.2 && stats.avgDemandError > 0.28) {
     return {
-      title: "OPERATOR TYPE: FIELD PHYSICIST",
-      summary: "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.",
+      title: "OPERATOR TYPE: CONTROL ROOM STATUE",
+      summary: "The panel changed phases. You respected its independence.",
+    };
+  }
+  if (stats.tempCriticalRatio > 0.16 && stats.maxCoreStress < 70) {
+    return {
+      title: "OPERATOR TYPE: EDGE WALKER",
+      summary: "You visited the red band often enough to learn the furniture, then left before it became permanent.",
     };
   }
   if (stats.snapshot.mode === "failed") {
@@ -897,9 +1027,27 @@ function pickOperatorProfile(stats) {
       summary: "The shift ended with useful data, technically. The maintenance team may use different words.",
     };
   }
+  if (stats.avgDemandError < 0.18 && stats.avgEfficiency > 68) {
+    return {
+      title: "OPERATOR TYPE: SHIFT OPERATOR",
+      summary: "You kept the core moving, made some compromises, and left enough machine for the next person.",
+    };
+  }
+  if (stats.maxOutput > 980 && stats.maxCoreStress < 80) {
+    return {
+      title: "OPERATOR TYPE: PEAK OUTPUT TOURIST",
+      summary: "You went sightseeing near maximum output and brought back most of the equipment.",
+    };
+  }
+  if (stats.avgEfficiency < 45) {
+    return {
+      title: "OPERATOR TYPE: REACTION POET",
+      summary: "The numbers formed an emotional arc. The grid requested fewer metaphors.",
+    };
+  }
   return {
-    title: "OPERATOR TYPE: SHIFT OPERATOR",
-    summary: "You kept the core moving, made some compromises, and left enough machine for the next person.",
+    title: "OPERATOR TYPE: PANEL APPRENTICE",
+    summary: "You learned which lights matter and which lights merely judge.",
   };
 }
 
@@ -919,6 +1067,7 @@ function updateFeedback(dt) {
 function updateSceneLightFeedback() {
   const startup = getStartupFeedbackAmount();
   const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
+  const emergency = getThermalEmergencyAmount();
   const startupConfig = CONFIG.feedback.startup;
   const outputConfig = CONFIG.feedback.outputLow;
   const blackout = startupFeedbackTimer > startupConfig.duration - startupConfig.blackoutSeconds ? 0.04 : 1;
@@ -929,19 +1078,33 @@ function updateSceneLightFeedback() {
   const outputPulse = outputLow
     ? THREE.MathUtils.lerp(1 - outputConfig.lightFlicker, 1 - outputConfig.lightFlicker * 0.42, flickerWave(9, 0.4))
     : 1;
-  const factor = blackout * THREE.MathUtils.lerp(1, startupPulse * startupRamp, startup) * outputPulse;
+  const emergencyPulse = emergency ? THREE.MathUtils.lerp(0.72, 1.18, flickerWave(18, 2.7)) : 1;
+  const factor = blackout * THREE.MathUtils.lerp(1, startupPulse * startupRamp, startup) * outputPulse * emergencyPulse;
 
   controlledLights.forEach((light) => {
     light.intensity = light.userData.baseIntensity * factor;
   });
+
+  if (bloomPass) {
+    const bloomConfig = CONFIG.postProcessing.bloom;
+    bloomPass.strength = bloomConfig.strength + emergency * CONFIG.feedback.thermalEmergency.bloomBoost;
+  }
+
+  if (chromaticAberrationPass) {
+    const chromaConfig = CONFIG.postProcessing.chromaticAberration;
+    chromaticAberrationPass.uniforms.amount.value =
+      chromaConfig.amount + emergency * CONFIG.feedback.thermalEmergency.chromaticBoost * flickerWave(10, 1.1);
+  }
 }
 
 function applyCameraFeedback() {
   const startup = getStartupFeedbackAmount();
   const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
+  const emergency = getThermalEmergencyAmount();
   const shake =
     startup * CONFIG.feedback.startup.cameraShake +
-    outputLow * CONFIG.feedback.outputLow.cameraShake * flickerWave(11, 0.7);
+    outputLow * CONFIG.feedback.outputLow.cameraShake * flickerWave(11, 0.7) +
+    emergency * CONFIG.feedback.thermalEmergency.cameraShake * flickerWave(14, 1.9);
   if (shake <= 0) return;
 
   camera.position.x += Math.sin(testTime * 39.1) * shake;
@@ -952,6 +1115,15 @@ function applyCameraFeedback() {
 function getStartupFeedbackAmount() {
   if (startupFeedbackTimer <= 0) return 0;
   return THREE.MathUtils.clamp(startupFeedbackTimer / CONFIG.feedback.startup.duration, 0, 1);
+}
+
+function getThermalEmergencyAmount() {
+  if (latestSnapshot.mode !== "running") return 0;
+  const temp = THREE.MathUtils.clamp((latestSnapshot.plasmaTemp - 158) / 34, 0, 1);
+  const soak = THREE.MathUtils.clamp(((latestSnapshot.thermalSoak ?? 0) - 55) / 45, 0, 1);
+  const stress = THREE.MathUtils.clamp((latestSnapshot.coreStress - 72) / 28, 0, 1);
+  const surge = THREE.MathUtils.clamp(((latestSnapshot.outputSurge ?? 0) - 34) / 55, 0, 1) * 0.7;
+  return Math.max(temp, soak, stress, surge);
 }
 
 function flickerWave(frequency, seed = 0) {
@@ -998,11 +1170,36 @@ function updateGaugeNeedle(needle, snapshot, dt) {
   );
   const currentAngle = needle.userData.needleAngle ?? targetAngle;
   const operationalJitter = getOperationalNeedleJitter(needle, snapshot, dt);
+  const dangerJitter = getDangerNeedleJitter(needle, snapshot);
   const startupJitter =
     getStartupFeedbackAmount() *
     THREE.MathUtils.degToRad(CONFIG.feedback.startup.needleJitterDegrees) *
     Math.sin(testTime * (18 + needle.userData.needleNoiseSeed));
-  needle.userData.needleAngle = THREE.MathUtils.damp(currentAngle, targetAngle + operationalJitter + startupJitter, 8, dt);
+  needle.userData.needleAngle = THREE.MathUtils.damp(
+    currentAngle,
+    targetAngle + operationalJitter + dangerJitter + startupJitter,
+    8,
+    dt,
+  );
+}
+
+function getDangerNeedleJitter(needle, snapshot) {
+  const key = needle.userData.gaugeKey;
+  if (snapshot.mode !== "running" || (key !== "plasmaTemp" && key !== "coreStress")) return 0;
+
+  const tempDanger = THREE.MathUtils.clamp((snapshot.plasmaTemp - 145) / 28, 0, 1);
+  const soakDanger = THREE.MathUtils.clamp((snapshot.thermalSoak ?? 0) / 100, 0, 1);
+  const stressDanger = THREE.MathUtils.clamp((snapshot.coreStress - 45) / 55, 0, 1);
+  const amountDegrees =
+    key === "plasmaTemp"
+      ? 1.5 + tempDanger * 10 + soakDanger * 7
+      : 1 + stressDanger * 8 + soakDanger * 9;
+
+  return (
+    THREE.MathUtils.degToRad(amountDegrees) *
+    (Math.sin(testTime * 47 + needle.userData.needleNoiseSeed) * 0.65 +
+      Math.sin(testTime * 91 + needle.userData.needleNoiseSeed * 0.7) * 0.35)
+  );
 }
 
 function getOperationalNeedleJitter(needle, snapshot, dt) {
@@ -1440,7 +1637,12 @@ window.operatorGameDebug = {
       underDemandTime: Number(shiftRecorder.underDemandTime.toFixed(1)),
       overDemandTime: Number(shiftRecorder.overDemandTime.toFixed(1)),
       tempHighTime: Number(shiftRecorder.tempHighTime.toFixed(1)),
+      tempCriticalTime: Number(shiftRecorder.tempCriticalTime.toFixed(1)),
+      thermalSoakTime: Number(shiftRecorder.thermalSoakTime.toFixed(1)),
+      outputSurgeTime: Number(shiftRecorder.outputSurgeTime.toFixed(1)),
+      coreStressTime: Number(shiftRecorder.coreStressTime.toFixed(1)),
       ventTime: Number(shiftRecorder.ventTime.toFixed(1)),
+      ventActivations: shiftRecorder.ventActivations,
     },
     cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
