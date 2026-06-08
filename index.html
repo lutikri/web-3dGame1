@@ -26,6 +26,36 @@
       <div class="crosshair" aria-hidden="true"></div>
       <button id="lockButton" type="button">Enter First Person</button>
       <canvas id="scene"></canvas>
+      <div id="loadingOverlay" class="loading-overlay" aria-live="polite">
+        <div class="loading-panel">
+          <div class="loading-header">
+            <span>CORE BOOT</span>
+            <span id="loadingPercent">00%</span>
+          </div>
+          <div class="loading-body">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <div class="loading-copy">
+              <strong id="loadingStatus">INITIALIZING OPERATOR CONSOLE</strong>
+              <span id="loadingShiftTitle" class="loading-shift-title">YOUR FIRST FUSION SHIFT</span>
+            </div>
+          </div>
+          <div class="loading-bar" aria-hidden="true">
+            <div id="loadingBarFill"></div>
+          </div>
+        </div>
+      </div>
+      <div id="resultsOverlay" class="results-overlay" hidden>
+        <div class="results-panel">
+          <div class="results-header">
+            <span>SHIFT REPORT</span>
+            <span id="resultsOutcome">--</span>
+          </div>
+          <h1 id="resultsProfile">OPERATOR PROFILE</h1>
+          <p id="resultsSummary">Awaiting shift data.</p>
+          <div id="resultsStats" class="results-stats"></div>
+          <button id="resultsRestartButton" type="button">START NEW SHIFT</button>
+        </div>
+      </div>
     </div>
     <script type="module" src="src/OperatorGame.js"></script>
   </body>

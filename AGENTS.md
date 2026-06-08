@@ -12,6 +12,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 
 - `src/OperatorGame.js`: Three.js scene setup, panel loading, interaction, animation, post-processing, debug API.
 - `src/OperatorGameConfig.js`: primary tuning surface for panel placement, lights, shadows, needle animation, and post-processing effects.
+- `src/FusionCoreSimulation.js`: core gameplay loop, phases, warning flags, and derived gauge values.
 - `src/StatusScreen.js`: canvas-driven material for the small status display.
 - `assets/`: runtime GLB and baked PBR textures.
 - `styles/operator-game.css`: HUD/canvas styling.
@@ -50,6 +51,13 @@ Secondary meters and screen values should use engineering language:
 - Prefer `CORE STRESS` over `Reactor Damage`. Treat it as accumulated thermal, vessel, and coil stress; failure occurs at the stress limit.
 - Other useful secondary values: `Fuel Reserve`, `Heat Sink Capacity`, `Reaction Efficiency`, and `Grid Demand` / `Target Output`.
 - Warning lamps: `TEMP HIGH`, `FIELD WEAK`, `OUTPUT LOW`, `INSTABILITY`, `QUENCH RISK`, `CORE STRESS`.
+- Current Panel1 warning/indicator lamp mesh names include:
+  - `LightCase1_Light_UnderDemand`: yellow when output is slightly below demand, red when far below demand.
+  - `LightCase1_Light_OverDemand`: yellow when output is slightly above demand, red when far above demand. Over-demand should add thermal load so max output is not free.
+  - `LightCase1_Light_ReactionEfficiency`: green for good efficiency, yellow for mediocre, red for bad, blinking red for very bad.
+  - `LightCase1_Light_FuelQuality`: green for now; future fuel quality mechanic can drive it.
+  - `LightCase1_Light_COREDAMAGE`, `LightCase1_Light_QUENCHRISK`, `LightCase1_Light_INSTABILITY`, `LightCase1_Light_FIELDWEAK`, `LightCase1_Light_TEMPHIGH`: keep as direct warning lamps.
+- Current Panel1 control button mesh names are `Control_Btn_Start`, `Control_Btn_Reset`, `Control_Btn_Test`, and `Control_Btn_Vent`. `Control_Btn_Test` is an indicator test, not the gameplay start button.
 
 Operation phases should be called phases or burn phases, not batches:
 
@@ -67,5 +75,5 @@ Small screens may show exact target bands, such as target plasma temp and grid d
 - The debug API is available as `window.operatorGameDebug`.
 - Useful checks:
   - `window.operatorGameDebug.getState()`
-  - `window.operatorGameDebug.setTestActive(true)`
-  - `window.operatorGameDebug.setTestActive(false)`
+  - `window.operatorGameDebug.startGame()`
+  - `window.operatorGameDebug.resetGame()`

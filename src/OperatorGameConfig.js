@@ -3,9 +3,16 @@ import * as THREE from "three";
 export const CONFIG = {
   assetPath: "assets/Panel1.glb",
   playerEyeHeight: 1.65,
+  camera: {
+    fovDegrees: 72,
+    zoomFovDegrees: 38,
+    zoomDamping: 12,
+    mouseSensitivity: 0.0022,
+    walkSpeed: 2.4,
+    runSpeed: 4.2,
+  },
   panel: {
-    // Location, rotation and scale of assets/Panel1.glb in the room.
-    position: new THREE.Vector3(0, 1.3, 4),
+    position: new THREE.Vector3(0, 1.2, 4),
     rotation: new THREE.Euler(0, 0, 0),
     width: 1.5,
   },
@@ -19,8 +26,9 @@ export const CONFIG = {
       max: 230,
     },
     speedRetargetInterval: 1.18,
-    jitterDegrees: 3.5,
-    jitterFrequency: 16,
+    jitterDegrees: 1.2,
+    jitterFrequency: 432,
+    jitterRetargetInterval: 0.16,
     overshootDegrees: 4,
   },
   controls: {
@@ -44,8 +52,51 @@ export const CONFIG = {
       },
     },
     buttons: {
+      Control_Btn_Test: {
+        label: "INDICATOR TEST",
+        action: "indicatorTest",
+        pressAxis: "y",
+        pressDistance: -0.006,
+        pressSpeed: 18,
+      },
+      Control_Btn_Start: {
+        label: "START CORE",
+        action: "start",
+        pressAxis: "y",
+        pressDistance: -0.006,
+        pressSpeed: 18,
+      },
+      Control_Btn_Reset: {
+        label: "RESET CORE",
+        action: "reset",
+        pressAxis: "y",
+        pressDistance: -0.006,
+        pressSpeed: 18,
+      },
+      Buttun_Test: {
+        label: "INDICATOR TEST",
+        action: "indicatorTest",
+        pressAxis: "y",
+        pressDistance: -0.006,
+        pressSpeed: 18,
+      },
+      Buttun_Start: {
+        label: "START CORE",
+        action: "start",
+        pressAxis: "y",
+        pressDistance: -0.006,
+        pressSpeed: 18,
+      },
+      Buttun_Reset: {
+        label: "RESET CORE",
+        action: "reset",
+        pressAxis: "y",
+        pressDistance: -0.018,
+        pressSpeed: 18,
+      },
       Control_Btn_Vent: {
         label: "EMERGENCY VENT / PURGE",
+        action: "vent",
         pressAxis: "y",
         pressDistance: -0.025,
         pressSpeed: 18,
@@ -61,7 +112,8 @@ export const CONFIG = {
 // operatorGameDebug.listObjects("Arrow")
 // operatorGameDebug.findObject("GaugeSmall_Arrow_TargetOutput")
 // operatorGameDebug.resumeNeedles()
-// operatorGameDebug.setTestActive(true)
+// operatorGameDebug.startGame()
+// operatorGameDebug.resetGame()
 //window.operatorGameDebug.getPerformance()
 
 
@@ -80,7 +132,7 @@ export const CONFIG = {
   lighting: {
     ambientSky: "#9fb6c7",
     ambientGround: "#101010",
-    ambientIntensity: 0.25,
+    ambientIntensity: 0.15,
     pointLights: {
       key: {
         color: "#f7d67b",
@@ -89,7 +141,7 @@ export const CONFIG = {
         decay: 2,
         position: new THREE.Vector3(-1.8, 2.8, 5.4),
         castShadow: true,
-        shadowMapSize: 4096,
+        shadowMapSize: 512,
         shadowBias: -0.0006,
         shadowNormalBias: 0.035,
         shadowNear: 0.1,
@@ -102,12 +154,31 @@ export const CONFIG = {
         decay: 2,
         position: new THREE.Vector3(1.1, 2.9, 5.3),
         castShadow: false,
-        shadowMapSize: 4096,
+        shadowMapSize: 512,
         shadowBias: -0.0005,
         shadowNormalBias: 0.03,
         shadowNear: 0.1,
         shadowFar: 7,
       },
+    },
+  },
+  feedback: {
+    startup: {
+      duration: 3.2,
+      blackoutSeconds: 0.28,
+      flickerFrequency: 24,
+      lampFrequency: 18,
+      needleJitterDegrees: 40,
+      cameraShake: 0.004,
+    },
+    outputLow: {
+      lightFlicker: 0.1,
+      lampFlickerFrequency: 10,
+      cameraShake: 0,
+    },
+    indicatorTest: {
+      duration: 3,
+      lampFrequency: 9,
     },
   },
   shadows: {
@@ -117,7 +188,7 @@ export const CONFIG = {
   postProcessing: {
     enabled: true,
     gtao: {
-      enabled: true,
+      enabled: false,
       blendIntensity: 1.65,
       radius: 0.42,
       distanceExponent: 1.7,
@@ -149,6 +220,8 @@ export const MATERIAL_COLORS = {
   lampOffEmissive: "#000000",
   lampAmber: "#ffcc47",
   lampAmberEmissive: "#ffb000",
+  lampGreen: "#55ff91",
+  lampGreenEmissive: "#19ff6c",
   lampRed: "#ff5555",
   lampRedEmissive: "#ff1f1f",
   needle: "#ff5a58",

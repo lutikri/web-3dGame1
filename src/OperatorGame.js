@@ -6,6 +6,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js";
 import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js";
 import { createStatusScreen } from "./StatusScreen.js";
 
@@ -13,6 +14,17 @@ const canvas = document.querySelector("#scene");
 const lockButton = document.querySelector("#lockButton");
 const debugOverlay = document.querySelector("#debugOverlay");
 const fpsMeter = document.querySelector("#fpsMeter");
+const loadingOverlay = document.querySelector("#loadingOverlay");
+const loadingPercent = document.querySelector("#loadingPercent");
+const loadingStatus = document.querySelector("#loadingStatus");
+const loadingShiftTitle = document.querySelector("#loadingShiftTitle");
+const loadingBarFill = document.querySelector("#loadingBarFill");
+const resultsOverlay = document.querySelector("#resultsOverlay");
+const resultsOutcome = document.querySelector("#resultsOutcome");
+const resultsProfile = document.querySelector("#resultsProfile");
+const resultsSummary = document.querySelector("#resultsSummary");
+const resultsStats = document.querySelector("#resultsStats");
+const resultsRestartButton = document.querySelector("#resultsRestartButton");
 const controlTooltip = document.createElement("div");
 controlTooltip.className = "control-tooltip";
 document.body.appendChild(controlTooltip);
@@ -21,7 +33,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(CONFIG.world.backgroundColor);
 scene.fog = new THREE.Fog(CONFIG.world.fogColor, CONFIG.world.fogNear, CONFIG.world.fogFar);
 
-const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.05, 80);
+const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.innerWidth / window.innerHeight, 0.05, 80);
 camera.position.set(0, CONFIG.playerEyeHeight, 4.8);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -37,19 +49,21 @@ const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2(0, 0);
+const worldUp = new THREE.Vector3(0, 1, 0);
 const keys = new Set();
 const interactive = [];
 const lamps = [];
 const needles = [];
+const gaugeNeedles = new Map();
 const controlKnobs = [];
 const controlButtons = [];
+const controlledLights = [];
 const statusScreen = createStatusScreen();
+const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
-let testButton = null;
 let yaw = 0;
 let pitch = 0;
-let testActive = false;
 let testTime = 0;
 let freezeNeedles = false;
 let composer = null;
@@ -64,6 +78,19 @@ let hoveredInteractive = null;
 let hoveredKnob = null;
 let hoveredTooltipTarget = null;
 let forcedHoveredTarget = null;
+let startupFeedbackTimer = 0;
+let indicatorTestTimer = 0;
+let latestSnapshot = fusionCore.getSnapshot();
+let zoomActive = false;
+let loadingProgress = 0;
+let displayedLoadingProgress = 0;
+let loadingComplete = false;
+const loadingStartedAt = performance.now();
+let shiftRecorder = createShiftRecorder();
+let previousGameMode = latestSnapshot.mode;
+let resultsTimer = 0;
+let resultsSnapshot = null;
+let resultsVisible = false;
 
 const panelTextureMaps = createPanelTextureMaps();
 const chromaticAberrationShader = {
@@ -96,10 +123,6 @@ const chromaticAberrationShader = {
 
 const materials = {
   panel: createPanelPbrMaterial("Panel1_PBR"),
-  panelButtonOn: createPanelPbrMaterial("Panel1_ButtonOn_PBR", {
-    emissive: MATERIAL_COLORS.buttonOnEmissive,
-    emissiveIntensity: 1.5,
-  }),
   wall: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.wall, roughness: 0.72, metalness: 0.08 }),
   floor: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.floor, roughness: 0.9, metalness: 0.04 }),
   trim: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.trim, roughness: 0.42, metalness: 0.35 }),
@@ -114,12 +137,39 @@ const materials = {
     emissiveIntensity: 2.8,
     roughness: 0.2,
   }),
+  lampGreen: new THREE.MeshStandardMaterial({
+    color: MATERIAL_COLORS.lampGreen,
+    emissive: MATERIAL_COLORS.lampGreenEmissive,
+    emissiveIntensity: 2.5,
+    roughness: 0.2,
+  }),
   lampRed: new THREE.MeshStandardMaterial({
     color: MATERIAL_COLORS.lampRed,
     emissive: MATERIAL_COLORS.lampRedEmissive,
     emissiveIntensity: 3.6,
     roughness: 0.2,
   }),
+};
+
+const GAUGE_RANGES = {
+  plasmaTemp: [0, 180],
+  containment: [0, 100],
+  powerOutput: [0, 1200],
+  targetOutput: [0, 1200],
+  fuelReserve: [0, 100],
+  heatSinkCapacity: [0, 100],
+  coreStress: [0, 100],
+  reactionEfficiency: [0, 100],
+};
+
+const LAMP_WARNING_KEYS = {
+  LightCase1_Light_COREDAMAGE: "coreStress",
+  LightCase1_Light_FIELDWEAK: "fieldWeak",
+  LightCase1_Light_INSTABILITY: "instability",
+  LightCase1_Light_OUTPUTLOW: "outputLow",
+  LightCase1_Light_QUENCH_RISK: "quenchRisk",
+  LightCase1_Light_QUENCHRISK: "quenchRisk",
+  LightCase1_Light_TEMPHIGH: "tempHigh",
 };
 
 function createPanelTextureMaps() {
@@ -149,7 +199,16 @@ function createPanelPbrMaterial(name, overrides = {}) {
 }
 
 function loadPanelTexture(path, options = {}) {
-  const texture = textureLoader.load(path);
+  const texture = textureLoader.load(
+    path,
+    () => {
+      setLoadingProgress(Math.max(loadingProgress, 18));
+    },
+    undefined,
+    () => {
+      setLoadingStatus("TEXTURE MAP WARNING");
+    },
+  );
   texture.flipY = false;
   texture.colorSpace = options.colorSpace ?? THREE.NoColorSpace;
   texture.anisotropy = maxAnisotropy;
@@ -172,6 +231,8 @@ function setupLights() {
     CONFIG.lighting.ambientGround,
     CONFIG.lighting.ambientIntensity,
   );
+  hemi.userData.baseIntensity = hemi.intensity;
+  controlledLights.push(hemi);
   scene.add(hemi);
 
   for (const [name, lightConfig] of Object.entries(CONFIG.lighting.pointLights)) {
@@ -183,6 +244,8 @@ function setupLights() {
     );
     light.name = `PointLight_${name}`;
     light.position.copy(lightConfig.position);
+    light.userData.baseIntensity = light.intensity;
+    controlledLights.push(light);
     applyShadowSettings(light, lightConfig);
     scene.add(light);
   }
@@ -264,10 +327,19 @@ function loadPanelModel() {
       fitPanelToRoom(panelModel);
       scene.add(panelModel);
 
+      finishLoading();
       console.log(`[OperatorGame] Loaded Panel1.glb: ${needles.length} arrows, ${lamps.length} lamps`);
     },
-    undefined,
+    (event) => {
+      if (!event.lengthComputable) {
+        setLoadingProgress(Math.max(loadingProgress, 62));
+        return;
+      }
+      const assetProgress = event.loaded / event.total;
+      setLoadingProgress(20 + assetProgress * 74);
+    },
     (error) => {
+      setLoadingStatus("PANEL LOAD FAILURE");
       console.error("[OperatorGame] Failed to load Panel1.glb", error);
     },
   );
@@ -286,20 +358,19 @@ function registerPanelObject(object) {
     object.userData.needleAngle = THREE.MathUtils.degToRad(CONFIG.needleAnimation.inactiveDegrees);
     object.userData.needleSpeed = getRandomNeedleSpeed();
     object.userData.needleSpeedTimer = 0;
+    object.userData.needleJitterOffset = 0;
+    object.userData.needleJitterTarget = 0;
+    object.userData.needleJitterTimer = Math.random() * CONFIG.needleAnimation.jitterRetargetInterval;
     object.userData.needleNoiseSeed = Math.random() * 100;
+    object.userData.gaugeKey = getGaugeKey(object.name);
     needles.push(object);
+    if (object.userData.gaugeKey) gaugeNeedles.set(object.userData.gaugeKey, object);
   }
 
   if (object.name.startsWith("LightCase1_Light_")) {
     object.material = materials.lampOff;
     object.userData.initialScale = object.scale.clone();
     lamps.push(object);
-  }
-
-  if (object.name === "Buttun_Test") {
-    object.userData.kind = "testButton";
-    testButton = object;
-    interactive.push(object);
   }
 
   if (CONFIG.controls.knobs[object.name]) {
@@ -332,6 +403,7 @@ function registerControlButton(object, buttonConfig) {
   object.userData.kind = "controlButton";
   object.userData.controlId = object.name;
   object.userData.controlLabel = buttonConfig.label;
+  object.userData.controlAction = buttonConfig.action ?? "";
   object.userData.initialPosition = object.position.clone();
   object.userData.pressAxis = buttonConfig.pressAxis ?? "y";
   object.userData.pressDistance = buttonConfig.pressDistance ?? -0.02;
@@ -341,6 +413,18 @@ function registerControlButton(object, buttonConfig) {
 
   controlButtons.push(object);
   interactive.push(object);
+}
+
+function getGaugeKey(name) {
+  if (name.includes("PlasmaTemp")) return "plasmaTemp";
+  if (name.includes("ContainmentStability")) return "containment";
+  if (name.includes("PowerOutput")) return "powerOutput";
+  if (name.includes("TargetOutput")) return "targetOutput";
+  if (name.includes("FuelReserve")) return "fuelReserve";
+  if (name.includes("HeatSinkCapacity")) return "heatSinkCapacity";
+  if (name.includes("ReactorDamage")) return "coreStress";
+  if (name.includes("ReactionEfficiency")) return "reactionEfficiency";
+  return null;
 }
 
 function applyPanelPbrMaterial(object) {
@@ -378,12 +462,15 @@ function addBox(name, size, position, material, options = {}) {
 
 function animate() {
   const dt = Math.min(clock.getDelta(), 0.05);
+  updateLoadingOverlay(dt);
   updateFpsMeter(dt);
   testTime += dt;
   updateMovement(dt);
+  updateCameraZoom(dt);
   updateHoverTarget();
   updateControlLabels();
   updatePanel(dt);
+  updateFeedback(dt);
   updateDebugOverlay();
   if (composer) {
     composer.render();
@@ -391,6 +478,44 @@ function animate() {
     renderer.render(scene, camera);
   }
   requestAnimationFrame(animate);
+}
+
+function setLoadingProgress(value) {
+  loadingProgress = THREE.MathUtils.clamp(value, loadingProgress, 100);
+  if (loadingProgress >= 70) loadingShiftTitle?.classList.add("is-visible");
+}
+
+function setLoadingStatus(text) {
+  if (loadingStatus) loadingStatus.textContent = text;
+}
+
+function finishLoading() {
+  setLoadingStatus("CORE INTERFACE ONLINE");
+  setLoadingProgress(100);
+  const remainingMinimum = Math.max(0, 2000 - (performance.now() - loadingStartedAt));
+  window.setTimeout(() => {
+    loadingOverlay?.classList.add("is-final");
+  }, remainingMinimum + 450);
+  window.setTimeout(() => {
+    loadingOverlay?.classList.add("is-complete");
+    loadingComplete = true;
+  }, remainingMinimum + 1150);
+}
+
+function updateLoadingOverlay(dt) {
+  if (!loadingOverlay || loadingComplete) return;
+
+  if (!panelModel) {
+    const idleTarget = Math.min(loadingProgress + dt * 9, 68);
+    setLoadingProgress(idleTarget);
+  }
+
+  displayedLoadingProgress = THREE.MathUtils.damp(displayedLoadingProgress, loadingProgress, 12, dt);
+  const shownPercent = Math.min(100, Math.round(displayedLoadingProgress));
+
+  if (loadingPercent) loadingPercent.textContent = `${String(shownPercent).padStart(2, "0")}%`;
+  if (loadingBarFill) loadingBarFill.style.width = `${shownPercent}%`;
+  if (shownPercent >= 70) loadingShiftTitle?.classList.add("is-visible");
 }
 
 function updateFpsMeter(dt) {
@@ -512,27 +637,400 @@ function getTooltipText(target) {
 }
 
 function updatePanel(dt) {
+  const controlInputs = getControlInputs();
+  const snapshot = fusionCore.update(dt, controlInputs);
+  latestSnapshot = snapshot;
+  updateShiftRecorder(dt, snapshot, controlInputs);
+  updateShiftCompletion(dt, snapshot);
+  statusScreen.setSnapshot(snapshot);
   statusScreen.update(dt);
   updateControlButtons(dt);
 
-  needles.forEach((needle, index) => {
-    if (!freezeNeedles) updateNeedle(needle, index, dt);
+  needles.forEach((needle) => {
+    if (!freezeNeedles) updateGaugeNeedle(needle, snapshot, dt);
     needle.rotation.copy(needle.userData.initialRotation);
     applyNeedleAxisRotation(needle, needle.userData.needleDebugAxis ?? "z", needle.userData.needleAngle);
   });
 
-  lamps.forEach((lamp, index) => {
-    if (!testActive) {
-      lamp.material = materials.lampOff;
-      return;
-    }
-
-    const chase = Math.floor(testTime * 8) % lamps.length;
-    const load = Math.floor((Math.sin(testTime * 1.6) + 1) * (lamps.length / 2 + 0.5));
-    const on = index <= load || index === chase;
-    lamp.material = on ? (index >= lamps.length - 2 ? materials.lampRed : materials.lampAmber) : materials.lampOff;
+  lamps.forEach((lamp) => {
+    const startup = getStartupFeedbackAmount();
+    const startupOn =
+      startup > 0 &&
+      flickerWave(CONFIG.feedback.startup.lampFrequency + lamps.indexOf(lamp) * 1.7, lamps.indexOf(lamp)) > 0.35;
+    lamp.material = startupOn ? getIndicatorTestMaterial(lamps.indexOf(lamp)) : getLampMaterial(lamp, snapshot);
     lamp.scale.copy(lamp.userData.initialScale);
   });
+}
+
+function getLampMaterial(lamp, snapshot) {
+  if (indicatorTestTimer > 0) return getIndicatorTestMaterial(lamps.indexOf(lamp));
+
+  if (lamp.name === "LightCase1_Light_UnderDemand") {
+    if (snapshot.warning?.underDemandCritical) return materials.lampRed;
+    if (snapshot.warning?.underDemand) return materials.lampAmber;
+    return materials.lampOff;
+  }
+
+  if (lamp.name === "LightCase1_Light_OverDemand") {
+    if (snapshot.warning?.overDemandCritical) return materials.lampRed;
+    if (snapshot.warning?.overDemand) return materials.lampAmber;
+    return materials.lampOff;
+  }
+
+  if (lamp.name === "LightCase1_Light_ReactionEfficiency") {
+    if (snapshot.mode === "standby") return materials.lampOff;
+    if (snapshot.reactionEfficiency >= 72) return materials.lampGreen;
+    if (snapshot.reactionEfficiency >= 45) return materials.lampAmber;
+    if (snapshot.reactionEfficiency >= 20) return materials.lampRed;
+    return flickerWave(7, 2.4) > 0.42 ? materials.lampRed : materials.lampOff;
+  }
+
+  if (lamp.name === "LightCase1_Light_FuelQuality") {
+    return snapshot.mode === "standby" ? materials.lampOff : materials.lampGreen;
+  }
+
+  const warningKey = LAMP_WARNING_KEYS[lamp.name];
+  if (!warningKey) return materials.lampOff;
+  const outputLowFlicker =
+    warningKey === "outputLow" && snapshot.warning?.outputLow
+      ? flickerWave(CONFIG.feedback.outputLow.lampFlickerFrequency, 1.8) > 0.22
+      : Boolean(snapshot.warning?.[warningKey]);
+  return outputLowFlicker
+    ? warningKey === "coreStress" || warningKey === "tempHigh"
+      ? materials.lampRed
+      : materials.lampAmber
+    : materials.lampOff;
+}
+
+function getIndicatorTestMaterial(index) {
+  const phase = Math.floor(testTime * CONFIG.feedback.indicatorTest.lampFrequency + index) % 3;
+  if (phase === 0) return materials.lampGreen;
+  if (phase === 1) return materials.lampAmber;
+  return materials.lampRed;
+}
+
+function createShiftRecorder() {
+  return {
+    active: false,
+    elapsed: 0,
+    sampleTimer: 0,
+    sampleCount: 0,
+    demandErrorSum: 0,
+    efficiencySum: 0,
+    tempSum: 0,
+    outputSum: 0,
+    underDemandTime: 0,
+    overDemandTime: 0,
+    tempHighTime: 0,
+    quenchTime: 0,
+    instabilityTime: 0,
+    ventTime: 0,
+    maxTemp: 0,
+    maxCoreStress: 0,
+    maxOutput: 0,
+    knobMovement: 0,
+    previousControls: null,
+  };
+}
+
+function resetShiftRecorder() {
+  shiftRecorder = createShiftRecorder();
+}
+
+function updateShiftRecorder(dt, snapshot, controls) {
+  if (snapshot.mode !== "running") return;
+
+  shiftRecorder.active = true;
+  shiftRecorder.elapsed += dt;
+  shiftRecorder.sampleTimer += dt;
+  shiftRecorder.demandErrorSum += Math.abs(snapshot.demandError ?? 0) * dt;
+  shiftRecorder.efficiencySum += snapshot.reactionEfficiency * dt;
+  shiftRecorder.tempSum += snapshot.plasmaTemp * dt;
+  shiftRecorder.outputSum += snapshot.powerOutput * dt;
+  if (snapshot.warning?.underDemand) shiftRecorder.underDemandTime += dt;
+  if (snapshot.warning?.overDemand) shiftRecorder.overDemandTime += dt;
+  if (snapshot.warning?.tempHigh) shiftRecorder.tempHighTime += dt;
+  if (snapshot.warning?.quenchRisk) shiftRecorder.quenchTime += dt;
+  if (snapshot.warning?.instability) shiftRecorder.instabilityTime += dt;
+  if (controls.ventActive) shiftRecorder.ventTime += dt;
+
+  shiftRecorder.maxTemp = Math.max(shiftRecorder.maxTemp, snapshot.plasmaTemp);
+  shiftRecorder.maxCoreStress = Math.max(shiftRecorder.maxCoreStress, snapshot.coreStress);
+  shiftRecorder.maxOutput = Math.max(shiftRecorder.maxOutput, snapshot.powerOutput);
+
+  if (shiftRecorder.previousControls) {
+    shiftRecorder.knobMovement +=
+      Math.abs(controls.fuelInjection - shiftRecorder.previousControls.fuelInjection) +
+      Math.abs(controls.magneticField - shiftRecorder.previousControls.magneticField) +
+      Math.abs(controls.coolantFlow - shiftRecorder.previousControls.coolantFlow);
+  }
+  shiftRecorder.previousControls = { ...controls };
+
+  if (shiftRecorder.sampleTimer >= 2) {
+    shiftRecorder.sampleCount += 1;
+    shiftRecorder.sampleTimer = 0;
+  }
+}
+
+function updateShiftCompletion(dt, snapshot) {
+  const finishedNow = previousGameMode === "running" && (snapshot.mode === "complete" || snapshot.mode === "failed");
+  previousGameMode = snapshot.mode;
+
+  if (finishedNow) {
+    resultsTimer = 5;
+    resultsSnapshot = snapshot;
+  }
+
+  if (resultsTimer <= 0 || resultsVisible) return;
+  resultsTimer = Math.max(0, resultsTimer - dt);
+  if (resultsTimer === 0 && resultsSnapshot) showShiftResults(resultsSnapshot);
+}
+
+function showShiftResults(snapshot) {
+  const report = buildShiftReport(snapshot);
+  if (resultsOutcome) resultsOutcome.textContent = snapshot.mode === "complete" ? "COMPLETE" : "FAILED";
+  if (resultsProfile) resultsProfile.textContent = report.profile;
+  if (resultsSummary) resultsSummary.textContent = report.summary;
+  if (resultsStats) {
+    resultsStats.innerHTML = "";
+    report.stats.forEach(([label, value]) => {
+      const item = document.createElement("div");
+      item.className = "results-stat";
+      item.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+      resultsStats.appendChild(item);
+    });
+  }
+  resultsOverlay.hidden = false;
+  requestAnimationFrame(() => resultsOverlay.classList.add("is-visible"));
+  resultsVisible = true;
+}
+
+function hideShiftResults() {
+  if (!resultsOverlay) return;
+  resultsOverlay.classList.remove("is-visible");
+  window.setTimeout(() => {
+    if (!resultsOverlay.classList.contains("is-visible")) resultsOverlay.hidden = true;
+  }, 1200);
+  resultsVisible = false;
+}
+
+function buildShiftReport(snapshot) {
+  const duration = Math.max(1, shiftRecorder.elapsed);
+  const avgDemandError = shiftRecorder.demandErrorSum / duration;
+  const avgEfficiency = shiftRecorder.efficiencySum / duration;
+  const avgTemp = shiftRecorder.tempSum / duration;
+  const avgOutput = shiftRecorder.outputSum / duration;
+  const overRatio = shiftRecorder.overDemandTime / duration;
+  const underRatio = shiftRecorder.underDemandTime / duration;
+  const tempHighRatio = shiftRecorder.tempHighTime / duration;
+  const quenchRatio = shiftRecorder.quenchTime / duration;
+  const instabilityRatio = shiftRecorder.instabilityTime / duration;
+  const ventRatio = shiftRecorder.ventTime / duration;
+  const movementRate = shiftRecorder.knobMovement / duration;
+  const profile = pickOperatorProfile({
+    avgDemandError,
+    avgEfficiency,
+    overRatio,
+    underRatio,
+    tempHighRatio,
+    quenchRatio,
+    instabilityRatio,
+    ventRatio,
+    movementRate,
+    snapshot,
+  });
+
+  return {
+    profile: profile.title,
+    summary: profile.summary,
+    stats: [
+      ["SHIFT TIME", formatDuration(snapshot.elapsed)],
+      ["AVG EFFICIENCY", `${Math.round(avgEfficiency)}%`],
+      ["AVG OUTPUT", `${Math.round(avgOutput)} MW`],
+      ["AVG DEMAND ERROR", `${Math.round(avgDemandError * 100)}%`],
+      ["MAX TEMP", `${Math.round(shiftRecorder.maxTemp)} MK`],
+      ["MAX CORE STRESS", `${Math.round(shiftRecorder.maxCoreStress)}%`],
+      ["OVER DEMAND", `${Math.round(overRatio * 100)}%`],
+      ["UNDER DEMAND", `${Math.round(underRatio * 100)}%`],
+      ["QUENCH RISK", `${Math.round(quenchRatio * 100)}%`],
+      ["VENT HELD", `${Math.round(ventRatio * 100)}%`],
+      ["AVG TEMP", `${Math.round(avgTemp)} MK`],
+      ["CONTROL MOTION", `${Math.round(movementRate)}%/s`],
+    ],
+  };
+}
+
+function pickOperatorProfile(stats) {
+  if (stats.ventRatio > 0.18) {
+    return {
+      title: "OPERATOR TYPE: NERVOUS PURGE TECH",
+      summary: "You survived by reaching for the vent early and often. The core noticed. So did the paperwork.",
+    };
+  }
+  if (stats.tempHighRatio > 0.2 || stats.overRatio > 0.28) {
+    return {
+      title: "OPERATOR TYPE: REDLINE PHILOSOPHER",
+      summary: "You treated the safe operating band as a suggestion and asked whether heat is really a problem. It is.",
+    };
+  }
+  if (stats.quenchRatio > 0.22 || stats.underRatio > 0.35) {
+    return {
+      title: "OPERATOR TYPE: COOLANT INTERN",
+      summary: "The plasma spent much of the shift wondering why it was being refrigerated instead of operated.",
+    };
+  }
+  if (stats.movementRate > 10) {
+    return {
+      title: "OPERATOR TYPE: WHY IS THIS LAMP BLINKING",
+      summary: "You made many corrections and at least some of them were related to the problem at hand.",
+    };
+  }
+  if (stats.avgEfficiency > 76 && stats.avgDemandError < 0.16 && stats.instabilityRatio < 0.08) {
+    return {
+      title: "OPERATOR TYPE: FIELD PHYSICIST",
+      summary: "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.",
+    };
+  }
+  if (stats.snapshot.mode === "failed") {
+    return {
+      title: "OPERATOR TYPE: UNSCHEDULED EXPERIMENT",
+      summary: "The shift ended with useful data, technically. The maintenance team may use different words.",
+    };
+  }
+  return {
+    title: "OPERATOR TYPE: SHIFT OPERATOR",
+    summary: "You kept the core moving, made some compromises, and left enough machine for the next person.",
+  };
+}
+
+function formatDuration(seconds) {
+  const total = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(total / 60);
+  return `${minutes}:${String(total % 60).padStart(2, "0")}`;
+}
+
+function updateFeedback(dt) {
+  startupFeedbackTimer = Math.max(0, startupFeedbackTimer - dt);
+  indicatorTestTimer = Math.max(0, indicatorTestTimer - dt);
+  updateSceneLightFeedback();
+  applyCameraFeedback();
+}
+
+function updateSceneLightFeedback() {
+  const startup = getStartupFeedbackAmount();
+  const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
+  const startupConfig = CONFIG.feedback.startup;
+  const outputConfig = CONFIG.feedback.outputLow;
+  const blackout = startupFeedbackTimer > startupConfig.duration - startupConfig.blackoutSeconds ? 0.04 : 1;
+  const startupPulse = startup
+    ? THREE.MathUtils.lerp(0.55, 1.14, flickerWave(startupConfig.flickerFrequency, 0.18))
+    : 1;
+  const startupRamp = startup ? THREE.MathUtils.smoothstep(startupConfig.duration - startupFeedbackTimer, 0, startupConfig.duration) : 1;
+  const outputPulse = outputLow
+    ? THREE.MathUtils.lerp(1 - outputConfig.lightFlicker, 1 - outputConfig.lightFlicker * 0.42, flickerWave(9, 0.4))
+    : 1;
+  const factor = blackout * THREE.MathUtils.lerp(1, startupPulse * startupRamp, startup) * outputPulse;
+
+  controlledLights.forEach((light) => {
+    light.intensity = light.userData.baseIntensity * factor;
+  });
+}
+
+function applyCameraFeedback() {
+  const startup = getStartupFeedbackAmount();
+  const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
+  const shake =
+    startup * CONFIG.feedback.startup.cameraShake +
+    outputLow * CONFIG.feedback.outputLow.cameraShake * flickerWave(11, 0.7);
+  if (shake <= 0) return;
+
+  camera.position.x += Math.sin(testTime * 39.1) * shake;
+  camera.position.y += Math.sin(testTime * 53.7) * shake * 0.45;
+  camera.rotation.z += Math.sin(testTime * 31.3) * shake * 0.6;
+}
+
+function getStartupFeedbackAmount() {
+  if (startupFeedbackTimer <= 0) return 0;
+  return THREE.MathUtils.clamp(startupFeedbackTimer / CONFIG.feedback.startup.duration, 0, 1);
+}
+
+function flickerWave(frequency, seed = 0) {
+  const a = Math.sin(testTime * frequency + seed) * 0.5 + 0.5;
+  const b = Math.sin(testTime * frequency * 2.37 + seed * 3.1) * 0.5 + 0.5;
+  return Math.pow(a * 0.65 + b * 0.35, 1.8);
+}
+
+function getControlInputs() {
+  return {
+    fuelInjection: getControlPercent("Control_Knob_FuelInjection"),
+    magneticField: getControlPercent("Control_Knob_MagneticField"),
+    coolantFlow: getControlPercent("Control_Knob_CoolantFlow"),
+    ventActive: isControlButtonPressed("Control_Btn_Vent"),
+  };
+}
+
+function getControlPercent(name) {
+  return controlKnobs.find((knob) => knob.name === name)?.userData.controlPercent ?? 0;
+}
+
+function isControlButtonPressed(name) {
+  return Boolean(controlButtons.find((button) => button.name === name)?.userData.pressed);
+}
+
+function updateGaugeNeedle(needle, snapshot, dt) {
+  const key = needle.userData.gaugeKey;
+  const range = GAUGE_RANGES[key];
+  if (!range) return;
+
+  if (indicatorTestTimer > 0) {
+    const phase = (Math.sin(testTime * 4 + needle.userData.needleNoiseSeed) + 1) * 0.5;
+    const testAngle = THREE.MathUtils.degToRad(
+      THREE.MathUtils.lerp(CONFIG.needleAnimation.inactiveDegrees, CONFIG.needleAnimation.activeDegrees, phase),
+    );
+    needle.userData.needleAngle = THREE.MathUtils.damp(needle.userData.needleAngle ?? testAngle, testAngle, 10, dt);
+    return;
+  }
+
+  const value = snapshot[key] ?? 0;
+  const ratio = THREE.MathUtils.clamp((value - range[0]) / (range[1] - range[0]), 0, 1);
+  const targetAngle = THREE.MathUtils.degToRad(
+    THREE.MathUtils.lerp(CONFIG.needleAnimation.inactiveDegrees, CONFIG.needleAnimation.activeDegrees, ratio),
+  );
+  const currentAngle = needle.userData.needleAngle ?? targetAngle;
+  const operationalJitter = getOperationalNeedleJitter(needle, snapshot, dt);
+  const startupJitter =
+    getStartupFeedbackAmount() *
+    THREE.MathUtils.degToRad(CONFIG.feedback.startup.needleJitterDegrees) *
+    Math.sin(testTime * (18 + needle.userData.needleNoiseSeed));
+  needle.userData.needleAngle = THREE.MathUtils.damp(currentAngle, targetAngle + operationalJitter + startupJitter, 8, dt);
+}
+
+function getOperationalNeedleJitter(needle, snapshot, dt) {
+  if (snapshot.mode !== "running") {
+    needle.userData.needleJitterOffset = THREE.MathUtils.damp(needle.userData.needleJitterOffset ?? 0, 0, 10, dt);
+    return needle.userData.needleJitterOffset ?? 0;
+  }
+
+  needle.userData.needleJitterTimer = (needle.userData.needleJitterTimer ?? 0) - dt;
+  if (needle.userData.needleJitterTimer <= 0) {
+    const interval = CONFIG.needleAnimation.jitterRetargetInterval;
+    needle.userData.needleJitterTimer = THREE.MathUtils.randFloat(interval * 0.65, interval * 1.45);
+    needle.userData.needleJitterTarget = THREE.MathUtils.degToRad(
+      THREE.MathUtils.randFloatSpread(CONFIG.needleAnimation.jitterDegrees * 2),
+    );
+  }
+
+  const vibration =
+    THREE.MathUtils.degToRad(CONFIG.needleAnimation.jitterDegrees * 0.28) *
+    Math.sin(testTime * CONFIG.needleAnimation.jitterFrequency + needle.userData.needleNoiseSeed);
+  needle.userData.needleJitterOffset = THREE.MathUtils.damp(
+    needle.userData.needleJitterOffset ?? 0,
+    needle.userData.needleJitterTarget ?? 0,
+    18,
+    dt,
+  );
+
+  return (needle.userData.needleJitterOffset ?? 0) + vibration;
 }
 
 function updateControlButtons(dt) {
@@ -554,38 +1052,6 @@ function applyControlButtonPress(button) {
   applyPositionAxisOffset(button, button.userData.pressAxis, distance);
 }
 
-function updateNeedle(needle, index, dt) {
-  needle.userData.needleDebugAxis = null;
-  const animationConfig = CONFIG.needleAnimation;
-  const limitA = THREE.MathUtils.degToRad(animationConfig.minDegrees);
-  const limitB = THREE.MathUtils.degToRad(animationConfig.maxDegrees);
-  const lowerAngle = Math.min(limitA, limitB);
-  const upperAngle = Math.max(limitA, limitB);
-  const inactiveAngle = THREE.MathUtils.degToRad(animationConfig.inactiveDegrees);
-  const activeAngle = THREE.MathUtils.degToRad(animationConfig.activeDegrees);
-  const overshoot = THREE.MathUtils.degToRad(animationConfig.overshootDegrees);
-  const targetAngle = testActive ? activeAngle + overshoot * Math.sin(testTime * 2.8 + index) : inactiveAngle;
-  const currentAngle = needle.userData.needleAngle ?? inactiveAngle;
-
-  needle.userData.needleSpeedTimer -= dt;
-  if (needle.userData.needleSpeedTimer <= 0) {
-    needle.userData.needleSpeed = getRandomNeedleSpeed();
-    needle.userData.needleSpeedTimer = animationConfig.speedRetargetInterval * THREE.MathUtils.randFloat(0.75, 1.45);
-  }
-
-  const direction = Math.sign(targetAngle - currentAngle);
-  const step = needle.userData.needleSpeed * dt;
-  let nextAngle = Math.abs(targetAngle - currentAngle) <= step ? targetAngle : currentAngle + direction * step;
-
-  if (testActive) {
-    const jitter = THREE.MathUtils.degToRad(animationConfig.jitterDegrees);
-    const noise = Math.sin(testTime * animationConfig.jitterFrequency + needle.userData.needleNoiseSeed) * jitter;
-    nextAngle += noise * THREE.MathUtils.randFloat(0.15, 1);
-  }
-
-  needle.userData.needleAngle = THREE.MathUtils.clamp(nextAngle, lowerAngle, upperAngle);
-}
-
 function applyNeedleAxisRotation(needle, axis, angle) {
   if (axis === "x") {
     needle.rotateX(angle);
@@ -604,7 +1070,6 @@ function adjustControlKnob(knob, deltaPercent) {
   knob.userData.controlPercent = next;
   applyControlKnobRotation(knob);
   updateControlTooltip();
-  console.log(`[OperatorGame] ${knob.userData.controlLabel}: ${Math.round(next)}%`);
 }
 
 function applyControlKnobRotation(knob) {
@@ -638,8 +1103,36 @@ function setControlButtonPressed(button, pressed) {
   if (!button || button.userData.kind !== "controlButton") return;
   if (button.userData.pressed === pressed) return;
   button.userData.pressed = pressed;
-  button.material = pressed ? materials.panelButtonOn : materials.panel;
+  if (pressed) runControlButtonAction(button);
   console.log(`[OperatorGame] ${button.userData.controlLabel} ${pressed ? "PRESSED" : "RELEASED"}`);
+}
+
+function runControlButtonAction(button) {
+  if (button.userData.controlAction === "start") {
+    resetShiftRecorder();
+    hideShiftResults();
+    fusionCore.start();
+    previousGameMode = "running";
+    resultsTimer = 0;
+    resultsSnapshot = null;
+    startupFeedbackTimer = CONFIG.feedback.startup.duration;
+    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+    console.log("[OperatorGame] Fusion core run started");
+  } else if (button.userData.controlAction === "reset") {
+    resetShiftRecorder();
+    hideShiftResults();
+    fusionCore.reset();
+    previousGameMode = "standby";
+    resultsTimer = 0;
+    resultsSnapshot = null;
+    startupFeedbackTimer = 0;
+    indicatorTestTimer = 0;
+    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+    console.log("[OperatorGame] Fusion core reset");
+  } else if (button.userData.controlAction === "indicatorTest") {
+    indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
+    console.log("[OperatorGame] Indicator test started");
+  }
 }
 
 function releaseAllControlButtons() {
@@ -652,9 +1145,17 @@ function getRandomNeedleSpeed() {
 }
 
 function updateMovement(dt) {
-  const speed = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 4.2 : 2.4;
-  const forward = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw) * -1);
-  const right = new THREE.Vector3(Math.cos(yaw), 0, Math.sin(yaw));
+  const speed = keys.has("ShiftLeft") || keys.has("ShiftRight") ? CONFIG.camera.runSpeed : CONFIG.camera.walkSpeed;
+
+  camera.rotation.order = "YXZ";
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  forward.normalize();
+  const right = new THREE.Vector3().crossVectors(forward, worldUp).normalize();
   const move = new THREE.Vector3();
 
   if (keys.has("KeyW")) move.add(forward);
@@ -668,26 +1169,12 @@ function updateMovement(dt) {
 
   // Only floor collision for now: keep the player on a constant eye height.
   camera.position.y = CONFIG.playerEyeHeight;
-  camera.rotation.order = "YXZ";
-  camera.rotation.y = yaw;
-  camera.rotation.x = pitch;
 }
 
-function clickScene() {
-  raycaster.setFromCamera(pointer, camera);
-  const hit = raycaster.intersectObjects(interactive, true)[0];
-  const target = hit ? findInteractiveRoot(hit.object) : null;
-  if (target?.userData.kind === "testButton") {
-    setTestActive(!testActive);
-  }
-}
-
-function setTestActive(value) {
-  testActive = value;
-  freezeNeedles = false;
-  if (testButton) testButton.material = testActive ? materials.panelButtonOn : materials.panel;
-  statusScreen.setActive(testActive);
-  console.log(`[OperatorGame] Button_Test ${testActive ? "ON" : "OFF"}`);
+function updateCameraZoom(dt) {
+  const targetFov = zoomActive ? CONFIG.camera.zoomFovDegrees : CONFIG.camera.fovDegrees;
+  camera.fov = THREE.MathUtils.damp(camera.fov, targetFov, CONFIG.camera.zoomDamping, dt);
+  camera.updateProjectionMatrix();
 }
 
 function findSceneObject(name) {
@@ -767,8 +1254,13 @@ window.addEventListener("resize", () => {
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
 });
 
-document.addEventListener("keydown", (event) => keys.add(event.code));
-document.addEventListener("keyup", (event) => keys.delete(event.code));
+document.addEventListener("keydown", (event) => {
+  if (["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight"].includes(event.code)) event.preventDefault();
+  keys.add(event.code);
+});
+document.addEventListener("keyup", (event) => {
+  keys.delete(event.code);
+});
 
 document.addEventListener("mousemove", (event) => {
   if (document.pointerLockElement !== canvas) {
@@ -777,8 +1269,8 @@ document.addEventListener("mousemove", (event) => {
   }
 
   pointer.set(0, 0);
-  yaw -= event.movementX * 0.0022;
-  pitch -= event.movementY * 0.0022;
+  yaw -= event.movementX * CONFIG.camera.mouseSensitivity;
+  pitch -= event.movementY * CONFIG.camera.mouseSensitivity;
   pitch = THREE.MathUtils.clamp(pitch, -1.25, 1.25);
 });
 
@@ -799,6 +1291,13 @@ canvas.addEventListener(
 );
 
 canvas.addEventListener("mousedown", (event) => {
+  if (event.button === 2) {
+    event.preventDefault();
+    zoomActive = true;
+    if (document.pointerLockElement !== canvas) requestPointerLock();
+    return;
+  }
+
   if (event.button !== 0) return;
   if (document.pointerLockElement !== canvas) updatePointerFromEvent(event);
   updateHoverTarget();
@@ -807,11 +1306,17 @@ canvas.addEventListener("mousedown", (event) => {
   }
 });
 
-window.addEventListener("mouseup", () => {
+window.addEventListener("mouseup", (event) => {
+  if (event.button === 2) zoomActive = false;
   releaseAllControlButtons();
 });
 
-window.addEventListener("blur", releaseAllControlButtons);
+canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+window.addEventListener("blur", () => {
+  zoomActive = false;
+  releaseAllControlButtons();
+});
 
 function updatePointerFromEvent(event) {
   const rect = canvas.getBoundingClientRect();
@@ -822,16 +1327,26 @@ function updatePointerFromEvent(event) {
 canvas.addEventListener("click", () => {
   if (document.pointerLockElement !== canvas) {
     requestPointerLock();
-    return;
   }
-  clickScene();
 });
 
 lockButton.addEventListener("click", requestPointerLock);
+resultsRestartButton?.addEventListener("click", () => {
+  resetShiftRecorder();
+  hideShiftResults();
+  fusionCore.reset();
+  previousGameMode = "standby";
+  resultsTimer = 0;
+  resultsSnapshot = null;
+  startupFeedbackTimer = 0;
+  indicatorTestTimer = 0;
+  statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+});
 
 document.addEventListener("pointerlockchange", () => {
   lockButton.textContent = document.pointerLockElement === canvas ? "Pointer Locked" : "Enter First Person";
   if (document.pointerLockElement === canvas) pointer.set(0, 0);
+  zoomActive = false;
   releaseAllControlButtons();
 });
 
@@ -840,8 +1355,31 @@ window.operatorGameDebug = {
   camera,
   renderer,
   config: CONFIG,
-  toggleTest: () => setTestActive(!testActive),
-  setTestActive,
+  startGame: () => {
+    resetShiftRecorder();
+    hideShiftResults();
+    fusionCore.start();
+    previousGameMode = "running";
+    resultsTimer = 0;
+    resultsSnapshot = null;
+    startupFeedbackTimer = CONFIG.feedback.startup.duration;
+    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  },
+  resetGame: () => {
+    resetShiftRecorder();
+    hideShiftResults();
+    fusionCore.reset();
+    previousGameMode = "standby";
+    resultsTimer = 0;
+    resultsSnapshot = null;
+    startupFeedbackTimer = 0;
+    indicatorTestTimer = 0;
+    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  },
+  showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
+  startIndicatorTest: () => {
+    indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
+  },
   findObject: findSceneObject,
   getObjectTransform,
   listObjects: listSceneObjects,
@@ -892,11 +1430,22 @@ window.operatorGameDebug = {
     });
   },
   getState: () => ({
-    testActive,
     freezeNeedles,
+    zoomActive,
+    indicatorTestActive: indicatorTestTimer > 0,
+    resultsVisible,
+    resultsTimer: Number(resultsTimer.toFixed(2)),
+    recorder: {
+      elapsed: Number(shiftRecorder.elapsed.toFixed(1)),
+      underDemandTime: Number(shiftRecorder.underDemandTime.toFixed(1)),
+      overDemandTime: Number(shiftRecorder.overDemandTime.toFixed(1)),
+      tempHighTime: Number(shiftRecorder.tempHighTime.toFixed(1)),
+      ventTime: Number(shiftRecorder.ventTime.toFixed(1)),
+    },
+    cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
-    buttonLoaded: Boolean(testButton),
     screen: statusScreen.getState(),
+    game: fusionCore.getSnapshot(),
     postProcessing: {
       composer: Boolean(composer),
       gtao: Boolean(gtaoPass),
@@ -925,7 +1474,13 @@ window.operatorGameDebug = {
       ]),
     ),
     lampMaterials: lamps.map((lamp) =>
-      lamp.material === materials.lampOff ? "off" : lamp.material === materials.lampRed ? "red" : "amber",
+      lamp.material === materials.lampOff
+        ? "off"
+        : lamp.material === materials.lampRed
+          ? "red"
+          : lamp.material === materials.lampGreen
+            ? "green"
+            : "amber",
     ),
     needleAngles: needles.map((needle) => Number(THREE.MathUtils.radToDeg(needle.userData.needleAngle ?? 0).toFixed(1))),
   }),

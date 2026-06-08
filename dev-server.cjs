@@ -8,6 +8,7 @@ const port = Number(process.env.PORT ?? 5173);
 const clients = new Set();
 const watchedDirs = ["src", "styles", "assets"];
 const watchedFiles = ["index.html", "README.md", "AGENTS.md"];
+const ignoredWatchPaths = [path.resolve(root, "3dGameAssetsDev")];
 const liveReloadScript = `
 <script>
 (() => {
@@ -40,12 +41,21 @@ function sendReload() {
   }
 }
 
+function isIgnoredWatchPath(targetPath) {
+  const resolvedPath = path.resolve(targetPath);
+  return ignoredWatchPaths.some(
+    (ignoredPath) => resolvedPath === ignoredPath || resolvedPath.startsWith(`${ignoredPath}${path.sep}`),
+  );
+}
+
 function watchPath(relativePath) {
   const target = path.join(root, relativePath);
-  if (!fs.existsSync(target)) return;
+  if (!fs.existsSync(target) || isIgnoredWatchPath(target)) return;
 
   let timer = null;
-  fs.watch(target, { recursive: true }, () => {
+  fs.watch(target, { recursive: true }, (_eventType, filename) => {
+    if (filename && isIgnoredWatchPath(path.join(target, filename))) return;
+
     clearTimeout(timer);
     timer = setTimeout(sendReload, 80);
   });
