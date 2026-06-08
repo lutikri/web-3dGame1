@@ -34,8 +34,10 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(CONFIG.world.backgroundColor);
 scene.fog = new THREE.Fog(CONFIG.world.fogColor, CONFIG.world.fogNear, CONFIG.world.fogFar);
 
+const playerSpawnPosition = CONFIG.player?.spawnPosition ?? new THREE.Vector3(0, CONFIG.playerEyeHeight, 4.8);
+const playerFloorHeight = playerSpawnPosition.y ?? CONFIG.playerEyeHeight;
 const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.innerWidth / window.innerHeight, 0.05, 80);
-camera.position.set(0, CONFIG.playerEyeHeight, 4.8);
+camera.position.copy(playerSpawnPosition);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -61,13 +63,17 @@ const gaugeNeedles = new Map();
 const controlKnobs = [];
 const controlButtons = [];
 const controlledLights = [];
+const interiorFans = [];
 const statusScreen = createStatusScreen();
 const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
-let yaw = 0;
-let pitch = 0;
+let interiorModel = null;
+let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
+let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
 let testTime = 0;
+let noclipEnabled = Boolean(CONFIG.camera.noclip?.enabled);
+let noclipSpeed = CONFIG.camera.noclip?.speed ?? CONFIG.camera.walkSpeed;
 let freezeNeedles = false;
 let composer = null;
 let gtaoPass = null;
@@ -87,7 +93,7 @@ let latestSnapshot = fusionCore.getSnapshot();
 let zoomActive = false;
 let loadingProgress = 0;
 let displayedLoadingProgress = 0;
-let loadingComplete = false;
+let loadingComplete = Boolean(CONFIG.loading?.skip);
 const loadingStartedAt = performance.now();
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
@@ -126,6 +132,13 @@ const chromaticAberrationShader = {
 
 const materials = {
   panel: createPanelPbrMaterial("Panel1_PBR"),
+  interior: new THREE.MeshStandardMaterial({
+    name: "Interior1_Material",
+    color: CONFIG.interior.material?.color ?? "#3f4a43",
+    roughness: CONFIG.interior.material?.roughness ?? 0.82,
+    metalness: CONFIG.interior.material?.metalness ?? 0.08,
+    side: THREE.DoubleSide,
+  }),
   wall: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.wall, roughness: 0.72, metalness: 0.08 }),
   floor: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.floor, roughness: 0.9, metalness: 0.04 }),
   trim: new THREE.MeshStandardMaterial({ color: MATERIAL_COLORS.trim, roughness: 0.42, metalness: 0.35 }),
@@ -218,9 +231,11 @@ async function loadPanelTexture(path, options = {}) {
 init();
 
 function init() {
+  if (CONFIG.loading?.skip) skipLoadingOverlay();
   setupLights();
   buildRoom();
   setupPostProcessing();
+  loadInteriorModel();
   loadPanelModel();
   animate();
 }
@@ -311,8 +326,18 @@ function setupPostProcessing() {
 }
 
 function buildRoom() {
+  if (!CONFIG.room.floorVisible) return;
+
   const { width, depth } = CONFIG.room;
   addBox("Floor", [width, 0.12, depth], [0, -0.06, 0], materials.floor, { receiveShadow: true });
+}
+
+function updateInterior(dt) {
+  interiorFans.forEach((fan) => {
+    fan.userData.fanAngle = (fan.userData.fanAngle + fan.userData.fanSpeed * dt) % (Math.PI * 2);
+    fan.rotation.copy(fan.userData.initialRotation);
+    applyAxisRotation(fan, fan.userData.fanAxis, fan.userData.fanAngle);
+  });
 }
 
 function loadPanelModel() {
@@ -324,7 +349,7 @@ function loadPanelModel() {
       panelModel.name = "Panel1";
 
       panelModel.traverse(registerPanelObject);
-      fitPanelToRoom(panelModel);
+      applyPanelTransform(panelModel);
       scene.add(panelModel);
 
       finishLoading();
@@ -343,6 +368,45 @@ function loadPanelModel() {
       console.error("[OperatorGame] Failed to load Panel1.glb", error);
     },
   );
+}
+
+function loadInteriorModel() {
+  if (!CONFIG.interior?.assetPath) return;
+
+  const loader = new GLTFLoader();
+  loader.load(
+    CONFIG.interior.assetPath,
+    (gltf) => {
+      interiorModel = gltf.scene;
+      interiorModel.name = "Interior1_Panel1";
+      interiorModel.position.copy(CONFIG.interior.position);
+      interiorModel.rotation.copy(CONFIG.interior.rotation);
+      interiorModel.scale.copy(CONFIG.interior.scale);
+      interiorModel.traverse(registerInteriorObject);
+      scene.add(interiorModel);
+      console.log("[OperatorGame] Loaded Interior1_Panel1.glb");
+    },
+    undefined,
+    (error) => {
+      console.error("[OperatorGame] Failed to load Interior1_Panel1.glb", error);
+    },
+  );
+}
+
+function registerInteriorObject(object) {
+  const fanConfig = CONFIG.interior.fans?.[object.name];
+  if (fanConfig?.enabled) {
+    object.userData.initialRotation = object.rotation.clone();
+    object.userData.fanAxis = fanConfig.axis ?? "z";
+    object.userData.fanSpeed = THREE.MathUtils.degToRad(fanConfig.speedDegreesPerSecond ?? 360);
+    object.userData.fanAngle = 0;
+    interiorFans.push(object);
+  }
+
+  if (!object.isMesh) return;
+  object.castShadow = true;
+  object.receiveShadow = true;
+  object.material = materials.interior;
 }
 
 function registerPanelObject(object) {
@@ -435,19 +499,10 @@ function applyPanelPbrMaterial(object) {
   object.material = materials.panel;
 }
 
-function fitPanelToRoom(model) {
-  const box = new THREE.Box3().setFromObject(model);
-  const size = box.getSize(new THREE.Vector3());
-  const center = box.getCenter(new THREE.Vector3());
-  const scale = CONFIG.panel.width / Math.max(size.x, size.y, size.z);
-
-  model.scale.setScalar(scale);
-  model.position.set(
-    CONFIG.panel.position.x - center.x * scale,
-    CONFIG.panel.position.y - center.y * scale,
-    CONFIG.panel.position.z - center.z * scale,
-  );
+function applyPanelTransform(model) {
+  model.position.copy(CONFIG.panel.position);
   model.rotation.copy(CONFIG.panel.rotation);
+  model.scale.copy(CONFIG.panel.scale);
 }
 
 function addBox(name, size, position, material, options = {}) {
@@ -469,6 +524,7 @@ function animate() {
   updateCameraZoom(dt);
   updateHoverTarget();
   updateControlLabels();
+  updateInterior(dt);
   updatePanel(dt);
   updateFeedback(dt);
   updateDebugOverlay();
@@ -490,6 +546,11 @@ function setLoadingStatus(text) {
 }
 
 function finishLoading() {
+  if (CONFIG.loading?.skip) {
+    skipLoadingOverlay();
+    return;
+  }
+
   setLoadingStatus("CORE INTERFACE ONLINE");
   setLoadingProgress(100);
   const remainingMinimum = Math.max(0, 2000 - (performance.now() - loadingStartedAt));
@@ -500,6 +561,12 @@ function finishLoading() {
     loadingOverlay?.classList.add("is-complete");
     loadingComplete = true;
   }, remainingMinimum + 1150);
+}
+
+function skipLoadingOverlay() {
+  loadingComplete = true;
+  setLoadingProgress(100);
+  loadingOverlay?.classList.add("is-final", "is-complete");
 }
 
 function updateLoadingOverlay(dt) {
@@ -556,6 +623,9 @@ function updateDebugOverlay() {
     "",
     `shadows: ${CONFIG.shadows.enabled ? "on" : "off"}`,
     `gtao: ${gtaoPass ? "on" : "off"}`,
+    "",
+    `noclip: ${noclipEnabled ? "on" : "off"}`,
+    `noclip speed: ${noclipSpeed.toFixed(2)}`,
     "",
     `hover: ${hoveredInteractive?.name ?? "none"}`,
   ].join("\n");
@@ -832,6 +902,10 @@ function updateShiftCompletion(dt, snapshot) {
 }
 
 function showShiftResults(snapshot) {
+  document.exitPointerLock?.();
+  zoomActive = false;
+  releaseAllControlButtons();
+
   const report = buildShiftReport(snapshot);
   if (resultsOutcome) resultsOutcome.textContent = snapshot.mode === "complete" ? "COMPLETE" : "FAILED";
   if (resultsProfile) resultsProfile.textContent = report.profile;
@@ -846,7 +920,7 @@ function showShiftResults(snapshot) {
     });
   }
   resultsOverlay.hidden = false;
-  requestAnimationFrame(() => resultsOverlay.classList.add("is-visible"));
+  resultsOverlay.classList.add("is-visible");
   resultsVisible = true;
 }
 
@@ -1296,6 +1370,14 @@ function applyPositionAxisOffset(object, axis, distance) {
   }
 }
 
+function adjustNoclipSpeed(direction) {
+  const noclipConfig = CONFIG.camera.noclip ?? {};
+  const step = noclipConfig.wheelStep ?? 0.35;
+  const minSpeed = noclipConfig.minSpeed ?? 0.25;
+  const maxSpeed = noclipConfig.maxSpeed ?? 30;
+  noclipSpeed = THREE.MathUtils.clamp(noclipSpeed + direction * step, minSpeed, maxSpeed);
+}
+
 function setControlButtonPressed(button, pressed) {
   if (!button || button.userData.kind !== "controlButton") return;
   if (button.userData.pressed === pressed) return;
@@ -1342,7 +1424,11 @@ function getRandomNeedleSpeed() {
 }
 
 function updateMovement(dt) {
-  const speed = keys.has("ShiftLeft") || keys.has("ShiftRight") ? CONFIG.camera.runSpeed : CONFIG.camera.walkSpeed;
+  const speed = noclipEnabled
+    ? noclipSpeed
+    : keys.has("ShiftLeft") || keys.has("ShiftRight")
+      ? CONFIG.camera.runSpeed
+      : CONFIG.camera.walkSpeed;
 
   camera.rotation.order = "YXZ";
   camera.rotation.y = yaw;
@@ -1350,8 +1436,10 @@ function updateMovement(dt) {
 
   const forward = new THREE.Vector3();
   camera.getWorldDirection(forward);
-  forward.y = 0;
-  forward.normalize();
+  if (!noclipEnabled) {
+    forward.y = 0;
+    forward.normalize();
+  }
   const right = new THREE.Vector3().crossVectors(forward, worldUp).normalize();
   const move = new THREE.Vector3();
 
@@ -1359,13 +1447,17 @@ function updateMovement(dt) {
   if (keys.has("KeyS")) move.sub(forward);
   if (keys.has("KeyD")) move.add(right);
   if (keys.has("KeyA")) move.sub(right);
+  if (noclipEnabled && keys.has("Space")) move.y += 1;
+  if (noclipEnabled && (keys.has("ControlLeft") || keys.has("ControlRight"))) move.y -= 1;
   if (move.lengthSq() > 0) {
     move.normalize().multiplyScalar(speed * dt);
     camera.position.add(move);
   }
 
-  // Only floor collision for now: keep the player on a constant eye height.
-  camera.position.y = CONFIG.playerEyeHeight;
+  if (!noclipEnabled) {
+    // Only floor collision for now: keep the player on a constant eye height.
+    camera.position.y = playerFloorHeight;
+  }
 }
 
 function updateCameraZoom(dt) {
@@ -1452,7 +1544,17 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight"].includes(event.code)) event.preventDefault();
+  if (
+    ["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight", "Space", "ControlLeft", "ControlRight"].includes(
+      event.code,
+    )
+  ) {
+    event.preventDefault();
+  }
+  if (event.code === "KeyN" && !event.repeat) {
+    noclipEnabled = !noclipEnabled;
+    console.log(`[OperatorGame] Noclip ${noclipEnabled ? "enabled" : "disabled"}`);
+  }
   keys.add(event.code);
 });
 document.addEventListener("keyup", (event) => {
@@ -1474,6 +1576,12 @@ document.addEventListener("mousemove", (event) => {
 canvas.addEventListener(
   "wheel",
   (event) => {
+    if (event.shiftKey) {
+      event.preventDefault();
+      adjustNoclipSpeed(-Math.sign(event.deltaY));
+      return;
+    }
+
     if (!hoveredKnob) return;
     event.preventDefault();
     const rawDelta = -event.deltaY * CONFIG.controls.wheelPercentPerDelta;
@@ -1531,11 +1639,11 @@ lockButton.addEventListener("click", requestPointerLock);
 resultsRestartButton?.addEventListener("click", () => {
   resetShiftRecorder();
   hideShiftResults();
-  fusionCore.reset();
-  previousGameMode = "standby";
+  fusionCore.start();
+  previousGameMode = "running";
   resultsTimer = 0;
   resultsSnapshot = null;
-  startupFeedbackTimer = 0;
+  startupFeedbackTimer = CONFIG.feedback.startup.duration;
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 });
@@ -1576,6 +1684,19 @@ window.operatorGameDebug = {
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: () => {
     indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
+  },
+  setNoclip: (enabled) => {
+    noclipEnabled = Boolean(enabled);
+    return noclipEnabled;
+  },
+  setNoclipSpeed: (speed) => {
+    const noclipConfig = CONFIG.camera.noclip ?? {};
+    noclipSpeed = THREE.MathUtils.clamp(
+      Number(speed),
+      noclipConfig.minSpeed ?? 0.25,
+      noclipConfig.maxSpeed ?? 30,
+    );
+    return noclipSpeed;
   },
   findObject: findSceneObject,
   getObjectTransform,
@@ -1629,6 +1750,8 @@ window.operatorGameDebug = {
   getState: () => ({
     freezeNeedles,
     zoomActive,
+    noclipEnabled,
+    noclipSpeed: Number(noclipSpeed.toFixed(2)),
     indicatorTestActive: indicatorTestTimer > 0,
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
@@ -1646,6 +1769,10 @@ window.operatorGameDebug = {
     },
     cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
+    panelTransform: panelModel ? getObjectTransform(panelModel.name) : null,
+    interiorLoaded: Boolean(interiorModel),
+    interiorTransform: interiorModel ? getObjectTransform(interiorModel.name) : null,
+    interiorFans: interiorFans.map((fan) => fan.name),
     screen: statusScreen.getState(),
     game: fusionCore.getSnapshot(),
     postProcessing: {

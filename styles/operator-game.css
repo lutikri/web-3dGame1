@@ -138,19 +138,19 @@ body {
 
 .results-overlay {
   position: fixed;
-  z-index: 19;
+  z-index: 100;
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(0, 0, 0, 0);
+  background: #000;
   opacity: 0;
   padding: 18px;
   pointer-events: none;
-  transition: opacity 1.2s ease, background 1.2s ease;
+  transition: opacity 1.2s ease;
 }
 
 .results-overlay.is-visible {
-  background: rgba(0, 0, 0, 0.92);
+  background: #000;
   opacity: 1;
   pointer-events: auto;
 }
@@ -160,7 +160,7 @@ body {
   gap: 14px;
   width: min(620px, calc(100vw - 36px));
   border: 1px solid rgba(103, 215, 135, 0.42);
-  background: rgba(3, 7, 5, 0.9);
+  background: #030705;
   box-shadow: 0 0 34px rgba(103, 215, 135, 0.12);
   color: #9ff2b5;
   padding: 18px;

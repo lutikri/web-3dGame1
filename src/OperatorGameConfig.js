@@ -2,7 +2,15 @@ import * as THREE from "three";
 
 export const CONFIG = {
   assetPath: "assets/Panel1.glb",
-  playerEyeHeight: 1.65,
+  playerEyeHeight: 1.45,
+  player: {
+    spawnPosition: new THREE.Vector3(0, 1.45, 2),
+    spawnYawDegrees: 0,
+    spawnPitchDegrees: 0,
+  },
+  loading: {
+    skip: false,
+  },
   camera: {
     fovDegrees: 72,
     zoomFovDegrees: 38,
@@ -10,11 +18,36 @@ export const CONFIG = {
     mouseSensitivity: 0.0022,
     walkSpeed: 2.4,
     runSpeed: 4.2,
+    noclip: {
+      enabled: false,
+      speed: 3.5,
+      minSpeed: 0.25,
+      maxSpeed: 30,
+      wheelStep: 0.35,
+    },
   },
   panel: {
-    position: new THREE.Vector3(0, 1.2, 4),
+    position: new THREE.Vector3(0, 0, 0),
     rotation: new THREE.Euler(0, 0, 0),
-    width: 1.5,
+    scale: new THREE.Vector3(1, 1, 1),
+  },
+  interior: {
+    assetPath: "assets/Interior1_Panel1.glb",
+    position: new THREE.Vector3(0, 0, 0),
+    rotation: new THREE.Euler(0, 0, 0),
+    scale: new THREE.Vector3(1, 1, 1),
+    material: {
+      color: "#7e807e",
+      roughness: 0.82,
+      metalness: 0,
+    },
+    fans: {
+      SM_Interior1_Fan1: {
+        enabled: true,
+        axis: "y",
+        speedDegreesPerSecond: 120,
+      },
+    },
   },
   needleAnimation: {
     minDegrees: 30,
@@ -122,25 +155,26 @@ export const CONFIG = {
     width: 12,
     depth: 12,
     height: 4,
+    floorVisible: false,
   },
   world: {
     backgroundColor: "#080b0d",
     fogColor: "#080b0d",
-    fogNear: 10,
-    fogFar: 28,
+    fogNear: 1,
+    fogFar: 10,
   },
   lighting: {
     ambientSky: "#9fb6c7",
     ambientGround: "#101010",
-    ambientIntensity: 0.15,
+    ambientIntensity: 1.15,
     pointLights: {
       key: {
         color: "#f7d67b",
-        intensity: 5,
-        distance: 8,
-        decay: 2,
-        position: new THREE.Vector3(-1.8, 2.8, 5.4),
-        castShadow: true,
+        intensity: 1.3,
+        distance: 5,
+        decay: 1,
+        position: new THREE.Vector3(-0.53, 1.87, 0.594996),
+        castShadow: false,
         shadowMapSize: 512,
         shadowBias: -0.0006,
         shadowNormalBias: 0.035,
@@ -149,10 +183,10 @@ export const CONFIG = {
       },
       fill: {
         color: "#87b1ff",
-        intensity: 3,
+        intensity: 0.2,
         distance: 6,
-        decay: 2,
-        position: new THREE.Vector3(1.1, 2.9, 5.3),
+        decay: 0.4,
+        position: new THREE.Vector3(0.64, 2.03, 0.45),
         castShadow: false,
         shadowMapSize: 512,
         shadowBias: -0.0005,
@@ -195,15 +229,15 @@ export const CONFIG = {
     enabled: true,
     gtao: {
       enabled: false,
-      blendIntensity: 1.65,
+      blendIntensity: 0.8,
       radius: 0.42,
       distanceExponent: 1.7,
       thickness: 0.85,
       distanceFallOff: 1,
       scale: 2,
       samples: 16,
-      denoiseRadius: 8,
-      denoiseSamples: 16,
+      denoiseRadius: 2,
+      denoiseSamples: 8,
     },
     bloom: {
       enabled: true,
