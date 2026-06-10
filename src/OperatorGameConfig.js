@@ -150,7 +150,6 @@ export const CONFIG = {
 //window.operatorGameDebug.getPerformance()
 
 
-
   room: {
     width: 12,
     depth: 12,
