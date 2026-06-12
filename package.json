@@ -1,5 +1,8 @@
 {
   "scripts": {
     "dev": "node dev-server.cjs"
+  },
+  "devDependencies": {
+    "basisu": "^1.16.3"
   }
 }

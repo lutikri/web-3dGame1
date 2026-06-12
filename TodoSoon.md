@@ -1,31 +1,36 @@
-Ligts long term flicker
-Bulk head hatch SM_Door1_Handle interaction
-Custom collision meshes
-Start task list
-Controls Knob left to right
-Controls Knob Dial
-Controls Button retexture
-Better movement
-Controls Test Button gauges go to 0 then to 100. All lights red - green - yellow
+Todo Soon
+
+- Bulk head hatch `SM_Door1_Handle` interaction
+- Custom collision meshes
+- Start task list
+- Controls Knob Dial
+- Controls Button retexture
 
 Pause Menu
+
 - Resume
 - Restart
 - Settings
-- Settings
- - FOV
- - UI Scale
- - button tooltips (buttons popups)
- - Shadows
- - gtao
- - Post procces
- - Shadows quality
- - Gtao quality
- - Textures Quality
- - debug info (show hide"debugOverlay" class="debug-overlay")
+- FOV
+- UI Scale
+- Button tooltips / popups
+- Shadows
+- GTAO
+- Post process
+- Shadows quality
+- GTAO quality
+- Textures quality
+- Debug info show/hide for `debugOverlay`
 
- Loading
-  - controls tutorial
- Loading finished
-  - Lights tured off, then lights turn on.
-  - While lights turning on a box with current shift tasks appear aka 5 minutes, demand n - n rising, point or smth aka "how to"
+Loading
+
+- Controls tutorial
+- While lights turn on, show a box with current shift tasks: 5 minutes, rising demand range, goal/point summary.
+
+Done
+
+- Long-term light flicker: rare old fluorescent-style dips.
+- Controls Knob left-to-right wheel direction.
+- Better movement.
+- Controls Test Button: gauges sweep 0 to 100 while held, lamps red to green to yellow.
+- Loading finished: lights turn off, then turn on like old fluorescent tubes.

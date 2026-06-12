@@ -16,9 +16,8 @@ Main runtime files:
 - `src/OperatorGameConfig.js`
 - `styles/operator-game.css`
 - `assets/Panel1.glb`
-- `assets/T_Panel1_BaseColor.ktx2`
-- `assets/T_Panel1_Normal.ktx2`
-- `assets/T_Panel1_OcclusionRoughnessMetallic.ktx2`
+- `assets/runtime-textures/T_Panel1_*_Preview_1024_ETC1S.ktx2`
+- `assets/runtime-textures/T_Panel1_*_Full_ETC1S.ktx2`
 
 Runtime folders should stay small and browser-facing:
 
@@ -45,13 +44,13 @@ Generated artifacts:
 
 ## Texture Compression
 
-Original runtime texture PNGs live in `3dGameAssetsDev/RuntimeTextureSources/`.
+Runtime texture PNG sources live in `assets/`.
 
 Run this after changing those source textures:
 
-- `tools/compress-panel-textures.bat`
+- `generate-runtime-textures.bat`
 
-The script uses Khronos `toktx.exe` to write compressed KTX2 textures into `assets/`.
+The script uses `basisu` to write preview and full KTX2 textures into `assets/runtime-textures/`.
 
 ## Scene Knobs
 

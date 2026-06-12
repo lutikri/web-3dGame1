@@ -9,15 +9,32 @@ export const CONFIG = {
     spawnPitchDegrees: 0,
   },
   loading: {
-    skip: true,
+    skip: false,
+  },
+  textureStreaming: {
+    fullLoadDelaySeconds: 4,
   },
   camera: {
     fovDegrees: 72,
-    zoomFovDegrees: 38,
+    zoomFovDegrees: 68,
     zoomDamping: 12,
     mouseSensitivity: 0.0022,
-    walkSpeed: 2.4,
+    pitchLimitDegrees: 72,
+    leanPitchLimitDegrees: 88,
+    walkSpeed: 1.8,
     runSpeed: 4.2,
+    operatorMovement: {
+      acceleration: 7,
+      deceleration: 12,
+      zoomSpeedMultiplier: 0.22,
+      zoomSensitivityMultiplier: 0.88,
+      headBobAmplitude: 0.018,
+      headBobSway: 0.009,
+      headBobFrequency: 4.5,
+      leanForward: 0.26,
+      leanDown: 0.025,
+      leanDamping: 4,
+    },
     noclip: {
       enabled: false,
       speed: 3.5,
@@ -30,6 +47,19 @@ export const CONFIG = {
     position: new THREE.Vector3(0, 0, 0),
     rotation: new THREE.Euler(0, 0, 0),
     scale: new THREE.Vector3(1, 1, 1),
+    placeholderColor: "#365247",
+    maps: {
+      preview: {
+        baseColor: "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
+        normal: "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
+        orm: "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",
+      },
+      full: {
+        baseColor: "assets/runtime-textures/T_Panel1_BaseColor_Critical_Full_ETC1S.ktx2",
+        normal: "assets/runtime-textures/T_Panel1_Normal_Critical_Full_ETC1S.ktx2",
+        orm: "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Full_ETC1S.ktx2",
+      },
+    },
   },
   interior: {
     assetPath: "assets/Interior1_Panel1.glb",
@@ -43,12 +73,45 @@ export const CONFIG = {
     },
     specialMaterials: {
       lamp1: {
-        meshNames: ["SM_Lamp1", "SM_Lamp1_1", "SM_Lamp1_2", "SM_Lamp1001"],
+        meshNames: ["SM_Lamp1", "SM_Lamp1_1", "SM_Lamp1001"],
         maps: {
-          baseColor: "assets/T_Lamp1_BaseColor.png",
-          normal: "assets/T_Lamp1_Normal.png",
-          orm: "assets/T_Lamp1_OcclusionRoughnessMetallic.png",
-          emissive: "assets/T_Lamp1_Emissive.png",
+          preview: {
+            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Preview_512_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Preview_512_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Preview_512_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#ffffff",
+        emissiveIntensity: 2.35,
+        roomLightControlled: true,
+      },
+      lamp1_2: {
+        meshNames: ["SM_Lamp1_2"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Preview_512_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Preview_512_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Preview_512_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Full_ETC1S.ktx2",
+          },
         },
         color: "#ffffff",
         roughness: 1,
@@ -62,10 +125,18 @@ export const CONFIG = {
       doorLamp1: {
         meshNames: ["SM_Door1_Lamp", "SM_Door1_Handle", "SM_Door1_Panel", "SM_Door1_Frame"],
         maps: {
-          baseColor: "assets/T_DoorLamp1_BaseColor.png",
-          normal: "assets/T_DoorLamp1_Normal.png",
-          orm: "assets/T_DoorLamp1_OcclusionRoughnessMetallic.png",
-          emissive: "assets/T_DoorLamp1_Emissive.png",
+          preview: {
+            baseColor: "assets/runtime-textures/T_DoorLamp1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_DoorLamp1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_DoorLamp1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_DoorLamp1_Emissive_Interactive_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_DoorLamp1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_DoorLamp1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_DoorLamp1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_DoorLamp1_Emissive_Interactive_Full_ETC1S.ktx2",
+          },
         },
         color: "#ffffff",
         roughness: 1,
@@ -74,6 +145,36 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#ff0000",
         emissiveIntensity: 5.5,
+      },
+      Interior1: {
+        meshNames: [
+          "SM_Interior1",
+          "SM_Beams1",
+          "SM_Piping1",
+          "SM_Piping2",
+          "SM_TubeBig1",
+          "SM_TubeBig1_Attachment1",
+          "SM_TubeBig1_Attachment2",
+        ],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Interior1_BaseColor_Background_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Interior1_Normal_Background_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Interior1_OcclusionRoughnessMetallic_Background_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Interior1_BaseColor_Background_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Interior1_Normal_Background_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Interior1_OcclusionRoughnessMetallic_Background_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
       },
       details1: {
         meshNames: [
@@ -94,9 +195,16 @@ export const CONFIG = {
           "SM_ButtonBox1",
         ],
         maps: {
-          baseColor: "assets/T_Details1_BaseColor.png",
-          normal: "assets/T_Details1_Normal.png",
-          orm: "assets/T_Details1_OcclusionRoughnessMetallic.png",
+          preview: {
+            baseColor: "assets/runtime-textures/T_Details1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Details1_Normal_Secondary_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Details1_OcclusionRoughnessMetallic_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Details1_BaseColor_Secondary_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Details1_Normal_Secondary_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Details1_OcclusionRoughnessMetallic_Secondary_Full_ETC1S.ktx2",
+          },
         },
         color: "#ffffff",
         roughness: 1,
@@ -245,7 +353,7 @@ export const CONFIG = {
     ambientGround: "#101010",
     ambientIntensity: 0.03,
     pointLights: {
-      key: {
+      SM_Lamp1_2_Light: {
         color: "#ffffff",
         intensity: 1.3,
         roomLightControlled: true,
@@ -253,8 +361,8 @@ export const CONFIG = {
         decay: 1,
         position: new THREE.Vector3(0.01, 1.91, 0.66),
         castShadow: true,
-        shadowMapSize: 512,
-        shadowBias: -0.0006,
+        shadowMapSize: 128,
+        shadowBias: 0.0006,
         shadowNormalBias: 0.035,
         shadowNear: 0.1,
         shadowFar: 9,
@@ -262,7 +370,7 @@ export const CONFIG = {
       fill: {
         color: "#87b1ff",
         intensity: 0.2,
-        roomLightControlled: true,
+        roomLightControlled: false,
         distance: 6,
         decay: 0.4,
         position: new THREE.Vector3(0.64, 2.03, 0.45),
@@ -287,15 +395,44 @@ export const CONFIG = {
         shadowFar: 9,
       },
     },
+    fixtures: {
+      SM_Lamp1_2: {
+        lightNames: ["SM_Lamp1_2_Light"],
+        materialKeys: ["lamp1_2"],
+      }
+      // roomFill: {
+      //   lightNames: ["fill"],
+      //   materialKeys: ["lamp1"],
+      // },
+    },
   },
   feedback: {
     startup: {
       duration: 3.2,
       blackoutSeconds: 0.28,
-      flickerFrequency: 24,
       lampFrequency: 18,
       needleJitterDegrees: 40,
       cameraShake: 0.004,
+      tubeOnPattern: [
+        { time: 0, factor: 0 },
+        { time: 0.32, factor: 0 },
+        { time: 0.38, factor: 0.9 },
+        { time: 0.43, factor: 0.06 },
+        { time: 0.54, factor: 1.08 },
+        { time: 0.62, factor: 0.16 },
+        { time: 0.78, factor: 0.82 },
+        { time: 0.93, factor: 0.28 },
+        { time: 1.18, factor: 1 },
+      ],
+    },
+    longTermLightFlicker: {
+      enabled: true,
+      minIntervalSeconds: 20,
+      maxIntervalSeconds: 60,
+      durationSeconds: [0.28, 3.42],
+      minFactor: [0.1, 1.2],
+      retryChance: 0.85,
+      pulseCount: [1, 5],
     },
     thermalEmergency: {
       lampFlickerFrequency: 16,
@@ -339,7 +476,7 @@ export const CONFIG = {
     },
     chromaticAberration: {
       enabled: true,
-      amount: 0.0058,
+      amount: 0.0028,
     },
   },
 };

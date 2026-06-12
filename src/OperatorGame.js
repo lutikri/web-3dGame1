@@ -36,6 +36,7 @@ scene.fog = new THREE.Fog(CONFIG.world.fogColor, CONFIG.world.fogNear, CONFIG.wo
 
 const playerSpawnPosition = CONFIG.player?.spawnPosition ?? new THREE.Vector3(0, CONFIG.playerEyeHeight, 4.8);
 const playerFloorHeight = playerSpawnPosition.y ?? CONFIG.playerEyeHeight;
+const playerPosition = playerSpawnPosition.clone();
 const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.innerWidth / window.innerHeight, 0.05, 80);
 camera.position.copy(playerSpawnPosition);
 
@@ -65,6 +66,7 @@ const controlKnobs = [];
 const controlButtons = [];
 const roomLightButtons = [];
 const controlledLights = [];
+const pointLightsByKey = new Map();
 const interiorFans = [];
 const statusScreen = createStatusScreen();
 const fusionCore = createFusionCoreSimulation();
@@ -76,6 +78,9 @@ let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
 let testTime = 0;
 let noclipEnabled = Boolean(CONFIG.camera.noclip?.enabled);
 let noclipSpeed = CONFIG.camera.noclip?.speed ?? CONFIG.camera.walkSpeed;
+let movementVelocity = new THREE.Vector3();
+let headBobTime = 0;
+let leanAmount = 0;
 let freezeNeedles = false;
 let composer = null;
 let gtaoPass = null;
@@ -105,10 +110,13 @@ let resultsVisible = false;
 let roomLightsEnabled = CONFIG.interior.lightToggleButton?.initialOn ?? true;
 let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
+let roomLightSwitchMode = "off";
+let roomLightBootTimer = 0;
 
-const panelTextureMaps = await createPanelTextureMaps();
 const interiorCustomTextureMaps = {};
 const interiorCustomTextureMapPromises = loadInteriorCustomMaterialTextures();
+let panelTextureMaps = null;
+const panelTextureMapPromise = createPanelTextureMaps();
 const chromaticAberrationShader = {
   uniforms: {
     tDiffuse: { value: null },
@@ -176,14 +184,34 @@ const materials = {
 
 Promise.all(interiorCustomTextureMapPromises)
   .then((entries) => {
-    entries.forEach(([key, textureMaps]) => {
+    entries.forEach(([key, textureMaps, deferredPaths]) => {
       interiorCustomTextureMaps[key] = textureMaps;
       applyTextureMapsToMaterial(materials.interiorCustom[key], textureMaps);
+      materials.interiorCustom[key].userData.textureTier = deferredPaths ? "preview" : "full";
+      if (deferredPaths) queueDeferredTextureLoad(key, deferredPaths);
+    });
+    Object.entries(materials.interiorCustom).forEach(([key, material]) => {
+      const config = CONFIG.interior.specialMaterials?.[key];
+      if (config?.roomLightControlled && !material.userData.fixtureFlicker) {
+        material.userData.fixtureFlicker = createFixtureFlickerState();
+      }
     });
     updateRoomLightMaterials();
   })
   .catch((error) => {
     console.error("[OperatorGame] Failed to load custom interior texture maps", error);
+  });
+
+panelTextureMapPromise
+  .then((textureMaps) => {
+    panelTextureMaps = textureMaps;
+    applyPanelTextureMapsToMaterial(materials.panel, textureMaps);
+    materials.panel.userData.textureTier = getDeferredTexturePaths(CONFIG.panel.maps) ? "preview" : "full";
+    console.log("[OperatorGame] Loaded Panel1 PBR texture maps");
+  })
+  .catch((error) => {
+    setLoadingStatus("PANEL TEXTURE WARNING");
+    console.error("[OperatorGame] Failed to load Panel1 texture maps", error);
   });
 
 const GAUGE_RANGES = {
@@ -208,30 +236,107 @@ const LAMP_WARNING_KEYS = {
 };
 
 async function createPanelTextureMaps() {
-  const map = await loadPanelTexture("assets/T_Panel1_BaseColor.ktx2", {
-    colorSpace: THREE.SRGBColorSpace,
-  });
-  const normalMap = await loadPanelTexture("assets/T_Panel1_Normal.ktx2");
-  const ormMap = await loadPanelTexture("assets/T_Panel1_OcclusionRoughnessMetallic.ktx2");
-
-  return { map, normalMap, ormMap };
+  const initialPaths = getInitialTexturePaths(CONFIG.panel.maps);
+  const textureMaps = await loadInteriorTextureMaps(initialPaths);
+  const deferredPaths = getDeferredTexturePaths(CONFIG.panel.maps);
+  if (deferredPaths) queueDeferredPanelTextureLoad(deferredPaths);
+  return textureMaps;
 }
 
 function loadInteriorCustomMaterialTextures() {
   return Object.entries(CONFIG.interior.specialMaterials ?? {}).map(async ([key, config]) => [
     key,
-    await loadInteriorTextureMaps(config.maps),
+    await loadInteriorTextureMaps(getInitialTexturePaths(config.maps)),
+    getDeferredTexturePaths(config.maps),
   ]);
+}
+
+function getInitialTexturePaths(paths) {
+  if (!paths) return null;
+  return paths.preview ?? paths.initial ?? paths;
+}
+
+function getDeferredTexturePaths(paths) {
+  if (!paths?.full) return null;
+  return paths.full;
+}
+
+function queueDeferredTextureLoad(key, paths) {
+  const loadFullTextureMaps = async () => {
+    try {
+      const fullTextureMaps = await loadInteriorTextureMaps(paths);
+      const previousTextureMaps = interiorCustomTextureMaps[key];
+      interiorCustomTextureMaps[key] = fullTextureMaps;
+      applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps);
+      materials.interiorCustom[key].userData.textureTier = "full";
+      disposeTextureMaps(previousTextureMaps);
+      console.log(`[OperatorGame] Upgraded ${key} textures to full resolution`);
+    } catch (error) {
+      console.warn(`[OperatorGame] Failed to upgrade ${key} textures`, error);
+    }
+  };
+
+  const waitForSceneThenLoad = () => {
+    if (!loadingComplete) {
+      window.setTimeout(waitForSceneThenLoad, 250);
+      return;
+    }
+
+    const delayMs = (CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) * 1000;
+    window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadFullTextureMaps, { timeout: 3000 });
+      } else {
+        loadFullTextureMaps();
+      }
+    }, delayMs);
+  };
+
+  waitForSceneThenLoad();
+}
+
+function queueDeferredPanelTextureLoad(paths) {
+  const loadFullTextureMaps = async () => {
+    try {
+      const fullTextureMaps = await loadInteriorTextureMaps(paths);
+      const previousTextureMaps = panelTextureMaps;
+      panelTextureMaps = fullTextureMaps;
+      applyPanelTextureMapsToMaterial(materials.panel, fullTextureMaps);
+      materials.panel.userData.textureTier = "full";
+      disposeTextureMaps(previousTextureMaps);
+      console.log("[OperatorGame] Upgraded Panel1 textures to full resolution");
+    } catch (error) {
+      console.warn("[OperatorGame] Failed to upgrade Panel1 textures", error);
+    }
+  };
+
+  const waitForSceneThenLoad = () => {
+    if (!loadingComplete) {
+      window.setTimeout(waitForSceneThenLoad, 250);
+      return;
+    }
+
+    const delayMs = (CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) * 1000;
+    window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadFullTextureMaps, { timeout: 3000 });
+      } else {
+        loadFullTextureMaps();
+      }
+    }, delayMs);
+  };
+
+  waitForSceneThenLoad();
 }
 
 async function loadInteriorTextureMaps(paths) {
   if (!paths) return null;
 
   const textureJobs = {
-    map: paths.baseColor ? loadImageTexture(paths.baseColor, { colorSpace: THREE.SRGBColorSpace }) : null,
-    normalMap: paths.normal ? loadImageTexture(paths.normal) : null,
-    ormMap: paths.orm ? loadImageTexture(paths.orm) : null,
-    emissiveMap: paths.emissive ? loadImageTexture(paths.emissive, { colorSpace: THREE.SRGBColorSpace }) : null,
+    map: paths.baseColor ? loadRuntimeTexture(paths.baseColor, { colorSpace: THREE.SRGBColorSpace }) : null,
+    normalMap: paths.normal ? loadRuntimeTexture(paths.normal) : null,
+    ormMap: paths.orm ? loadRuntimeTexture(paths.orm) : null,
+    emissiveMap: paths.emissive ? loadRuntimeTexture(paths.emissive, { colorSpace: THREE.SRGBColorSpace }) : null,
   };
 
   const entries = await Promise.all(
@@ -240,19 +345,33 @@ async function loadInteriorTextureMaps(paths) {
   return Object.fromEntries(entries);
 }
 
+function disposeTextureMaps(textureMaps) {
+  if (!textureMaps) return;
+  Object.values(textureMaps).forEach((texture) => texture?.dispose?.());
+}
+
 function createPanelPbrMaterial(name, overrides = {}) {
-  return new THREE.MeshStandardMaterial({
+  const material = new THREE.MeshStandardMaterial({
     name,
-    map: panelTextureMaps.map,
-    normalMap: panelTextureMaps.normalMap,
-    aoMap: panelTextureMaps.ormMap,
-    roughnessMap: panelTextureMaps.ormMap,
-    metalnessMap: panelTextureMaps.ormMap,
+    color: CONFIG.panel.placeholderColor ?? "#365247",
     roughness: 1,
     metalness: 1,
     aoMapIntensity: 1,
     ...overrides,
   });
+  if (panelTextureMaps) applyPanelTextureMapsToMaterial(material, panelTextureMaps);
+  return material;
+}
+
+function applyPanelTextureMapsToMaterial(material, textureMaps) {
+  if (!material || !textureMaps) return;
+  material.color.set("#ffffff");
+  material.map = textureMaps.map;
+  material.normalMap = textureMaps.normalMap;
+  material.aoMap = textureMaps.ormMap;
+  material.roughnessMap = textureMaps.ormMap;
+  material.metalnessMap = textureMaps.ormMap;
+  material.needsUpdate = true;
 }
 
 function createInteriorCustomMaterials() {
@@ -306,6 +425,10 @@ async function loadPanelTexture(path, options = {}) {
   }
 }
 
+async function loadRuntimeTexture(path, options = {}) {
+  return path.toLowerCase().endsWith(".ktx2") ? loadPanelTexture(path, options) : loadImageTexture(path, options);
+}
+
 async function loadImageTexture(path, options = {}) {
   const texture = await imageTextureLoader.loadAsync(path);
   texture.flipY = false;
@@ -319,10 +442,12 @@ init();
 function init() {
   if (CONFIG.loading?.skip) skipLoadingOverlay();
   setupLights();
+  setupLightFixtures();
   buildRoom();
   setupPostProcessing();
   loadInteriorModel();
   loadPanelModel();
+  if (CONFIG.loading?.skip) triggerRoomLightBoot();
   animate();
 }
 
@@ -346,11 +471,30 @@ function setupLights() {
     light.name = `PointLight_${name}`;
     light.position.copy(lightConfig.position);
     light.userData.baseIntensity = light.intensity;
+    light.userData.lightKey = name;
     light.userData.roomLightControlled = Boolean(lightConfig.roomLightControlled);
+    if (light.userData.roomLightControlled) light.userData.fixtureFlicker = createFixtureFlickerState();
+    pointLightsByKey.set(name, light);
     controlledLights.push(light);
     applyShadowSettings(light, lightConfig);
     scene.add(light);
   }
+}
+
+function setupLightFixtures() {
+  Object.entries(CONFIG.lighting.fixtures ?? {}).forEach(([fixtureName, fixtureConfig]) => {
+    const fixtureState = createFixtureFlickerState();
+    const fixtureTargets = [
+      ...(fixtureConfig.lightNames ?? []).map((lightName) => pointLightsByKey.get(lightName)),
+      ...(fixtureConfig.materialKeys ?? []).map((materialKey) => materials.interiorCustom[materialKey]),
+    ].filter(Boolean);
+
+    fixtureTargets.forEach((target) => {
+      target.userData.fixtureName = fixtureName;
+      target.userData.fixtureFlicker = fixtureState;
+      target.userData.roomLightControlled = true;
+    });
+  });
 }
 
 function applyShadowSettings(light, lightConfig) {
@@ -678,6 +822,8 @@ function getCustomInteriorMaterialDebugState() {
         metalness: material.metalness,
         emissive: `#${material.emissive.getHexString()}`,
         emissiveIntensity: material.emissiveIntensity,
+        fixtureName: material.userData.fixtureName ?? "",
+        textureTier: material.userData.textureTier ?? "",
       },
     ]),
   );
@@ -750,6 +896,7 @@ function finishLoading() {
   window.setTimeout(() => {
     loadingOverlay?.classList.add("is-complete");
     loadingComplete = true;
+    triggerRoomLightBoot();
   }, remainingMinimum + 1150);
 }
 
@@ -972,10 +1119,10 @@ function getLampMaterial(lamp, snapshot) {
 }
 
 function getIndicatorTestMaterial(index) {
-  const phase = Math.floor(testTime * CONFIG.feedback.indicatorTest.lampFrequency + index) % 3;
-  if (phase === 0) return materials.lampGreen;
-  if (phase === 1) return materials.lampAmber;
-  return materials.lampRed;
+  const ratio = THREE.MathUtils.clamp(indicatorTestTimer / CONFIG.feedback.indicatorTest.duration, 0, 1);
+  if (ratio < 1 / 3) return materials.lampRed;
+  if (ratio < 2 / 3) return materials.lampGreen;
+  return materials.lampAmber;
 }
 
 function getStartupLampMaterial(index) {
@@ -1331,32 +1478,150 @@ function formatDuration(seconds) {
 
 function updateFeedback(dt) {
   startupFeedbackTimer = Math.max(0, startupFeedbackTimer - dt);
-  indicatorTestTimer = Math.max(0, indicatorTestTimer - dt);
+  roomLightBootTimer = Math.max(0, roomLightBootTimer - dt);
+  updateIndicatorTest(dt);
+  updateLongTermLightFlicker(dt);
   updateRoomLightFade(dt);
   updateSceneLightFeedback();
   applyCameraFeedback();
+}
+
+function triggerStartupFeedback() {
+  startupFeedbackTimer = CONFIG.feedback.startup.duration;
+}
+
+function triggerRoomLightBoot() {
+  const wasEnabled = roomLightsEnabled;
+  roomLightsEnabled = true;
+  roomLightCurrentFactor = 0;
+  roomLightSwitchTimer = 0;
+  roomLightSwitchMode = "on";
+  roomLightBootTimer = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+  if (!wasEnabled) updateControlTooltip();
+}
+
+function updateIndicatorTest(dt) {
+  const active = controlButtons.some(
+    (button) => button.userData.controlAction === "indicatorTest" && button.userData.pressed,
+  );
+  indicatorTestTimer = active ? Math.min(indicatorTestTimer + dt, CONFIG.feedback.indicatorTest.duration) : 0;
+}
+
+function updateLongTermLightFlicker(dt) {
+  [...controlledLights, ...Object.values(materials.interiorCustom)].forEach((target) => {
+    const state = target.userData.fixtureFlicker;
+    if (!state) return;
+    updateFixtureFlickerState(state, dt);
+  });
+}
+
+function createFixtureFlickerState() {
+  const flickerConfig = CONFIG.feedback.longTermLightFlicker;
+  return {
+    seed: Math.random() * 1000,
+    nextIn: getRandomRangeValue(flickerConfig?.minIntervalSeconds ?? 45, flickerConfig?.maxIntervalSeconds ?? 140),
+    elapsed: 0,
+    duration: 0,
+    pulses: [],
+  };
+}
+
+function updateFixtureFlickerState(state, dt) {
+  const flickerConfig = CONFIG.feedback.longTermLightFlicker;
+  if (!flickerConfig?.enabled) return;
+
+  if (state.duration > 0) {
+    state.elapsed += dt;
+    if (state.elapsed >= state.duration) {
+      state.elapsed = 0;
+      state.duration = 0;
+      state.pulses = [];
+    }
+    return;
+  }
+
+  state.nextIn -= dt;
+  if (state.nextIn > 0) return;
+
+  state.duration = getRandomConfigRange(flickerConfig.durationSeconds, 0.08, 0.42);
+  state.elapsed = 0;
+  state.pulses = createFixtureFlickerPulses(state.duration, flickerConfig);
+  const retrySoon = Math.random() < (flickerConfig.retryChance ?? 0.35);
+  state.nextIn = retrySoon
+    ? THREE.MathUtils.randFloat(0.8, 3.5)
+    : getRandomRangeValue(flickerConfig.minIntervalSeconds ?? 45, flickerConfig.maxIntervalSeconds ?? 140);
+}
+
+function triggerFixtureFlicker(targetName = "") {
+  const flickerConfig = CONFIG.feedback.longTermLightFlicker;
+  const triggered = [];
+  [...controlledLights, ...Object.values(materials.interiorCustom)].forEach((target) => {
+    const state = target.userData.fixtureFlicker;
+    const fixtureName = target.userData.fixtureName ?? target.userData.lightKey ?? target.name ?? target.name;
+    if (!state || (targetName && fixtureName !== targetName)) return;
+    state.duration = getRandomConfigRange(flickerConfig.durationSeconds, 0.08, 0.42);
+    state.elapsed = 0;
+    state.pulses = createFixtureFlickerPulses(state.duration, flickerConfig);
+    triggered.push(fixtureName);
+  });
+  return [...new Set(triggered)];
+}
+
+function createFixtureFlickerPulses(duration, flickerConfig) {
+  const pulseCount = Math.round(getRandomConfigRange(flickerConfig.pulseCount, 1, 4));
+  return Array.from({ length: pulseCount }, () => {
+    const center = Math.random();
+    const width = THREE.MathUtils.randFloat(0.035, 0.16);
+    return {
+      center,
+      width,
+      depth: 1 - getRandomConfigRange(flickerConfig.minFactor, 0.72, 0.92),
+      wobble: THREE.MathUtils.randFloat(0.75, 1.25),
+      duration,
+    };
+  });
+}
+
+function getFixtureFlickerFactor(target) {
+  const state = target.userData.fixtureFlicker;
+  if (!state || state.duration <= 0) return 1;
+
+  const progress = THREE.MathUtils.clamp(state.elapsed / Math.max(state.duration, 0.001), 0, 1);
+  const factor = state.pulses.reduce((currentFactor, pulse) => {
+    const distance = Math.abs(progress - pulse.center) / pulse.width;
+    if (distance >= 1) return currentFactor;
+    const dip = Math.pow(1 - distance, 2) * pulse.depth * pulse.wobble;
+    return Math.min(currentFactor, 1 - dip);
+  }, 1);
+  return THREE.MathUtils.clamp(factor, 0, 1.08);
+}
+
+function getRandomConfigRange(value, fallbackMin, fallbackMax) {
+  if (Array.isArray(value)) return getRandomRangeValue(value[0] ?? fallbackMin, value[1] ?? fallbackMax);
+  if (Number.isFinite(value)) return value;
+  return getRandomRangeValue(fallbackMin, fallbackMax);
+}
+
+function getRandomRangeValue(min, max) {
+  return THREE.MathUtils.randFloat(Number(min), Number(max));
 }
 
 function updateSceneLightFeedback() {
   const startup = getStartupFeedbackAmount();
   const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
   const emergency = getThermalEmergencyAmount();
-  const startupConfig = CONFIG.feedback.startup;
   const outputConfig = CONFIG.feedback.outputLow;
-  const blackout = startupFeedbackTimer > startupConfig.duration - startupConfig.blackoutSeconds ? 0.04 : 1;
-  const startupPulse = startup
-    ? THREE.MathUtils.lerp(0.55, 1.14, flickerWave(startupConfig.flickerFrequency, 0.18))
-    : 1;
-  const startupRamp = startup ? THREE.MathUtils.smoothstep(startupConfig.duration - startupFeedbackTimer, 0, startupConfig.duration) : 1;
+  const startupLightFactor = getStartupLightFactor();
   const outputPulse = outputLow
     ? THREE.MathUtils.lerp(1 - outputConfig.lightFlicker, 1 - outputConfig.lightFlicker * 0.42, flickerWave(9, 0.4))
     : 1;
   const emergencyPulse = emergency ? THREE.MathUtils.lerp(0.72, 1.18, flickerWave(18, 2.7)) : 1;
   const roomLightFactor = getRoomLightVisualFactor();
-  const sceneFactor = blackout * THREE.MathUtils.lerp(1, startupPulse * startupRamp, startup) * outputPulse * emergencyPulse;
+  const sceneFactor = startupLightFactor * outputPulse * emergencyPulse;
 
   controlledLights.forEach((light) => {
-    const factor = light.userData.roomLightControlled ? sceneFactor * roomLightFactor : sceneFactor;
+    const fixtureFactor = light.userData.roomLightControlled ? getFixtureFlickerFactor(light) : 1;
+    const factor = light.userData.roomLightControlled ? sceneFactor * roomLightFactor * fixtureFactor : sceneFactor;
     light.intensity = light.userData.baseIntensity * factor;
   });
 
@@ -1372,6 +1637,31 @@ function updateSceneLightFeedback() {
     chromaticAberrationPass.uniforms.amount.value =
       chromaConfig.amount + emergency * CONFIG.feedback.thermalEmergency.chromaticBoost * flickerWave(10, 1.1);
   }
+}
+
+function getStartupLightFactor() {
+  if (startupFeedbackTimer <= 0) return 1;
+
+  const startupConfig = CONFIG.feedback.startup;
+  const elapsed = startupConfig.duration - startupFeedbackTimer;
+  return getTubePatternFactor(elapsed);
+}
+
+function getTubePatternFactor(elapsed) {
+  const startupConfig = CONFIG.feedback.startup;
+  const pattern = startupConfig.tubeOnPattern ?? [];
+  if (pattern.length === 0) return 1;
+
+  let factor = pattern[pattern.length - 1].factor;
+  for (let index = 0; index < pattern.length - 1; index += 1) {
+    const current = pattern[index];
+    const next = pattern[index + 1];
+    if (elapsed < current.time || elapsed > next.time) continue;
+    const ratio = THREE.MathUtils.smoothstep(elapsed, current.time, next.time);
+    factor = THREE.MathUtils.lerp(current.factor, next.factor, ratio);
+    break;
+  }
+  return factor;
 }
 
 function applyCameraFeedback() {
@@ -1432,7 +1722,11 @@ function updateGaugeNeedle(needle, snapshot, dt) {
   if (!range) return;
 
   if (indicatorTestTimer > 0) {
-    const phase = (Math.sin(testTime * 4 + needle.userData.needleNoiseSeed) + 1) * 0.5;
+    const phase = THREE.MathUtils.smoothstep(
+      indicatorTestTimer,
+      CONFIG.feedback.indicatorTest.duration * 0.18,
+      CONFIG.feedback.indicatorTest.duration,
+    );
     const testAngle = THREE.MathUtils.degToRad(
       THREE.MathUtils.lerp(CONFIG.needleAnimation.inactiveDegrees, CONFIG.needleAnimation.activeDegrees, phase),
     );
@@ -1583,7 +1877,11 @@ function adjustNoclipSpeed(direction) {
 
 function toggleRoomLights() {
   roomLightsEnabled = !roomLightsEnabled;
-  roomLightSwitchTimer = CONFIG.interior.lightToggleButton?.flickerSeconds ?? 0.18;
+  roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
+  roomLightSwitchTimer = roomLightsEnabled
+    ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
+    : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
+  if (roomLightsEnabled) roomLightCurrentFactor = 0;
   updateControlTooltip();
   console.log(`[OperatorGame] Room lights ${roomLightsEnabled ? "enabled" : "disabled"}`);
 }
@@ -1593,26 +1891,36 @@ function updateRoomLightFade(dt) {
   const target = roomLightsEnabled ? 1 : 0;
   const fadeSeconds = Math.max(0.001, buttonConfig.fadeSeconds ?? 0.3);
   roomLightSwitchTimer = Math.max(0, roomLightSwitchTimer - dt);
-  roomLightCurrentFactor = THREE.MathUtils.damp(roomLightCurrentFactor, target, 4 / fadeSeconds, dt);
+  if (roomLightSwitchMode === "on" && roomLightSwitchTimer > 0) {
+    roomLightCurrentFactor = getRoomLightVisualFactor();
+  } else {
+    roomLightCurrentFactor = THREE.MathUtils.damp(roomLightCurrentFactor, target, 4 / fadeSeconds, dt);
+  }
   updateRoomLightMaterials();
 }
 
 function getRoomLightVisualFactor() {
-  if (roomLightSwitchTimer <= 0) return roomLightCurrentFactor;
-  const buttonConfig = CONFIG.interior.lightToggleButton ?? {};
-  const flicker = THREE.MathUtils.lerp(
-    0.62,
-    1.08,
-    flickerWave(buttonConfig.flickerFrequency ?? 42, 5.4),
-  );
-  return roomLightCurrentFactor * flicker;
+  if (roomLightBootTimer > 0) {
+    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const elapsed = bootDuration - roomLightBootTimer;
+    return getTubePatternFactor(elapsed);
+  }
+
+  if (roomLightSwitchTimer > 0 && roomLightSwitchMode === "on") {
+    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const elapsed = bootDuration - roomLightSwitchTimer;
+    return getTubePatternFactor(elapsed);
+  }
+
+  return roomLightCurrentFactor;
 }
 
 function updateRoomLightMaterials() {
   const visualFactor = getRoomLightVisualFactor();
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
-    material.emissiveIntensity = (material.userData.baseEmissiveIntensity ?? 1) * visualFactor;
+    material.emissiveIntensity =
+      (material.userData.baseEmissiveIntensity ?? 1) * visualFactor * getFixtureFlickerFactor(material);
     material.needsUpdate = true;
   });
 }
@@ -1622,6 +1930,7 @@ function setControlButtonPressed(button, pressed) {
   if (button.userData.pressed === pressed) return;
   button.userData.pressed = pressed;
   if (pressed) runControlButtonAction(button);
+  if (!pressed && button.userData.controlAction === "indicatorTest") indicatorTestTimer = 0;
   console.log(`[OperatorGame] ${button.userData.controlLabel} ${pressed ? "PRESSED" : "RELEASED"}`);
 }
 
@@ -1640,7 +1949,7 @@ function runControlButtonAction(button) {
     previousGameMode = "running";
     resultsTimer = 0;
     resultsSnapshot = null;
-    startupFeedbackTimer = CONFIG.feedback.startup.duration;
+    triggerStartupFeedback();
     statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
     console.log("[OperatorGame] Fusion core run started");
   } else if (button.userData.controlAction === "reset") {
@@ -1655,7 +1964,7 @@ function runControlButtonAction(button) {
     statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
     console.log("[OperatorGame] Fusion core reset");
   } else if (button.userData.controlAction === "indicatorTest") {
-    indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
+    indicatorTestTimer = 0;
     console.log("[OperatorGame] Indicator test started");
   }
 }
@@ -1671,11 +1980,13 @@ function getRandomNeedleSpeed() {
 }
 
 function updateMovement(dt) {
-  const speed = noclipEnabled
+  const movementConfig = CONFIG.camera.operatorMovement ?? {};
+  const baseSpeed = noclipEnabled
     ? noclipSpeed
     : keys.has("ShiftLeft") || keys.has("ShiftRight")
       ? CONFIG.camera.runSpeed
       : CONFIG.camera.walkSpeed;
+  const speed = baseSpeed * (zoomActive && !noclipEnabled ? movementConfig.zoomSpeedMultiplier ?? 0.62 : 1);
 
   camera.rotation.order = "YXZ";
   camera.rotation.y = yaw;
@@ -1696,15 +2007,49 @@ function updateMovement(dt) {
   if (keys.has("KeyA")) move.sub(right);
   if (noclipEnabled && keys.has("Space")) move.y += 1;
   if (noclipEnabled && (keys.has("ControlLeft") || keys.has("ControlRight"))) move.y -= 1;
+
+  const targetVelocity = new THREE.Vector3();
   if (move.lengthSq() > 0) {
-    move.normalize().multiplyScalar(speed * dt);
-    camera.position.add(move);
+    targetVelocity.copy(move.normalize().multiplyScalar(speed));
   }
+
+  const damping = targetVelocity.lengthSq() > 0 ? movementConfig.acceleration ?? 13 : movementConfig.deceleration ?? 18;
+  movementVelocity.x = THREE.MathUtils.damp(movementVelocity.x, targetVelocity.x, damping, dt);
+  movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, targetVelocity.y, damping, dt);
+  movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, targetVelocity.z, damping, dt);
+  playerPosition.addScaledVector(movementVelocity, dt);
 
   if (!noclipEnabled) {
     // Only floor collision for now: keep the player on a constant eye height.
-    camera.position.y = playerFloorHeight;
+    playerPosition.y = playerFloorHeight;
   }
+
+  applyOperatorCameraOffsets(forward, right, dt);
+}
+
+function applyOperatorCameraOffsets(forward, right, dt) {
+  const movementConfig = CONFIG.camera.operatorMovement ?? {};
+  camera.position.copy(playerPosition);
+
+  if (noclipEnabled) {
+    leanAmount = THREE.MathUtils.damp(leanAmount, 0, movementConfig.leanDamping ?? 11, dt);
+    return;
+  }
+
+  const horizontalSpeed = Math.hypot(movementVelocity.x, movementVelocity.z);
+  const speedRatio = THREE.MathUtils.clamp(horizontalSpeed / Math.max(CONFIG.camera.runSpeed, 0.001), 0, 1);
+  headBobTime += horizontalSpeed * (movementConfig.headBobFrequency ?? 9.5) * dt;
+
+  const bobFade = THREE.MathUtils.smoothstep(speedRatio, 0.03, 0.45);
+  const bobY = Math.sin(headBobTime * 2) * (movementConfig.headBobAmplitude ?? 0.018) * bobFade;
+  const bobX = Math.sin(headBobTime) * (movementConfig.headBobSway ?? 0.009) * bobFade;
+  camera.position.y += bobY;
+  camera.position.addScaledVector(right, bobX);
+
+  const targetLean = zoomActive ? 1 : 0;
+  leanAmount = THREE.MathUtils.damp(leanAmount, targetLean, movementConfig.leanDamping ?? 11, dt);
+  camera.position.addScaledVector(forward, leanAmount * (movementConfig.leanForward ?? 0.16));
+  camera.position.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
 }
 
 function updateCameraZoom(dt) {
@@ -1815,9 +2160,17 @@ document.addEventListener("mousemove", (event) => {
   }
 
   pointer.set(0, 0);
-  yaw -= event.movementX * CONFIG.camera.mouseSensitivity;
-  pitch -= event.movementY * CONFIG.camera.mouseSensitivity;
-  pitch = THREE.MathUtils.clamp(pitch, -1.25, 1.25);
+  const movementConfig = CONFIG.camera.operatorMovement ?? {};
+  const sensitivity =
+    CONFIG.camera.mouseSensitivity *
+    (zoomActive ? movementConfig.zoomSensitivityMultiplier ?? 0.48 : 1);
+  yaw -= event.movementX * sensitivity;
+  pitch -= event.movementY * sensitivity;
+  const pitchLimitDegrees = zoomActive
+    ? CONFIG.camera.leanPitchLimitDegrees ?? CONFIG.camera.pitchLimitDegrees ?? 88
+    : CONFIG.camera.pitchLimitDegrees ?? 72;
+  const pitchLimit = THREE.MathUtils.degToRad(pitchLimitDegrees);
+  pitch = THREE.MathUtils.clamp(pitch, -pitchLimit, pitchLimit);
 });
 
 canvas.addEventListener(
@@ -1831,7 +2184,7 @@ canvas.addEventListener(
 
     if (!hoveredKnob) return;
     event.preventDefault();
-    const rawDelta = -event.deltaY * CONFIG.controls.wheelPercentPerDelta;
+    const rawDelta = event.deltaY * CONFIG.controls.wheelPercentPerDelta;
     const clampedDelta = THREE.MathUtils.clamp(
       rawDelta,
       -CONFIG.controls.wheelMaxStepPercent,
@@ -1892,7 +2245,7 @@ resultsRestartButton?.addEventListener("click", () => {
   previousGameMode = "running";
   resultsTimer = 0;
   resultsSnapshot = null;
-  startupFeedbackTimer = CONFIG.feedback.startup.duration;
+  triggerStartupFeedback();
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 });
@@ -1916,7 +2269,7 @@ window.operatorGameDebug = {
     previousGameMode = "running";
     resultsTimer = 0;
     resultsSnapshot = null;
-    startupFeedbackTimer = CONFIG.feedback.startup.duration;
+    triggerStartupFeedback();
     statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
   },
   resetGame: () => {
@@ -1934,6 +2287,7 @@ window.operatorGameDebug = {
   startIndicatorTest: () => {
     indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
   },
+  triggerFixtureFlicker,
   setNoclip: (enabled) => {
     noclipEnabled = Boolean(enabled);
     return noclipEnabled;
@@ -1951,7 +2305,11 @@ window.operatorGameDebug = {
     const nextEnabled = Boolean(enabled);
     if (roomLightsEnabled !== nextEnabled) {
       roomLightsEnabled = nextEnabled;
-      roomLightSwitchTimer = CONFIG.interior.lightToggleButton?.flickerSeconds ?? 0.18;
+      roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
+      roomLightSwitchTimer = roomLightsEnabled
+        ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
+        : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
+      if (roomLightsEnabled) roomLightCurrentFactor = 0;
     }
     return roomLightsEnabled;
   },
@@ -2018,6 +2376,10 @@ window.operatorGameDebug = {
     roomLightsEnabled,
     roomLightFactor: Number(roomLightCurrentFactor.toFixed(2)),
     roomLightSwitchTimer: Number(roomLightSwitchTimer.toFixed(2)),
+    roomLightSwitchMode,
+    roomLightBootTimer: Number(roomLightBootTimer.toFixed(2)),
+    movementSpeed: Number(movementVelocity.length().toFixed(2)),
+    leanAmount: Number(leanAmount.toFixed(2)),
     indicatorTestActive: indicatorTestTimer > 0,
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
@@ -2036,10 +2398,20 @@ window.operatorGameDebug = {
     cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
     panelTransform: panelModel ? getObjectTransform(panelModel.name) : null,
+    panelTextureTier: materials.panel.userData.textureTier ?? (panelTextureMaps ? "loaded" : "placeholder"),
     interiorLoaded: Boolean(interiorModel),
     interiorTransform: interiorModel ? getObjectTransform(interiorModel.name) : null,
     interiorFans: interiorFans.map((fan) => fan.name),
     customInteriorMaterials: getCustomInteriorMaterialDebugState(),
+    lightFixtures: Object.fromEntries(
+      Object.entries(CONFIG.lighting.fixtures ?? {}).map(([name, fixture]) => [
+        name,
+        {
+          lightNames: fixture.lightNames ?? [],
+          materialKeys: fixture.materialKeys ?? [],
+        },
+      ]),
+    ),
     screen: statusScreen.getState(),
     game: fusionCore.getSnapshot(),
     postProcessing: {
