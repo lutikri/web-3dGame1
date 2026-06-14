@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
@@ -8,27 +7,42 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { createFusionCoreSimulation } from "./FusionCoreSimulation.js";
+import {
+  buildShiftReport,
+  createShiftRecorder,
+  getShiftRecorderDebugState,
+  updateShiftRecorder as updateShiftRecorderState,
+} from "./game/ShiftReport.js";
 import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js";
+import {
+  createTextureStreaming,
+  getDeferredTexturePaths,
+  getInitialTexturePaths,
+} from "./scene/TextureStreaming.js";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js";
 import { createStatusScreen } from "./StatusScreen.js";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js";
 
 const canvas = document.querySelector("#scene");
 const lockButton = document.querySelector("#lockButton");
 const debugOverlay = document.querySelector("#debugOverlay");
 const fpsMeter = document.querySelector("#fpsMeter");
-const loadingOverlay = document.querySelector("#loadingOverlay");
-const loadingPercent = document.querySelector("#loadingPercent");
-const loadingStatus = document.querySelector("#loadingStatus");
-const loadingShiftTitle = document.querySelector("#loadingShiftTitle");
-const loadingBarFill = document.querySelector("#loadingBarFill");
 const resultsOverlay = document.querySelector("#resultsOverlay");
 const resultsOutcome = document.querySelector("#resultsOutcome");
 const resultsProfile = document.querySelector("#resultsProfile");
 const resultsSummary = document.querySelector("#resultsSummary");
 const resultsStats = document.querySelector("#resultsStats");
-const resultsRestartButton = document.querySelector("#resultsRestartButton");
 const controlTooltip = document.createElement("div");
 controlTooltip.className = "control-tooltip";
 document.body.appendChild(controlTooltip);
+
+const loadingOverlay = createLoadingOverlay({
+  overlay: document.querySelector("#loadingOverlay"),
+  percent: document.querySelector("#loadingPercent"),
+  status: document.querySelector("#loadingStatus"),
+  shiftTitle: document.querySelector("#loadingShiftTitle"),
+  barFill: document.querySelector("#loadingBarFill"),
+});
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(CONFIG.world.backgroundColor);
@@ -47,11 +61,12 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = CONFIG.shadows.enabled;
 renderer.shadowMap.type = CONFIG.shadows.type;
 
-const textureLoader = new KTX2Loader()
-  .setTranscoderPath("https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/basis/")
-  .detectSupport(renderer);
-const imageTextureLoader = new THREE.TextureLoader();
-const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+const textureStreaming = createTextureStreaming({
+  renderer,
+  transcoderPath: "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/basis/",
+  onProgress: () => setLoadingProgress(18),
+  onWarning: () => setLoadingStatus("TEXTURE MAP WARNING"),
+});
 
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
@@ -98,10 +113,8 @@ let startupFeedbackTimer = 0;
 let indicatorTestTimer = 0;
 let latestSnapshot = fusionCore.getSnapshot();
 let zoomActive = false;
-let loadingProgress = 0;
-let displayedLoadingProgress = 0;
+let baseFovDegrees = CONFIG.camera.fovDegrees;
 let loadingComplete = Boolean(CONFIG.loading?.skip);
-const loadingStartedAt = performance.now();
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
@@ -214,26 +227,8 @@ panelTextureMapPromise
     console.error("[OperatorGame] Failed to load Panel1 texture maps", error);
   });
 
-const GAUGE_RANGES = {
-  plasmaTemp: [0, 180],
-  containment: [0, 100],
-  powerOutput: [0, 1200],
-  targetOutput: [0, 1200],
-  fuelReserve: [0, 100],
-  heatSinkCapacity: [0, 100],
-  coreStress: [0, 100],
-  reactionEfficiency: [0, 100],
-};
-
-const LAMP_WARNING_KEYS = {
-  LightCase1_Light_COREDAMAGE: "coreStress",
-  LightCase1_Light_FIELDWEAK: "fieldWeak",
-  LightCase1_Light_INSTABILITY: "instability",
-  LightCase1_Light_OUTPUTLOW: "outputLow",
-  LightCase1_Light_QUENCH_RISK: "quenchRisk",
-  LightCase1_Light_QUENCHRISK: "quenchRisk",
-  LightCase1_Light_TEMPHIGH: "tempHigh",
-};
+const GAUGE_RANGES = PANEL1_GAUGE_RANGES;
+const LAMP_WARNING_KEYS = PANEL1_LAMP_WARNING_KEYS;
 
 async function createPanelTextureMaps() {
   const initialPaths = getInitialTexturePaths(CONFIG.panel.maps);
@@ -251,16 +246,6 @@ function loadInteriorCustomMaterialTextures() {
   ]);
 }
 
-function getInitialTexturePaths(paths) {
-  if (!paths) return null;
-  return paths.preview ?? paths.initial ?? paths;
-}
-
-function getDeferredTexturePaths(paths) {
-  if (!paths?.full) return null;
-  return paths.full;
-}
-
 function queueDeferredTextureLoad(key, paths) {
   const loadFullTextureMaps = async () => {
     try {
@@ -269,7 +254,7 @@ function queueDeferredTextureLoad(key, paths) {
       interiorCustomTextureMaps[key] = fullTextureMaps;
       applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps);
       materials.interiorCustom[key].userData.textureTier = "full";
-      disposeTextureMaps(previousTextureMaps);
+      textureStreaming.disposeTextureMaps(previousTextureMaps);
       console.log(`[OperatorGame] Upgraded ${key} textures to full resolution`);
     } catch (error) {
       console.warn(`[OperatorGame] Failed to upgrade ${key} textures`, error);
@@ -303,7 +288,7 @@ function queueDeferredPanelTextureLoad(paths) {
       panelTextureMaps = fullTextureMaps;
       applyPanelTextureMapsToMaterial(materials.panel, fullTextureMaps);
       materials.panel.userData.textureTier = "full";
-      disposeTextureMaps(previousTextureMaps);
+      textureStreaming.disposeTextureMaps(previousTextureMaps);
       console.log("[OperatorGame] Upgraded Panel1 textures to full resolution");
     } catch (error) {
       console.warn("[OperatorGame] Failed to upgrade Panel1 textures", error);
@@ -330,24 +315,7 @@ function queueDeferredPanelTextureLoad(paths) {
 }
 
 async function loadInteriorTextureMaps(paths) {
-  if (!paths) return null;
-
-  const textureJobs = {
-    map: paths.baseColor ? loadRuntimeTexture(paths.baseColor, { colorSpace: THREE.SRGBColorSpace }) : null,
-    normalMap: paths.normal ? loadRuntimeTexture(paths.normal) : null,
-    ormMap: paths.orm ? loadRuntimeTexture(paths.orm) : null,
-    emissiveMap: paths.emissive ? loadRuntimeTexture(paths.emissive, { colorSpace: THREE.SRGBColorSpace }) : null,
-  };
-
-  const entries = await Promise.all(
-    Object.entries(textureJobs).map(async ([name, texturePromise]) => [name, texturePromise ? await texturePromise : null]),
-  );
-  return Object.fromEntries(entries);
-}
-
-function disposeTextureMaps(textureMaps) {
-  if (!textureMaps) return;
-  Object.values(textureMaps).forEach((texture) => texture?.dispose?.());
+  return textureStreaming.loadTextureMaps(paths);
 }
 
 function createPanelPbrMaterial(name, overrides = {}) {
@@ -409,32 +377,6 @@ function applyTextureMapsToMaterial(material, textureMaps) {
   material.metalnessMap = textureMaps.ormMap ?? null;
   material.emissiveMap = textureMaps.emissiveMap ?? null;
   material.needsUpdate = true;
-}
-
-async function loadPanelTexture(path, options = {}) {
-  try {
-    const texture = await textureLoader.loadAsync(path);
-    texture.flipY = false;
-    texture.colorSpace = options.colorSpace ?? THREE.NoColorSpace;
-    texture.anisotropy = maxAnisotropy;
-    setLoadingProgress(Math.max(loadingProgress, 18));
-    return texture;
-  } catch (error) {
-    setLoadingStatus("TEXTURE MAP WARNING");
-    throw error;
-  }
-}
-
-async function loadRuntimeTexture(path, options = {}) {
-  return path.toLowerCase().endsWith(".ktx2") ? loadPanelTexture(path, options) : loadImageTexture(path, options);
-}
-
-async function loadImageTexture(path, options = {}) {
-  const texture = await imageTextureLoader.loadAsync(path);
-  texture.flipY = false;
-  texture.colorSpace = options.colorSpace ?? THREE.NoColorSpace;
-  texture.anisotropy = maxAnisotropy;
-  return texture;
 }
 
 init();
@@ -588,7 +530,7 @@ function loadPanelModel() {
     },
     (event) => {
       if (!event.lengthComputable) {
-        setLoadingProgress(Math.max(loadingProgress, 62));
+        setLoadingProgress(62);
         return;
       }
       const assetProgress = event.loaded / event.total;
@@ -728,6 +670,7 @@ function registerControlKnob(object, knobConfig) {
   object.userData.controlId = object.name;
   object.userData.controlLabel = knobConfig.label;
   object.userData.controlPercent = percent;
+  object.userData.initialPercent = percent;
   object.userData.initialRotation = object.rotation.clone();
 
   controlKnobs.push(object);
@@ -873,12 +816,11 @@ function animate() {
 }
 
 function setLoadingProgress(value) {
-  loadingProgress = THREE.MathUtils.clamp(value, loadingProgress, 100);
-  if (loadingProgress >= 70) loadingShiftTitle?.classList.add("is-visible");
+  loadingOverlay.setProgress(value);
 }
 
 function setLoadingStatus(text) {
-  if (loadingStatus) loadingStatus.textContent = text;
+  loadingOverlay.setStatus(text);
 }
 
 function finishLoading() {
@@ -887,39 +829,35 @@ function finishLoading() {
     return;
   }
 
-  setLoadingStatus("CORE INTERFACE ONLINE");
-  setLoadingProgress(100);
-  const remainingMinimum = Math.max(0, 2000 - (performance.now() - loadingStartedAt));
-  window.setTimeout(() => {
-    loadingOverlay?.classList.add("is-final");
-  }, remainingMinimum + 450);
-  window.setTimeout(() => {
-    loadingOverlay?.classList.add("is-complete");
+  loadingOverlay.finish(() => {
     loadingComplete = true;
     triggerRoomLightBoot();
-  }, remainingMinimum + 1150);
+  });
 }
 
 function skipLoadingOverlay() {
   loadingComplete = true;
-  setLoadingProgress(100);
-  loadingOverlay?.classList.add("is-final", "is-complete");
+  loadingOverlay.skip();
+}
+
+function showRouteLoading({ title = "LOADING SHIFT", status = "PREPARING OPERATOR CONSOLE", progress = 0 } = {}) {
+  loadingComplete = false;
+  loadingOverlay.show({
+    title,
+    statusText: status,
+    progressValue: progress,
+  });
+}
+
+function finishRouteLoading(onComplete) {
+  loadingOverlay.finish(() => {
+    loadingComplete = true;
+    onComplete?.();
+  });
 }
 
 function updateLoadingOverlay(dt) {
-  if (!loadingOverlay || loadingComplete) return;
-
-  if (!panelModel) {
-    const idleTarget = Math.min(loadingProgress + dt * 9, 68);
-    setLoadingProgress(idleTarget);
-  }
-
-  displayedLoadingProgress = THREE.MathUtils.damp(displayedLoadingProgress, loadingProgress, 12, dt);
-  const shownPercent = Math.min(100, Math.round(displayedLoadingProgress));
-
-  if (loadingPercent) loadingPercent.textContent = `${String(shownPercent).padStart(2, "0")}%`;
-  if (loadingBarFill) loadingBarFill.style.width = `${shownPercent}%`;
-  if (shownPercent >= 70) loadingShiftTitle?.classList.add("is-visible");
+  loadingOverlay.update(dt, !panelModel);
 }
 
 function updateFpsMeter(dt) {
@@ -1149,87 +1087,12 @@ function shouldFastBlinkWarning(warningKey, snapshot) {
   return false;
 }
 
-function createShiftRecorder() {
-  return {
-    active: false,
-    elapsed: 0,
-    sampleTimer: 0,
-    sampleCount: 0,
-    demandErrorSum: 0,
-    efficiencySum: 0,
-    tempSum: 0,
-    outputSum: 0,
-    underDemandTime: 0,
-    overDemandTime: 0,
-    tempHighTime: 0,
-    tempCriticalTime: 0,
-    thermalSoakTime: 0,
-    outputSurgeTime: 0,
-    coreStressTime: 0,
-    quenchTime: 0,
-    instabilityTime: 0,
-    ventTime: 0,
-    ventActivations: 0,
-    fuelSum: 0,
-    fieldSum: 0,
-    coolantSum: 0,
-    maxTemp: 0,
-    maxCoreStress: 0,
-    maxThermalSoak: 0,
-    maxOutput: 0,
-    knobMovement: 0,
-    previousControls: null,
-  };
-}
-
 function resetShiftRecorder() {
   shiftRecorder = createShiftRecorder();
 }
 
 function updateShiftRecorder(dt, snapshot, controls) {
-  if (snapshot.mode !== "running") return;
-
-  shiftRecorder.active = true;
-  shiftRecorder.elapsed += dt;
-  shiftRecorder.sampleTimer += dt;
-  shiftRecorder.demandErrorSum += Math.abs(snapshot.demandError ?? 0) * dt;
-  shiftRecorder.efficiencySum += snapshot.reactionEfficiency * dt;
-  shiftRecorder.tempSum += snapshot.plasmaTemp * dt;
-  shiftRecorder.outputSum += snapshot.powerOutput * dt;
-  shiftRecorder.fuelSum += controls.fuelInjection * dt;
-  shiftRecorder.fieldSum += controls.magneticField * dt;
-  shiftRecorder.coolantSum += controls.coolantFlow * dt;
-  if (snapshot.warning?.underDemand) shiftRecorder.underDemandTime += dt;
-  if (snapshot.warning?.overDemand) shiftRecorder.overDemandTime += dt;
-  if (snapshot.warning?.tempHigh) shiftRecorder.tempHighTime += dt;
-  if (snapshot.warning?.tempCritical) shiftRecorder.tempCriticalTime += dt;
-  if (snapshot.warning?.thermalSoak) shiftRecorder.thermalSoakTime += dt;
-  if (snapshot.warning?.outputSurge) shiftRecorder.outputSurgeTime += dt;
-  if (snapshot.warning?.coreStress) shiftRecorder.coreStressTime += dt;
-  if (snapshot.warning?.quenchRisk) shiftRecorder.quenchTime += dt;
-  if (snapshot.warning?.instability) shiftRecorder.instabilityTime += dt;
-  if (controls.ventActive) shiftRecorder.ventTime += dt;
-
-  shiftRecorder.maxTemp = Math.max(shiftRecorder.maxTemp, snapshot.plasmaTemp);
-  shiftRecorder.maxCoreStress = Math.max(shiftRecorder.maxCoreStress, snapshot.coreStress);
-  shiftRecorder.maxThermalSoak = Math.max(shiftRecorder.maxThermalSoak, snapshot.thermalSoak ?? 0);
-  shiftRecorder.maxOutput = Math.max(shiftRecorder.maxOutput, snapshot.powerOutput);
-
-  if (shiftRecorder.previousControls) {
-    shiftRecorder.knobMovement +=
-      Math.abs(controls.fuelInjection - shiftRecorder.previousControls.fuelInjection) +
-      Math.abs(controls.magneticField - shiftRecorder.previousControls.magneticField) +
-      Math.abs(controls.coolantFlow - shiftRecorder.previousControls.coolantFlow);
-    if (controls.ventActive && !shiftRecorder.previousControls.ventActive) shiftRecorder.ventActivations += 1;
-  } else if (controls.ventActive) {
-    shiftRecorder.ventActivations += 1;
-  }
-  shiftRecorder.previousControls = { ...controls };
-
-  if (shiftRecorder.sampleTimer >= 2) {
-    shiftRecorder.sampleCount += 1;
-    shiftRecorder.sampleTimer = 0;
-  }
+  updateShiftRecorderState(shiftRecorder, dt, snapshot, controls);
 }
 
 function updateShiftCompletion(dt, snapshot) {
@@ -1251,7 +1114,7 @@ function showShiftResults(snapshot) {
   zoomActive = false;
   releaseAllControlButtons();
 
-  const report = buildShiftReport(snapshot);
+  const report = buildShiftReport(shiftRecorder, snapshot);
   if (resultsOutcome) resultsOutcome.textContent = snapshot.mode === "complete" ? "COMPLETE" : "FAILED";
   if (resultsProfile) resultsProfile.textContent = report.profile;
   if (resultsSummary) resultsSummary.textContent = report.summary;
@@ -1267,6 +1130,7 @@ function showShiftResults(snapshot) {
   resultsOverlay.hidden = false;
   resultsOverlay.classList.add("is-visible");
   resultsVisible = true;
+  window.dispatchEvent(new CustomEvent("operatorgame:shift-results", { detail: { snapshot, report } }));
 }
 
 function hideShiftResults() {
@@ -1276,204 +1140,6 @@ function hideShiftResults() {
     if (!resultsOverlay.classList.contains("is-visible")) resultsOverlay.hidden = true;
   }, 1200);
   resultsVisible = false;
-}
-
-function buildShiftReport(snapshot) {
-  const duration = Math.max(1, shiftRecorder.elapsed);
-  const avgDemandError = shiftRecorder.demandErrorSum / duration;
-  const avgEfficiency = shiftRecorder.efficiencySum / duration;
-  const avgTemp = shiftRecorder.tempSum / duration;
-  const avgOutput = shiftRecorder.outputSum / duration;
-  const overRatio = shiftRecorder.overDemandTime / duration;
-  const underRatio = shiftRecorder.underDemandTime / duration;
-  const tempHighRatio = shiftRecorder.tempHighTime / duration;
-  const tempCriticalRatio = shiftRecorder.tempCriticalTime / duration;
-  const thermalSoakRatio = shiftRecorder.thermalSoakTime / duration;
-  const outputSurgeRatio = shiftRecorder.outputSurgeTime / duration;
-  const coreStressRatio = shiftRecorder.coreStressTime / duration;
-  const quenchRatio = shiftRecorder.quenchTime / duration;
-  const instabilityRatio = shiftRecorder.instabilityTime / duration;
-  const ventRatio = shiftRecorder.ventTime / duration;
-  const movementRate = shiftRecorder.knobMovement / duration;
-  const avgFuel = shiftRecorder.fuelSum / duration;
-  const avgField = shiftRecorder.fieldSum / duration;
-  const avgCoolant = shiftRecorder.coolantSum / duration;
-  const profile = pickOperatorProfile({
-    avgDemandError,
-    avgEfficiency,
-    avgOutput,
-    avgTemp,
-    avgFuel,
-    avgField,
-    avgCoolant,
-    overRatio,
-    underRatio,
-    tempHighRatio,
-    tempCriticalRatio,
-    thermalSoakRatio,
-    outputSurgeRatio,
-    coreStressRatio,
-    quenchRatio,
-    instabilityRatio,
-    ventRatio,
-    ventActivations: shiftRecorder.ventActivations,
-    movementRate,
-    maxTemp: shiftRecorder.maxTemp,
-    maxCoreStress: shiftRecorder.maxCoreStress,
-    maxThermalSoak: shiftRecorder.maxThermalSoak,
-    maxOutput: shiftRecorder.maxOutput,
-    snapshot,
-  });
-
-  return {
-    profile: profile.title,
-    summary: profile.summary,
-    stats: [
-      ["SHIFT TIME", formatDuration(snapshot.elapsed)],
-      ["AVG EFFICIENCY", `${Math.round(avgEfficiency)}%`],
-      ["AVG OUTPUT", `${Math.round(avgOutput)} MW`],
-      ["AVG DEMAND ERROR", `${Math.round(avgDemandError * 100)}%`],
-      ["MAX TEMP", `${Math.round(shiftRecorder.maxTemp)} MK`],
-      ["MAX CORE STRESS", `${Math.round(shiftRecorder.maxCoreStress)}%`],
-      ["MAX HEAT SOAK", `${Math.round(shiftRecorder.maxThermalSoak)}%`],
-      ["CRITICAL TEMP", `${Math.round(tempCriticalRatio * 100)}%`],
-      ["OUTPUT SURGE", `${Math.round(outputSurgeRatio * 100)}%`],
-      ["OVER DEMAND", `${Math.round(overRatio * 100)}%`],
-      ["UNDER DEMAND", `${Math.round(underRatio * 100)}%`],
-      ["QUENCH RISK", `${Math.round(quenchRatio * 100)}%`],
-      ["VENT HELD", `${Math.round(ventRatio * 100)}%`],
-      ["VENT PULSES", `${shiftRecorder.ventActivations}`],
-      ["AVG TEMP", `${Math.round(avgTemp)} MK`],
-      ["CONTROL MOTION", `${Math.round(movementRate)}%/s`],
-    ],
-  };
-}
-
-function pickOperatorProfile(stats) {
-  if (stats.snapshot.mode === "failed" && stats.maxCoreStress > 96 && stats.maxTemp > 178) {
-    return {
-      title: "OPERATOR TYPE: CONTAINMENT POSTMORTEM",
-      summary: "You found the part of the operating envelope that writes reports in all caps.",
-    };
-  }
-  if (stats.ventActivations >= 4 || (stats.ventRatio > 0.06 && stats.maxTemp > 155)) {
-    return {
-      title: "OPERATOR TYPE: NERVOUS PURGE TECH",
-      summary: "Short purge pulses solved several problems and created several new entries in the logbook.",
-    };
-  }
-  if (stats.avgEfficiency > 82 && stats.avgDemandError < 0.12 && stats.maxCoreStress < 55 && stats.instabilityRatio < 0.08) {
-    return {
-      title: "OPERATOR TYPE: FIELD PHYSICIST",
-      summary: "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.",
-    };
-  }
-  if (stats.avgOutput > 720 && stats.avgDemandError < 0.18 && stats.tempCriticalRatio > 0.04 && stats.coreStressRatio < 0.14) {
-    return {
-      title: "OPERATOR TYPE: HIGH LOAD SPECIALIST",
-      summary: "You ran the burn hot on purpose and mostly convinced the machinery it was planned.",
-    };
-  }
-  if (stats.thermalSoakRatio > 0.12 || stats.maxThermalSoak > 75 || stats.maxTemp > 185) {
-    return {
-      title: "OPERATOR TYPE: REDLINE PHILOSOPHER",
-      summary: "You treated heat soak as a philosophical disagreement between you and the panel. The panel had evidence.",
-    };
-  }
-  if (stats.outputSurgeRatio > 0.08) {
-    return {
-      title: "OPERATOR TYPE: BUS SURGE CONDUCTOR",
-      summary: "The grid received power in expressive waves. Some of them were even useful.",
-    };
-  }
-  if (stats.overRatio > 0.32) {
-    return {
-      title: "OPERATOR TYPE: GRID OVERFEEDER",
-      summary: "Demand was a target. You interpreted it as a lower bound.",
-    };
-  }
-  if (stats.avgFuel > 84 && stats.avgOutput < 650) {
-    return {
-      title: "OPERATOR TYPE: FUEL INTO NOISE",
-      summary: "A lot of fuel became heat, alarms, and character development before it became grid power.",
-    };
-  }
-  if (stats.avgField > 86 && stats.avgOutput < 820) {
-    return {
-      title: "OPERATOR TYPE: MAGNETIC ACCOUNTANT",
-      summary: "Containment was extremely well filed. Net output was less impressed.",
-    };
-  }
-  if (stats.avgCoolant < 28 && stats.maxTemp > 160 && stats.maxCoreStress < 75) {
-    return {
-      title: "OPERATOR TYPE: HEAT SINK GAMBLER",
-      summary: "You trusted the thermal mass longer than the manual recommends, but the lights stayed on.",
-    };
-  }
-  if (stats.quenchRatio > 0.18 || (stats.avgCoolant > 72 && stats.avgTemp < 110)) {
-    return {
-      title: "OPERATOR TYPE: COOLANT INTERN",
-      summary: "The plasma spent much of the shift wondering why it was being refrigerated instead of operated.",
-    };
-  }
-  if (stats.underRatio > 0.42) {
-    return {
-      title: "OPERATOR TYPE: UNDERPOWERED OPTIMIST",
-      summary: "The grid kept asking for more. You maintained a tasteful distance from the request.",
-    };
-  }
-  if (stats.movementRate > 12) {
-    return {
-      title: "OPERATOR TYPE: WHY IS THIS LAMP BLINKING",
-      summary: "You made many corrections and at least some of them were related to the problem at hand.",
-    };
-  }
-  if (stats.movementRate < 1.2 && stats.avgDemandError > 0.28) {
-    return {
-      title: "OPERATOR TYPE: CONTROL ROOM STATUE",
-      summary: "The panel changed phases. You respected its independence.",
-    };
-  }
-  if (stats.tempCriticalRatio > 0.16 && stats.maxCoreStress < 70) {
-    return {
-      title: "OPERATOR TYPE: EDGE WALKER",
-      summary: "You visited the red band often enough to learn the furniture, then left before it became permanent.",
-    };
-  }
-  if (stats.snapshot.mode === "failed") {
-    return {
-      title: "OPERATOR TYPE: UNSCHEDULED EXPERIMENT",
-      summary: "The shift ended with useful data, technically. The maintenance team may use different words.",
-    };
-  }
-  if (stats.avgDemandError < 0.18 && stats.avgEfficiency > 68) {
-    return {
-      title: "OPERATOR TYPE: SHIFT OPERATOR",
-      summary: "You kept the core moving, made some compromises, and left enough machine for the next person.",
-    };
-  }
-  if (stats.maxOutput > 980 && stats.maxCoreStress < 80) {
-    return {
-      title: "OPERATOR TYPE: PEAK OUTPUT TOURIST",
-      summary: "You went sightseeing near maximum output and brought back most of the equipment.",
-    };
-  }
-  if (stats.avgEfficiency < 45) {
-    return {
-      title: "OPERATOR TYPE: REACTION POET",
-      summary: "The numbers formed an emotional arc. The grid requested fewer metaphors.",
-    };
-  }
-  return {
-    title: "OPERATOR TYPE: PANEL APPRENTICE",
-    summary: "You learned which lights matter and which lights merely judge.",
-  };
-}
-
-function formatDuration(seconds) {
-  const total = Math.max(0, Math.floor(seconds));
-  const minutes = Math.floor(total / 60);
-  return `${minutes}:${String(total % 60).padStart(2, "0")}`;
 }
 
 function updateFeedback(dt) {
@@ -1941,27 +1607,91 @@ function setRoomLightButtonPressed(button, pressed) {
   if (pressed) toggleRoomLights();
 }
 
+function startShift() {
+  resetShiftRecorder();
+  hideShiftResults();
+  fusionCore.start();
+  previousGameMode = "running";
+  resultsTimer = 0;
+  resultsSnapshot = null;
+  triggerStartupFeedback();
+  indicatorTestTimer = 0;
+  statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+}
+
+function resetShift() {
+  resetShiftRecorder();
+  hideShiftResults();
+  fusionCore.reset();
+  previousGameMode = "standby";
+  resultsTimer = 0;
+  resultsSnapshot = null;
+  startupFeedbackTimer = 0;
+  indicatorTestTimer = 0;
+  statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+}
+
+function resetOperatorView() {
+  document.exitPointerLock?.();
+  keys.clear();
+  movementVelocity.set(0, 0, 0);
+  headBobTime = 0;
+  leanAmount = 0;
+  zoomActive = false;
+  playerPosition.copy(playerSpawnPosition);
+  camera.position.copy(playerSpawnPosition);
+  yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
+  pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
+  pointer.set(0, 0);
+  camera.rotation.order = "YXZ";
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+}
+
+function resetPanelControls() {
+  releaseAllControlButtons();
+  controlKnobs.forEach((knob) => {
+    knob.userData.controlPercent = knob.userData.initialPercent ?? 0;
+    applyControlKnobRotation(knob);
+  });
+  setHoveredKnob(null);
+  setHoveredTooltipTarget(null);
+  forcedHoveredTarget = null;
+  hoveredInteractive = null;
+  indicatorTestTimer = 0;
+}
+
+function resetLevelSession() {
+  hideShiftResults();
+  resetOperatorView();
+  resetPanelControls();
+  freezeNeedles = false;
+  needles.forEach((needle) => {
+    needle.userData.needleDebugAxis = null;
+  });
+  resultsTimer = 0;
+  resultsSnapshot = null;
+}
+
+function resetForMenu() {
+  resetLevelSession();
+  resetShift();
+}
+
+function enterLevelSession() {
+  resetLevelSession();
+  resetShiftRecorder();
+  fusionCore.reset();
+  previousGameMode = "standby";
+  statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+}
+
 function runControlButtonAction(button) {
   if (button.userData.controlAction === "start") {
-    resetShiftRecorder();
-    hideShiftResults();
-    fusionCore.start();
-    previousGameMode = "running";
-    resultsTimer = 0;
-    resultsSnapshot = null;
-    triggerStartupFeedback();
-    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+    startShift();
     console.log("[OperatorGame] Fusion core run started");
   } else if (button.userData.controlAction === "reset") {
-    resetShiftRecorder();
-    hideShiftResults();
-    fusionCore.reset();
-    previousGameMode = "standby";
-    resultsTimer = 0;
-    resultsSnapshot = null;
-    startupFeedbackTimer = 0;
-    indicatorTestTimer = 0;
-    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+    resetForMenu();
     console.log("[OperatorGame] Fusion core reset");
   } else if (button.userData.controlAction === "indicatorTest") {
     indicatorTestTimer = 0;
@@ -2053,7 +1783,7 @@ function applyOperatorCameraOffsets(forward, right, dt) {
 }
 
 function updateCameraZoom(dt) {
-  const targetFov = zoomActive ? CONFIG.camera.zoomFovDegrees : CONFIG.camera.fovDegrees;
+  const targetFov = zoomActive ? Math.min(CONFIG.camera.zoomFovDegrees, baseFovDegrees) : baseFovDegrees;
   camera.fov = THREE.MathUtils.damp(camera.fov, targetFov, CONFIG.camera.zoomDamping, dt);
   camera.updateProjectionMatrix();
 }
@@ -2232,23 +1962,13 @@ function updatePointerFromEvent(event) {
 }
 
 canvas.addEventListener("click", () => {
+  if (document.body.classList.contains("app-ui-open")) return;
   if (document.pointerLockElement !== canvas) {
     requestPointerLock();
   }
 });
 
 lockButton.addEventListener("click", requestPointerLock);
-resultsRestartButton?.addEventListener("click", () => {
-  resetShiftRecorder();
-  hideShiftResults();
-  fusionCore.start();
-  previousGameMode = "running";
-  resultsTimer = 0;
-  resultsSnapshot = null;
-  triggerStartupFeedback();
-  indicatorTestTimer = 0;
-  statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
-});
 
 document.addEventListener("pointerlockchange", () => {
   lockButton.textContent = document.pointerLockElement === canvas ? "Pointer Locked" : "Enter First Person";
@@ -2262,26 +1982,28 @@ window.operatorGameDebug = {
   camera,
   renderer,
   config: CONFIG,
-  startGame: () => {
-    resetShiftRecorder();
-    hideShiftResults();
-    fusionCore.start();
-    previousGameMode = "running";
-    resultsTimer = 0;
-    resultsSnapshot = null;
-    triggerStartupFeedback();
-    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  startGame: startShift,
+  resetGame: resetForMenu,
+  restartGame: enterLevelSession,
+  startLevel: enterLevelSession,
+  resetForMenu,
+  showLoadingScreen: showRouteLoading,
+  finishLoadingScreen: finishRouteLoading,
+  hideShiftResults,
+  requestPointerLock,
+  releasePointerLock: () => document.exitPointerLock?.(),
+  setBaseFov: (degrees) => {
+    baseFovDegrees = THREE.MathUtils.clamp(Number(degrees), 50, 105);
+    CONFIG.camera.fovDegrees = baseFovDegrees;
+    if (!zoomActive) {
+      camera.fov = baseFovDegrees;
+      camera.updateProjectionMatrix();
+    }
+    return baseFovDegrees;
   },
-  resetGame: () => {
-    resetShiftRecorder();
-    hideShiftResults();
-    fusionCore.reset();
-    previousGameMode = "standby";
-    resultsTimer = 0;
-    resultsSnapshot = null;
-    startupFeedbackTimer = 0;
-    indicatorTestTimer = 0;
-    statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  setDebugVisible: (visible) => {
+    if (debugOverlay) debugOverlay.hidden = !visible;
+    return Boolean(visible);
   },
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: () => {
@@ -2383,18 +2105,7 @@ window.operatorGameDebug = {
     indicatorTestActive: indicatorTestTimer > 0,
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
-    recorder: {
-      elapsed: Number(shiftRecorder.elapsed.toFixed(1)),
-      underDemandTime: Number(shiftRecorder.underDemandTime.toFixed(1)),
-      overDemandTime: Number(shiftRecorder.overDemandTime.toFixed(1)),
-      tempHighTime: Number(shiftRecorder.tempHighTime.toFixed(1)),
-      tempCriticalTime: Number(shiftRecorder.tempCriticalTime.toFixed(1)),
-      thermalSoakTime: Number(shiftRecorder.thermalSoakTime.toFixed(1)),
-      outputSurgeTime: Number(shiftRecorder.outputSurgeTime.toFixed(1)),
-      coreStressTime: Number(shiftRecorder.coreStressTime.toFixed(1)),
-      ventTime: Number(shiftRecorder.ventTime.toFixed(1)),
-      ventActivations: shiftRecorder.ventActivations,
-    },
+    recorder: getShiftRecorderDebugState(shiftRecorder),
     cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
     panelTransform: panelModel ? getObjectTransform(panelModel.name) : null,

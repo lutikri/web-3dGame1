@@ -1,0 +1,5 @@
+SM_Details1_LP 528 p/m 1k
+SM_Pipes1_LP 528 p/m 512 
+SM_DoorLamp_LP 522 p/m 1k
+SM_Interior1_LP 
+SM_Lamps 528 p/m 512, free space

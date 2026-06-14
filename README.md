@@ -12,8 +12,15 @@ Run locally with live reload:
 Main runtime files:
 
 - `index.html`
+- `src/main.js`
+- `src/app/AppShell.js`
+- `src/app/LevelCatalog.js`
 - `src/OperatorGame.js`
 - `src/OperatorGameConfig.js`
+- `src/game/ShiftReport.js`
+- `src/panels/Panel1Bindings.js`
+- `src/scene/TextureStreaming.js`
+- `src/ui/LoadingOverlay.js`
 - `styles/operator-game.css`
 - `assets/Panel1.glb`
 - `assets/runtime-textures/T_Panel1_*_Preview_1024_ETC1S.ktx2`

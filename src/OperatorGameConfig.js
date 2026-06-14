@@ -361,7 +361,7 @@ export const CONFIG = {
         decay: 1,
         position: new THREE.Vector3(0.01, 1.91, 0.66),
         castShadow: true,
-        shadowMapSize: 128,
+        shadowMapSize: 256,
         shadowBias: 0.0006,
         shadowNormalBias: 0.035,
         shadowNear: 0.1,

@@ -19,7 +19,7 @@
     <div id="app">
       <div class="hud">
         <strong>OperatorGame</strong>
-        <span>Click scene to look. WASD move. Aim at Button_Test and click.</span>
+        <span>Click scene to look. WASD move. P pause. Aim at panel controls and click.</span>
       </div>
       <div id="fpsMeter" class="fps-meter" aria-live="polite">FPS --</div>
       <pre id="debugOverlay" class="debug-overlay">camera</pre>
@@ -53,10 +53,101 @@
           <h1 id="resultsProfile">OPERATOR PROFILE</h1>
           <p id="resultsSummary">Awaiting shift data.</p>
           <div id="resultsStats" class="results-stats"></div>
-          <button id="resultsRestartButton" type="button">START NEW SHIFT</button>
+          <div class="results-actions">
+            <button id="resultsRestartButton" data-app-action="restart" type="button">START NEW SHIFT</button>
+            <button data-app-action="level-select" type="button">LEVEL SELECT</button>
+            <button data-app-action="main-menu" type="button">MAIN MENU</button>
+          </div>
         </div>
       </div>
+      <div id="appOverlay" class="app-overlay" hidden>
+        <section id="mainMenuPanel" class="app-panel main-menu-panel" data-app-panel="main-menu" hidden>
+          <div class="brand-lockup">
+            <span>OperatorGame</span>
+            <strong>FUSION CORE SHIFT CONSOLE</strong>
+          </div>
+          <div class="menu-actions">
+            <button data-app-action="level-select" type="button">PLAY</button>
+            <button data-app-action="profile" type="button">PROFILE</button>
+            <button data-app-action="settings" type="button">SETTINGS</button>
+          </div>
+        </section>
+        <section id="levelSelectPanel" class="app-panel level-panel" data-app-panel="level-select" hidden>
+          <div class="panel-header">
+            <span>LEVEL ROUTE</span>
+            <button data-app-action="main-menu" type="button" aria-label="Back">BACK</button>
+          </div>
+          <div class="level-map">
+            <button class="level-node is-active" data-level-id="intro-shift" type="button">
+              <strong>INTRO SHIFT</strong>
+              <span>First supervised fusion operation</span>
+            </button>
+            <div class="route-split" aria-hidden="true"></div>
+            <button class="level-node is-locked" data-level-id="unexpected-stuff" type="button" disabled>
+              <strong>UNEXPECTED STUFF</strong>
+              <span>Instrument faults route</span>
+            </button>
+            <button class="level-node is-locked" data-level-id="fuel-problems" type="button" disabled>
+              <strong>FUEL PROBLEMS</strong>
+              <span>Fuel quality route</span>
+            </button>
+          </div>
+          <div class="side-modes">
+            <button class="mode-card" data-level-id="freeplay" type="button">
+              <strong>FREEPLAY</strong>
+              <span>Same console, loose targets</span>
+            </button>
+            <button class="mode-card is-locked" data-level-id="competitive" type="button" disabled>
+              <strong>COMPETITIVE</strong>
+              <span>Score route placeholder</span>
+            </button>
+          </div>
+        </section>
+        <section id="profilePanel" class="app-panel dossier-panel" data-app-panel="profile" hidden>
+          <div class="panel-header">
+            <span>OPERATOR DOSSIER</span>
+            <button data-app-action="main-menu" type="button" aria-label="Back">BACK</button>
+          </div>
+          <div class="dossier-card">
+            <span>STATUS</span>
+            <strong>PROVISIONAL SHIFT OPERATOR</strong>
+            <p>Performance history, route unlocks, incident tags, and operator notes will live here.</p>
+          </div>
+        </section>
+        <section id="pausePanel" class="app-panel pause-panel" data-app-panel="pause" hidden>
+          <div class="panel-header">
+            <span>PAUSED</span>
+            <button data-app-action="resume" type="button" aria-label="Resume">RESUME</button>
+          </div>
+          <div class="menu-actions">
+            <button data-app-action="resume" type="button">RESUME</button>
+            <button data-app-action="main-menu" type="button">MENU</button>
+            <button data-app-action="restart" type="button">RESTART</button>
+            <button data-app-action="settings" type="button">SETTINGS</button>
+          </div>
+        </section>
+        <section id="settingsPanel" class="app-panel settings-panel" data-app-panel="settings" hidden>
+          <div class="panel-header">
+            <span>SETTINGS</span>
+            <button data-app-action="back" type="button" aria-label="Back">BACK</button>
+          </div>
+          <label class="setting-row">
+            <span>FOV</span>
+            <input id="settingFov" type="range" min="55" max="95" step="1" />
+            <strong id="settingFovValue">72</strong>
+          </label>
+          <label class="setting-row">
+            <span>UI SCALE</span>
+            <input id="settingUiScale" type="range" min="80" max="130" step="5" />
+            <strong id="settingUiScaleValue">100%</strong>
+          </label>
+          <label class="setting-toggle">
+            <input id="settingDebugWindow" type="checkbox" />
+            <span>SHOW DEBUG WINDOW</span>
+          </label>
+        </section>
+      </div>
     </div>
-    <script type="module" src="src/OperatorGame.js"></script>
+    <script type="module" src="src/main.js"></script>
   </body>
 </html>
