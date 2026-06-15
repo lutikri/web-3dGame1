@@ -159,7 +159,7 @@ export const CONFIG = {
             baseColor: "assets/runtime-textures/T_Bricks1Old_BaseColor_Background_Full_ETC1S.ktx2",
             normal: "assets/runtime-textures/T_Bricks1Old_Normal_Background_Full_ETC1S.ktx2",
             orm: "assets/runtime-textures/T_Bricks1Old_ORM_Background_Full_ETC1S.ktx2",
-            mask: "assets/T_Interior1_Mask_Mask.png",
+            mask: "assets/runtime-textures/T_Interior1_Mask_Background_Full_ETC1S.ktx2",
           },
         },
         color: "#fdfffe",

@@ -35,6 +35,11 @@ const resultsStats = document.querySelector("#resultsStats");
 const controlTooltip = document.createElement("div");
 controlTooltip.className = "control-tooltip";
 document.body.appendChild(controlTooltip);
+const textureLoadingIndicator = document.createElement("div");
+textureLoadingIndicator.className = "texture-loading-indicator";
+textureLoadingIndicator.hidden = true;
+textureLoadingIndicator.innerHTML = `<span class="texture-loading-spinner" aria-hidden="true"></span><span>Loading Textures 0 / 0</span>`;
+document.body.appendChild(textureLoadingIndicator);
 
 const loadingOverlay = createLoadingOverlay({
   overlay: document.querySelector("#loadingOverlay"),
@@ -127,6 +132,12 @@ let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
 let roomLightSwitchMode = "off";
 let roomLightBootTimer = 0;
+const runtimeTextureLoading = {
+  total: 0,
+  completed: 0,
+  active: 0,
+  hideTimer: 0,
+};
 
 const interiorCustomTextureMaps = {};
 const interiorCustomTextureMapPromises = loadInteriorCustomMaterialTextures();
@@ -251,7 +262,7 @@ function loadInteriorCustomMaterialTextures() {
 function queueDeferredTextureLoad(key, paths) {
   const loadFullTextureMaps = async () => {
     try {
-      const fullTextureMaps = await loadInteriorTextureMaps(paths);
+      const fullTextureMaps = await loadInteriorTextureMaps(paths, { trackRuntimeTextures: true });
       const previousTextureMaps = interiorCustomTextureMaps[key];
       interiorCustomTextureMaps[key] = fullTextureMaps;
       applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps, CONFIG.interior.specialMaterials?.[key]);
@@ -285,7 +296,7 @@ function queueDeferredTextureLoad(key, paths) {
 function queueDeferredPanelTextureLoad(paths) {
   const loadFullTextureMaps = async () => {
     try {
-      const fullTextureMaps = await loadInteriorTextureMaps(paths);
+      const fullTextureMaps = await loadInteriorTextureMaps(paths, { trackRuntimeTextures: true });
       const previousTextureMaps = panelTextureMaps;
       panelTextureMaps = fullTextureMaps;
       applyPanelTextureMapsToMaterial(materials.panel, fullTextureMaps);
@@ -316,8 +327,60 @@ function queueDeferredPanelTextureLoad(paths) {
   waitForSceneThenLoad();
 }
 
-async function loadInteriorTextureMaps(paths) {
-  return textureStreaming.loadTextureMaps(paths);
+async function loadInteriorTextureMaps(paths, options = {}) {
+  return textureStreaming.loadTextureMaps(paths, getTextureLoadTrackingOptions(options));
+}
+
+function getTextureLoadTrackingOptions(options = {}) {
+  if (!options.trackRuntimeTextures) return {};
+  return {
+    onTextureStart: registerRuntimeTextureStart,
+    onTextureComplete: registerRuntimeTextureComplete,
+  };
+}
+
+function registerRuntimeTextureStart() {
+  if (!loadingComplete) return;
+  if (runtimeTextureLoading.active === 0 && runtimeTextureLoading.hideTimer <= 0) {
+    runtimeTextureLoading.total = 0;
+    runtimeTextureLoading.completed = 0;
+  }
+  runtimeTextureLoading.total += 1;
+  runtimeTextureLoading.active += 1;
+  runtimeTextureLoading.hideTimer = 0;
+  updateTextureLoadingIndicator();
+}
+
+function registerRuntimeTextureComplete() {
+  if (!loadingComplete) return;
+  runtimeTextureLoading.completed = Math.min(runtimeTextureLoading.completed + 1, runtimeTextureLoading.total);
+  runtimeTextureLoading.active = Math.max(0, runtimeTextureLoading.active - 1);
+  if (runtimeTextureLoading.active === 0) runtimeTextureLoading.hideTimer = 1.6;
+  updateTextureLoadingIndicator();
+}
+
+function updateRuntimeTextureLoading(dt) {
+  if (runtimeTextureLoading.active > 0) {
+    updateTextureLoadingIndicator();
+    return;
+  }
+  if (runtimeTextureLoading.hideTimer <= 0) return;
+  runtimeTextureLoading.hideTimer = Math.max(0, runtimeTextureLoading.hideTimer - dt);
+  if (runtimeTextureLoading.hideTimer <= 0) updateTextureLoadingIndicator();
+}
+
+function updateTextureLoadingIndicator() {
+  if (!textureLoadingIndicator) return;
+  const shouldShow =
+    loadingComplete &&
+    runtimeTextureLoading.total > 0 &&
+    (runtimeTextureLoading.active > 0 || runtimeTextureLoading.hideTimer > 0);
+  textureLoadingIndicator.hidden = !shouldShow;
+  textureLoadingIndicator.classList.toggle("is-active", shouldShow);
+  const label = textureLoadingIndicator.querySelector("span:last-child");
+  if (label) {
+    label.textContent = `Loading Textures ${runtimeTextureLoading.completed} / ${runtimeTextureLoading.total}`;
+  }
 }
 
 function createPanelPbrMaterial(name, overrides = {}) {
@@ -1036,6 +1099,7 @@ function animate() {
   updateInterior(dt);
   updatePanel(dt);
   updateFeedback(dt);
+  updateRuntimeTextureLoading(dt);
   updateDebugOverlay();
   if (composer) {
     composer.render();
@@ -2374,6 +2438,7 @@ window.operatorGameDebug = {
       mapSize: getShadowPreset(shadowQuality).mapSize ?? 0,
       lights: [...pointLightsByKey.values()].filter((light) => light.castShadow).length,
     },
+    textureLoading: { ...runtimeTextureLoading },
     lampCount: lamps.length,
     needleCount: needles.length,
     interactive: interactive.map((object) => ({

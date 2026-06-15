@@ -7,21 +7,33 @@ export function createTextureStreaming({ renderer, transcoderPath, onProgress, o
   const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 
   async function loadKtx2Texture(path, options = {}) {
+    options.onTextureStart?.(path);
     try {
       const texture = await ktx2Loader.loadAsync(path);
       applyTextureDefaults(texture, options);
       onProgress?.();
+      options.onTextureComplete?.(path);
       return texture;
     } catch (error) {
       onWarning?.(error);
+      options.onTextureComplete?.(path);
+      options.onTextureError?.(path, error);
       throw error;
     }
   }
 
   async function loadImageTexture(path, options = {}) {
-    const texture = await imageTextureLoader.loadAsync(path);
-    applyTextureDefaults(texture, options);
-    return texture;
+    options.onTextureStart?.(path);
+    try {
+      const texture = await imageTextureLoader.loadAsync(path);
+      applyTextureDefaults(texture, options);
+      options.onTextureComplete?.(path);
+      return texture;
+    } catch (error) {
+      options.onTextureComplete?.(path);
+      options.onTextureError?.(path, error);
+      throw error;
+    }
   }
 
   function applyTextureDefaults(texture, options = {}) {
@@ -34,15 +46,17 @@ export function createTextureStreaming({ renderer, transcoderPath, onProgress, o
     return path.toLowerCase().endsWith(".ktx2") ? loadKtx2Texture(path, options) : loadImageTexture(path, options);
   }
 
-  async function loadTextureMaps(paths) {
+  async function loadTextureMaps(paths, options = {}) {
     if (!paths) return null;
 
     const textureJobs = {
-      map: paths.baseColor ? loadRuntimeTexture(paths.baseColor, { colorSpace: THREE.SRGBColorSpace }) : null,
-      normalMap: paths.normal ? loadRuntimeTexture(paths.normal) : null,
-      ormMap: paths.orm ? loadRuntimeTexture(paths.orm) : null,
-      emissiveMap: paths.emissive ? loadRuntimeTexture(paths.emissive, { colorSpace: THREE.SRGBColorSpace }) : null,
-      maskMap: paths.mask ? loadRuntimeTexture(paths.mask) : null,
+      map: paths.baseColor ? loadRuntimeTexture(paths.baseColor, { ...options, colorSpace: THREE.SRGBColorSpace }) : null,
+      normalMap: paths.normal ? loadRuntimeTexture(paths.normal, options) : null,
+      ormMap: paths.orm ? loadRuntimeTexture(paths.orm, options) : null,
+      emissiveMap: paths.emissive
+        ? loadRuntimeTexture(paths.emissive, { ...options, colorSpace: THREE.SRGBColorSpace })
+        : null,
+      maskMap: paths.mask ? loadRuntimeTexture(paths.mask, options) : null,
     };
 
     const entries = await Promise.all(

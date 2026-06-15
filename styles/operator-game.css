@@ -87,6 +87,43 @@ body {
   display: none;
 }
 
+.texture-loading-indicator {
+  position: fixed;
+  z-index: 4;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border: 1px solid rgba(103, 215, 135, 0.34);
+  background: rgba(3, 7, 5, 0.78);
+  box-shadow: 0 0 18px rgba(103, 215, 135, 0.1);
+  color: #67d787;
+  padding: 8px 10px;
+  font: 800 0.75rem "Cascadia Mono", Consolas, monospace;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.texture-loading-indicator[hidden] {
+  display: none;
+}
+
+.texture-loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(103, 215, 135, 0.18);
+  border-top-color: #67d787;
+  border-radius: 50%;
+  animation: texture-loading-spin 0.82s linear infinite;
+}
+
+@keyframes texture-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .hud strong {
   font-size: 0.9rem;
   text-transform: uppercase;
