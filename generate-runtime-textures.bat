@@ -29,10 +29,19 @@ $jobs = @(
   @{ Source = "T_Interior1_BaseColor.png"; Prefix = "T_Interior1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 170 },
   @{ Source = "T_Interior1_Normal.png"; Prefix = "T_Interior1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 190 },
   @{ Source = "T_Interior1_OcclusionRoughnessMetallic.png"; Prefix = "T_Interior1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 170 },
+  @{ Source = "T_Interior1_Mask_Mask.png"; Prefix = "T_Interior1_Mask_Background"; Preview = 1024; Mode = "linear"; Quality = 190; KeepPreviewPng = $true },
+
+  @{ Source = "T_Bricks1Old_BaseColor.png"; Prefix = "T_Bricks1Old_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
+  @{ Source = "T_Bricks1Old_Normal.png"; Prefix = "T_Bricks1Old_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
+  @{ Source = "T_Bricks1Old_ORM.png"; Prefix = "T_Bricks1Old_ORM_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
 
   @{ Source = "T_Details1_BaseColor.png"; Prefix = "T_Details1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 180 },
   @{ Source = "T_Details1_Normal.png"; Prefix = "T_Details1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 195 },
   @{ Source = "T_Details1_OcclusionRoughnessMetallic.png"; Prefix = "T_Details1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 180 },
+
+  @{ Source = "T_Pipes1_BaseColor.png"; Prefix = "T_Pipes1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Pipes1_Normal.png"; Prefix = "T_Pipes1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Pipes1_OcclusionRoughnessMetallic.png"; Prefix = "T_Pipes1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
 
   @{ Source = "T_DoorLamp1_BaseColor.png"; Prefix = "T_DoorLamp1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_DoorLamp1_Normal.png"; Prefix = "T_DoorLamp1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
@@ -89,32 +98,111 @@ function Invoke-BasisuKtx2($inputPath, $outputPath, $mode, $quality) {
     $args = @("-ktx2", "-mipmap", "-linear", "-q", "$quality", "-comp_level", "1", "-file", $inputPath, "-output_file", $outputPath)
   }
 
-  & $basisu @args | Out-Host
+  $output = & $basisu @args 2>&1
   if ($LASTEXITCODE -ne 0) {
+    $output | Out-Host
     throw "basisu failed for $inputPath"
   }
 }
 
-foreach ($job in $jobs) {
+function Get-JobPaths($job) {
   $source = Join-Path $assets $job.Source
-  if (!(Test-Path -LiteralPath $source)) {
-    Write-Warning "Skipping missing source: $source"
-    continue
-  }
-
   $previewPng = Join-Path $tmpDir "$($job.Prefix)_Preview_$($job.Preview).png"
+  $previewRuntimePng = Join-Path $outDir "$($job.Prefix)_Preview_$($job.Preview).png"
   $previewKtx2 = Join-Path $outDir "$($job.Prefix)_Preview_$($job.Preview)_ETC1S.ktx2"
   $fullKtx2 = Join-Path $outDir "$($job.Prefix)_Full_ETC1S.ktx2"
 
+  return @{
+    Source = $source
+    PreviewPng = $previewPng
+    PreviewRuntimePng = $previewRuntimePng
+    PreviewKtx2 = $previewKtx2
+    FullKtx2 = $fullKtx2
+  }
+}
+
+function Test-JobOutputsCurrent($job) {
+  $paths = Get-JobPaths $job
+  if (!(Test-Path -LiteralPath $paths.Source)) {
+    return $false
+  }
+  if (!(Test-Path -LiteralPath $paths.PreviewKtx2) -or !(Test-Path -LiteralPath $paths.FullKtx2)) {
+    return $false
+  }
+  if ($job.KeepPreviewPng -and !(Test-Path -LiteralPath $paths.PreviewRuntimePng)) {
+    return $false
+  }
+
+  $sourceTime = (Get-Item -LiteralPath $paths.Source).LastWriteTimeUtc
+  $previewTime = (Get-Item -LiteralPath $paths.PreviewKtx2).LastWriteTimeUtc
+  $fullTime = (Get-Item -LiteralPath $paths.FullKtx2).LastWriteTimeUtc
+  if ($job.KeepPreviewPng) {
+    $previewPngTime = (Get-Item -LiteralPath $paths.PreviewRuntimePng).LastWriteTimeUtc
+    return ($previewTime -ge $sourceTime -and $fullTime -ge $sourceTime -and $previewPngTime -ge $sourceTime)
+  }
+  return ($previewTime -ge $sourceTime -and $fullTime -ge $sourceTime)
+}
+
+Write-Host ""
+Write-Host "Runtime texture generation"
+Write-Host "  [N] Only new/changed textures (default)"
+Write-Host "  [A] Convert all textures"
+$choice = Read-Host "Choose mode"
+$convertAll = $choice -match "^[Aa]"
+
+$selectedJobs = @()
+foreach ($job in $jobs) {
+  $paths = Get-JobPaths $job
+  if (!(Test-Path -LiteralPath $paths.Source)) {
+    Write-Warning "Skipping missing source: $($paths.Source)"
+    continue
+  }
+
+  if ($convertAll -or !(Test-JobOutputsCurrent $job)) {
+    $selectedJobs += $job
+  } else {
+    Write-Host "Current   $($job.Source)"
+  }
+}
+
+if ($selectedJobs.Count -eq 0) {
+  Write-Host "No runtime textures need conversion: $outDir"
+  Remove-Item -LiteralPath $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+  exit 0
+}
+
+$modeLabel = if ($convertAll) { "all textures" } else { "new/changed textures" }
+Write-Host "Converting $($selectedJobs.Count) source texture(s): $modeLabel"
+
+$jobIndex = 0
+foreach ($job in $selectedJobs) {
+  $jobIndex++
+  $paths = Get-JobPaths $job
+  $source = $paths.Source
+  $previewPng = $paths.PreviewPng
+  $previewKtx2 = $paths.PreviewKtx2
+  $fullKtx2 = $paths.FullKtx2
+  $percent = [int](($jobIndex - 1) / $selectedJobs.Count * 100)
+
+  Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] $($job.Source)" -PercentComplete $percent
+  Write-Host "Converting $($job.Source)"
+
   if (Save-ResizedPng -sourcePath $source -targetPath $previewPng -maxSize $job.Preview) {
+    if ($job.KeepPreviewPng) {
+      Copy-Item -LiteralPath $previewPng -Destination $paths.PreviewRuntimePng -Force
+      Write-Host "Generated $([IO.Path]::GetFileName($paths.PreviewRuntimePng))"
+    }
+    Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Preview $($job.Source)" -PercentComplete $percent
     Invoke-BasisuKtx2 -inputPath $previewPng -outputPath $previewKtx2 -mode $job.Mode -quality $job.Quality
     Remove-Item -LiteralPath $previewPng -Force
     Write-Host "Generated $([IO.Path]::GetFileName($previewKtx2))"
   }
 
+  Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Full $($job.Source)" -PercentComplete $percent
   Invoke-BasisuKtx2 -inputPath $source -outputPath $fullKtx2 -mode $job.Mode -quality $job.Quality
   Write-Host "Generated $([IO.Path]::GetFileName($fullKtx2))"
 }
 
+Write-Progress -Activity "Generating runtime textures" -Completed
 Remove-Item -LiteralPath $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "Runtime KTX2 texture generation complete: $outDir"

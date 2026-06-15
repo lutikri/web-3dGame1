@@ -9,6 +9,10 @@ export function createAppShell({ gameApi }) {
   const fovValue = document.querySelector("#settingFovValue");
   const uiScaleInput = document.querySelector("#settingUiScale");
   const uiScaleValue = document.querySelector("#settingUiScaleValue");
+  const shadowQualityInput = document.querySelector("#settingShadowQuality");
+  const shadowQualityValue = document.querySelector("#settingShadowQualityValue");
+  const gtaoQualityInput = document.querySelector("#settingGtaoQuality");
+  const gtaoQualityValue = document.querySelector("#settingGtaoQualityValue");
   const debugInput = document.querySelector("#settingDebugWindow");
   const settings = loadSettings();
   let currentPanel = null;
@@ -67,6 +71,24 @@ export function createAppShell({ gameApi }) {
       debugInput.checked = settings.showDebug;
       debugInput.addEventListener("change", () => {
         settings.showDebug = debugInput.checked;
+        applySettings();
+        saveSettings();
+      });
+    }
+
+    if (shadowQualityInput) {
+      shadowQualityInput.value = settings.shadowQuality;
+      shadowQualityInput.addEventListener("change", () => {
+        settings.shadowQuality = shadowQualityInput.value;
+        applySettings();
+        saveSettings();
+      });
+    }
+
+    if (gtaoQualityInput) {
+      gtaoQualityInput.value = settings.gtaoQuality;
+      gtaoQualityInput.addEventListener("change", () => {
+        settings.gtaoQuality = gtaoQualityInput.value;
         applySettings();
         saveSettings();
       });
@@ -168,14 +190,24 @@ export function createAppShell({ gameApi }) {
   function applySettings() {
     if (fovValue) fovValue.textContent = String(settings.fov);
     if (uiScaleValue) uiScaleValue.textContent = `${settings.uiScale}%`;
+    if (shadowQualityValue) shadowQualityValue.textContent = getQualityLabel(settings.shadowQuality);
+    if (gtaoQualityValue) gtaoQualityValue.textContent = getQualityLabel(settings.gtaoQuality);
     if (fovInput && Number(fovInput.value) !== settings.fov) fovInput.value = String(settings.fov);
     if (uiScaleInput && Number(uiScaleInput.value) !== settings.uiScale) uiScaleInput.value = String(settings.uiScale);
+    if (shadowQualityInput && shadowQualityInput.value !== settings.shadowQuality) {
+      shadowQualityInput.value = settings.shadowQuality;
+    }
+    if (gtaoQualityInput && gtaoQualityInput.value !== settings.gtaoQuality) {
+      gtaoQualityInput.value = settings.gtaoQuality;
+    }
     if (debugInput) debugInput.checked = settings.showDebug;
 
     document.body.style.setProperty("--ui-scale", String(settings.uiScale / 100));
     document.body.classList.toggle("debug-hidden", !settings.showDebug);
     gameApi.setBaseFov?.(settings.fov);
     gameApi.setDebugVisible?.(settings.showDebug);
+    gameApi.setShadowQuality?.(settings.shadowQuality);
+    gameApi.setGtaoQuality?.(settings.gtaoQuality);
   }
 
   function isOpen() {
@@ -198,12 +230,16 @@ function loadSettings() {
       fov: clampNumber(parsed.fov, 55, 95, 72),
       uiScale: clampNumber(parsed.uiScale, 80, 130, 100),
       showDebug: typeof parsed.showDebug === "boolean" ? parsed.showDebug : true,
+      shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "max"], "min"),
+      gtaoQuality: normalizeQuality(parsed.gtaoQuality, ["off", "min", "med", "max"], "off"),
     };
   } catch {
     return {
       fov: 72,
       uiScale: 100,
       showDebug: true,
+      shadowQuality: "min",
+      gtaoQuality: "off",
     };
   }
 }
@@ -215,8 +251,22 @@ function saveSettings() {
       fov: Number(document.querySelector("#settingFov")?.value ?? 72),
       uiScale: Number(document.querySelector("#settingUiScale")?.value ?? 100),
       showDebug: Boolean(document.querySelector("#settingDebugWindow")?.checked),
+      shadowQuality: document.querySelector("#settingShadowQuality")?.value ?? "min",
+      gtaoQuality: document.querySelector("#settingGtaoQuality")?.value ?? "off",
     }),
   );
+}
+
+function normalizeQuality(value, allowed, fallback) {
+  return allowed.includes(value) ? value : fallback;
+}
+
+function getQualityLabel(value) {
+  if (value === "off") return "OFF";
+  if (value === "min") return "MIN";
+  if (value === "med") return "MED";
+  if (value === "max") return "MAX";
+  return String(value).toUpperCase();
 }
 
 function clampNumber(value, min, max, fallback) {

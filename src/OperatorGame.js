@@ -58,7 +58,6 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.shadowMap.enabled = CONFIG.shadows.enabled;
 renderer.shadowMap.type = CONFIG.shadows.type;
 
 const textureStreaming = createTextureStreaming({
@@ -67,6 +66,7 @@ const textureStreaming = createTextureStreaming({
   onProgress: () => setLoadingProgress(18),
   onWarning: () => setLoadingStatus("TEXTURE MAP WARNING"),
 });
+const emptyMaskTexture = createSolidTexture(0, 0, 0, 255);
 
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
@@ -114,6 +114,8 @@ let indicatorTestTimer = 0;
 let latestSnapshot = fusionCore.getSnapshot();
 let zoomActive = false;
 let baseFovDegrees = CONFIG.camera.fovDegrees;
+let shadowQuality = CONFIG.shadows.defaultQuality ?? "min";
+let gtaoQuality = CONFIG.postProcessing.gtao.defaultQuality ?? "off";
 let loadingComplete = Boolean(CONFIG.loading?.skip);
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
@@ -199,7 +201,7 @@ Promise.all(interiorCustomTextureMapPromises)
   .then((entries) => {
     entries.forEach(([key, textureMaps, deferredPaths]) => {
       interiorCustomTextureMaps[key] = textureMaps;
-      applyTextureMapsToMaterial(materials.interiorCustom[key], textureMaps);
+      applyTextureMapsToMaterial(materials.interiorCustom[key], textureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = deferredPaths ? "preview" : "full";
       if (deferredPaths) queueDeferredTextureLoad(key, deferredPaths);
     });
@@ -252,7 +254,7 @@ function queueDeferredTextureLoad(key, paths) {
       const fullTextureMaps = await loadInteriorTextureMaps(paths);
       const previousTextureMaps = interiorCustomTextureMaps[key];
       interiorCustomTextureMaps[key] = fullTextureMaps;
-      applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps);
+      applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = "full";
       textureStreaming.disposeTextureMaps(previousTextureMaps);
       console.log(`[OperatorGame] Upgraded ${key} textures to full resolution`);
@@ -364,10 +366,11 @@ function createInteriorCustomMaterial(key, config) {
   });
   material.userData.baseEmissiveIntensity = material.emissiveIntensity;
   material.userData.roomLightControlled = Boolean(config.roomLightControlled);
+  if (config.maskOverlay) setupMaskOverlayMaterial(material, config);
   return material;
 }
 
-function applyTextureMapsToMaterial(material, textureMaps) {
+function applyTextureMapsToMaterial(material, textureMaps, config = {}) {
   if (!material || !textureMaps) return;
 
   material.map = textureMaps.map ?? null;
@@ -376,13 +379,190 @@ function applyTextureMapsToMaterial(material, textureMaps) {
   material.roughnessMap = textureMaps.ormMap ?? null;
   material.metalnessMap = textureMaps.ormMap ?? null;
   material.emissiveMap = textureMaps.emissiveMap ?? null;
+  material.userData.maskMap = textureMaps.maskMap ?? null;
+  applyTextureRepeat(textureMaps, config.textureRepeat);
+  applyMaskTextureSettings(textureMaps.maskMap);
+  updateMaskOverlayUniforms(material, config);
   material.needsUpdate = true;
+}
+
+function applyTextureRepeat(textureMaps, repeatConfig) {
+  const repeat =
+    Array.isArray(repeatConfig) || typeof repeatConfig === "object"
+      ? {
+          x: Number(repeatConfig.x ?? repeatConfig[0] ?? 1),
+          y: Number(repeatConfig.y ?? repeatConfig[1] ?? repeatConfig.x ?? repeatConfig[0] ?? 1),
+        }
+      : { x: Number(repeatConfig ?? 1), y: Number(repeatConfig ?? 1) };
+
+  [textureMaps.map, textureMaps.normalMap, textureMaps.ormMap, textureMaps.emissiveMap].forEach((texture) => {
+    if (!texture) return;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(repeat.x, repeat.y);
+    texture.needsUpdate = true;
+  });
+}
+
+function applyMaskTextureSettings(texture) {
+  if (!texture) return;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.repeat.set(1, 1);
+  texture.offset.set(0, 0);
+  texture.needsUpdate = true;
+}
+
+function setupMaskOverlayMaterial(material, config) {
+  const uniforms = createMaskOverlayUniforms(config);
+  material.userData.maskOverlayUniforms = uniforms;
+  material.customProgramCacheKey = () => `${material.name}:mask-overlay`;
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        "#include <uv_pars_vertex>",
+        `#include <uv_pars_vertex>
+varying vec2 interiorMaskUv;`,
+      )
+      .replace(
+        "#include <uv_vertex>",
+        `#include <uv_vertex>
+interiorMaskUv = uv;`,
+      );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "#include <map_pars_fragment>",
+      `#include <map_pars_fragment>
+uniform sampler2D interiorMaskMap;
+uniform vec3 interiorMaskColorR;
+uniform vec3 interiorMaskColorG;
+uniform vec3 interiorMaskColorB;
+uniform float interiorMaskOpacityR;
+uniform float interiorMaskOpacityG;
+uniform float interiorMaskOpacityB;
+uniform vec3 interiorMaskThreshold;
+uniform vec3 interiorMaskSoftness;
+uniform vec3 interiorMaskBlendMode;
+uniform float interiorMaskDebugView;
+varying vec2 interiorMaskUv;
+float getInteriorMaskChannel(float channel, float threshold, float softness) {
+  return smoothstep(threshold, threshold + max(softness, 0.001), channel);
+}
+vec3 getInteriorOverlayBlend(vec3 baseColor, vec3 overlayColor) {
+  return mix(
+    2.0 * baseColor * overlayColor,
+    1.0 - 2.0 * (1.0 - baseColor) * (1.0 - overlayColor),
+    step(0.5, baseColor)
+  );
+}
+vec3 applyInteriorMaskBlend(vec3 baseColor, vec3 overlayColor, float strength, float blendMode) {
+  vec3 mixColor = mix(baseColor, overlayColor, strength);
+  vec3 multiplyColor = mix(baseColor, baseColor * overlayColor, strength);
+  vec3 overlayBlendColor = mix(baseColor, getInteriorOverlayBlend(baseColor, overlayColor), strength);
+  vec3 mixOrMultiply = mix(mixColor, multiplyColor, step(0.5, blendMode));
+  return mix(mixOrMultiply, overlayBlendColor, step(1.5, blendMode));
+}`,
+    );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "#include <map_fragment>",
+      `#include <map_fragment>
+  vec3 interiorMaskSample = texture2D(interiorMaskMap, interiorMaskUv).rgb;
+  if (interiorMaskDebugView > 0.5) {
+    diffuseColor.rgb = interiorMaskSample;
+  } else {
+  float interiorMaskR = getInteriorMaskChannel(interiorMaskSample.r, interiorMaskThreshold.r, interiorMaskSoftness.r);
+  float interiorMaskG = getInteriorMaskChannel(interiorMaskSample.g, interiorMaskThreshold.g, interiorMaskSoftness.g);
+  float interiorMaskB = getInteriorMaskChannel(interiorMaskSample.b, interiorMaskThreshold.b, interiorMaskSoftness.b);
+  diffuseColor.rgb = applyInteriorMaskBlend(diffuseColor.rgb, interiorMaskColorR, clamp(interiorMaskR * interiorMaskOpacityR, 0.0, 1.0), interiorMaskBlendMode.r);
+  diffuseColor.rgb = applyInteriorMaskBlend(diffuseColor.rgb, interiorMaskColorG, clamp(interiorMaskG * interiorMaskOpacityG, 0.0, 1.0), interiorMaskBlendMode.g);
+  diffuseColor.rgb = applyInteriorMaskBlend(diffuseColor.rgb, interiorMaskColorB, clamp(interiorMaskB * interiorMaskOpacityB, 0.0, 1.0), interiorMaskBlendMode.b);
+  }`,
+    );
+  };
+}
+
+function createMaskOverlayUniforms(config) {
+  const overlay = config.maskOverlay ?? {};
+  return {
+    interiorMaskMap: { value: emptyMaskTexture },
+    interiorMaskColorR: { value: new THREE.Color(overlay.red?.color ?? "#ffffff") },
+    interiorMaskColorG: { value: new THREE.Color(overlay.green?.color ?? "#ffffff") },
+    interiorMaskColorB: { value: new THREE.Color(overlay.blue?.color ?? "#ffffff") },
+    interiorMaskOpacityR: { value: getMaskChannelStrength(overlay.red) },
+    interiorMaskOpacityG: { value: getMaskChannelStrength(overlay.green) },
+    interiorMaskOpacityB: { value: getMaskChannelStrength(overlay.blue) },
+    interiorMaskThreshold: { value: getMaskChannelVector(overlay, "threshold", 0.45) },
+    interiorMaskSoftness: { value: getMaskChannelVector(overlay, "softness", 0.08) },
+    interiorMaskBlendMode: { value: getMaskBlendModeVector(overlay) },
+    interiorMaskDebugView: { value: overlay.debugView ? 1 : 0 },
+  };
+}
+
+function updateMaskOverlayUniforms(material, config = {}) {
+  const uniforms = material.userData.maskOverlayUniforms;
+  if (!uniforms) return;
+  const overlay = config.maskOverlay ?? {};
+  uniforms.interiorMaskMap.value = material.userData.maskMap ?? emptyMaskTexture;
+  uniforms.interiorMaskColorR.value.set(overlay.red?.color ?? "#ffffff");
+  uniforms.interiorMaskColorG.value.set(overlay.green?.color ?? "#ffffff");
+  uniforms.interiorMaskColorB.value.set(overlay.blue?.color ?? "#ffffff");
+  uniforms.interiorMaskOpacityR.value = getMaskChannelStrength(overlay.red);
+  uniforms.interiorMaskOpacityG.value = getMaskChannelStrength(overlay.green);
+  uniforms.interiorMaskOpacityB.value = getMaskChannelStrength(overlay.blue);
+  uniforms.interiorMaskThreshold.value.copy(getMaskChannelVector(overlay, "threshold", 0.45));
+  uniforms.interiorMaskSoftness.value.copy(getMaskChannelVector(overlay, "softness", 0.08));
+  uniforms.interiorMaskBlendMode.value.copy(getMaskBlendModeVector(overlay));
+  uniforms.interiorMaskDebugView.value = overlay.debugView ? 1 : 0;
+  material.needsUpdate = true;
+}
+
+function setInteriorMaskDebug(materialKey, enabled) {
+  const config = CONFIG.interior.specialMaterials?.[materialKey];
+  const material = materials.interiorCustom?.[materialKey];
+  if (!config?.maskOverlay || !material) return false;
+  config.maskOverlay.debugView = Boolean(enabled);
+  updateMaskOverlayUniforms(material, config);
+  return config.maskOverlay.debugView;
+}
+
+function getMaskChannelStrength(channel = {}) {
+  return Number(channel.opacity ?? 0) * Number(channel.intensity ?? 1);
+}
+
+function getMaskChannelVector(overlay, property, fallback) {
+  return new THREE.Vector3(
+    Number(overlay.red?.[property] ?? fallback),
+    Number(overlay.green?.[property] ?? fallback),
+    Number(overlay.blue?.[property] ?? fallback),
+  );
+}
+
+function getMaskBlendModeVector(overlay) {
+  return new THREE.Vector3(
+    getMaskBlendModeValue(overlay.red?.blend),
+    getMaskBlendModeValue(overlay.green?.blend),
+    getMaskBlendModeValue(overlay.blue?.blend),
+  );
+}
+
+function getMaskBlendModeValue(mode = "mix") {
+  if (mode === "multiply") return 1;
+  if (mode === "overlay") return 2;
+  return 0;
+}
+
+function createSolidTexture(r, g, b, a = 255) {
+  const texture = new THREE.DataTexture(new Uint8Array([r, g, b, a]), 1, 1, THREE.RGBAFormat);
+  texture.colorSpace = THREE.NoColorSpace;
+  texture.needsUpdate = true;
+  return texture;
 }
 
 init();
 
 function init() {
   if (CONFIG.loading?.skip) skipLoadingOverlay();
+  renderer.shadowMap.enabled = getShadowPreset(shadowQuality).enabled;
   setupLights();
   setupLightFixtures();
   buildRoom();
@@ -440,10 +620,11 @@ function setupLightFixtures() {
 }
 
 function applyShadowSettings(light, lightConfig) {
-  light.castShadow = CONFIG.shadows.enabled && Boolean(lightConfig.castShadow);
+  const shadowPreset = getShadowPreset(shadowQuality);
+  light.castShadow = shadowPreset.enabled && Boolean(lightConfig.castShadow);
   if (!light.castShadow) return;
 
-  const mapSize = lightConfig.shadowMapSize ?? 1024;
+  const mapSize = shadowPreset.mapSize ?? lightConfig.shadowMapSize ?? 512;
   light.shadow.mapSize.set(mapSize, mapSize);
   light.shadow.bias = lightConfig.shadowBias ?? -0.0005;
   light.shadow.normalBias = lightConfig.shadowNormalBias ?? 0.03;
@@ -454,27 +635,19 @@ function applyShadowSettings(light, lightConfig) {
 function setupPostProcessing() {
   if (!CONFIG.postProcessing.enabled) return;
 
+  composer?.dispose?.();
+  gtaoPass = null;
+  bloomPass = null;
+  chromaticAberrationPass = null;
   composer = new EffectComposer(renderer);
   composer.setSize(window.innerWidth, window.innerHeight);
   composer.addPass(new RenderPass(scene, camera));
 
-  if (CONFIG.postProcessing.gtao.enabled) {
-    const gtaoConfig = CONFIG.postProcessing.gtao;
+  const gtaoConfig = getGtaoPreset(gtaoQuality);
+  if (gtaoConfig.enabled) {
     gtaoPass = new GTAOPass(scene, camera, window.innerWidth, window.innerHeight);
     gtaoPass.output = GTAOPass.OUTPUT.Default;
-    gtaoPass.blendIntensity = gtaoConfig.blendIntensity;
-    gtaoPass.updateGtaoMaterial({
-      radius: gtaoConfig.radius,
-      distanceExponent: gtaoConfig.distanceExponent,
-      thickness: gtaoConfig.thickness,
-      distanceFallOff: gtaoConfig.distanceFallOff,
-      scale: gtaoConfig.scale,
-      samples: gtaoConfig.samples,
-    });
-    gtaoPass.updatePdMaterial({
-      radius: gtaoConfig.denoiseRadius,
-      samples: gtaoConfig.denoiseSamples,
-    });
+    applyGtaoPresetToPass(gtaoPass, gtaoConfig);
     composer.addPass(gtaoPass);
   }
 
@@ -496,6 +669,58 @@ function setupPostProcessing() {
   }
 
   composer.addPass(new OutputPass());
+}
+
+function getShadowPreset(quality = shadowQuality) {
+  return CONFIG.shadows.presets?.[quality] ?? CONFIG.shadows.presets?.min ?? { enabled: true, mapSize: 512 };
+}
+
+function getGtaoPreset(quality = gtaoQuality) {
+  return CONFIG.postProcessing.gtao.presets?.[quality] ?? CONFIG.postProcessing.gtao.presets?.off ?? { enabled: false };
+}
+
+function applyGtaoPresetToPass(pass, gtaoConfig) {
+  pass.blendIntensity = gtaoConfig.blendIntensity ?? 0;
+  pass.updateGtaoMaterial({
+    radius: gtaoConfig.radius ?? 0.35,
+    distanceExponent: gtaoConfig.distanceExponent ?? 1.6,
+    thickness: gtaoConfig.thickness ?? 0.75,
+    distanceFallOff: gtaoConfig.distanceFallOff ?? 1,
+    scale: gtaoConfig.scale ?? 1.5,
+    samples: gtaoConfig.samples ?? 8,
+  });
+  pass.updatePdMaterial({
+    radius: gtaoConfig.denoiseRadius ?? 2,
+    samples: gtaoConfig.denoiseSamples ?? 4,
+  });
+}
+
+function setShadowQuality(quality = "min") {
+  const presetKey = CONFIG.shadows.presets?.[quality] ? quality : CONFIG.shadows.defaultQuality ?? "min";
+  const preset = getShadowPreset(presetKey);
+  if (shadowQuality === presetKey && renderer.shadowMap.enabled === Boolean(preset.enabled)) return shadowQuality;
+  shadowQuality = presetKey;
+  renderer.shadowMap.enabled = Boolean(preset.enabled);
+  renderer.shadowMap.type = CONFIG.shadows.type;
+
+  pointLightsByKey.forEach((light) => {
+    const lightKey = light.userData.lightKey;
+    const lightConfig = CONFIG.lighting.pointLights?.[lightKey] ?? {};
+    light.shadow?.map?.dispose?.();
+    if (light.shadow) light.shadow.map = null;
+    applyShadowSettings(light, lightConfig);
+  });
+
+  return shadowQuality;
+}
+
+function setGtaoQuality(quality = "off") {
+  const presetKey = CONFIG.postProcessing.gtao.presets?.[quality] ? quality : CONFIG.postProcessing.gtao.defaultQuality ?? "off";
+  const preset = getGtaoPreset(presetKey);
+  if (gtaoQuality === presetKey && Boolean(gtaoPass) === Boolean(preset.enabled)) return gtaoQuality;
+  gtaoQuality = presetKey;
+  setupPostProcessing();
+  return gtaoQuality;
 }
 
 function buildRoom() {
@@ -758,14 +983,19 @@ function getCustomInteriorMaterialDebugState() {
     Object.entries(materials.interiorCustom).map(([key, material]) => [
       key,
       {
+        meshName: material.name,
         assignedTo: CONFIG.interior.specialMaterials?.[key]?.meshNames ?? [],
         mapsLoaded: Boolean(interiorCustomTextureMaps[key]),
+        maskLoaded: Boolean(interiorCustomTextureMaps[key]?.maskMap),
+        maskOverlay: Boolean(CONFIG.interior.specialMaterials?.[key]?.maskOverlay),
+        maskOverlaySettings: CONFIG.interior.specialMaterials?.[key]?.maskOverlay ?? null,
         color: `#${material.color.getHexString()}`,
         roughness: material.roughness,
         metalness: material.metalness,
         emissive: `#${material.emissive.getHexString()}`,
         emissiveIntensity: material.emissiveIntensity,
         fixtureName: material.userData.fixtureName ?? "",
+        textureRepeat: CONFIG.interior.specialMaterials?.[key]?.textureRepeat ?? 1,
         textureTier: material.userData.textureTier ?? "",
       },
     ]),
@@ -896,8 +1126,8 @@ function updateDebugOverlay() {
     "LIGHTS: src/OperatorGameConfig.js",
     "CONFIG.lighting.pointLights",
     "",
-    `shadows: ${CONFIG.shadows.enabled ? "on" : "off"}`,
-    `gtao: ${gtaoPass ? "on" : "off"}`,
+    `shadows: ${renderer.shadowMap.enabled ? shadowQuality : "off"}`,
+    `gtao: ${gtaoPass ? gtaoQuality : "off"}`,
     "",
     `noclip: ${noclipEnabled ? "on" : "off"}`,
     `noclip speed: ${noclipSpeed.toFixed(2)}`,
@@ -2005,10 +2235,13 @@ window.operatorGameDebug = {
     if (debugOverlay) debugOverlay.hidden = !visible;
     return Boolean(visible);
   },
+  setShadowQuality,
+  setGtaoQuality,
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: () => {
     indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
   },
+  setInteriorMaskDebug,
   triggerFixtureFlicker,
   setNoclip: (enabled) => {
     noclipEnabled = Boolean(enabled);
@@ -2128,6 +2361,7 @@ window.operatorGameDebug = {
     postProcessing: {
       composer: Boolean(composer),
       gtao: Boolean(gtaoPass),
+      gtaoQuality,
       gtaoBlendIntensity: gtaoPass?.blendIntensity ?? 0,
       bloom: Boolean(bloomPass),
       bloomStrength: bloomPass?.strength ?? 0,
@@ -2136,7 +2370,9 @@ window.operatorGameDebug = {
     },
     shadows: {
       enabled: renderer.shadowMap.enabled,
-      lights: Object.values(CONFIG.lighting.pointLights).filter((light) => light.castShadow).length,
+      quality: shadowQuality,
+      mapSize: getShadowPreset(shadowQuality).mapSize ?? 0,
+      lights: [...pointLightsByKey.values()].filter((light) => light.castShadow).length,
     },
     lampCount: lamps.length,
     needleCount: needles.length,

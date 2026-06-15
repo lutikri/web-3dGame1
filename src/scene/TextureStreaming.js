@@ -42,6 +42,7 @@ export function createTextureStreaming({ renderer, transcoderPath, onProgress, o
       normalMap: paths.normal ? loadRuntimeTexture(paths.normal) : null,
       ormMap: paths.orm ? loadRuntimeTexture(paths.orm) : null,
       emissiveMap: paths.emissive ? loadRuntimeTexture(paths.emissive, { colorSpace: THREE.SRGBColorSpace }) : null,
+      maskMap: paths.mask ? loadRuntimeTexture(paths.mask) : null,
     };
 
     const entries = await Promise.all(

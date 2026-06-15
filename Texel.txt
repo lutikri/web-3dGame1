@@ -1,5 +1,5 @@
-SM_Details1_LP 528 p/m 1k
-SM_Pipes1_LP 528 p/m 512 
-SM_DoorLamp_LP 522 p/m 1k
-SM_Interior1_LP 
-SM_Lamps 528 p/m 512, free space
+SM_Details1_LP 2094.24 p/m 4k
+SM_Pipes1_LP 2045.13 p/m 2K
+SM_DoorLamp_LP 2252.85 p/m 4K
+SM_Interior1_LP 704.05 4K
+SM_Lamps 2447.64 2K

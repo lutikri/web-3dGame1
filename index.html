@@ -141,6 +141,25 @@
             <input id="settingUiScale" type="range" min="80" max="130" step="5" />
             <strong id="settingUiScaleValue">100%</strong>
           </label>
+          <label class="setting-row">
+            <span>SHADOWS</span>
+            <select id="settingShadowQuality">
+              <option value="off">OFF</option>
+              <option value="min">MIN 512</option>
+              <option value="max">MAX 2K</option>
+            </select>
+            <strong id="settingShadowQualityValue">MIN</strong>
+          </label>
+          <label class="setting-row">
+            <span>GTAO</span>
+            <select id="settingGtaoQuality">
+              <option value="off">OFF</option>
+              <option value="min">MIN</option>
+              <option value="med">MED</option>
+              <option value="max">MAX</option>
+            </select>
+            <strong id="settingGtaoQualityValue">OFF</strong>
+          </label>
           <label class="setting-toggle">
             <input id="settingDebugWindow" type="checkbox" />
             <span>SHOW DEBUG WINDOW</span>
