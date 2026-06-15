@@ -293,7 +293,7 @@ export const CONFIG = {
       SM_Fan: {
         enabled: true,
         axis: "z",
-        speedDegreesPerSecond: 420,
+        speedDegreesPerSecond: 120,
       },
     },
   },
@@ -457,8 +457,8 @@ export const CONFIG = {
         shadowFar: 9,
       },
       LampFan: {
-        color: "#ffbd41",
-        intensity: 1.8,
+        color: "#75b1ff",
+        intensity: 0.4,
         distance: 3,
         decay: 1,
         position: new THREE.Vector3(-0.45, 2.33, -0.47),
