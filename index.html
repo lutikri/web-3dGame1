@@ -9,8 +9,10 @@
     <script type="importmap">
       {
         "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+          "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/",
+          "postprocessing": "https://esm.sh/postprocessing@6.36.3?external=three",
+          "realism-effects": "https://esm.sh/realism-effects@1.1.2?external=three&deps=postprocessing@6.36.3"
         }
       }
     </script>
@@ -159,6 +161,36 @@
               <option value="max">MAX</option>
             </select>
             <strong id="settingGtaoQualityValue">OFF</strong>
+          </label>
+          <label class="setting-row">
+            <span>SSGI</span>
+            <select id="settingSsgiQuality">
+              <option value="off">OFF</option>
+              <option value="min">MIN</option>
+              <option value="med">MED</option>
+              <option value="max">MAX</option>
+            </select>
+            <strong id="settingSsgiQualityValue">OFF</strong>
+          </label>
+          <label class="setting-row">
+            <span>SSR</span>
+            <select id="settingSsrQuality">
+              <option value="off">OFF</option>
+              <option value="min">MIN</option>
+              <option value="med">MED</option>
+              <option value="max">MAX</option>
+            </select>
+            <strong id="settingSsrQualityValue">OFF</strong>
+          </label>
+          <label class="setting-row">
+            <span>CONTACT SHADOWS</span>
+            <select id="settingScreenSpaceShadowQuality">
+              <option value="off">OFF</option>
+              <option value="min">MIN</option>
+              <option value="med">MED</option>
+              <option value="max">MAX</option>
+            </select>
+            <strong id="settingScreenSpaceShadowQualityValue">OFF</strong>
           </label>
           <label class="setting-toggle">
             <input id="settingDebugWindow" type="checkbox" />

@@ -104,8 +104,20 @@ let leanAmount = 0;
 let freezeNeedles = false;
 let composer = null;
 let gtaoPass = null;
+let ssrPass = null;
+let ssrPassClass = null;
+let ssrModulesPromise = null;
+let postProcessingRevision = 0;
 let bloomPass = null;
 let chromaticAberrationPass = null;
+let realismComposer = null;
+let realismVelocityDepthNormalPass = null;
+let realismSsgiEffect = null;
+let realismScreenSpaceShadowEffect = null;
+let realismBloomEffect = null;
+let realismChromaticAberrationEffect = null;
+let realismModulesPromise = null;
+let realismPostProcessingRevision = 0;
 let fpsFrameCount = 0;
 let fpsElapsed = 0;
 let currentFps = 0;
@@ -121,6 +133,9 @@ let zoomActive = false;
 let baseFovDegrees = CONFIG.camera.fovDegrees;
 let shadowQuality = CONFIG.shadows.defaultQuality ?? "min";
 let gtaoQuality = CONFIG.postProcessing.gtao.defaultQuality ?? "off";
+let ssgiQuality = CONFIG.postProcessing.ssgi.defaultQuality ?? "off";
+let ssrQuality = CONFIG.postProcessing.ssr.defaultQuality ?? "off";
+let screenSpaceShadowQuality = CONFIG.postProcessing.screenSpaceShadows.defaultQuality ?? "off";
 let loadingComplete = Boolean(CONFIG.loading?.skip);
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
@@ -698,8 +713,11 @@ function applyShadowSettings(light, lightConfig) {
 function setupPostProcessing() {
   if (!CONFIG.postProcessing.enabled) return;
 
+  const revision = ++postProcessingRevision;
+  ssrPass?.dispose?.();
   composer?.dispose?.();
   gtaoPass = null;
+  ssrPass = null;
   bloomPass = null;
   chromaticAberrationPass = null;
   composer = new EffectComposer(renderer);
@@ -712,6 +730,29 @@ function setupPostProcessing() {
     gtaoPass.output = GTAOPass.OUTPUT.Default;
     applyGtaoPresetToPass(gtaoPass, gtaoConfig);
     composer.addPass(gtaoPass);
+  }
+
+  const ssrConfig = getSsrPreset(ssrQuality);
+  if (ssrConfig.enabled) {
+    if (ssrPassClass) {
+      ssrPass = new ssrPassClass({
+        renderer,
+        scene,
+        camera,
+        width: Math.max(1, Math.round(window.innerWidth * (ssrConfig.resolutionScale ?? 1))),
+        height: Math.max(1, Math.round(window.innerHeight * (ssrConfig.resolutionScale ?? 1))),
+      });
+      applySsrPresetToPass(ssrPass, ssrConfig);
+      composer.addPass(ssrPass);
+    } else {
+      loadSsrPassClass()
+        .then(() => {
+          if (revision === postProcessingRevision && getSsrPreset(ssrQuality).enabled) setupPostProcessing();
+        })
+        .catch((error) => {
+          console.warn("[OperatorGame] Failed to load SSRPass", error);
+        });
+    }
   }
 
   if (CONFIG.postProcessing.bloom.enabled) {
@@ -732,6 +773,7 @@ function setupPostProcessing() {
   }
 
   composer.addPass(new OutputPass());
+  setupRealismPostProcessing();
 }
 
 function getShadowPreset(quality = shadowQuality) {
@@ -740,6 +782,21 @@ function getShadowPreset(quality = shadowQuality) {
 
 function getGtaoPreset(quality = gtaoQuality) {
   return CONFIG.postProcessing.gtao.presets?.[quality] ?? CONFIG.postProcessing.gtao.presets?.off ?? { enabled: false };
+}
+
+function getSsgiPreset(quality = ssgiQuality) {
+  return CONFIG.postProcessing.ssgi.presets?.[quality] ?? CONFIG.postProcessing.ssgi.presets?.off ?? { enabled: false };
+}
+
+function getSsrPreset(quality = ssrQuality) {
+  return CONFIG.postProcessing.ssr.presets?.[quality] ?? CONFIG.postProcessing.ssr.presets?.off ?? { enabled: false };
+}
+
+function getScreenSpaceShadowPreset(quality = screenSpaceShadowQuality) {
+  return (
+    CONFIG.postProcessing.screenSpaceShadows.presets?.[quality] ??
+    CONFIG.postProcessing.screenSpaceShadows.presets?.off ?? { enabled: false }
+  );
 }
 
 function applyGtaoPresetToPass(pass, gtaoConfig) {
@@ -756,6 +813,24 @@ function applyGtaoPresetToPass(pass, gtaoConfig) {
     radius: gtaoConfig.denoiseRadius ?? 2,
     samples: gtaoConfig.denoiseSamples ?? 4,
   });
+}
+
+async function loadSsrPassClass() {
+  if (ssrPassClass) return ssrPassClass;
+  ssrModulesPromise ??= import("three/addons/postprocessing/SSRPass.js").then(({ SSRPass }) => SSRPass);
+  ssrPassClass = await ssrModulesPromise;
+  return ssrPassClass;
+}
+
+function applySsrPresetToPass(pass, ssrConfig) {
+  pass.opacity = ssrConfig.opacity ?? 0.35;
+  pass.maxDistance = ssrConfig.maxDistance ?? 1.5;
+  pass.thickness = ssrConfig.thickness ?? 0.025;
+  pass.blur = ssrConfig.blur ?? true;
+  pass.bouncing = ssrConfig.bouncing ?? false;
+  pass.distanceAttenuation = ssrConfig.distanceAttenuation ?? true;
+  pass.fresnel = ssrConfig.fresnel ?? true;
+  pass.infiniteThick = ssrConfig.infiniteThick ?? false;
 }
 
 function setShadowQuality(quality = "min") {
@@ -784,6 +859,146 @@ function setGtaoQuality(quality = "off") {
   gtaoQuality = presetKey;
   setupPostProcessing();
   return gtaoQuality;
+}
+
+function setSsgiQuality(quality = "off") {
+  const presetKey = CONFIG.postProcessing.ssgi.presets?.[quality] ? quality : CONFIG.postProcessing.ssgi.defaultQuality ?? "off";
+  const preset = getSsgiPreset(presetKey);
+  if (ssgiQuality === presetKey && Boolean(realismSsgiEffect) === Boolean(preset.enabled)) return ssgiQuality;
+  ssgiQuality = presetKey;
+  setupRealismPostProcessing();
+  return ssgiQuality;
+}
+
+function setSsrQuality(quality = "off") {
+  const presetKey = CONFIG.postProcessing.ssr.presets?.[quality] ? quality : CONFIG.postProcessing.ssr.defaultQuality ?? "off";
+  const preset = getSsrPreset(presetKey);
+  if (ssrQuality === presetKey && Boolean(ssrPass) === Boolean(preset.enabled)) return ssrQuality;
+  ssrQuality = presetKey;
+  setupPostProcessing();
+  return ssrQuality;
+}
+
+function setScreenSpaceShadowQuality(quality = "off") {
+  const presetKey = CONFIG.postProcessing.screenSpaceShadows.presets?.[quality]
+    ? quality
+    : CONFIG.postProcessing.screenSpaceShadows.defaultQuality ?? "off";
+  const preset = getScreenSpaceShadowPreset(presetKey);
+  if (screenSpaceShadowQuality === presetKey && Boolean(realismScreenSpaceShadowEffect) === Boolean(preset.enabled)) {
+    return screenSpaceShadowQuality;
+  }
+  screenSpaceShadowQuality = presetKey;
+  setupRealismPostProcessing();
+  return screenSpaceShadowQuality;
+}
+
+function isRealismPostProcessingEnabled() {
+  return Boolean(getSsgiPreset().enabled || getScreenSpaceShadowPreset().enabled);
+}
+
+async function loadRealismModules() {
+  realismModulesPromise ??= Promise.all([import("postprocessing"), import("realism-effects")]).then(
+    ([postprocessing, realismEffects]) => ({ postprocessing, realismEffects }),
+  );
+  return realismModulesPromise;
+}
+
+async function setupRealismPostProcessing() {
+  const revision = ++realismPostProcessingRevision;
+  if (!CONFIG.postProcessing.enabled || !isRealismPostProcessingEnabled()) {
+    disposeRealismPostProcessing();
+    return;
+  }
+
+  try {
+    const modules = await loadRealismModules();
+    if (revision !== realismPostProcessingRevision || !isRealismPostProcessingEnabled()) return;
+    buildRealismPostProcessing(modules);
+  } catch (error) {
+    console.warn("[OperatorGame] Failed to load experimental realism effects", error);
+    disposeRealismPostProcessing();
+  }
+}
+
+function buildRealismPostProcessing({ postprocessing, realismEffects }) {
+  disposeRealismPostProcessing();
+
+  const {
+    EffectComposer: RealismComposer,
+    EffectPass,
+    RenderPass: RealismRenderPass,
+    BloomEffect,
+    ChromaticAberrationEffect,
+    BlendFunction,
+  } = postprocessing;
+  const { SSGIEffect, HBAOEffect, VelocityDepthNormalPass } = realismEffects;
+  const ssgiPreset = getSsgiPreset();
+  const screenSpaceShadowPreset = getScreenSpaceShadowPreset();
+  const effects = [];
+
+  realismComposer = new RealismComposer(renderer, { depthBuffer: true });
+  realismComposer.setSize(window.innerWidth, window.innerHeight);
+  realismVelocityDepthNormalPass = new VelocityDepthNormalPass(scene, camera);
+  realismComposer.addPass(realismVelocityDepthNormalPass);
+
+  // Keep the ordinary lit scene as the source buffer so SSGI adds indirect light
+  // instead of replacing direct point/ambient lighting with only screen-space hits.
+  realismComposer.addPass(new RealismRenderPass(scene, camera));
+
+  if (ssgiPreset.enabled) {
+    realismSsgiEffect = new SSGIEffect(scene, camera, realismVelocityDepthNormalPass, {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      ...ssgiPreset,
+    });
+    effects.push(realismSsgiEffect);
+  }
+
+  if (screenSpaceShadowPreset.enabled) {
+    realismScreenSpaceShadowEffect = new HBAOEffect(realismComposer, camera, scene, {
+      ...screenSpaceShadowPreset,
+      velocityDepthNormalPass: realismVelocityDepthNormalPass,
+      normalTexture: realismVelocityDepthNormalPass.texture,
+    });
+    effects.push(realismScreenSpaceShadowEffect);
+  }
+
+  if (CONFIG.postProcessing.bloom.enabled) {
+    const bloomConfig = CONFIG.postProcessing.bloom;
+    realismBloomEffect = new BloomEffect({
+      blendFunction: BlendFunction.SCREEN,
+      luminanceThreshold: bloomConfig.threshold,
+      intensity: bloomConfig.strength,
+      radius: bloomConfig.radius,
+    });
+    effects.push(realismBloomEffect);
+  }
+
+  if (CONFIG.postProcessing.chromaticAberration.enabled) {
+    realismChromaticAberrationEffect = new ChromaticAberrationEffect({
+      offset: new THREE.Vector2(CONFIG.postProcessing.chromaticAberration.amount),
+      radialModulation: true,
+      modulationOffset: 0.18,
+    });
+    effects.push(realismChromaticAberrationEffect);
+  }
+
+  if (effects.length > 0) realismComposer.addPass(new EffectPass(camera, ...effects));
+}
+
+function disposeRealismPostProcessing() {
+  realismComposer?.dispose?.();
+  realismVelocityDepthNormalPass?.dispose?.();
+  realismSsgiEffect?.dispose?.();
+  realismScreenSpaceShadowEffect?.dispose?.();
+  realismBloomEffect?.dispose?.();
+  realismChromaticAberrationEffect?.dispose?.();
+  realismComposer = null;
+  realismVelocityDepthNormalPass = null;
+  realismSsgiEffect = null;
+  realismScreenSpaceShadowEffect = null;
+  realismBloomEffect = null;
+  realismChromaticAberrationEffect = null;
 }
 
 function buildRoom() {
@@ -1101,12 +1316,27 @@ function animate() {
   updateFeedback(dt);
   updateRuntimeTextureLoading(dt);
   updateDebugOverlay();
-  if (composer) {
+  if (realismComposer) {
+    renderRealismComposer(dt);
+  } else if (composer) {
     composer.render();
   } else {
     renderer.render(scene, camera);
   }
   requestAnimationFrame(animate);
+}
+
+function renderRealismComposer(dt) {
+  const originalWarn = console.warn;
+  console.warn = (message, ...args) => {
+    if (typeof message === "string" && message.includes("copyFramebufferToTexture function signature has changed")) return;
+    originalWarn.call(console, message, ...args);
+  };
+  try {
+    realismComposer.render(dt);
+  } finally {
+    console.warn = originalWarn;
+  }
 }
 
 function setLoadingProgress(value) {
@@ -1192,6 +1422,9 @@ function updateDebugOverlay() {
     "",
     `shadows: ${renderer.shadowMap.enabled ? shadowQuality : "off"}`,
     `gtao: ${gtaoPass ? gtaoQuality : "off"}`,
+    `ssgi: ${realismSsgiEffect ? ssgiQuality : "off"}`,
+    `ssr: ${ssrPass ? ssrQuality : "off"}`,
+    `contact shadows: ${realismScreenSpaceShadowEffect ? screenSpaceShadowQuality : "off"}`,
     "",
     `noclip: ${noclipEnabled ? "on" : "off"}`,
     `noclip speed: ${noclipSpeed.toFixed(2)}`,
@@ -1591,11 +1824,20 @@ function updateSceneLightFeedback() {
     const bloomConfig = CONFIG.postProcessing.bloom;
     bloomPass.strength = bloomConfig.strength + emergency * CONFIG.feedback.thermalEmergency.bloomBoost;
   }
+  if (realismBloomEffect) {
+    const bloomConfig = CONFIG.postProcessing.bloom;
+    realismBloomEffect.intensity = bloomConfig.strength + emergency * CONFIG.feedback.thermalEmergency.bloomBoost;
+  }
 
   if (chromaticAberrationPass) {
     const chromaConfig = CONFIG.postProcessing.chromaticAberration;
     chromaticAberrationPass.uniforms.amount.value =
       chromaConfig.amount + emergency * CONFIG.feedback.thermalEmergency.chromaticBoost * flickerWave(10, 1.1);
+  }
+  if (realismChromaticAberrationEffect?.offset) {
+    const chromaConfig = CONFIG.postProcessing.chromaticAberration;
+    const amount = chromaConfig.amount + emergency * CONFIG.feedback.thermalEmergency.chromaticBoost * flickerWave(10, 1.1);
+    realismChromaticAberrationEffect.offset.set(amount, amount);
   }
 }
 
@@ -2155,6 +2397,16 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   composer?.setSize(window.innerWidth, window.innerHeight);
+  realismComposer?.setSize(window.innerWidth, window.innerHeight);
+  realismSsgiEffect?.setSize?.(window.innerWidth, window.innerHeight);
+  if (ssrPass) {
+    const ssrConfig = getSsrPreset(ssrQuality);
+    ssrPass.setSize(
+      Math.max(1, Math.round(window.innerWidth * (ssrConfig.resolutionScale ?? 1))),
+      Math.max(1, Math.round(window.innerHeight * (ssrConfig.resolutionScale ?? 1))),
+    );
+  }
+  realismScreenSpaceShadowEffect?.setSize?.(window.innerWidth, window.innerHeight);
   gtaoPass?.setSize(window.innerWidth, window.innerHeight);
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
 });
@@ -2301,6 +2553,9 @@ window.operatorGameDebug = {
   },
   setShadowQuality,
   setGtaoQuality,
+  setSsgiQuality,
+  setSsrQuality,
+  setScreenSpaceShadowQuality,
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: () => {
     indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
@@ -2427,10 +2682,20 @@ window.operatorGameDebug = {
       gtao: Boolean(gtaoPass),
       gtaoQuality,
       gtaoBlendIntensity: gtaoPass?.blendIntensity ?? 0,
+      realismComposer: Boolean(realismComposer),
+      ssgi: Boolean(realismSsgiEffect),
+      ssgiQuality,
+      ssr: Boolean(ssrPass),
+      ssrQuality,
+      screenSpaceShadows: Boolean(realismScreenSpaceShadowEffect),
+      screenSpaceShadowQuality,
       bloom: Boolean(bloomPass),
       bloomStrength: bloomPass?.strength ?? 0,
+      realismBloom: Boolean(realismBloomEffect),
+      realismBloomStrength: realismBloomEffect?.intensity ?? 0,
       chromaticAberration: Boolean(chromaticAberrationPass),
       chromaticAberrationAmount: chromaticAberrationPass?.uniforms.amount.value ?? 0,
+      realismChromaticAberration: Boolean(realismChromaticAberrationEffect),
     },
     shadows: {
       enabled: renderer.shadowMap.enabled,

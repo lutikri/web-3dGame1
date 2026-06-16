@@ -13,6 +13,12 @@ export function createAppShell({ gameApi }) {
   const shadowQualityValue = document.querySelector("#settingShadowQualityValue");
   const gtaoQualityInput = document.querySelector("#settingGtaoQuality");
   const gtaoQualityValue = document.querySelector("#settingGtaoQualityValue");
+  const ssgiQualityInput = document.querySelector("#settingSsgiQuality");
+  const ssgiQualityValue = document.querySelector("#settingSsgiQualityValue");
+  const ssrQualityInput = document.querySelector("#settingSsrQuality");
+  const ssrQualityValue = document.querySelector("#settingSsrQualityValue");
+  const screenSpaceShadowQualityInput = document.querySelector("#settingScreenSpaceShadowQuality");
+  const screenSpaceShadowQualityValue = document.querySelector("#settingScreenSpaceShadowQualityValue");
   const debugInput = document.querySelector("#settingDebugWindow");
   const settings = loadSettings();
   let currentPanel = null;
@@ -89,6 +95,33 @@ export function createAppShell({ gameApi }) {
       gtaoQualityInput.value = settings.gtaoQuality;
       gtaoQualityInput.addEventListener("change", () => {
         settings.gtaoQuality = gtaoQualityInput.value;
+        applySettings();
+        saveSettings();
+      });
+    }
+
+    if (ssgiQualityInput) {
+      ssgiQualityInput.value = settings.ssgiQuality;
+      ssgiQualityInput.addEventListener("change", () => {
+        settings.ssgiQuality = ssgiQualityInput.value;
+        applySettings();
+        saveSettings();
+      });
+    }
+
+    if (ssrQualityInput) {
+      ssrQualityInput.value = settings.ssrQuality;
+      ssrQualityInput.addEventListener("change", () => {
+        settings.ssrQuality = ssrQualityInput.value;
+        applySettings();
+        saveSettings();
+      });
+    }
+
+    if (screenSpaceShadowQualityInput) {
+      screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
+      screenSpaceShadowQualityInput.addEventListener("change", () => {
+        settings.screenSpaceShadowQuality = screenSpaceShadowQualityInput.value;
         applySettings();
         saveSettings();
       });
@@ -192,6 +225,11 @@ export function createAppShell({ gameApi }) {
     if (uiScaleValue) uiScaleValue.textContent = `${settings.uiScale}%`;
     if (shadowQualityValue) shadowQualityValue.textContent = getQualityLabel(settings.shadowQuality);
     if (gtaoQualityValue) gtaoQualityValue.textContent = getQualityLabel(settings.gtaoQuality);
+    if (ssgiQualityValue) ssgiQualityValue.textContent = getQualityLabel(settings.ssgiQuality);
+    if (ssrQualityValue) ssrQualityValue.textContent = getQualityLabel(settings.ssrQuality);
+    if (screenSpaceShadowQualityValue) {
+      screenSpaceShadowQualityValue.textContent = getQualityLabel(settings.screenSpaceShadowQuality);
+    }
     if (fovInput && Number(fovInput.value) !== settings.fov) fovInput.value = String(settings.fov);
     if (uiScaleInput && Number(uiScaleInput.value) !== settings.uiScale) uiScaleInput.value = String(settings.uiScale);
     if (shadowQualityInput && shadowQualityInput.value !== settings.shadowQuality) {
@@ -199,6 +237,18 @@ export function createAppShell({ gameApi }) {
     }
     if (gtaoQualityInput && gtaoQualityInput.value !== settings.gtaoQuality) {
       gtaoQualityInput.value = settings.gtaoQuality;
+    }
+    if (ssgiQualityInput && ssgiQualityInput.value !== settings.ssgiQuality) {
+      ssgiQualityInput.value = settings.ssgiQuality;
+    }
+    if (ssrQualityInput && ssrQualityInput.value !== settings.ssrQuality) {
+      ssrQualityInput.value = settings.ssrQuality;
+    }
+    if (
+      screenSpaceShadowQualityInput &&
+      screenSpaceShadowQualityInput.value !== settings.screenSpaceShadowQuality
+    ) {
+      screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
     }
     if (debugInput) debugInput.checked = settings.showDebug;
 
@@ -208,6 +258,9 @@ export function createAppShell({ gameApi }) {
     gameApi.setDebugVisible?.(settings.showDebug);
     gameApi.setShadowQuality?.(settings.shadowQuality);
     gameApi.setGtaoQuality?.(settings.gtaoQuality);
+    gameApi.setSsgiQuality?.(settings.ssgiQuality);
+    gameApi.setSsrQuality?.(settings.ssrQuality);
+    gameApi.setScreenSpaceShadowQuality?.(settings.screenSpaceShadowQuality);
   }
 
   function isOpen() {
@@ -232,6 +285,13 @@ function loadSettings() {
       showDebug: typeof parsed.showDebug === "boolean" ? parsed.showDebug : true,
       shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "max"], "min"),
       gtaoQuality: normalizeQuality(parsed.gtaoQuality, ["off", "min", "med", "max"], "off"),
+      ssgiQuality: normalizeQuality(parsed.ssgiQuality, ["off", "min", "med", "max"], "off"),
+      ssrQuality: normalizeQuality(parsed.ssrQuality, ["off", "min", "med", "max"], "off"),
+      screenSpaceShadowQuality: normalizeQuality(
+        parsed.screenSpaceShadowQuality,
+        ["off", "min", "med", "max"],
+        "off",
+      ),
     };
   } catch {
     return {
@@ -240,6 +300,9 @@ function loadSettings() {
       showDebug: true,
       shadowQuality: "min",
       gtaoQuality: "off",
+      ssgiQuality: "off",
+      ssrQuality: "off",
+      screenSpaceShadowQuality: "off",
     };
   }
 }
@@ -253,6 +316,9 @@ function saveSettings() {
       showDebug: Boolean(document.querySelector("#settingDebugWindow")?.checked),
       shadowQuality: document.querySelector("#settingShadowQuality")?.value ?? "min",
       gtaoQuality: document.querySelector("#settingGtaoQuality")?.value ?? "off",
+      ssgiQuality: document.querySelector("#settingSsgiQuality")?.value ?? "off",
+      ssrQuality: document.querySelector("#settingSsrQuality")?.value ?? "off",
+      screenSpaceShadowQuality: document.querySelector("#settingScreenSpaceShadowQuality")?.value ?? "off",
     }),
   );
 }
