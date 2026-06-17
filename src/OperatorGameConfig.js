@@ -163,7 +163,7 @@ export const CONFIG = {
           },
         },
         color: "#fdfffe",
-        roughness: 1.2,
+        roughness: 1,
         metalness: 0,
         normalScale: 1,
         aoMapIntensity: 1,
@@ -174,7 +174,7 @@ export const CONFIG = {
           debugView: false,
           red: { color: "#804800", opacity: 0.4, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
           green: { color: "#5e5343", opacity: 0.9, intensity: 1.0, threshold: 0, softness: 1, blend: "multiply" },
-          blue: { color: "#1a1a1a", opacity: 0.9, intensity: 0.7, threshold: 0, softness: 1, blend: "multiply" },
+          blue: { color: "#1a1a1a", opacity: 0.9, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
         },
       },
       Interior1: {
