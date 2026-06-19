@@ -19,6 +19,8 @@ export function createShiftRecorder() {
     instabilityTime: 0,
     ventTime: 0,
     ventActivations: 0,
+    pulseTime: 0,
+    pulseActivations: 0,
     fuelSum: 0,
     fieldSum: 0,
     coolantSum: 0,
@@ -51,9 +53,10 @@ export function updateShiftRecorder(recorder, dt, snapshot, controls) {
   if (snapshot.warning?.thermalSoak) recorder.thermalSoakTime += dt;
   if (snapshot.warning?.outputSurge) recorder.outputSurgeTime += dt;
   if (snapshot.warning?.coreStress) recorder.coreStressTime += dt;
-  if (snapshot.warning?.quenchRisk) recorder.quenchTime += dt;
+  if (snapshot.warning?.coreStall) recorder.quenchTime += dt;
   if (snapshot.warning?.instability) recorder.instabilityTime += dt;
   if (controls.ventActive) recorder.ventTime += dt;
+  if (controls.pulseActive) recorder.pulseTime += dt;
 
   recorder.maxTemp = Math.max(recorder.maxTemp, snapshot.plasmaTemp);
   recorder.maxCoreStress = Math.max(recorder.maxCoreStress, snapshot.coreStress);
@@ -66,8 +69,12 @@ export function updateShiftRecorder(recorder, dt, snapshot, controls) {
       Math.abs(controls.magneticField - recorder.previousControls.magneticField) +
       Math.abs(controls.coolantFlow - recorder.previousControls.coolantFlow);
     if (controls.ventActive && !recorder.previousControls.ventActive) recorder.ventActivations += 1;
+    if (controls.pulseActive && !recorder.previousControls.pulseActive) recorder.pulseActivations += 1;
   } else if (controls.ventActive) {
     recorder.ventActivations += 1;
+    if (controls.pulseActive) recorder.pulseActivations += 1;
+  } else if (controls.pulseActive) {
+    recorder.pulseActivations += 1;
   }
   recorder.previousControls = { ...controls };
 
@@ -87,8 +94,11 @@ export function getShiftRecorderDebugState(recorder) {
     thermalSoakTime: Number(recorder.thermalSoakTime.toFixed(1)),
     outputSurgeTime: Number(recorder.outputSurgeTime.toFixed(1)),
     coreStressTime: Number(recorder.coreStressTime.toFixed(1)),
+    coreStallTime: Number(recorder.quenchTime.toFixed(1)),
     ventTime: Number(recorder.ventTime.toFixed(1)),
     ventActivations: recorder.ventActivations,
+    pulseTime: Number(recorder.pulseTime.toFixed(1)),
+    pulseActivations: recorder.pulseActivations,
   };
 }
 
@@ -122,6 +132,8 @@ export function buildShiftReport(recorder, snapshot) {
     instabilityRatio: recorder.instabilityTime / duration,
     ventRatio: recorder.ventTime / duration,
     ventActivations: recorder.ventActivations,
+    pulseRatio: recorder.pulseTime / duration,
+    pulseActivations: recorder.pulseActivations,
     movementRate,
     maxTemp: recorder.maxTemp,
     maxCoreStress: recorder.maxCoreStress,
@@ -145,9 +157,10 @@ export function buildShiftReport(recorder, snapshot) {
       ["OUTPUT SURGE", `${Math.round(outputSurgeRatio * 100)}%`],
       ["OVER DEMAND", `${Math.round(overRatio * 100)}%`],
       ["UNDER DEMAND", `${Math.round(underRatio * 100)}%`],
-      ["QUENCH RISK", `${Math.round(quenchRatio * 100)}%`],
+      ["CORE STALL", `${Math.round(quenchRatio * 100)}%`],
       ["VENT HELD", `${Math.round((recorder.ventTime / duration) * 100)}%`],
       ["VENT PULSES", `${recorder.ventActivations}`],
+      ["PULSE USES", `${recorder.pulseActivations}`],
       ["AVG TEMP", `${Math.round(avgTemp)} MK`],
       ["CONTROL MOTION", `${Math.round(movementRate)}%/s`],
     ],

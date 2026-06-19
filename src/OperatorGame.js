@@ -1580,6 +1580,7 @@ function getLampMaterial(lamp, snapshot) {
     warningKey === "outputLow" ? flickerWave(CONFIG.feedback.outputLow.lampFlickerFrequency, 1.8) > 0.22 : true;
   if (!outputLowFlicker) return materials.lampOff;
 
+  if (warningKey === "coreStall") return snapshot.warning?.coreStallCritical ? materials.lampRed : materials.lampAmber;
   return warningKey === "coreStress" || warningKey === "tempHigh" ? materials.lampRed : materials.lampAmber;
 }
 
@@ -1611,6 +1612,7 @@ function shouldFastBlinkWarning(warningKey, snapshot) {
   if (warningKey === "tempHigh") return Boolean(snapshot.warning?.tempCritical || snapshot.warning?.thermalSoak);
   if (warningKey === "coreStress") return Boolean(snapshot.warning?.coreStress);
   if (warningKey === "instability") return Boolean(snapshot.warning?.tempCritical || snapshot.warning?.outputSurge);
+  if (warningKey === "coreStall") return Boolean(snapshot.warning?.coreStallCritical);
   return false;
 }
 
@@ -1907,6 +1909,7 @@ function getControlInputs() {
     magneticField: getControlPercent("Control_Knob_MagneticField"),
     coolantFlow: getControlPercent("Control_Knob_CoolantFlow"),
     ventActive: isControlButtonPressed("Control_Btn_Vent"),
+    pulseActive: isControlButtonPressed("Control_Btn_Reset") || isControlButtonPressed("Buttun_Reset"),
   };
 }
 
@@ -2229,6 +2232,8 @@ function runControlButtonAction(button) {
   } else if (button.userData.controlAction === "reset") {
     resetForMenu();
     console.log("[OperatorGame] Fusion core reset");
+  } else if (button.userData.controlAction === "pulse") {
+    console.log("[OperatorGame] Ignition pulse armed");
   } else if (button.userData.controlAction === "indicatorTest") {
     indicatorTestTimer = 0;
     console.log("[OperatorGame] Indicator test started");

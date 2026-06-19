@@ -14,7 +14,7 @@ export const PANEL1_LAMP_WARNING_KEYS = {
   LightCase1_Light_FIELDWEAK: "fieldWeak",
   LightCase1_Light_INSTABILITY: "instability",
   LightCase1_Light_OUTPUTLOW: "outputLow",
-  LightCase1_Light_QUENCH_RISK: "quenchRisk",
-  LightCase1_Light_QUENCHRISK: "quenchRisk",
+  LightCase1_Light_QUENCH_RISK: "coreStall",
+  LightCase1_Light_QUENCHRISK: "coreStall",
   LightCase1_Light_TEMPHIGH: "tempHigh",
 };

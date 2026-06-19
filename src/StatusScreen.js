@@ -95,28 +95,30 @@ function drawStatus(ctx, data) {
   ctx.fillText(`TIME: ${formatTime(data.remaining)}`, 704, 126);
 
   ctx.font = "700 28px Consolas, monospace";
-  drawRow(ctx, "TEMP", `${Math.round(data.plasmaTemp)} MK`, 190, data.warning.tempHigh || data.warning.quenchRisk);
+  drawRow(ctx, "TEMP", `${Math.round(data.plasmaTemp)} MK`, 190, data.warning.tempHigh);
   drawRow(ctx, "CONTAIN", `${Math.round(data.containment)}%`, 242, data.warning.fieldWeak);
   drawRow(ctx, "OUTPUT", `${Math.round(data.powerOutput)} / ${Math.round(data.targetOutput)} MW`, 294, data.warning.outputLow);
-  drawRow(ctx, "EFF", `${Math.round(data.reactionEfficiency)}%`, 346, data.reactionEfficiency < 55);
-  drawRow(ctx, "CORE STRESS", `${Math.round(data.coreStress)}%`, 398, data.warning.coreStress);
+  drawRow(ctx, "BURN", `${Math.round(data.burnRate * 100)}%`, 346, data.warning.coreStall);
+  drawRow(ctx, "STALL", `${Math.round(data.coreStall)}%  PULSE ${Math.round(data.pulseCharge)}%`, 398, data.warning.coreStall);
+  drawRow(ctx, "STRESS", `${Math.round(data.coreStress)}%`, 450, data.warning.coreStress);
   drawEmergencyBanner(ctx, data);
 
   ctx.fillStyle = warning ? "#ff5d55" : data.status.includes("STABLE") || complete ? "#45ff92" : "#ffcf5a";
-  ctx.font = "700 32px Consolas, monospace";
-  ctx.fillText(`STATUS: ${data.status}`, 48, 462);
+  ctx.font = "700 28px Consolas, monospace";
+  ctx.fillText(`STATUS: ${data.status}`, 48, 492);
 
   ctx.shadowBlur = 0;
 }
 
 function drawEmergencyBanner(ctx, data) {
+  const stall = data.warning.coreStallCritical || data.coreStall > 82;
   const meltdown =
     data.mode === "failed" ||
     data.coreStress > 88 ||
     data.thermalSoak > 82 ||
     (data.warning.tempCritical && data.warning.outputSurge);
   const runaway = data.plasmaTemp > 165 || data.warning.thermalSoak || data.warning.coreStress;
-  if (!meltdown && !runaway) return;
+  if (!meltdown && !runaway && !stall) return;
 
   const blink = Math.floor(performance.now() / 160) % 2 === 0;
   if (!blink && data.mode !== "failed") return;
@@ -133,10 +135,16 @@ function drawEmergencyBanner(ctx, data) {
   ctx.fillStyle = meltdown ? "#ff5d55" : "#ffcf5a";
   ctx.font = "900 64px Consolas, monospace";
   ctx.textAlign = "center";
-  ctx.fillText(meltdown ? "MELTDOWN IMMINENT" : "THERMAL RUNAWAY", SCREEN_W / 2, 236);
+  ctx.fillText(meltdown ? "MELTDOWN IMMINENT" : stall ? "CORE STALL" : "THERMAL RUNAWAY", SCREEN_W / 2, 236);
 
   ctx.font = "700 30px Consolas, monospace";
-  ctx.fillText(`TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`, SCREEN_W / 2, 286);
+  ctx.fillText(
+    stall
+      ? `BURN ${Math.round(data.burnRate * 100)}%  PULSE ${Math.round(data.pulseCharge)}%`
+      : `TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`,
+    SCREEN_W / 2,
+    286,
+  );
   ctx.restore();
 }
 

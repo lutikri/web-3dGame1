@@ -93,7 +93,7 @@ export const CONFIG = {
         metalness: 1,
         normalScale: 1,
         aoMapIntensity: 1,
-        emissive: "#ffffff",
+        emissive: "#ffe4ab",
         emissiveIntensity: 2.35,
         roomLightControlled: true,
       },
@@ -174,7 +174,7 @@ export const CONFIG = {
           debugView: false,
           red: { color: "#804800", opacity: 0.4, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
           green: { color: "#5e5343", opacity: 0.9, intensity: 1.0, threshold: 0, softness: 1, blend: "multiply" },
-          blue: { color: "#1a1a1a", opacity: 0.9, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
+          blue: { color: "#1a1a1a", opacity: 0.6, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
         },
       },
       Interior1: {
@@ -369,8 +369,8 @@ export const CONFIG = {
         pressSpeed: 18,
       },
       Control_Btn_Reset: {
-        label: "RESET CORE",
-        action: "reset",
+        label: "PULSE",
+        action: "pulse",
         pressAxis: "y",
         pressDistance: -0.006,
         pressSpeed: 18,
@@ -390,8 +390,8 @@ export const CONFIG = {
         pressSpeed: 18,
       },
       Buttun_Reset: {
-        label: "RESET CORE",
-        action: "reset",
+        label: "PULSE",
+        action: "pulse",
         pressAxis: "y",
         pressDistance: -0.018,
         pressSpeed: 18,
@@ -437,8 +437,8 @@ export const CONFIG = {
     ambientIntensity: 0.03,
     pointLights: {
       SM_Lamp1_2_Light: {
-        color: "#ffffff",
-        intensity: 1.3,
+        color: "#fff0dc",
+        intensity: 0.8,
         roomLightControlled: true,
         distance: 5,
         decay: 1,
@@ -523,8 +523,8 @@ export const CONFIG = {
     },
     longTermLightFlicker: {
       enabled: true,
-      minIntervalSeconds: 20,
-      maxIntervalSeconds: 60,
+      minIntervalSeconds: 50,
+      maxIntervalSeconds: 80,
       durationSeconds: [0.28, 3.42],
       minFactor: [0.1, 1.2],
       retryChance: 0.85,
