@@ -11,6 +11,9 @@ export const CONFIG = {
   loading: {
     skip: false,
   },
+  app: {
+    firstVisitEmulation: true,
+  },
   textureStreaming: {
     fullLoadDelaySeconds: 4,
   },
@@ -336,7 +339,9 @@ export const CONFIG = {
   controls: {
     wheelPercentPerDelta: 0.025,
     wheelMaxStepPercent: 2.5,
-    knobRotationDegrees: 360,
+    knobDialDegrees: 360,
+    knobValue0DialPercent: 85,
+    knobValue100DialPercent: 15,
     knobRotationAxis: "y",
     labelYOffset: 0.1,
     knobs: {

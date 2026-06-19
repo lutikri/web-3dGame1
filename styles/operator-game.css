@@ -422,6 +422,36 @@ body {
   background: rgba(36, 67, 49, 0.98);
 }
 
+.level-node.is-complete {
+  border-color: rgba(128, 207, 255, 0.72);
+  background: rgba(28, 55, 62, 0.96);
+}
+
+.level-node.is-finished {
+  border-color: rgba(255, 207, 90, 0.6);
+  background: rgba(54, 48, 28, 0.94);
+}
+
+.level-node.is-complete::after {
+  content: "COMPLETE";
+  justify-self: start;
+  border: 1px solid rgba(128, 207, 255, 0.5);
+  color: #bde8ff;
+  padding: 3px 7px;
+  font-size: 0.62rem;
+  font-weight: 950;
+}
+
+.level-node.is-finished::after {
+  content: "ATTEMPTED";
+  justify-self: start;
+  border: 1px solid rgba(255, 207, 90, 0.48);
+  color: #ffdf88;
+  padding: 3px 7px;
+  font-size: 0.62rem;
+  font-weight: 950;
+}
+
 .route-split {
   grid-column: 1 / -1;
   height: 24px;
@@ -530,6 +560,11 @@ body.app-ui-open #lockButton {
   visibility: hidden;
 }
 
+.loading-overlay.is-intro-briefing {
+  align-items: start;
+  justify-items: center;
+}
+
 .loading-panel {
   display: grid;
   gap: 12px;
@@ -540,6 +575,11 @@ body.app-ui-open #lockButton {
   color: #67d787;
   padding: 14px;
   font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.loading-overlay.is-intro-briefing .loading-panel {
+  width: min(620px, calc(100vw - 36px));
+  margin-top: clamp(22px, 7vh, 72px);
 }
 
 .loading-header {
@@ -613,6 +653,100 @@ body.app-ui-open #lockButton {
   background: linear-gradient(90deg, #2fbf70, #9ff2b5);
   box-shadow: 0 0 16px rgba(103, 215, 135, 0.4);
   transition: width 0.22s ease;
+}
+
+.shift-briefing {
+  display: grid;
+  gap: 10px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-22px);
+  transition: max-height 0.9s ease, opacity 0.6s ease, transform 0.75s ease;
+}
+
+.loading-overlay.is-intro-briefing .shift-briefing {
+  max-height: 420px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.briefing-stamp {
+  justify-self: start;
+  border: 1px solid rgba(255, 207, 90, 0.45);
+  color: #ffdf88;
+  padding: 4px 7px;
+  font-size: 0.62rem;
+  font-weight: 950;
+}
+
+.shift-briefing h1 {
+  margin: 0;
+  color: #edf1f2;
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+.shift-briefing p {
+  margin: 0;
+  color: #b6c9bd;
+  font-size: 0.78rem;
+  line-height: 1.48;
+}
+
+.shift-briefing ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shift-briefing li {
+  position: relative;
+  padding-left: 16px;
+  color: #dce8df;
+  font-size: 0.76rem;
+  line-height: 1.38;
+}
+
+.shift-briefing li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.58em;
+  width: 7px;
+  height: 1px;
+  background: #67d787;
+}
+
+.loading-start-button {
+  display: none;
+  justify-self: end;
+  border: 1px solid rgba(159, 242, 181, 0.65);
+  background: rgba(36, 67, 49, 0.98);
+  color: #edf1f2;
+  cursor: pointer;
+  font: 950 0.82rem "Cascadia Mono", Consolas, monospace;
+  opacity: 0;
+  padding: 10px 14px;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.18s ease;
+}
+
+.loading-overlay.is-intro-briefing .loading-start-button {
+  display: block;
+}
+
+.loading-overlay.is-briefing-ready .loading-start-button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.loading-start-button:hover {
+  background: rgba(52, 91, 70, 0.98);
 }
 
 @keyframes loading-spin {

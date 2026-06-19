@@ -43,6 +43,16 @@ export function createLoadingOverlay({
     setStatus("CORE INTERFACE ONLINE");
     setProgress(100);
     const remainingMinimum = Math.max(0, minimumVisibleMs - (performance.now() - startedAt));
+
+    if (overlay?.classList.contains("is-intro-briefing")) {
+      window.setTimeout(() => {
+        overlay.classList.add("is-briefing-ready");
+        complete = true;
+        onComplete?.();
+      }, remainingMinimum + 450);
+      return;
+    }
+
     window.setTimeout(() => {
       overlay?.classList.add("is-final");
     }, remainingMinimum + 450);

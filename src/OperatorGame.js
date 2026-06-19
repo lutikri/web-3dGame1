@@ -142,6 +142,8 @@ let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
 let resultsSnapshot = null;
 let resultsVisible = false;
+let activeLevelId = "intro-shift";
+let activeLevelMode = "tutorial";
 let roomLightsEnabled = CONFIG.interior.lightToggleButton?.initialOn ?? true;
 let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
@@ -1355,6 +1357,7 @@ function finishLoading() {
 
   loadingOverlay.finish(() => {
     loadingComplete = true;
+    window.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
     triggerRoomLightBoot();
   });
 }
@@ -1362,6 +1365,7 @@ function finishLoading() {
 function skipLoadingOverlay() {
   loadingComplete = true;
   loadingOverlay.skip();
+  window.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
 }
 
 function showRouteLoading({ title = "LOADING SHIFT", status = "PREPARING OPERATOR CONSOLE", progress = 0 } = {}) {
@@ -1659,7 +1663,11 @@ function showShiftResults(snapshot) {
   resultsOverlay.hidden = false;
   resultsOverlay.classList.add("is-visible");
   resultsVisible = true;
-  window.dispatchEvent(new CustomEvent("operatorgame:shift-results", { detail: { snapshot, report } }));
+  window.dispatchEvent(
+    new CustomEvent("operatorgame:shift-results", {
+      detail: { levelId: activeLevelId, mode: activeLevelMode, snapshot, report },
+    }),
+  );
 }
 
 function hideShiftResults() {
@@ -2047,7 +2055,12 @@ function adjustControlKnob(knob, deltaPercent) {
 
 function applyControlKnobRotation(knob) {
   const percent = knob.userData.controlPercent ?? 0;
-  const angle = THREE.MathUtils.degToRad(CONFIG.controls.knobRotationDegrees) * (percent / 100);
+  const dialPercent = THREE.MathUtils.lerp(
+    CONFIG.controls.knobValue0DialPercent ?? 0,
+    CONFIG.controls.knobValue100DialPercent ?? 100,
+    percent / 100,
+  );
+  const angle = THREE.MathUtils.degToRad(CONFIG.controls.knobDialDegrees ?? 360) * (dialPercent / 100);
   knob.rotation.copy(knob.userData.initialRotation);
   applyAxisRotation(knob, CONFIG.controls.knobRotationAxis, angle);
 }
@@ -2217,7 +2230,9 @@ function resetForMenu() {
   resetShift();
 }
 
-function enterLevelSession() {
+function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
+  activeLevelId = levelId;
+  activeLevelMode = mode;
   resetLevelSession();
   resetShiftRecorder();
   fusionCore.reset();
@@ -2465,7 +2480,7 @@ canvas.addEventListener(
 
     if (!hoveredKnob) return;
     event.preventDefault();
-    const rawDelta = event.deltaY * CONFIG.controls.wheelPercentPerDelta;
+    const rawDelta = -event.deltaY * CONFIG.controls.wheelPercentPerDelta;
     const clampedDelta = THREE.MathUtils.clamp(
       rawDelta,
       -CONFIG.controls.wheelMaxStepPercent,
@@ -2540,6 +2555,7 @@ window.operatorGameDebug = {
   resetForMenu,
   showLoadingScreen: showRouteLoading,
   finishLoadingScreen: finishRouteLoading,
+  isLoadingComplete: () => loadingComplete,
   hideShiftResults,
   requestPointerLock,
   releasePointerLock: () => document.exitPointerLock?.(),
@@ -2662,6 +2678,8 @@ window.operatorGameDebug = {
     indicatorTestActive: indicatorTestTimer > 0,
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
+    activeLevelId,
+    activeLevelMode,
     recorder: getShiftRecorderDebugState(shiftRecorder),
     cameraFov: Number(camera.fov.toFixed(2)),
     modelLoaded: Boolean(panelModel),
