@@ -45,15 +45,24 @@
             <div id="loadingBarFill"></div>
           </div>
         </div>
-        <button id="loadingStartButton" class="loading-start-button" data-app-action="start-intro-shift" type="button">
-          START SHIFT
-        </button>
-        <img
-          class="shift-brief-image"
-          src="assets/shift-briefs/Intro1-us.png"
-          alt="Intro shift briefing sheet"
-          draggable="false"
-        />
+      </div>
+      <div id="routeLoadingOverlay" class="loading-overlay route-loading-overlay" aria-live="polite" hidden>
+        <div class="loading-panel">
+          <div class="loading-header">
+            <span id="routeLoadingHeader">SHIFT LOAD</span>
+            <span id="routeLoadingPercent">00%</span>
+          </div>
+          <div class="loading-body">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <div class="loading-copy">
+              <strong id="routeLoadingStatus">PREPARING OPERATOR CONSOLE</strong>
+              <span id="routeLoadingTitle" class="loading-shift-title">SHIFT</span>
+            </div>
+          </div>
+          <div class="loading-bar" aria-hidden="true">
+            <div id="routeLoadingBarFill"></div>
+          </div>
+        </div>
       </div>
       <div id="resultsOverlay" class="results-overlay" hidden>
         <div class="results-panel">

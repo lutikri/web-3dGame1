@@ -561,6 +561,33 @@ body.app-ui-open #lockButton {
   visibility: hidden;
 }
 
+.route-loading-overlay {
+  z-index: 130;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.route-loading-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.route-loading-overlay[hidden] {
+  display: none;
+}
+
+.route-loading-overlay .loading-panel {
+  opacity: 0;
+  transition: opacity 0.08s ease;
+}
+
+.route-loading-overlay.is-loading .loading-panel {
+  opacity: 1;
+}
+
 .loading-panel {
   display: grid;
   gap: 12px;
@@ -600,22 +627,6 @@ body.app-ui-open #lockButton {
   flex: 0 0 auto;
 }
 
-.loading-overlay.is-briefing-ready .loading-spinner {
-  animation: none;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-.loading-overlay.is-briefing-ready .loading-spinner::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  background: #67d787;
-  mask: url("../assets/icons/ico-tick-circle-solid.svg") center / contain no-repeat;
-  -webkit-mask: url("../assets/icons/ico-tick-circle-solid.svg") center / contain no-repeat;
-  filter: drop-shadow(0 0 12px rgba(103, 215, 135, 0.28));
-}
-
 .loading-copy {
   display: grid;
   gap: 6px;
@@ -642,13 +653,6 @@ body.app-ui-open #lockButton {
   transform: translateY(0);
 }
 
-.loading-overlay.is-final .loading-panel,
-.loading-overlay.is-final .loading-start-button {
-  opacity: 0;
-  transform: none;
-  transition: opacity 0.42s ease;
-}
-
 .loading-bar {
   height: 8px;
   border: 1px solid rgba(103, 215, 135, 0.42);
@@ -664,107 +668,8 @@ body.app-ui-open #lockButton {
   transition: width 0.22s ease;
 }
 
-.loading-overlay.is-briefing-ready .loading-bar {
-  border-color: rgba(159, 242, 181, 0.58);
-}
-
-.loading-overlay.is-briefing-ready .loading-bar div {
-  background: #9ff2b5;
-  box-shadow: 0 0 20px rgba(159, 242, 181, 0.28);
-}
-
-.shift-brief-image {
-  position: absolute;
-  top: clamp(10px, 3vh, 30px);
-  right: clamp(14px, 4vw, 68px);
-  width: clamp(360px, 48vw, 560px);
-  max-width: calc(100vw - 32px);
-  max-height: min(88vh, 940px);
-  object-fit: contain;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(118%, -18%) rotate(4deg);
-  transform-origin: 86% 12%;
-  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.5));
-}
-
-.loading-overlay.is-intro-briefing .shift-brief-image {
-  animation: shift-brief-slide-in 1.18s both;
-}
-
-.loading-start-button {
-  display: none;
-  position: absolute;
-  left: 18px;
-  top: calc(50% + 80px);
-  width: min(420px, calc(100vw - 36px));
-  border: 1px solid rgba(159, 242, 181, 0.65);
-  background: rgba(36, 67, 49, 0.98);
-  color: #edf1f2;
-  cursor: pointer;
-  font: 950 0.82rem "Cascadia Mono", Consolas, monospace;
-  margin-top: 0;
-  opacity: 0;
-  padding: 12px 14px;
-  pointer-events: none;
-  text-align: left;
-  transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.35s ease, background 0.18s ease;
-}
-
-.loading-overlay.is-intro-briefing .loading-start-button {
-  display: block;
-}
-
-.loading-overlay.is-briefing-ready .loading-start-button {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-  box-shadow: 0 0 18px rgba(103, 215, 135, 0.14);
-}
-
-.loading-start-button:hover {
-  background: rgba(52, 91, 70, 0.98);
-}
-
-.loading-overlay.is-final .loading-start-button {
-  opacity: 0;
-  pointer-events: none;
-  transform: none;
-  transition: opacity 0.42s ease;
-}
-
-.loading-overlay.is-final .shift-brief-image {
-  animation: none;
-  opacity: 0;
-  transform: translate(0, 0) rotate(0deg);
-  transition: opacity 0.42s ease;
-}
-
 @keyframes loading-spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes shift-brief-slide-in {
-  0% {
-    opacity: 0;
-    transform: translate(118%, -18%) rotate(4deg);
-  }
-
-  58% {
-    opacity: 1;
-    transform: translate(-2%, 1%) rotate(-1.2deg);
-  }
-
-  76% {
-    opacity: 1;
-    transform: translate(1.2%, 0) rotate(0.55deg);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) rotate(0deg);
   }
 }

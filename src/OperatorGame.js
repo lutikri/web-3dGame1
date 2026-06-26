@@ -144,6 +144,7 @@ let resultsSnapshot = null;
 let resultsVisible = false;
 let activeLevelId = "intro-shift";
 let activeLevelMode = "tutorial";
+let operatorViewMode = "level";
 let roomLightsEnabled = CONFIG.interior.lightToggleButton?.initialOn ?? true;
 let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
@@ -1341,6 +1342,14 @@ function renderRealismComposer(dt) {
   }
 }
 
+function applyCameraPose(position, rotationDegrees) {
+  camera.position.copy(position);
+  camera.rotation.order = "YXZ";
+  camera.rotation.x = THREE.MathUtils.degToRad(rotationDegrees.x ?? 0);
+  camera.rotation.y = THREE.MathUtils.degToRad(rotationDegrees.y ?? 0);
+  camera.rotation.z = THREE.MathUtils.degToRad(rotationDegrees.z ?? 0);
+}
+
 function setLoadingProgress(value) {
   loadingOverlay.setProgress(value);
 }
@@ -1358,7 +1367,7 @@ function finishLoading() {
   loadingOverlay.finish(() => {
     loadingComplete = true;
     window.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
-    triggerRoomLightBoot();
+    if (operatorViewMode !== "menu") triggerRoomLightBoot();
   });
 }
 
@@ -1372,14 +1381,12 @@ function showRouteLoading({
   title = "LOADING SHIFT",
   status = "PREPARING OPERATOR CONSOLE",
   progress = 0,
-  introBriefing = false,
 } = {}) {
   loadingComplete = false;
   loadingOverlay.show({
     title,
     statusText: status,
     progressValue: progress,
-    introBriefing,
   });
 }
 
@@ -2100,13 +2107,7 @@ function adjustNoclipSpeed(direction) {
 }
 
 function toggleRoomLights() {
-  roomLightsEnabled = !roomLightsEnabled;
-  roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
-  roomLightSwitchTimer = roomLightsEnabled
-    ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
-    : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
-  if (roomLightsEnabled) roomLightCurrentFactor = 0;
-  updateControlTooltip();
+  setRoomLightsEnabled(!roomLightsEnabled);
   console.log(`[OperatorGame] Room lights ${roomLightsEnabled ? "enabled" : "disabled"}`);
 }
 
@@ -2190,6 +2191,7 @@ function resetShift() {
 }
 
 function resetOperatorView() {
+  operatorViewMode = "level";
   document.exitPointerLock?.();
   keys.clear();
   movementVelocity.set(0, 0, 0);
@@ -2204,6 +2206,40 @@ function resetOperatorView() {
   camera.rotation.order = "YXZ";
   camera.rotation.y = yaw;
   camera.rotation.x = pitch;
+}
+
+function setRoomLightsEnabled(enabled, { instant = false } = {}) {
+  roomLightsEnabled = Boolean(enabled);
+  roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
+  roomLightSwitchTimer = instant
+    ? 0
+    : roomLightsEnabled
+      ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
+      : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
+  roomLightBootTimer = 0;
+  if (instant) roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
+  updateControlTooltip();
+}
+
+function enterMenuView() {
+  operatorViewMode = "menu";
+  document.exitPointerLock?.();
+  keys.clear();
+  movementVelocity.set(0, 0, 0);
+  headBobTime = 0;
+  leanAmount = 0;
+  zoomActive = false;
+  pointer.set(0, 0);
+
+  const menuView = CONFIG.camera.menuView;
+  if (menuView?.position && menuView?.rotationDegrees) {
+    playerPosition.copy(menuView.position);
+    applyCameraPose(menuView.position, menuView.rotationDegrees);
+    yaw = THREE.MathUtils.degToRad(menuView.rotationDegrees.y ?? 0);
+    pitch = THREE.MathUtils.degToRad(menuView.rotationDegrees.x ?? 0);
+  }
+
+  setRoomLightsEnabled(Boolean(menuView?.roomLightsOn), { instant: true });
 }
 
 function resetPanelControls() {
@@ -2234,11 +2270,14 @@ function resetLevelSession() {
 function resetForMenu() {
   resetLevelSession();
   resetShift();
+  enterMenuView();
 }
 
 function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
   activeLevelId = levelId;
   activeLevelMode = mode;
+  operatorViewMode = "level";
+  setRoomLightsEnabled(true, { instant: false });
   resetLevelSession();
   resetShiftRecorder();
   fusionCore.reset();
@@ -2272,6 +2311,8 @@ function getRandomNeedleSpeed() {
 }
 
 function updateMovement(dt) {
+  if (operatorViewMode === "menu") return;
+
   const movementConfig = CONFIG.camera.operatorMovement ?? {};
   const baseSpeed = noclipEnabled
     ? noclipSpeed
@@ -2605,12 +2646,7 @@ window.operatorGameDebug = {
   setRoomLights: (enabled) => {
     const nextEnabled = Boolean(enabled);
     if (roomLightsEnabled !== nextEnabled) {
-      roomLightsEnabled = nextEnabled;
-      roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
-      roomLightSwitchTimer = roomLightsEnabled
-        ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
-        : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
-      if (roomLightsEnabled) roomLightCurrentFactor = 0;
+      setRoomLightsEnabled(nextEnabled);
     }
     return roomLightsEnabled;
   },
@@ -2679,6 +2715,7 @@ window.operatorGameDebug = {
     roomLightSwitchTimer: Number(roomLightSwitchTimer.toFixed(2)),
     roomLightSwitchMode,
     roomLightBootTimer: Number(roomLightBootTimer.toFixed(2)),
+    operatorViewMode,
     movementSpeed: Number(movementVelocity.length().toFixed(2)),
     leanAmount: Number(leanAmount.toFixed(2)),
     indicatorTestActive: indicatorTestTimer > 0,

@@ -12,7 +12,7 @@ export const CONFIG = {
     skip: false,
   },
   app: {
-    firstVisitEmulation: true,
+    firstVisitEmulation: false,
   },
   textureStreaming: {
     fullLoadDelaySeconds: 4,
@@ -39,11 +39,16 @@ export const CONFIG = {
       leanDamping: 4,
     },
     noclip: {
-      enabled: false,
+      enabled: true,
       speed: 3.5,
       minSpeed: 0.25,
       maxSpeed: 30,
       wheelStep: 0.35,
+    },
+    menuView: {
+      position: new THREE.Vector3(0.48, 1.02, 0.34),
+      rotationDegrees: new THREE.Vector3(19.4, 62.8, 0),
+      roomLightsOn: false,
     },
   },
   panel: {
@@ -176,8 +181,8 @@ export const CONFIG = {
         maskOverlay: {
           debugView: false,
           red: { color: "#804800", opacity: 0.4, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
-          green: { color: "#5e5343", opacity: 0.9, intensity: 1.0, threshold: 0, softness: 1, blend: "multiply" },
-          blue: { color: "#1a1a1a", opacity: 0.6, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
+          green: { color: "#5e5343", opacity: 0.8, intensity: 1.0, threshold: 0, softness: 1, blend: "multiply" },
+          blue: { color: "#1a1a1a", opacity: 0.1, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
         },
       },
       Interior1: {

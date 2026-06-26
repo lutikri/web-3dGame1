@@ -6,7 +6,11 @@ const INTRO_LEVEL_ID = "intro-shift";
 
 export function createAppShell({ gameApi }) {
   const overlay = document.querySelector("#appOverlay");
-  const loadingOverlay = document.querySelector("#loadingOverlay");
+  const routeLoadingOverlay = document.querySelector("#routeLoadingOverlay");
+  const routeLoadingPercent = document.querySelector("#routeLoadingPercent");
+  const routeLoadingTitle = document.querySelector("#routeLoadingTitle");
+  const routeLoadingStatus = document.querySelector("#routeLoadingStatus");
+  const routeLoadingBarFill = document.querySelector("#routeLoadingBarFill");
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
   const fovInput = document.querySelector("#settingFov");
   const fovValue = document.querySelector("#settingFovValue");
@@ -30,14 +34,11 @@ export function createAppShell({ gameApi }) {
   let previousPanel = "main-menu";
   let transitionActive = false;
   let initialRouteHandled = false;
-  const shouldShowIntroBriefing = !progress.finishedLevels[INTRO_LEVEL_ID];
 
   applySettings();
   wireActions();
   wireSettings();
-  prepareIntroBriefing();
   wireProgression();
-  updateInitialLoadingCopy();
   updateLevelProgressUi();
 
   function wireActions() {
@@ -164,52 +165,17 @@ export function createAppShell({ gameApi }) {
       return;
     }
 
-    if (!loadingOverlay?.classList.contains("is-briefing-ready")) {
-      startIntroBriefingShift();
-    }
+    startIntroShift();
   }
 
-  function updateInitialLoadingCopy() {
-    if (!progress.finishedLevels[INTRO_LEVEL_ID] || gameApi?.isLoadingComplete?.()) return;
-    const loadingTitle = document.querySelector("#loadingShiftTitle");
-    const loadingStatus = document.querySelector("#loadingStatus");
-    if (loadingTitle) loadingTitle.textContent = "OPERATOR MAIN MENU";
-    if (loadingStatus) loadingStatus.textContent = "LOADING OPERATOR CONSOLE";
-  }
-
-  function prepareIntroBriefing() {
-    if (!shouldShowIntroBriefing || gameApi?.isLoadingComplete?.()) return;
-    loadingOverlay?.classList.add("is-intro-briefing");
-  }
-
-  function startIntroBriefingShift() {
+  function startIntroShift() {
     if (transitionActive) return;
     transitionActive = true;
     hideOverlay();
-    loadingOverlay?.classList.add("is-final");
     window.setTimeout(() => {
-      loadingOverlay?.classList.add("is-complete");
-      loadingOverlay?.classList.remove("is-intro-briefing", "is-briefing-ready");
       gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
       transitionActive = false;
-    }, 460);
-  }
-
-  async function runIntroBriefingTransition() {
-    transitionActive = true;
-    gameApi.releasePointerLock?.();
-    gameApi.hideShiftResults?.();
-    hideOverlay();
-    gameApi.showLoadingScreen?.({
-      title: "YOUR FIRST FUSION SHIFT",
-      status: "PREPARING OPERATOR CONSOLE",
-      progress: 72,
-      introBriefing: true,
-    });
-    await wait(450);
-    gameApi.finishLoadingScreen?.(() => {
-      transitionActive = false;
-    });
+    }, 120);
   }
 
   function runAction(action) {
@@ -219,10 +185,19 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       gameApi.requestPointerLock?.();
     } else if (action === "main-menu") {
-      runRouteTransition("RETURNING TO MENU", () => {
-        gameApi.hideShiftResults?.();
-        gameApi.resetForMenu?.();
+      if (currentPanel && currentPanel !== "pause") {
         showPanel("main-menu");
+        return;
+      }
+
+      runRouteTransition({
+        title: "MAIN MENU",
+        status: "RETURNING TO OPERATOR CONSOLE",
+        action: () => {
+          gameApi.hideShiftResults?.();
+          gameApi.resetForMenu?.();
+          showPanel("main-menu");
+        },
       });
     } else if (action === "level-select") {
       gameApi.hideShiftResults?.();
@@ -235,13 +210,15 @@ export function createAppShell({ gameApi }) {
     } else if (action === "back") {
       showPanel(previousPanel || "main-menu");
     } else if (action === "restart") {
-      runRouteTransition("RESTARTING SHIFT", () => {
-        gameApi.hideShiftResults?.();
-        hideOverlay();
-        gameApi.restartGame?.();
+      runRouteTransition({
+        title: "RESTARTING SHIFT",
+        status: "RESETTING CORE SESSION",
+        action: () => {
+          gameApi.hideShiftResults?.();
+          hideOverlay();
+          gameApi.restartGame?.();
+        },
       });
-    } else if (action === "start-intro-shift") {
-      startIntroBriefingShift();
     } else if (action === "quick-level-select") {
       showPanel("level-select");
     } else if (action === "quick-main-menu") {
@@ -249,25 +226,56 @@ export function createAppShell({ gameApi }) {
     }
   }
 
-  async function runRouteTransition(label, action) {
+  async function runRouteTransition({ title, status = "PREPARING OPERATOR CONSOLE", action }) {
     transitionActive = true;
     gameApi.releasePointerLock?.();
-    gameApi.showLoadingScreen?.({
-      title: label,
-      status: "PREPARING OPERATOR CONSOLE",
-      progress: 0,
-    });
-    await wait(450);
-    gameApi.showLoadingScreen?.({
-      title: label,
-      status: "ROUTING SHIFT PROFILE",
-      progress: 72,
-    });
+    showRouteCurtain();
+    await wait(140);
+    showRouteLoading(title, status);
+    await wait(420);
+    hideRouteLoadingPanel();
+    await wait(100);
     action?.();
-    await wait(450);
-    gameApi.finishLoadingScreen?.(() => {
-      transitionActive = false;
+    await wait(80);
+    hideRouteCurtain();
+    await wait(140);
+    transitionActive = false;
+  }
+
+  function showRouteCurtain() {
+    if (!routeLoadingOverlay) return;
+    routeLoadingOverlay.classList.remove("is-loading");
+    routeLoadingTitle?.classList.remove("is-visible");
+    routeLoadingOverlay.hidden = false;
+    routeLoadingOverlay.getBoundingClientRect();
+    routeLoadingOverlay.classList.add("is-visible");
+  }
+
+  function showRouteLoading(title, status) {
+    if (!routeLoadingOverlay) return;
+    if (routeLoadingTitle) routeLoadingTitle.textContent = title;
+    if (routeLoadingStatus) routeLoadingStatus.textContent = status;
+    if (routeLoadingPercent) routeLoadingPercent.textContent = "00%";
+    if (routeLoadingBarFill) routeLoadingBarFill.style.width = "0%";
+    routeLoadingOverlay.classList.add("is-loading");
+    routeLoadingTitle?.classList.add("is-visible");
+    window.requestAnimationFrame(() => {
+      if (routeLoadingPercent) routeLoadingPercent.textContent = "100%";
+      if (routeLoadingBarFill) routeLoadingBarFill.style.width = "100%";
     });
+  }
+
+  function hideRouteLoadingPanel() {
+    routeLoadingOverlay?.classList.remove("is-loading");
+  }
+
+  function hideRouteCurtain() {
+    if (!routeLoadingOverlay) return;
+    routeLoadingOverlay.classList.remove("is-visible", "is-loading");
+    routeLoadingTitle?.classList.remove("is-visible");
+    window.setTimeout(() => {
+      if (!routeLoadingOverlay.classList.contains("is-visible")) routeLoadingOverlay.hidden = true;
+    }, 140);
   }
 
   function wait(ms) {
@@ -279,15 +287,14 @@ export function createAppShell({ gameApi }) {
     const level = LEVELS[levelId];
     if (!level?.playable) return;
 
-    if (levelId === INTRO_LEVEL_ID) {
-      runIntroBriefingTransition();
-      return;
-    }
-
-    runRouteTransition(level.title, () => {
-      gameApi.hideShiftResults?.();
-      hideOverlay();
-      gameApi.startLevel?.({ levelId, mode: level.mode });
+    runRouteTransition({
+      title: level.title,
+      status: "LOADING SHIFT",
+      action: () => {
+        gameApi.hideShiftResults?.();
+        hideOverlay();
+        gameApi.startLevel?.({ levelId, mode: level.mode });
+      },
     });
   }
 

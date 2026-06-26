@@ -30,14 +30,12 @@ export function createLoadingOverlay({
     title = "YOUR FIRST FUSION SHIFT",
     statusText = "INITIALIZING OPERATOR CONSOLE",
     progressValue = 0,
-    introBriefing = false,
   } = {}) {
     startedAt = performance.now();
     progress = THREE.MathUtils.clamp(progressValue, 0, 100);
     displayedProgress = progress;
     complete = false;
-    overlay?.classList.remove("is-final", "is-complete", "is-intro-briefing", "is-briefing-ready");
-    if (introBriefing) overlay?.classList.add("is-intro-briefing");
+    overlay?.classList.remove("is-complete");
     if (percent) percent.textContent = `${String(Math.round(displayedProgress)).padStart(2, "0")}%`;
     if (barFill) barFill.style.width = `${Math.round(displayedProgress)}%`;
     shiftTitle?.classList.toggle("is-visible", progress >= 70);
@@ -50,30 +48,17 @@ export function createLoadingOverlay({
     setProgress(100);
     const remainingMinimum = Math.max(0, minimumVisibleMs - (performance.now() - startedAt));
 
-    if (overlay?.classList.contains("is-intro-briefing")) {
-      window.setTimeout(() => {
-        overlay.classList.add("is-briefing-ready");
-        complete = true;
-        onComplete?.();
-      }, remainingMinimum + 450);
-      return;
-    }
-
-    window.setTimeout(() => {
-      overlay?.classList.add("is-final");
-    }, remainingMinimum + 450);
     window.setTimeout(() => {
       overlay?.classList.add("is-complete");
       complete = true;
       onComplete?.();
-    }, remainingMinimum + 1150);
+    }, remainingMinimum + 450);
   }
 
   function skip() {
     complete = true;
     setProgress(100);
-    overlay?.classList.remove("is-intro-briefing", "is-briefing-ready");
-    overlay?.classList.add("is-final", "is-complete");
+    overlay?.classList.add("is-complete");
   }
 
   function update(dt, waitingForPrimaryAsset = false) {
