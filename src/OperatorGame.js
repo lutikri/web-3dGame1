@@ -1368,12 +1368,18 @@ function skipLoadingOverlay() {
   window.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
 }
 
-function showRouteLoading({ title = "LOADING SHIFT", status = "PREPARING OPERATOR CONSOLE", progress = 0 } = {}) {
+function showRouteLoading({
+  title = "LOADING SHIFT",
+  status = "PREPARING OPERATOR CONSOLE",
+  progress = 0,
+  introBriefing = false,
+} = {}) {
   loadingComplete = false;
   loadingOverlay.show({
     title,
     statusText: status,
     progressValue: progress,
+    introBriefing,
   });
 }
 

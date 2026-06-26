@@ -189,9 +189,27 @@ export function createAppShell({ gameApi }) {
     loadingOverlay?.classList.add("is-final");
     window.setTimeout(() => {
       loadingOverlay?.classList.add("is-complete");
+      loadingOverlay?.classList.remove("is-intro-briefing", "is-briefing-ready");
       gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
       transitionActive = false;
-    }, 320);
+    }, 460);
+  }
+
+  async function runIntroBriefingTransition() {
+    transitionActive = true;
+    gameApi.releasePointerLock?.();
+    gameApi.hideShiftResults?.();
+    hideOverlay();
+    gameApi.showLoadingScreen?.({
+      title: "YOUR FIRST FUSION SHIFT",
+      status: "PREPARING OPERATOR CONSOLE",
+      progress: 72,
+      introBriefing: true,
+    });
+    await wait(450);
+    gameApi.finishLoadingScreen?.(() => {
+      transitionActive = false;
+    });
   }
 
   function runAction(action) {
@@ -260,6 +278,11 @@ export function createAppShell({ gameApi }) {
     if (transitionActive) return;
     const level = LEVELS[levelId];
     if (!level?.playable) return;
+
+    if (levelId === INTRO_LEVEL_ID) {
+      runIntroBriefingTransition();
+      return;
+    }
 
     runRouteTransition(level.title, () => {
       gameApi.hideShiftResults?.();

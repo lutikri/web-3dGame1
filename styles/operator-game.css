@@ -168,6 +168,7 @@ body {
   display: grid;
   align-items: center;
   justify-items: start;
+  align-content: center;
   background: #000;
   opacity: 1;
   padding: 18px;
@@ -560,11 +561,6 @@ body.app-ui-open #lockButton {
   visibility: hidden;
 }
 
-.loading-overlay.is-intro-briefing {
-  align-items: start;
-  justify-items: center;
-}
-
 .loading-panel {
   display: grid;
   gap: 12px;
@@ -575,11 +571,6 @@ body.app-ui-open #lockButton {
   color: #67d787;
   padding: 14px;
   font-family: "Cascadia Mono", Consolas, monospace;
-}
-
-.loading-overlay.is-intro-briefing .loading-panel {
-  width: min(620px, calc(100vw - 36px));
-  margin-top: clamp(22px, 7vh, 72px);
 }
 
 .loading-header {
@@ -599,6 +590,7 @@ body.app-ui-open #lockButton {
 }
 
 .loading-spinner {
+  position: relative;
   width: 34px;
   height: 34px;
   border: 2px solid rgba(103, 215, 135, 0.2);
@@ -606,6 +598,22 @@ body.app-ui-open #lockButton {
   border-radius: 50%;
   animation: loading-spin 0.85s linear infinite;
   flex: 0 0 auto;
+}
+
+.loading-overlay.is-briefing-ready .loading-spinner {
+  animation: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.loading-overlay.is-briefing-ready .loading-spinner::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  background: #67d787;
+  mask: url("../assets/icons/ico-tick-circle-solid.svg") center / contain no-repeat;
+  -webkit-mask: url("../assets/icons/ico-tick-circle-solid.svg") center / contain no-repeat;
+  filter: drop-shadow(0 0 12px rgba(103, 215, 135, 0.28));
 }
 
 .loading-copy {
@@ -634,10 +642,11 @@ body.app-ui-open #lockButton {
   transform: translateY(0);
 }
 
-.loading-overlay.is-final .loading-panel {
+.loading-overlay.is-final .loading-panel,
+.loading-overlay.is-final .loading-start-button {
   opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: none;
+  transition: opacity 0.42s ease;
 }
 
 .loading-bar {
@@ -655,82 +664,50 @@ body.app-ui-open #lockButton {
   transition: width 0.22s ease;
 }
 
-.shift-briefing {
-  display: grid;
-  gap: 10px;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transform: translateY(-22px);
-  transition: max-height 0.9s ease, opacity 0.6s ease, transform 0.75s ease;
+.loading-overlay.is-briefing-ready .loading-bar {
+  border-color: rgba(159, 242, 181, 0.58);
 }
 
-.loading-overlay.is-intro-briefing .shift-briefing {
-  max-height: 420px;
-  opacity: 1;
-  transform: translateY(0);
+.loading-overlay.is-briefing-ready .loading-bar div {
+  background: #9ff2b5;
+  box-shadow: 0 0 20px rgba(159, 242, 181, 0.28);
 }
 
-.briefing-stamp {
-  justify-self: start;
-  border: 1px solid rgba(255, 207, 90, 0.45);
-  color: #ffdf88;
-  padding: 4px 7px;
-  font-size: 0.62rem;
-  font-weight: 950;
-}
-
-.shift-briefing h1 {
-  margin: 0;
-  color: #edf1f2;
-  font-size: 1.05rem;
-  line-height: 1.15;
-}
-
-.shift-briefing p {
-  margin: 0;
-  color: #b6c9bd;
-  font-size: 0.78rem;
-  line-height: 1.48;
-}
-
-.shift-briefing ul {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.shift-briefing li {
-  position: relative;
-  padding-left: 16px;
-  color: #dce8df;
-  font-size: 0.76rem;
-  line-height: 1.38;
-}
-
-.shift-briefing li::before {
-  content: "";
+.shift-brief-image {
   position: absolute;
-  left: 0;
-  top: 0.58em;
-  width: 7px;
-  height: 1px;
-  background: #67d787;
+  top: clamp(10px, 3vh, 30px);
+  right: clamp(14px, 4vw, 68px);
+  width: clamp(360px, 48vw, 560px);
+  max-width: calc(100vw - 32px);
+  max-height: min(88vh, 940px);
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(118%, -18%) rotate(4deg);
+  transform-origin: 86% 12%;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.5));
+}
+
+.loading-overlay.is-intro-briefing .shift-brief-image {
+  animation: shift-brief-slide-in 1.18s both;
 }
 
 .loading-start-button {
   display: none;
-  justify-self: end;
+  position: absolute;
+  left: 18px;
+  top: calc(50% + 80px);
+  width: min(420px, calc(100vw - 36px));
   border: 1px solid rgba(159, 242, 181, 0.65);
   background: rgba(36, 67, 49, 0.98);
   color: #edf1f2;
   cursor: pointer;
   font: 950 0.82rem "Cascadia Mono", Consolas, monospace;
+  margin-top: 0;
   opacity: 0;
-  padding: 10px 14px;
+  padding: 12px 14px;
   pointer-events: none;
+  text-align: left;
   transform: translateY(8px);
   transition: opacity 0.35s ease, transform 0.35s ease, background 0.18s ease;
 }
@@ -743,14 +720,51 @@ body.app-ui-open #lockButton {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+  box-shadow: 0 0 18px rgba(103, 215, 135, 0.14);
 }
 
 .loading-start-button:hover {
   background: rgba(52, 91, 70, 0.98);
 }
 
+.loading-overlay.is-final .loading-start-button {
+  opacity: 0;
+  pointer-events: none;
+  transform: none;
+  transition: opacity 0.42s ease;
+}
+
+.loading-overlay.is-final .shift-brief-image {
+  animation: none;
+  opacity: 0;
+  transform: translate(0, 0) rotate(0deg);
+  transition: opacity 0.42s ease;
+}
+
 @keyframes loading-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes shift-brief-slide-in {
+  0% {
+    opacity: 0;
+    transform: translate(118%, -18%) rotate(4deg);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate(-2%, 1%) rotate(-1.2deg);
+  }
+
+  76% {
+    opacity: 1;
+    transform: translate(1.2%, 0) rotate(0.55deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
   }
 }
