@@ -1,18 +1,4 @@
-import { POST_PROCESSING_OVERRIDES } from "./generated/PostProcessingOverrides.js";
-
-function applyOverrides(target, overrides) {
-  Object.entries(overrides ?? {}).forEach(([key, value]) => {
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      if (!target[key] || typeof target[key] !== "object") target[key] = {};
-      applyOverrides(target[key], value);
-    } else {
-      target[key] = value;
-    }
-  });
-  return target;
-}
-
-const POST_PROCESSING_DEFAULTS = {
+export const POST_PROCESSING_CONFIG = {
   "debugPanel": {
     "enabled": true,
     "startClosed": true
@@ -211,33 +197,65 @@ const POST_PROCESSING_DEFAULTS = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.28,
-    "radius": 0.62,
-    "threshold": 0.18
+    "strength": 0.52,
+    "radius": 0.8,
+    "threshold": 0.33
+  },
+  "antiAliasing": {
+    "method": "off",
+    "msaaSamples": 4
+  },
+  "lensEffects": {
+    "enabled": true,
+    "anamorphicGlare": {
+      "enabled": true,
+      "strength": 0.25,
+      "threshold": 0.21,
+      "length": 0.195,
+      "tint": "#ffffff"
+    },
+    "flareGhosts": {
+      "enabled": true,
+      "strength": 0.05,
+      "threshold": 0.55,
+      "spacing": 0.76,
+      "tint": "#ffffff",
+      "chromaticAberration": 0.015,
+      "haloStrength": 1,
+      "haloRadius": 0.43
+    },
+    "lensDirt": {
+      "enabled": true,
+      "strength": 1,
+      "assetPath": "assets/LensDirt1.png",
+      "tint": "#ffffff",
+      "maxTextureSize": 1024,
+      "scale": 7.9
+    }
   },
   "lut": {
     "enabled": true,
     "assetPath": "assets/luts/Green1.cube",
     "format": "cube",
     "inputColorSpace": "display-srgb",
-    "intensity": 0.36
+    "intensity": 0.66
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.029,
-    "contrast": 1.041,
-    "saturation": 1.08,
+    "brightness": 0.025,
+    "contrast": 1.074,
+    "saturation": 0.88,
     "gamma": 0.93,
-    "temperature": -0.28,
-    "tint": -0.15,
-    "emergencyTint": "#ff4a2c",
-    "emergencyTintStrength": 0.07,
+    "temperature": -0.13,
+    "tint": -0.05,
+    "emergencyTint": "#c2c2c2",
+    "emergencyTintStrength": 0,
     "vignette": {
       "enabled": true,
-      "strength": 0.515,
-      "radius": 0.75,
+      "strength": 0.575,
+      "radius": 0.69,
       "softness": 0.38,
-      "emergencyBoost": 0.16
+      "emergencyBoost": 0.46
     },
     "grain": {
       "enabled": false,
@@ -247,23 +265,18 @@ const POST_PROCESSING_DEFAULTS = {
   },
   "sharpen": {
     "enabled": true,
-    "amount": 0.11,
+    "amount": 0.295,
     "zoomBoost": 0.035
   },
   "lensDistortion": {
     "enabled": true,
     "barrelAmount": 0,
-    "fisheyeAmount": 0,
+    "fisheyeAmount": 0.18,
     "emergencyBarrelBoost": 0.038,
-    "emergencyFisheyeBoost": 0.025
+    "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0.0042
+    "amount": 0.0014
   }
 };
-
-export const POST_PROCESSING_CONFIG = applyOverrides(
-  POST_PROCESSING_DEFAULTS,
-  POST_PROCESSING_OVERRIDES,
-);

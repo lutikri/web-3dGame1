@@ -7,8 +7,10 @@ import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { LUTPass } from "three/addons/postprocessing/LUTPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
 import { createFusionCoreSimulation } from "./FusionCoreSimulation.js";
 import {
   buildShiftReport,
@@ -133,10 +135,16 @@ let lutPass = null;
 let lutTexture = null;
 let lutAssetPath = "";
 let lutTexturePromise = null;
+let lensDirtTexture = null;
+let lensDirtAssetPath = "";
+let lensDirtTexturePromise = null;
 let colorAdjustmentPass = null;
 let sharpenPass = null;
 let lensDistortionPass = null;
 let chromaticAberrationPass = null;
+let lensEffectsPass = null;
+let fxaaPass = null;
+let smaaPass = null;
 let postProcessingDebugPanel = null;
 let sceneDebugPanels = null;
 let debugPanelsVisible = true;
@@ -372,6 +380,136 @@ const lensDistortionShader = {
       gl_FragColor = texture2D(tDiffuse, uv);
     }
   `,
+};
+
+const lensEffectsShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    bloomTexture: { value: null },
+    lensDirtTexture: { value: null },
+    hasBloomTexture: { value: 0 },
+    hasLensDirtTexture: { value: 0 },
+    glareEnabled: { value: 0 },
+    glareStrength: { value: 0 },
+    glareThreshold: { value: 0.72 },
+    glareLength: { value: 0.1 },
+    glareTint: { value: new THREE.Color("#d8e8ff") },
+    ghostsEnabled: { value: 0 },
+    ghostStrength: { value: 0 },
+    ghostThreshold: { value: 0.82 },
+    ghostSpacing: { value: 0.72 },
+    ghostTint: { value: new THREE.Color("#b7d8ff") },
+    ghostChromaticAberration: { value: 0.006 },
+    haloStrength: { value: 0.12 },
+    haloRadius: { value: 0.42 },
+    dirtEnabled: { value: 0 },
+    dirtStrength: { value: 0 },
+    dirtTint: { value: new THREE.Color("#ffffff") },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform sampler2D bloomTexture;
+    uniform sampler2D lensDirtTexture;
+    uniform float hasBloomTexture;
+    uniform float hasLensDirtTexture;
+    uniform float glareEnabled;
+    uniform float glareStrength;
+    uniform float glareThreshold;
+    uniform float glareLength;
+    uniform vec3 glareTint;
+    uniform float ghostsEnabled;
+    uniform float ghostStrength;
+    uniform float ghostThreshold;
+    uniform float ghostSpacing;
+    uniform vec3 ghostTint;
+    uniform float ghostChromaticAberration;
+    uniform float haloStrength;
+    uniform float haloRadius;
+    uniform float dirtEnabled;
+    uniform float dirtStrength;
+    uniform vec3 dirtTint;
+    varying vec2 vUv;
+
+    float luminance(vec3 color) {
+      return dot(color, vec3(0.2126, 0.7152, 0.0722));
+    }
+
+    vec3 highlights(vec3 color, float threshold) {
+      float contribution = smoothstep(threshold, min(1.0, threshold + 0.18), luminance(color));
+      return color * contribution;
+    }
+
+    vec3 sampleBloom(vec2 uv) {
+      return texture2D(bloomTexture, clamp(uv, 0.0, 1.0)).rgb * hasBloomTexture;
+    }
+
+    vec3 sampleBloomChromatic(vec2 uv, vec2 direction) {
+      vec2 offset = direction * ghostChromaticAberration;
+      return vec3(
+        sampleBloom(uv + offset).r,
+        sampleBloom(uv).g,
+        sampleBloom(uv - offset).b
+      );
+    }
+
+    void main() {
+      vec4 source = texture2D(tDiffuse, vUv);
+      vec3 glare = vec3(0.0);
+
+      if (glareEnabled > 0.5) {
+        for (int i = 1; i <= 6; i++) {
+          float stepAmount = float(i) / 6.0;
+          float weight = (1.0 - stepAmount) * 0.24 + 0.04;
+          vec2 offset = vec2(glareLength * stepAmount, 0.0);
+          glare += highlights(sampleBloom(vUv + offset), glareThreshold) * weight;
+          glare += highlights(sampleBloom(vUv - offset), glareThreshold) * weight;
+        }
+      }
+
+      glare *= glareTint * glareStrength * glareEnabled;
+
+      vec3 ghosts = vec3(0.0);
+      if (ghostsEnabled > 0.5) {
+        vec2 uv = vec2(1.0) - vUv;
+        vec2 ghostVector = (vec2(0.5) - uv) * ghostSpacing;
+        for (int i = 1; i <= 4; i++) {
+          float index = float(i);
+          vec2 ghostUv = fract(uv + ghostVector * index);
+          float edgeWeight = 1.0 - smoothstep(0.0, 0.72, distance(ghostUv, vec2(0.5)));
+          vec2 direction = normalize(ghostUv - 0.5 + vec2(0.0001));
+          ghosts += highlights(sampleBloomChromatic(ghostUv, direction), ghostThreshold) * edgeWeight;
+        }
+
+        vec2 haloDirection = normalize(ghostVector + vec2(0.0001));
+        vec2 haloUv = fract(uv + haloDirection * haloRadius);
+        float haloWeight = 1.0 - smoothstep(0.0, 0.72, distance(haloUv, vec2(0.5)));
+        ghosts += highlights(sampleBloomChromatic(haloUv, haloDirection), ghostThreshold) * haloWeight * haloStrength;
+      }
+      ghosts *= ghostTint * ghostStrength * ghostsEnabled;
+
+      vec3 dirt = vec3(0.0);
+      if (dirtEnabled > 0.5 && hasLensDirtTexture > 0.5) {
+        vec3 dirtMask = texture2D(lensDirtTexture, vUv).rgb;
+        dirt = sampleBloom(vUv) * dirtMask * dirtTint * dirtStrength;
+      }
+
+      gl_FragColor = vec4(clamp(source.rgb + glare + ghosts + dirt, 0.0, 1.0), source.a);
+    }
+  `,
+};
+
+const compatibleFxaaShader = {
+  ...FXAAShader,
+  name: "CompatibleFXAAShader",
+  fragmentShader: FXAAShader.fragmentShader.replaceAll("-100.0", "-16.0"),
 };
 
 const materials = {
@@ -905,8 +1043,7 @@ function applyShadowSettings(light, lightConfig) {
 function setupPostProcessing() {
   if (!CONFIG.postProcessing.enabled) {
     postProcessingRevision += 1;
-    ssrPass?.dispose?.();
-    composer?.dispose?.();
+    disposeStandardPostProcessing();
     composer = null;
     gtaoPass = null;
     ssrPass = null;
@@ -916,13 +1053,15 @@ function setupPostProcessing() {
     sharpenPass = null;
     lensDistortionPass = null;
     chromaticAberrationPass = null;
+    lensEffectsPass = null;
+    fxaaPass = null;
+    smaaPass = null;
     setupRealismPostProcessing();
     return;
   }
 
   const revision = ++postProcessingRevision;
-  ssrPass?.dispose?.();
-  composer?.dispose?.();
+  disposeStandardPostProcessing();
   gtaoPass = null;
   ssrPass = null;
   bloomPass = null;
@@ -931,7 +1070,10 @@ function setupPostProcessing() {
   sharpenPass = null;
   lensDistortionPass = null;
   chromaticAberrationPass = null;
-  composer = new EffectComposer(renderer);
+  lensEffectsPass = null;
+  fxaaPass = null;
+  smaaPass = null;
+  composer = createEffectComposer();
   composer.setSize(window.innerWidth, window.innerHeight);
   composer.addPass(new RenderPass(scene, camera));
 
@@ -1024,6 +1166,23 @@ function setupPostProcessing() {
     composer.addPass(sharpenPass);
   }
 
+  if (CONFIG.postProcessing.lensEffects?.enabled) {
+    lensEffectsPass = new ShaderPass(lensEffectsShader);
+    applyLensEffectsConfig(lensEffectsPass);
+    composer.addPass(lensEffectsPass);
+
+    const dirtConfig = CONFIG.postProcessing.lensEffects.lensDirt ?? {};
+    if (dirtConfig.enabled && dirtConfig.assetPath) {
+      loadLensDirtTexture(dirtConfig)
+        .then(() => {
+          if (revision === postProcessingRevision && lensEffectsPass) applyLensEffectsConfig(lensEffectsPass);
+        })
+        .catch((error) => {
+          console.warn("[OperatorGame] Failed to load lens dirt texture", error);
+        });
+    }
+  }
+
   if (CONFIG.postProcessing.lensDistortion?.enabled) {
     lensDistortionPass = new ShaderPass(lensDistortionShader);
     applyLensDistortionConfig(lensDistortionPass, 0);
@@ -1036,7 +1195,48 @@ function setupPostProcessing() {
     composer.addPass(chromaticAberrationPass);
   }
 
+  const antiAliasingMethod = CONFIG.postProcessing.antiAliasing?.method ?? "off";
+  if (antiAliasingMethod === "fxaa") {
+    fxaaPass = new ShaderPass(compatibleFxaaShader);
+    updateFxaaResolution();
+    composer.addPass(fxaaPass);
+  } else if (antiAliasingMethod === "smaa") {
+    const pixelRatio = renderer.getPixelRatio();
+    smaaPass = new SMAAPass(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio);
+    composer.addPass(smaaPass);
+  }
+
   setupRealismPostProcessing();
+}
+
+function disposeStandardPostProcessing() {
+  composer?.passes?.forEach((pass) => pass.dispose?.());
+  composer?.dispose?.();
+}
+
+function createEffectComposer() {
+  const requestedSamples = Number(CONFIG.postProcessing.antiAliasing?.msaaSamples ?? 0);
+  if (!renderer.capabilities.isWebGL2 || requestedSamples <= 0) return new EffectComposer(renderer);
+
+  const maxSamples = renderer.capabilities.maxSamples ?? requestedSamples;
+  const samples = Math.min(requestedSamples, maxSamples);
+  const pixelRatio = renderer.getPixelRatio();
+  const renderTarget = new THREE.WebGLRenderTarget(
+    Math.max(1, Math.round(window.innerWidth * pixelRatio)),
+    Math.max(1, Math.round(window.innerHeight * pixelRatio)),
+    { type: THREE.HalfFloatType },
+  );
+  renderTarget.samples = samples;
+  return new EffectComposer(renderer, renderTarget);
+}
+
+function updateFxaaResolution() {
+  if (!fxaaPass) return;
+  const pixelRatio = renderer.getPixelRatio();
+  fxaaPass.material.uniforms.resolution.value.set(
+    1 / Math.max(1, window.innerWidth * pixelRatio),
+    1 / Math.max(1, window.innerHeight * pixelRatio),
+  );
 }
 
 function setupPostProcessingDebugPanel() {
@@ -1101,6 +1301,7 @@ function applyLivePostProcessingConfig() {
   if (colorAdjustmentPass) applyColorAdjustmentConfig(colorAdjustmentPass, 0);
   if (sharpenPass) sharpenPass.uniforms.amount.value = postConfig.sharpen.amount;
   if (lensDistortionPass) applyLensDistortionConfig(lensDistortionPass, 0);
+  if (lensEffectsPass) applyLensEffectsConfig(lensEffectsPass);
   if (chromaticAberrationPass) {
     chromaticAberrationPass.uniforms.amount.value = postConfig.chromaticAberration.amount;
   }
@@ -1133,6 +1334,43 @@ async function loadLutTexture(lutConfig) {
   return lutTexturePromise;
 }
 
+async function loadLensDirtTexture(dirtConfig) {
+  const maxTextureSize = Math.max(256, Number(dirtConfig.maxTextureSize ?? 1024));
+  const assetKey = `${dirtConfig.assetPath}:${maxTextureSize}`;
+  if (lensDirtTexture && lensDirtAssetPath === assetKey) return lensDirtTexture;
+  if (lensDirtTexturePromise && lensDirtAssetPath === assetKey) return lensDirtTexturePromise;
+
+  lensDirtAssetPath = assetKey;
+  lensDirtTexturePromise = new Promise((resolve, reject) => {
+    new THREE.ImageLoader().load(
+      dirtConfig.assetPath,
+      (image) => {
+        const scale = Math.min(1, maxTextureSize / Math.max(image.width, image.height));
+        const canvasTexture = document.createElement("canvas");
+        canvasTexture.width = Math.max(1, Math.round(image.width * scale));
+        canvasTexture.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvasTexture.getContext("2d");
+        context.drawImage(image, 0, 0, canvasTexture.width, canvasTexture.height);
+
+        lensDirtTexture?.dispose?.();
+        lensDirtTexture = new THREE.CanvasTexture(canvasTexture);
+        lensDirtTexture.colorSpace = THREE.NoColorSpace;
+        lensDirtTexture.minFilter = THREE.LinearFilter;
+        lensDirtTexture.magFilter = THREE.LinearFilter;
+        lensDirtTexture.generateMipmaps = false;
+        lensDirtTexture.needsUpdate = true;
+        resolve(lensDirtTexture);
+      },
+      undefined,
+      reject,
+    );
+  }).finally(() => {
+    lensDirtTexturePromise = null;
+  });
+
+  return lensDirtTexturePromise;
+}
+
 function applyColorAdjustmentConfig(pass, emergency) {
   const colorConfig = CONFIG.postProcessing.colorAdjustments ?? {};
   const vignetteConfig = colorConfig.vignette ?? {};
@@ -1162,6 +1400,34 @@ function applyLensDistortionConfig(pass, emergency) {
     (lensConfig.barrelAmount ?? 0) + emergency * (lensConfig.emergencyBarrelBoost ?? 0);
   pass.uniforms.fisheyeAmount.value =
     (lensConfig.fisheyeAmount ?? 0) + emergency * (lensConfig.emergencyFisheyeBoost ?? 0);
+}
+
+function applyLensEffectsConfig(pass) {
+  const config = CONFIG.postProcessing.lensEffects ?? {};
+  const glare = config.anamorphicGlare ?? {};
+  const ghosts = config.flareGhosts ?? {};
+  const dirt = config.lensDirt ?? {};
+
+  pass.uniforms.bloomTexture.value = bloomPass?.renderTargetsHorizontal?.[0]?.texture ?? null;
+  pass.uniforms.hasBloomTexture.value = pass.uniforms.bloomTexture.value ? 1 : 0;
+  pass.uniforms.lensDirtTexture.value = lensDirtTexture;
+  pass.uniforms.hasLensDirtTexture.value = lensDirtTexture ? 1 : 0;
+  pass.uniforms.glareEnabled.value = glare.enabled ? 1 : 0;
+  pass.uniforms.glareStrength.value = glare.strength ?? 0;
+  pass.uniforms.glareThreshold.value = glare.threshold ?? 0.72;
+  pass.uniforms.glareLength.value = glare.length ?? 0.1;
+  pass.uniforms.glareTint.value.set(glare.tint ?? "#d8e8ff").convertLinearToSRGB();
+  pass.uniforms.ghostsEnabled.value = ghosts.enabled ? 1 : 0;
+  pass.uniforms.ghostStrength.value = ghosts.strength ?? 0;
+  pass.uniforms.ghostThreshold.value = ghosts.threshold ?? 0.82;
+  pass.uniforms.ghostSpacing.value = ghosts.spacing ?? 0.72;
+  pass.uniforms.ghostTint.value.set(ghosts.tint ?? "#b7d8ff").convertLinearToSRGB();
+  pass.uniforms.ghostChromaticAberration.value = ghosts.chromaticAberration ?? 0.006;
+  pass.uniforms.haloStrength.value = ghosts.haloStrength ?? 0.12;
+  pass.uniforms.haloRadius.value = ghosts.haloRadius ?? 0.42;
+  pass.uniforms.dirtEnabled.value = dirt.enabled ? 1 : 0;
+  pass.uniforms.dirtStrength.value = dirt.strength ?? 0;
+  pass.uniforms.dirtTint.value.set(dirt.tint ?? "#ffffff").convertLinearToSRGB();
 }
 
 function getShadowPreset(quality = shadowQuality) {
@@ -2891,6 +3157,7 @@ window.addEventListener("resize", () => {
   gtaoPass?.setSize(window.innerWidth, window.innerHeight);
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
   sharpenPass?.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+  updateFxaaResolution();
 });
 
 document.addEventListener("keydown", (event) => {
@@ -3228,6 +3495,18 @@ window.operatorGameDebug = {
       screenSpaceShadowQuality,
       bloom: Boolean(bloomPass),
       bloomStrength: bloomPass?.strength ?? 0,
+      antiAliasingMethod: fxaaPass ? "fxaa" : smaaPass ? "smaa" : "off",
+      msaaSamples: composer?.renderTarget1?.samples ?? 0,
+      lensEffects: Boolean(lensEffectsPass),
+      anamorphicGlare: Boolean(lensEffectsPass?.uniforms.glareEnabled.value),
+      anamorphicGlareStrength: lensEffectsPass?.uniforms.glareStrength.value ?? 0,
+      flareGhosts: Boolean(lensEffectsPass?.uniforms.ghostsEnabled.value),
+      flareGhostStrength: lensEffectsPass?.uniforms.ghostStrength.value ?? 0,
+      lensDirt: Boolean(lensEffectsPass?.uniforms.dirtEnabled.value),
+      lensDirtStrength: lensEffectsPass?.uniforms.dirtStrength.value ?? 0,
+      lensDirtTextureLoaded: Boolean(lensDirtTexture),
+      lensDirtAssetPath,
+      lensEffectsUseBloomTexture: Boolean(lensEffectsPass?.uniforms.hasBloomTexture.value),
       realismBloom: Boolean(realismBloomEffect),
       realismBloomStrength: realismBloomEffect?.intensity ?? 0,
       lut: Boolean(lutPass),

@@ -23,12 +23,12 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
     },
     "doorLamp1": {
       "color": "#ffffff",
-      "roughness": 1,
+      "roughness": 1.03,
       "metalness": 1,
       "normalScale": 1,
       "aoMapIntensity": 1,
       "emissive": "#ff0000",
-      "emissiveIntensity": 5.5
+      "emissiveIntensity": 9.65
     },
     "bricks1": {
       "color": "#659f89",
@@ -106,14 +106,14 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
   "lighting": {
     "ambientSky": "#9fb6c7",
     "ambientGround": "#101010",
-    "ambientIntensity": 0.03,
+    "ambientIntensity": 0,
     "pointLights": {
       "SM_Lamp1_2_Light": {
         "color": "#ffffff",
-        "intensity": 1.5,
+        "intensity": 1.4,
         "roomLightControlled": true,
-        "distance": 5,
-        "decay": 1,
+        "distance": 3.85,
+        "decay": 0.51,
         "position": {
           "x": 0.01,
           "y": 1.91,
@@ -128,7 +128,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
       },
       "fill": {
         "color": "#6092c7",
-        "intensity": 0.43,
+        "intensity": 0.1,
         "roomLightControlled": false,
         "distance": 2.85,
         "decay": 0.32,

@@ -198,20 +198,52 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.31,
-    "radius": 0.62,
-    "threshold": 0.18
+    "strength": 0.52,
+    "radius": 0.8,
+    "threshold": 0.33
+  },
+  "antiAliasing": {
+    "method": "off",
+    "msaaSamples": 4
+  },
+  "lensEffects": {
+    "enabled": true,
+    "anamorphicGlare": {
+      "enabled": true,
+      "strength": 0.25,
+      "threshold": 0.21,
+      "length": 0.195,
+      "tint": "#ffffff"
+    },
+    "flareGhosts": {
+      "enabled": true,
+      "strength": 0.05,
+      "threshold": 0.55,
+      "spacing": 0.76,
+      "tint": "#ffffff",
+      "chromaticAberration": 0.015,
+      "haloStrength": 1,
+      "haloRadius": 0.43
+    },
+    "lensDirt": {
+      "enabled": true,
+      "strength": 1,
+      "assetPath": "assets/LensDirt1.png",
+      "tint": "#ffffff",
+      "maxTextureSize": 1024,
+      "scale": 7.9
+    }
   },
   "lut": {
     "enabled": true,
     "assetPath": "assets/luts/Green1.cube",
     "format": "cube",
     "inputColorSpace": "display-srgb",
-    "intensity": 0.38
+    "intensity": 0.66
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.066,
+    "brightness": 0.034,
     "contrast": 1.074,
     "saturation": 0.88,
     "gamma": 0.93,

@@ -64,6 +64,37 @@ export function createPostProcessingDebugPanel({ config, defaults = config, rebu
   range(bloom, config.bloom, "radius", 0, 1, 0.01);
   range(bloom, config.bloom, "threshold", 0, 1, 0.01);
 
+  const antiAliasing = gui.addFolder("Anti-aliasing");
+  structural(antiAliasing.add(config.antiAliasing, "method", ["off", "fxaa", "smaa"]));
+  structural(antiAliasing.add(config.antiAliasing, "msaaSamples", { Off: 0, "2x": 2, "4x": 4 }));
+
+  const lensEffects = gui.addFolder("Lens effects");
+  structural(lensEffects.add(config.lensEffects, "enabled"));
+
+  const glare = lensEffects.addFolder("Anamorphic glare");
+  live(glare.add(config.lensEffects.anamorphicGlare, "enabled"));
+  range(glare, config.lensEffects.anamorphicGlare, "strength", 0, 2, 0.01);
+  range(glare, config.lensEffects.anamorphicGlare, "threshold", 0, 1, 0.01);
+  range(glare, config.lensEffects.anamorphicGlare, "length", 0.005, 0.35, 0.005);
+  live(glare.addColor(config.lensEffects.anamorphicGlare, "tint"));
+
+  const ghosts = lensEffects.addFolder("Flare ghosts");
+  live(ghosts.add(config.lensEffects.flareGhosts, "enabled"));
+  range(ghosts, config.lensEffects.flareGhosts, "strength", 0, 1, 0.01);
+  range(ghosts, config.lensEffects.flareGhosts, "threshold", 0, 1, 0.01);
+  range(ghosts, config.lensEffects.flareGhosts, "spacing", 0.1, 1.5, 0.01);
+  range(ghosts, config.lensEffects.flareGhosts, "chromaticAberration", 0, 0.05, 0.0005);
+  range(ghosts, config.lensEffects.flareGhosts, "haloStrength", 0, 1, 0.01);
+  range(ghosts, config.lensEffects.flareGhosts, "haloRadius", 0.05, 0.8, 0.01);
+  live(ghosts.addColor(config.lensEffects.flareGhosts, "tint"));
+
+  const dirt = lensEffects.addFolder("Lens dirt");
+  structural(dirt.add(config.lensEffects.lensDirt, "enabled"));
+  range(dirt, config.lensEffects.lensDirt, "strength", 0, 1, 0.01);
+  structural(dirt.add(config.lensEffects.lensDirt, "assetPath"));
+  live(dirt.addColor(config.lensEffects.lensDirt, "tint"));
+  structural(dirt.add(config.lensEffects.lensDirt, "maxTextureSize", [512, 1024, 2048]));
+
   const lut = gui.addFolder("LUT");
   structural(lut.add(config.lut, "enabled"));
   structural(lut.add(config.lut, "assetPath"));
@@ -160,6 +191,8 @@ export function createPostProcessingDebugPanel({ config, defaults = config, rebu
   sharpen.close();
   lens.close();
   chromatic.close();
+  antiAliasing.close();
+  lensEffects.close();
   presets.open();
 
   return {
