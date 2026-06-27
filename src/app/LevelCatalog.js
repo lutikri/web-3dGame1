@@ -3,6 +3,7 @@ export const LEVELS = {
     title: "INTRO SHIFT",
     mode: "tutorial",
     description: "Current first fusion shift scenario.",
+    briefingImage: "assets/shift-briefs/Intro1-us.png",
     playable: true,
   },
   "unexpected-stuff": {

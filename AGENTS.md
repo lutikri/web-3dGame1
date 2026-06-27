@@ -14,9 +14,30 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - `src/OperatorGameConfig.js`: primary tuning surface for panel placement, lights, shadows, needle animation, and post-processing effects.
 - `src/FusionCoreSimulation.js`: core gameplay loop, phases, warning flags, and derived gauge values.
 - `src/StatusScreen.js`: canvas-driven material for the small status display.
+- `src/app/AppShell.js`: app/menu shell, route transitions, settings, progress routing, and level briefing overlay behavior.
+- `src/app/LevelCatalog.js`: playable level metadata. Add per-level briefing sheets here via `briefingImage`.
+- `src/app/BriefingUiConfig.js`: small UI-only tuning surface for level briefing sheet zoom, pan, and vignette behavior.
 - `assets/`: runtime GLB and baked PBR textures.
 - `styles/operator-game.css`: HUD/canvas styling.
 - `legacy/`, `recordings/`, and `screenshots/` are supporting/generated material; avoid changing them unless the task calls for it.
+
+## App Shell / Loading Flow
+
+- Keep boot asset loading and route transitions logically separate. The user may see the same loading visual language, but boot loading should not become the menu/router state machine.
+- `AppShell` owns high-level app panels: main menu, level select, profile, settings, pause, route loading, and briefing sheets.
+- Internal menu navigation, such as settings/back/profile/level-select, should switch panels directly without route loading.
+- Use route loading only for major context changes, such as menu to level, pause/results to main menu, or restart. Route transitions should hide UI changes behind a black/loading sequence so loading panels and target menus are not visible at the same time.
+- The main menu uses `gameApi.resetForMenu()` and the menu camera view configured in `CONFIG.camera.menuView`; level sessions use `gameApi.startLevel()` / `restartGame()`.
+- First-time players enter `intro-shift`; returning players go to the main menu based on saved progress. `CONFIG.app.firstVisitEmulation` should usually stay `false` except for testing.
+
+## Level Briefings
+
+- Level briefing sheets are level-driven. Add or change the sheet path in `src/app/LevelCatalog.js` with `briefingImage`, for example `assets/shift-briefs/Intro1-us.png`.
+- Briefing sheets are shown by `AppShell` after level start, before player control is released.
+- While a briefing is visible, gameplay input is locked through `gameApi.setInputLocked(true)`: no pointer lock, WASD, pause, panel clicks, zoom, or held controls should pass through.
+- Pressing `Enter` dismisses the sheet. The sheet animates downward and then hides; after dismissal, input unlocks.
+- The briefing inspect/reading behavior is tuned in `src/app/BriefingUiConfig.js`, not in `OperatorGameConfig.js`.
+- The briefing vignette should be a fullscreen UI overlay in front of the scene, not a 3D/post-process effect and not a blend-mode artifact.
 
 ## Scene Rules
 

@@ -1,4 +1,5 @@
 import { LEVELS } from "./LevelCatalog.js";
+import { BRIEFING_UI } from "./BriefingUiConfig.js";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -11,6 +12,9 @@ export function createAppShell({ gameApi }) {
   const routeLoadingTitle = document.querySelector("#routeLoadingTitle");
   const routeLoadingStatus = document.querySelector("#routeLoadingStatus");
   const routeLoadingBarFill = document.querySelector("#routeLoadingBarFill");
+  const briefingOverlay = document.querySelector("#briefingOverlay");
+  const briefingSheetFrame = document.querySelector("#briefingSheetFrame");
+  const briefingImage = document.querySelector("#briefingImage");
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
   const fovInput = document.querySelector("#settingFov");
   const fovValue = document.querySelector("#settingFovValue");
@@ -34,9 +38,12 @@ export function createAppShell({ gameApi }) {
   let previousPanel = "main-menu";
   let transitionActive = false;
   let initialRouteHandled = false;
+  let briefingActive = false;
+  let briefingHideTimer = 0;
 
   applySettings();
   wireActions();
+  wireBriefingInspect();
   wireSettings();
   wireProgression();
   updateLevelProgressUi();
@@ -54,6 +61,16 @@ export function createAppShell({ gameApi }) {
     });
 
     document.addEventListener("keydown", (event) => {
+      if (briefingActive && event.code === "Enter" && !event.repeat) {
+        event.preventDefault();
+        dismissBriefing();
+        return;
+      }
+      if (briefingActive) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.code !== "KeyP" || event.repeat) return;
       if (document.querySelector("#resultsOverlay")?.classList.contains("is-visible")) return;
       event.preventDefault();
@@ -168,12 +185,48 @@ export function createAppShell({ gameApi }) {
     startIntroShift();
   }
 
+  function wireBriefingInspect() {
+    if (!briefingOverlay || !briefingSheetFrame || !briefingImage) return;
+
+    briefingOverlay.addEventListener("mousemove", (event) => {
+      if (!briefingActive) return;
+      const rect = briefingSheetFrame.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+      const insideImage =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      if (!insideImage) {
+        stopBriefingInspect();
+        return;
+      }
+
+      const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+      const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+      briefingOverlay.style.setProperty("--briefing-origin-x", `${(x * 100).toFixed(1)}%`);
+      briefingOverlay.style.setProperty("--briefing-origin-y", `${(y * 100).toFixed(1)}%`);
+      briefingOverlay.style.setProperty("--briefing-pan-x", `${((0.5 - x) * BRIEFING_UI.inspect.panX).toFixed(1)}px`);
+      briefingOverlay.style.setProperty("--briefing-pan-y", `${((0.5 - y) * BRIEFING_UI.inspect.panY).toFixed(1)}px`);
+      briefingOverlay.style.setProperty("--briefing-cursor-x", `${event.clientX.toFixed(1)}px`);
+      briefingOverlay.style.setProperty("--briefing-cursor-y", `${event.clientY.toFixed(1)}px`);
+      briefingOverlay.style.setProperty("--briefing-focus-radius", `${getBriefingFocusRadius(rect).toFixed(1)}px`);
+      briefingOverlay.classList.add("is-inspecting");
+    });
+
+    briefingOverlay.addEventListener("mouseleave", () => {
+      stopBriefingInspect();
+    });
+  }
+
   function startIntroShift() {
     if (transitionActive) return;
     transitionActive = true;
     hideOverlay();
     window.setTimeout(() => {
       gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
+      showLevelBriefing(INTRO_LEVEL_ID);
       transitionActive = false;
     }, 120);
   }
@@ -185,6 +238,7 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       gameApi.requestPointerLock?.();
     } else if (action === "main-menu") {
+      hideBriefing(true);
       if (currentPanel && currentPanel !== "pause") {
         showPanel("main-menu");
         return;
@@ -201,11 +255,14 @@ export function createAppShell({ gameApi }) {
       });
     } else if (action === "level-select") {
       gameApi.hideShiftResults?.();
+      hideBriefing(true);
       showPanel("level-select");
     } else if (action === "profile") {
+      hideBriefing(true);
       showPanel("profile");
     } else if (action === "settings") {
       previousPanel = currentPanel ?? "pause";
+      hideBriefing(true);
       showPanel("settings");
     } else if (action === "back") {
       showPanel(previousPanel || "main-menu");
@@ -217,6 +274,7 @@ export function createAppShell({ gameApi }) {
           gameApi.hideShiftResults?.();
           hideOverlay();
           gameApi.restartGame?.();
+          showLevelBriefing(gameApi.getState?.().activeLevelId);
         },
       });
     } else if (action === "quick-level-select") {
@@ -228,6 +286,7 @@ export function createAppShell({ gameApi }) {
 
   async function runRouteTransition({ title, status = "PREPARING OPERATOR CONSOLE", action }) {
     transitionActive = true;
+    updateInputLock();
     gameApi.releasePointerLock?.();
     showRouteCurtain();
     await wait(140);
@@ -240,6 +299,7 @@ export function createAppShell({ gameApi }) {
     hideRouteCurtain();
     await wait(140);
     transitionActive = false;
+    updateInputLock();
   }
 
   function showRouteCurtain() {
@@ -294,8 +354,72 @@ export function createAppShell({ gameApi }) {
         gameApi.hideShiftResults?.();
         hideOverlay();
         gameApi.startLevel?.({ levelId, mode: level.mode });
+        showLevelBriefing(levelId);
       },
     });
+  }
+
+  function showLevelBriefing(levelId) {
+    const briefing = LEVELS[levelId]?.briefingImage;
+    if (!briefing || !briefingOverlay || !briefingImage) return;
+
+    window.clearTimeout(briefingHideTimer);
+    briefingActive = true;
+    updateInputLock();
+    briefingImage.src = briefing;
+    briefingImage.alt = `${LEVELS[levelId]?.title ?? levelId} briefing`;
+    briefingOverlay.hidden = false;
+    briefingOverlay.classList.remove("is-visible", "is-dismissed");
+    resetBriefingInspectState();
+    briefingOverlay.getBoundingClientRect();
+    briefingOverlay.classList.add("is-visible");
+  }
+
+  function dismissBriefing() {
+    if (!briefingOverlay || !briefingActive) return;
+    briefingActive = false;
+    updateInputLock();
+    briefingOverlay.classList.remove("is-visible");
+    briefingOverlay.classList.add("is-dismissed");
+    briefingHideTimer = window.setTimeout(() => hideBriefing(true), 980);
+  }
+
+  function hideBriefing(immediate = false) {
+    if (!briefingOverlay) return;
+    window.clearTimeout(briefingHideTimer);
+    briefingActive = false;
+    updateInputLock();
+    briefingOverlay.classList.remove("is-visible", "is-dismissed");
+    resetBriefingInspectState();
+    if (immediate) briefingOverlay.hidden = true;
+  }
+
+  function stopBriefingInspect() {
+    briefingOverlay?.classList.remove("is-inspecting");
+  }
+
+  function resetBriefingInspectState() {
+    if (!briefingOverlay) return;
+    briefingOverlay.classList.remove("is-inspecting");
+    briefingOverlay.style.setProperty("--briefing-base-scale", String(BRIEFING_UI.inspect.baseScale));
+    briefingOverlay.style.setProperty("--briefing-zoom-scale", String(BRIEFING_UI.inspect.zoomScale));
+    briefingOverlay.style.setProperty("--briefing-vignette-clear", `${BRIEFING_UI.vignette.clearStop}%`);
+    briefingOverlay.style.setProperty("--briefing-vignette-fade", `${BRIEFING_UI.vignette.fadeStop}%`);
+    briefingOverlay.style.setProperty("--briefing-vignette-edge", `${BRIEFING_UI.vignette.edgeStop}%`);
+    briefingOverlay.style.setProperty("--briefing-vignette-mid-opacity", String(BRIEFING_UI.vignette.midOpacity));
+    briefingOverlay.style.setProperty("--briefing-vignette-edge-opacity", String(BRIEFING_UI.vignette.edgeOpacity));
+    briefingOverlay.style.setProperty("--briefing-origin-x", "50%");
+    briefingOverlay.style.setProperty("--briefing-origin-y", "50%");
+    briefingOverlay.style.setProperty("--briefing-pan-x", "0px");
+    briefingOverlay.style.setProperty("--briefing-pan-y", "0px");
+    briefingOverlay.style.setProperty("--briefing-cursor-x", "50vw");
+    briefingOverlay.style.setProperty("--briefing-cursor-y", "50vh");
+    briefingOverlay.style.setProperty("--briefing-focus-radius", `${BRIEFING_UI.vignette.minRadius}px`);
+  }
+
+  function getBriefingFocusRadius(rect) {
+    const rawRadius = Math.max(rect.width, rect.height) * BRIEFING_UI.vignette.radiusRatio;
+    return Math.min(BRIEFING_UI.vignette.maxRadius, Math.max(BRIEFING_UI.vignette.minRadius, rawRadius));
   }
 
   function updateLevelProgressUi() {
@@ -314,10 +438,12 @@ export function createAppShell({ gameApi }) {
   }
 
   function showPanel(panelName) {
+    hideBriefing(true);
     currentPanel = panelName;
     overlay.hidden = false;
     document.body.classList.add("app-ui-open");
     gameApi.releasePointerLock?.();
+    updateInputLock();
 
     panels.forEach((panel, name) => {
       panel.hidden = name !== panelName;
@@ -328,9 +454,14 @@ export function createAppShell({ gameApi }) {
     currentPanel = null;
     overlay.hidden = true;
     document.body.classList.remove("app-ui-open");
+    updateInputLock();
     panels.forEach((panel) => {
       panel.hidden = true;
     });
+  }
+
+  function updateInputLock() {
+    gameApi.setInputLocked?.(Boolean(transitionActive || briefingActive || isOpen()));
   }
 
   function applySettings() {

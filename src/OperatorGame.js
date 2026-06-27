@@ -1,7 +1,10 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { LUTCubeLoader } from "three/addons/loaders/LUTCubeLoader.js";
+import { LUT3dlLoader } from "three/addons/loaders/LUT3dlLoader.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
+import { LUTPass } from "three/addons/postprocessing/LUTPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
@@ -22,6 +25,23 @@ import {
 import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js";
 import { createStatusScreen } from "./StatusScreen.js";
 import { createLoadingOverlay } from "./ui/LoadingOverlay.js";
+import {
+  createPostProcessingDebugPanel,
+  restoreSavedPostProcessingConfig,
+} from "./ui/PostProcessingDebugPanel.js";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js";
+
+const defaultSceneDebugConfig = JSON.parse(
+  JSON.stringify({
+    materials: CONFIG.interior.specialMaterials,
+    lighting: CONFIG.lighting,
+  }),
+);
+restoreSavedSceneConfig({
+  levelId: CONFIG.sceneDebug?.levelId ?? "reactor-1",
+  materials: CONFIG.interior.specialMaterials,
+  lighting: CONFIG.lighting,
+});
 
 const canvas = document.querySelector("#scene");
 const lockButton = document.querySelector("#lockButton");
@@ -109,7 +129,18 @@ let ssrPassClass = null;
 let ssrModulesPromise = null;
 let postProcessingRevision = 0;
 let bloomPass = null;
+let lutPass = null;
+let lutTexture = null;
+let lutAssetPath = "";
+let lutTexturePromise = null;
+let colorAdjustmentPass = null;
+let sharpenPass = null;
+let lensDistortionPass = null;
 let chromaticAberrationPass = null;
+let postProcessingDebugPanel = null;
+let sceneDebugPanels = null;
+let debugPanelsVisible = true;
+let debugToggleBuffer = "";
 let realismComposer = null;
 let realismVelocityDepthNormalPass = null;
 let realismSsgiEffect = null;
@@ -137,6 +168,7 @@ let ssgiQuality = CONFIG.postProcessing.ssgi.defaultQuality ?? "off";
 let ssrQuality = CONFIG.postProcessing.ssr.defaultQuality ?? "off";
 let screenSpaceShadowQuality = CONFIG.postProcessing.screenSpaceShadows.defaultQuality ?? "off";
 let loadingComplete = Boolean(CONFIG.loading?.skip);
+let inputLocked = false;
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
@@ -150,12 +182,14 @@ let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
 let roomLightSwitchMode = "off";
 let roomLightBootTimer = 0;
+let hemisphereLight = null;
 const runtimeTextureLoading = {
   total: 0,
   completed: 0,
   active: 0,
   hideTimer: 0,
 };
+const defaultPostProcessingConfig = JSON.parse(JSON.stringify(CONFIG.postProcessing));
 
 const interiorCustomTextureMaps = {};
 const interiorCustomTextureMapPromises = loadInteriorCustomMaterialTextures();
@@ -185,6 +219,157 @@ const chromaticAberrationShader = {
       float g = texture2D(tDiffuse, vUv).g;
       float b = texture2D(tDiffuse, vUv - offset).b;
       gl_FragColor = vec4(r, g, b, 1.0);
+    }
+  `,
+};
+
+const colorAdjustmentShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    brightness: { value: 0 },
+    contrast: { value: 1 },
+    saturation: { value: 1 },
+    gamma: { value: 1 },
+    temperature: { value: 0 },
+    tint: { value: 0 },
+    emergency: { value: 0 },
+    emergencyTint: { value: new THREE.Color("#ff4a2c") },
+    emergencyTintStrength: { value: 0 },
+    vignetteStrength: { value: 0 },
+    vignetteRadius: { value: 0.78 },
+    vignetteSoftness: { value: 0.38 },
+    grainAmount: { value: 0 },
+    time: { value: 0 },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform float brightness;
+    uniform float contrast;
+    uniform float saturation;
+    uniform float gamma;
+    uniform float temperature;
+    uniform float tint;
+    uniform float emergency;
+    uniform vec3 emergencyTint;
+    uniform float emergencyTintStrength;
+    uniform float vignetteStrength;
+    uniform float vignetteRadius;
+    uniform float vignetteSoftness;
+    uniform float grainAmount;
+    uniform float time;
+    varying vec2 vUv;
+
+    float hash(vec2 p) {
+      p += time;
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    void main() {
+      vec4 source = texture2D(tDiffuse, vUv);
+      vec3 color = source.rgb;
+
+      color = (color - 0.5) * contrast + 0.5;
+      color += brightness;
+
+      float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+      color = mix(vec3(luma), color, saturation);
+
+      color.r += temperature * 0.1;
+      color.b -= temperature * 0.1;
+      color.g += tint * 0.1;
+      color = mix(color, emergencyTint, emergency * emergencyTintStrength);
+      color = pow(max(color, vec3(0.0)), vec3(1.0 / max(gamma, 0.001)));
+
+      float distanceFromCenter = distance(vUv, vec2(0.5));
+      float vignette = smoothstep(vignetteRadius, vignetteRadius - max(vignetteSoftness, 0.001), distanceFromCenter);
+      color *= mix(1.0 - vignetteStrength, 1.0, vignette);
+
+      float grain = (hash(gl_FragCoord.xy) - 0.5) * grainAmount;
+      color += grain;
+
+      gl_FragColor = vec4(clamp(color, 0.0, 1.0), source.a);
+    }
+  `,
+};
+
+const sharpenShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    resolution: { value: new THREE.Vector2(1, 1) },
+    amount: { value: 0 },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform vec2 resolution;
+    uniform float amount;
+    varying vec2 vUv;
+
+    void main() {
+      vec2 texel = 1.0 / resolution;
+      vec3 center = texture2D(tDiffuse, vUv).rgb;
+      vec3 blur = vec3(0.0);
+      blur += texture2D(tDiffuse, vUv + texel * vec2(-1.0, 0.0)).rgb;
+      blur += texture2D(tDiffuse, vUv + texel * vec2(1.0, 0.0)).rgb;
+      blur += texture2D(tDiffuse, vUv + texel * vec2(0.0, -1.0)).rgb;
+      blur += texture2D(tDiffuse, vUv + texel * vec2(0.0, 1.0)).rgb;
+      blur *= 0.25;
+      vec3 color = center + (center - blur) * amount;
+      gl_FragColor = vec4(clamp(color, 0.0, 1.0), texture2D(tDiffuse, vUv).a);
+    }
+  `,
+};
+
+const lensDistortionShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    barrelAmount: { value: 0 },
+    fisheyeAmount: { value: 0 },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform float barrelAmount;
+    uniform float fisheyeAmount;
+    varying vec2 vUv;
+
+    void main() {
+      vec2 centered = vUv * 2.0 - 1.0;
+      float radius2 = dot(centered, centered);
+      float radius = sqrt(radius2);
+      float normalizedRadius = min(radius / 1.41421356, 1.0);
+
+      float tangentRadius = tan(normalizedRadius * 1.15) / tan(1.15);
+      float equidistantRadius = atan(normalizedRadius * 2.2) / atan(2.2);
+      float projectedRadius = fisheyeAmount >= 0.0 ? tangentRadius : equidistantRadius;
+      float fisheyeRadius = mix(normalizedRadius, projectedRadius, clamp(abs(fisheyeAmount), 0.0, 1.0));
+      float fisheyeScale = radius > 0.00001 ? fisheyeRadius / max(normalizedRadius, 0.00001) : 1.0;
+      float barrelScale = 1.0 + barrelAmount * radius2;
+      vec2 uv = clamp(centered * fisheyeScale * barrelScale * 0.5 + 0.5, vec2(0.0), vec2(1.0));
+
+      gl_FragColor = texture2D(tDiffuse, uv);
     }
   `,
 };
@@ -643,11 +828,14 @@ init();
 
 function init() {
   if (CONFIG.loading?.skip) skipLoadingOverlay();
+  restoreSavedPostProcessingConfig(CONFIG.postProcessing);
   renderer.shadowMap.enabled = getShadowPreset(shadowQuality).enabled;
   setupLights();
   setupLightFixtures();
   buildRoom();
   setupPostProcessing();
+  setupPostProcessingDebugPanel();
+  setupSceneDebugPanels();
   loadInteriorModel();
   loadPanelModel();
   if (CONFIG.loading?.skip) triggerRoomLightBoot();
@@ -661,6 +849,7 @@ function setupLights() {
     CONFIG.lighting.ambientIntensity,
   );
   hemi.userData.baseIntensity = hemi.intensity;
+  hemisphereLight = hemi;
   controlledLights.push(hemi);
   scene.add(hemi);
 
@@ -714,7 +903,22 @@ function applyShadowSettings(light, lightConfig) {
 }
 
 function setupPostProcessing() {
-  if (!CONFIG.postProcessing.enabled) return;
+  if (!CONFIG.postProcessing.enabled) {
+    postProcessingRevision += 1;
+    ssrPass?.dispose?.();
+    composer?.dispose?.();
+    composer = null;
+    gtaoPass = null;
+    ssrPass = null;
+    bloomPass = null;
+    lutPass = null;
+    colorAdjustmentPass = null;
+    sharpenPass = null;
+    lensDistortionPass = null;
+    chromaticAberrationPass = null;
+    setupRealismPostProcessing();
+    return;
+  }
 
   const revision = ++postProcessingRevision;
   ssrPass?.dispose?.();
@@ -722,6 +926,10 @@ function setupPostProcessing() {
   gtaoPass = null;
   ssrPass = null;
   bloomPass = null;
+  lutPass = null;
+  colorAdjustmentPass = null;
+  sharpenPass = null;
+  lensDistortionPass = null;
   chromaticAberrationPass = null;
   composer = new EffectComposer(renderer);
   composer.setSize(window.innerWidth, window.innerHeight);
@@ -769,14 +977,191 @@ function setupPostProcessing() {
     composer.addPass(bloomPass);
   }
 
+  const lutConfig = CONFIG.postProcessing.lut;
+  const lutUsesLinearInput = lutConfig?.inputColorSpace === "linear";
+  if (lutConfig?.enabled && lutConfig.assetPath && lutUsesLinearInput) {
+    if (lutTexture && lutAssetPath === lutConfig.assetPath) {
+      lutPass = new LUTPass({ lut: lutTexture, intensity: lutConfig.intensity ?? 1 });
+      composer.addPass(lutPass);
+    } else {
+      loadLutTexture(lutConfig)
+        .then(() => {
+          if (revision === postProcessingRevision && CONFIG.postProcessing.lut?.enabled) setupPostProcessing();
+        })
+        .catch((error) => {
+          console.warn("[OperatorGame] Failed to load LUT", error);
+      });
+    }
+  }
+
+  composer.addPass(new OutputPass());
+
+  if (lutConfig?.enabled && lutConfig.assetPath && !lutUsesLinearInput) {
+    if (lutTexture && lutAssetPath === lutConfig.assetPath) {
+      lutPass = new LUTPass({ lut: lutTexture, intensity: lutConfig.intensity ?? 1 });
+      composer.addPass(lutPass);
+    } else {
+      loadLutTexture(lutConfig)
+        .then(() => {
+          if (revision === postProcessingRevision && CONFIG.postProcessing.lut?.enabled) setupPostProcessing();
+        })
+        .catch((error) => {
+          console.warn("[OperatorGame] Failed to load LUT", error);
+        });
+    }
+  }
+
+  if (CONFIG.postProcessing.colorAdjustments?.enabled) {
+    colorAdjustmentPass = new ShaderPass(colorAdjustmentShader);
+    applyColorAdjustmentConfig(colorAdjustmentPass, 0);
+    composer.addPass(colorAdjustmentPass);
+  }
+
+  if (CONFIG.postProcessing.sharpen?.enabled) {
+    sharpenPass = new ShaderPass(sharpenShader);
+    sharpenPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    sharpenPass.uniforms.amount.value = CONFIG.postProcessing.sharpen.amount ?? 0;
+    composer.addPass(sharpenPass);
+  }
+
+  if (CONFIG.postProcessing.lensDistortion?.enabled) {
+    lensDistortionPass = new ShaderPass(lensDistortionShader);
+    applyLensDistortionConfig(lensDistortionPass, 0);
+    composer.addPass(lensDistortionPass);
+  }
+
   if (CONFIG.postProcessing.chromaticAberration.enabled) {
     chromaticAberrationPass = new ShaderPass(chromaticAberrationShader);
     chromaticAberrationPass.uniforms.amount.value = CONFIG.postProcessing.chromaticAberration.amount;
     composer.addPass(chromaticAberrationPass);
   }
 
-  composer.addPass(new OutputPass());
   setupRealismPostProcessing();
+}
+
+function setupPostProcessingDebugPanel() {
+  const panelConfig = CONFIG.postProcessing.debugPanel ?? {};
+  if (!panelConfig.enabled || postProcessingDebugPanel) return;
+
+  postProcessingDebugPanel = createPostProcessingDebugPanel({
+    config: CONFIG.postProcessing,
+    defaults: defaultPostProcessingConfig,
+    rebuild: setupPostProcessing,
+    update: applyLivePostProcessingConfig,
+  });
+  if (panelConfig.startClosed) {
+    window.setTimeout(() => postProcessingDebugPanel?.gui.close(), 0);
+  }
+}
+
+function setupSceneDebugPanels() {
+  const panelConfig = CONFIG.sceneDebug ?? {};
+  if (!panelConfig.enabled || sceneDebugPanels) return;
+
+  sceneDebugPanels = createSceneDebugPanels({
+    levelId: panelConfig.levelId ?? "reactor-1",
+    materialConfigs: CONFIG.interior.specialMaterials,
+    materialInstances: materials.interiorCustom,
+    lightingConfig: CONFIG.lighting,
+    pointLights: pointLightsByKey,
+    hemisphereLight,
+    defaults: defaultSceneDebugConfig,
+    startClosed: panelConfig.startClosed,
+    applyShadowSettings,
+    applyMaterialOverlay: (key) => {
+      updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
+    },
+  });
+}
+
+function setDebugPanelsVisible(visible) {
+  debugPanelsVisible = Boolean(visible);
+  if (postProcessingDebugPanel) {
+    if (debugPanelsVisible) postProcessingDebugPanel.show();
+    else postProcessingDebugPanel.hide();
+  }
+  sceneDebugPanels?.setVisible(debugPanelsVisible);
+  return debugPanelsVisible;
+}
+
+function toggleDebugPanels() {
+  return setDebugPanelsVisible(!debugPanelsVisible);
+}
+
+function applyLivePostProcessingConfig() {
+  const postConfig = CONFIG.postProcessing;
+
+  if (bloomPass) {
+    bloomPass.strength = postConfig.bloom.strength;
+    bloomPass.radius = postConfig.bloom.radius;
+    bloomPass.threshold = postConfig.bloom.threshold;
+  }
+  if (realismBloomEffect) realismBloomEffect.intensity = postConfig.bloom.strength;
+  if (lutPass) lutPass.intensity = postConfig.lut.intensity;
+  if (colorAdjustmentPass) applyColorAdjustmentConfig(colorAdjustmentPass, 0);
+  if (sharpenPass) sharpenPass.uniforms.amount.value = postConfig.sharpen.amount;
+  if (lensDistortionPass) applyLensDistortionConfig(lensDistortionPass, 0);
+  if (chromaticAberrationPass) {
+    chromaticAberrationPass.uniforms.amount.value = postConfig.chromaticAberration.amount;
+  }
+  if (realismChromaticAberrationEffect?.offset) {
+    const amount = postConfig.chromaticAberration.amount;
+    realismChromaticAberrationEffect.offset.set(amount, amount);
+  }
+}
+
+async function loadLutTexture(lutConfig) {
+  if (lutTexture && lutAssetPath === lutConfig.assetPath) return lutTexture;
+  if (lutTexturePromise && lutAssetPath === lutConfig.assetPath) return lutTexturePromise;
+
+  const loader = lutConfig.format === "3dl" ? new LUT3dlLoader() : new LUTCubeLoader();
+  lutAssetPath = lutConfig.assetPath;
+  lutTexturePromise = new Promise((resolve, reject) => {
+    loader.load(
+      lutConfig.assetPath,
+      (result) => {
+        lutTexture = result.texture3D;
+        resolve(lutTexture);
+      },
+      undefined,
+      reject,
+    );
+  }).finally(() => {
+    lutTexturePromise = null;
+  });
+
+  return lutTexturePromise;
+}
+
+function applyColorAdjustmentConfig(pass, emergency) {
+  const colorConfig = CONFIG.postProcessing.colorAdjustments ?? {};
+  const vignetteConfig = colorConfig.vignette ?? {};
+  const grainConfig = colorConfig.grain ?? {};
+
+  pass.uniforms.brightness.value = colorConfig.brightness ?? 0;
+  pass.uniforms.contrast.value = colorConfig.contrast ?? 1;
+  pass.uniforms.saturation.value = colorConfig.saturation ?? 1;
+  pass.uniforms.gamma.value = colorConfig.gamma ?? 1;
+  pass.uniforms.temperature.value = colorConfig.temperature ?? 0;
+  pass.uniforms.tint.value = colorConfig.tint ?? 0;
+  pass.uniforms.emergency.value = emergency;
+  pass.uniforms.emergencyTint.value.set(colorConfig.emergencyTint ?? "#ff4a2c").convertLinearToSRGB();
+  pass.uniforms.emergencyTintStrength.value = colorConfig.emergencyTintStrength ?? 0;
+  pass.uniforms.vignetteStrength.value =
+    (vignetteConfig.enabled ? vignetteConfig.strength ?? 0 : 0) + emergency * (vignetteConfig.emergencyBoost ?? 0);
+  pass.uniforms.vignetteRadius.value = vignetteConfig.radius ?? 0.78;
+  pass.uniforms.vignetteSoftness.value = vignetteConfig.softness ?? 0.38;
+  pass.uniforms.grainAmount.value =
+    (grainConfig.enabled ? grainConfig.amount ?? 0 : 0) + emergency * (grainConfig.emergencyBoost ?? 0);
+  pass.uniforms.time.value = testTime;
+}
+
+function applyLensDistortionConfig(pass, emergency) {
+  const lensConfig = CONFIG.postProcessing.lensDistortion ?? {};
+  pass.uniforms.barrelAmount.value =
+    (lensConfig.barrelAmount ?? 0) + emergency * (lensConfig.emergencyBarrelBoost ?? 0);
+  pass.uniforms.fisheyeAmount.value =
+    (lensConfig.fisheyeAmount ?? 0) + emergency * (lensConfig.emergencyFisheyeBoost ?? 0);
 }
 
 function getShadowPreset(quality = shadowQuality) {
@@ -1862,6 +2247,20 @@ function updateSceneLightFeedback() {
     const amount = chromaConfig.amount + emergency * CONFIG.feedback.thermalEmergency.chromaticBoost * flickerWave(10, 1.1);
     realismChromaticAberrationEffect.offset.set(amount, amount);
   }
+
+  if (lutPass) {
+    lutPass.intensity = CONFIG.postProcessing.lut?.intensity ?? 1;
+  }
+  if (colorAdjustmentPass) {
+    applyColorAdjustmentConfig(colorAdjustmentPass, emergency);
+  }
+  if (sharpenPass) {
+    const sharpenConfig = CONFIG.postProcessing.sharpen ?? {};
+    sharpenPass.uniforms.amount.value = (sharpenConfig.amount ?? 0) + (zoomActive ? sharpenConfig.zoomBoost ?? 0 : 0);
+  }
+  if (lensDistortionPass) {
+    applyLensDistortionConfig(lensDistortionPass, emergency);
+  }
 }
 
 function getStartupLightFactor() {
@@ -2456,7 +2855,22 @@ function setNeedleDebugRotation(index = 0, axis = "z", degrees = 0) {
 }
 
 function requestPointerLock() {
+  if (inputLocked || document.body.classList.contains("app-ui-open")) return;
   canvas.requestPointerLock?.();
+}
+
+function setInputLocked(locked) {
+  inputLocked = Boolean(locked);
+  if (inputLocked) {
+    document.exitPointerLock?.();
+    keys.clear();
+    movementVelocity.set(0, 0, 0);
+    zoomActive = false;
+    releaseAllControlButtons();
+    setHoveredKnob(null);
+    setHoveredTooltipTarget(null);
+  }
+  return inputLocked;
 }
 
 window.addEventListener("resize", () => {
@@ -2476,9 +2890,38 @@ window.addEventListener("resize", () => {
   realismScreenSpaceShadowEffect?.setSize?.(window.innerWidth, window.innerHeight);
   gtaoPass?.setSize(window.innerWidth, window.innerHeight);
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
+  sharpenPass?.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
 });
 
 document.addEventListener("keydown", (event) => {
+  const toggleSequence = String(CONFIG.sceneDebug?.toggleSequence ?? "debug3").toLowerCase();
+  const target = event.target;
+  const isEditing =
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement ||
+    target?.isContentEditable;
+  if (isEditing || event.ctrlKey || event.altKey || event.metaKey || event.repeat || event.key.length !== 1) return;
+
+  debugToggleBuffer = `${debugToggleBuffer}${event.key.toLowerCase()}`.slice(-toggleSequence.length);
+  if (debugToggleBuffer !== toggleSequence) return;
+  debugToggleBuffer = "";
+  event.preventDefault();
+  toggleDebugPanels();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (inputLocked) {
+    if (
+      ["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight", "Space", "ControlLeft", "ControlRight"].includes(
+        event.code,
+      )
+    ) {
+      event.preventDefault();
+    }
+    return;
+  }
+
   if (
     ["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight", "Space", "ControlLeft", "ControlRight"].includes(
       event.code,
@@ -2497,6 +2940,8 @@ document.addEventListener("keyup", (event) => {
 });
 
 document.addEventListener("mousemove", (event) => {
+  if (inputLocked) return;
+
   if (document.pointerLockElement !== canvas) {
     updatePointerFromEvent(event);
     return;
@@ -2519,6 +2964,8 @@ document.addEventListener("mousemove", (event) => {
 canvas.addEventListener(
   "wheel",
   (event) => {
+    if (inputLocked) return;
+
     if (event.shiftKey) {
       event.preventDefault();
       adjustNoclipSpeed(-Math.sign(event.deltaY));
@@ -2539,6 +2986,11 @@ canvas.addEventListener(
 );
 
 canvas.addEventListener("mousedown", (event) => {
+  if (inputLocked) {
+    event.preventDefault();
+    return;
+  }
+
   if (event.button === 2) {
     event.preventDefault();
     zoomActive = true;
@@ -2575,6 +3027,7 @@ function updatePointerFromEvent(event) {
 }
 
 canvas.addEventListener("click", () => {
+  if (inputLocked) return;
   if (document.body.classList.contains("app-ui-open")) return;
   if (document.pointerLockElement !== canvas) {
     requestPointerLock();
@@ -2606,6 +3059,7 @@ window.operatorGameDebug = {
   hideShiftResults,
   requestPointerLock,
   releasePointerLock: () => document.exitPointerLock?.(),
+  setInputLocked,
   setBaseFov: (degrees) => {
     baseFovDegrees = THREE.MathUtils.clamp(Number(degrees), 50, 105);
     CONFIG.camera.fovDegrees = baseFovDegrees;
@@ -2624,6 +3078,22 @@ window.operatorGameDebug = {
   setSsgiQuality,
   setSsrQuality,
   setScreenSpaceShadowQuality,
+  setDebugPanelsVisible,
+  toggleDebugPanels,
+  saveSceneDebugPreset: () => sceneDebugPanels?.save(),
+  saveSceneDebugToProject: () => sceneDebugPanels?.saveProject(),
+  loadSceneDebugPreset: () => sceneDebugPanels?.load(),
+  resetSceneDebugPreset: () => sceneDebugPanels?.reset(),
+  copySceneDebugConfig: () => sceneDebugPanels?.copyConfig(),
+  rebuildPostProcessing: setupPostProcessing,
+  showPostProcessingPanel: () => postProcessingDebugPanel?.show(),
+  hidePostProcessingPanel: () => postProcessingDebugPanel?.hide(),
+  togglePostProcessingPanel: () => postProcessingDebugPanel?.toggle(),
+  savePostProcessingPreset: () => postProcessingDebugPanel?.save(),
+  savePostProcessingToProject: () => postProcessingDebugPanel?.saveProject(),
+  loadPostProcessingPreset: () => postProcessingDebugPanel?.load(),
+  resetPostProcessingPreset: () => postProcessingDebugPanel?.reset(),
+  copyPostProcessingConfig: () => postProcessingDebugPanel?.copyConfig(),
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: () => {
     indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
@@ -2707,6 +3177,7 @@ window.operatorGameDebug = {
   },
   getState: () => ({
     freezeNeedles,
+    inputLocked,
     zoomActive,
     noclipEnabled,
     noclipSpeed: Number(noclipSpeed.toFixed(2)),
@@ -2759,6 +3230,15 @@ window.operatorGameDebug = {
       bloomStrength: bloomPass?.strength ?? 0,
       realismBloom: Boolean(realismBloomEffect),
       realismBloomStrength: realismBloomEffect?.intensity ?? 0,
+      lut: Boolean(lutPass),
+      lutAssetPath,
+      lutIntensity: lutPass?.intensity ?? 0,
+      colorAdjustments: Boolean(colorAdjustmentPass),
+      sharpen: Boolean(sharpenPass),
+      sharpenAmount: sharpenPass?.uniforms.amount.value ?? 0,
+      lensDistortion: Boolean(lensDistortionPass),
+      barrelAmount: lensDistortionPass?.uniforms.barrelAmount.value ?? 0,
+      fisheyeAmount: lensDistortionPass?.uniforms.fisheyeAmount.value ?? 0,
       chromaticAberration: Boolean(chromaticAberrationPass),
       chromaticAberrationAmount: chromaticAberrationPass?.uniforms.amount.value ?? 0,
       realismChromaticAberration: Boolean(realismChromaticAberrationEffect),
