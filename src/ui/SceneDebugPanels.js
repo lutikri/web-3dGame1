@@ -86,15 +86,48 @@ export function createSceneDebugPanels({
   lightingConfig,
   pointLights,
   hemisphereLight,
+  gameConfig,
   defaults,
   startClosed = true,
   applyShadowSettings,
   applyMaterialOverlay,
+  applyCollisionSettings,
+  applyPlayerCollisionSettings,
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
+  const gameGui = new GUI({ title: "GAME", width: 320 });
   positionGui(materialsGui, 1);
   positionGui(lightsGui, 2);
+  positionGui(gameGui, 3);
+
+  const collisionConfig = gameConfig?.collision;
+  if (collisionConfig) {
+    const collisionFolder = gameGui.addFolder("Collision mesh");
+    collisionFolder.add(collisionConfig, "show").name("Show collision").onChange(applyCollisionSettings);
+    const positionFolder = collisionFolder.addFolder("Position");
+    positionFolder.add(collisionConfig.position, "x", -10, 10, 0.01).onChange(applyCollisionSettings);
+    positionFolder.add(collisionConfig.position, "y", -10, 10, 0.01).onChange(applyCollisionSettings);
+    positionFolder.add(collisionConfig.position, "z", -10, 10, 0.01).onChange(applyCollisionSettings);
+  }
+
+  if (gameConfig) {
+    const playerCollisionFolder = gameGui.addFolder("Player collision");
+    playerCollisionFolder
+      .add(gameConfig, "collisionRadius", 0.1, 0.6, 0.01)
+      .name("Body radius")
+      .onChange(applyPlayerCollisionSettings);
+    playerCollisionFolder
+      .add(gameConfig, "collisionHeight", 0.6, 2.2, 0.01)
+      .name("Body height")
+      .onChange(applyPlayerCollisionSettings);
+    if (collisionConfig) {
+      playerCollisionFolder
+        .add(collisionConfig, "cameraRadius", 0.02, 0.3, 0.01)
+        .name("Lean camera radius")
+        .onChange(applyPlayerCollisionSettings);
+    }
+  }
 
   function applyMaterial(key) {
     const config = materialConfigs[key];
@@ -196,7 +229,11 @@ export function createSceneDebugPanels({
   }
 
   function refresh() {
-    [...materialsGui.controllersRecursive(), ...lightsGui.controllersRecursive()].forEach((controller) => {
+    [
+      ...materialsGui.controllersRecursive(),
+      ...lightsGui.controllersRecursive(),
+      ...gameGui.controllersRecursive(),
+    ].forEach((controller) => {
       controller.updateDisplay();
     });
   }
@@ -245,17 +282,18 @@ export function createSceneDebugPanels({
     preset.add(actions, "clearSaved").name("Clear saved");
     if (startClosed) window.setTimeout(() => gui.close(), 0);
   });
+  if (startClosed) window.setTimeout(() => gameGui.close(), 0);
 
   let visible = true;
   const setVisible = (nextVisible) => {
     visible = Boolean(nextVisible);
-    [materialsGui, lightsGui].forEach((gui) => (visible ? gui.show() : gui.hide()));
+    [materialsGui, lightsGui, gameGui].forEach((gui) => (visible ? gui.show() : gui.hide()));
     return visible;
   };
 
   return {
     ...actions,
-    guis: [materialsGui, lightsGui],
+    guis: [materialsGui, lightsGui, gameGui],
     isVisible: () => visible,
     setVisible,
     toggle: () => setVisible(!visible),

@@ -16,6 +16,14 @@ export const CONFIG = {
     spawnPosition: new THREE.Vector3(0, 1.45, 2),
     spawnYawDegrees: 0,
     spawnPitchDegrees: 0,
+    collisionRadius: 0.15,
+    collisionHeight: 1.7,
+    collision: {
+      assetPath: "assets/Interior1_Collision.glb",
+      cameraRadius: 0.12,
+      show: false,
+      position: new THREE.Vector3(0, 0, 0),
+    },
   },
   loading: {
     skip: false,

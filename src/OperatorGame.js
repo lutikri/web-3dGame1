@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { Capsule } from "three/addons/math/Capsule.js";
+import { Octree } from "three/addons/math/Octree.js";
 import { LUTCubeLoader } from "three/addons/loaders/LUTCubeLoader.js";
 import { LUT3dlLoader } from "three/addons/loaders/LUT3dlLoader.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -78,6 +80,21 @@ scene.fog = new THREE.Fog(CONFIG.world.fogColor, CONFIG.world.fogNear, CONFIG.wo
 const playerSpawnPosition = CONFIG.player?.spawnPosition ?? new THREE.Vector3(0, CONFIG.playerEyeHeight, 4.8);
 const playerFloorHeight = playerSpawnPosition.y ?? CONFIG.playerEyeHeight;
 const playerPosition = playerSpawnPosition.clone();
+let playerCollisionRadius = CONFIG.player?.collisionRadius ?? 0.28;
+let playerCollisionHeight = Math.max(CONFIG.player?.collisionHeight ?? 1.7, playerCollisionRadius * 2);
+const playerCapsule = new Capsule(
+  new THREE.Vector3(
+    playerPosition.x,
+    playerPosition.y - CONFIG.playerEyeHeight + playerCollisionRadius,
+    playerPosition.z,
+  ),
+  new THREE.Vector3(
+    playerPosition.x,
+    playerPosition.y - CONFIG.playerEyeHeight + playerCollisionHeight - playerCollisionRadius,
+    playerPosition.z,
+  ),
+  playerCollisionRadius,
+);
 const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.innerWidth / window.innerHeight, 0.05, 80);
 camera.position.copy(playerSpawnPosition);
 
@@ -97,6 +114,20 @@ const emptyMaskTexture = createSolidTexture(0, 0, 0, 255);
 
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
+let collisionOctree = new Octree();
+const collisionMeshes = [];
+let cameraCollisionRadius = CONFIG.player?.collision?.cameraRadius ?? 0.12;
+const cameraCollisionCapsule = new Capsule(new THREE.Vector3(), new THREE.Vector3(), cameraCollisionRadius);
+const collisionDebugMaterial = new THREE.MeshBasicMaterial({
+  color: 0x36f1ff,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.72,
+  depthTest: false,
+  depthWrite: false,
+  side: THREE.DoubleSide,
+});
+collisionDebugMaterial.visible = false;
 const pointer = new THREE.Vector2(0, 0);
 const worldUp = new THREE.Vector3(0, 1, 0);
 const keys = new Set();
@@ -115,6 +146,8 @@ const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
 let interiorModel = null;
+let collisionModel = null;
+let collisionReady = false;
 let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
 let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
 let testTime = 0;
@@ -147,7 +180,7 @@ let fxaaPass = null;
 let smaaPass = null;
 let postProcessingDebugPanel = null;
 let sceneDebugPanels = null;
-let debugPanelsVisible = true;
+let debugPanelsVisible = false;
 let debugToggleBuffer = "";
 let realismComposer = null;
 let realismVelocityDepthNormalPass = null;
@@ -975,6 +1008,7 @@ function init() {
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   loadInteriorModel();
+  loadCollisionModel();
   loadPanelModel();
   if (CONFIG.loading?.skip) triggerRoomLightBoot();
   animate();
@@ -1252,6 +1286,7 @@ function setupPostProcessingDebugPanel() {
   if (panelConfig.startClosed) {
     window.setTimeout(() => postProcessingDebugPanel?.gui.close(), 0);
   }
+  if (!debugPanelsVisible) postProcessingDebugPanel.hide();
 }
 
 function setupSceneDebugPanels() {
@@ -1265,17 +1300,24 @@ function setupSceneDebugPanels() {
     lightingConfig: CONFIG.lighting,
     pointLights: pointLightsByKey,
     hemisphereLight,
+    gameConfig: CONFIG.player,
     defaults: defaultSceneDebugConfig,
     startClosed: panelConfig.startClosed,
     applyShadowSettings,
+    applyCollisionSettings,
+    applyPlayerCollisionSettings,
     applyMaterialOverlay: (key) => {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
   });
+  if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
 }
 
 function setDebugPanelsVisible(visible) {
   debugPanelsVisible = Boolean(visible);
+  if (debugOverlay) debugOverlay.hidden = !debugPanelsVisible;
+  if (fpsMeter) fpsMeter.hidden = !debugPanelsVisible;
+  document.body.classList.toggle("debug-hidden", !debugPanelsVisible);
   if (postProcessingDebugPanel) {
     if (debugPanelsVisible) postProcessingDebugPanel.show();
     else postProcessingDebugPanel.hide();
@@ -1723,6 +1765,63 @@ function loadInteriorModel() {
   );
 }
 
+function loadCollisionModel() {
+  const collisionConfig = CONFIG.player?.collision;
+  if (!collisionConfig?.assetPath) return;
+
+  const loader = new GLTFLoader();
+  loader.load(
+    collisionConfig.assetPath,
+    (gltf) => {
+      collisionModel = gltf.scene;
+      collisionModel.name = "Interior1_Collision";
+      collisionModel.position.copy(collisionConfig.position ?? CONFIG.interior.position);
+      collisionModel.rotation.copy(CONFIG.interior.rotation);
+      collisionModel.scale.copy(CONFIG.interior.scale);
+      collisionModel.updateMatrixWorld(true);
+      collisionModel.traverse((object) => {
+        if (!object.isMesh) return;
+        object.castShadow = false;
+        object.receiveShadow = false;
+        object.material = collisionDebugMaterial;
+        object.renderOrder = 1000;
+        collisionMeshes.push(object);
+      });
+      scene.add(collisionModel);
+      applyCollisionSettings();
+      console.log(`[OperatorGame] Loaded collision mesh: ${collisionMeshes.length} meshes`);
+    },
+    undefined,
+    (error) => {
+      console.error("[OperatorGame] Failed to load Interior1_Collision.glb", error);
+    },
+  );
+}
+
+function applyCollisionSettings() {
+  if (!collisionModel) return;
+
+  const collisionConfig = CONFIG.player?.collision;
+  collisionModel.position.copy(collisionConfig?.position ?? CONFIG.interior.position);
+  collisionModel.updateMatrixWorld(true);
+  collisionDebugMaterial.visible = Boolean(collisionConfig?.show);
+  collisionOctree = new Octree();
+  collisionOctree.fromGraphNode(collisionModel);
+  collisionReady = true;
+  syncPlayerCapsule();
+  resolvePlayerCollisions();
+}
+
+function applyPlayerCollisionSettings() {
+  playerCollisionRadius = CONFIG.player?.collisionRadius ?? 0.28;
+  playerCollisionHeight = Math.max(CONFIG.player?.collisionHeight ?? 1.7, playerCollisionRadius * 2);
+  cameraCollisionRadius = CONFIG.player?.collision?.cameraRadius ?? 0.12;
+  playerCapsule.radius = playerCollisionRadius;
+  cameraCollisionCapsule.radius = cameraCollisionRadius;
+  syncPlayerCapsule();
+  resolvePlayerCollisions();
+}
+
 function registerInteriorObject(object) {
   if (object.userData.hitProxyFor) return;
 
@@ -1977,7 +2076,12 @@ function animate() {
   } else {
     renderer.render(scene, camera);
   }
-  requestAnimationFrame(animate);
+  const isBackground = document.hidden || !document.hasFocus();
+  if (isBackground) {
+    setTimeout(animate, 1000); // approximately 1 FPS
+  } else {
+    requestAnimationFrame(animate);
+  }
 }
 
 function renderRealismComposer(dt) {
@@ -2864,6 +2968,7 @@ function resetOperatorView() {
   leanAmount = 0;
   zoomActive = false;
   playerPosition.copy(playerSpawnPosition);
+  syncPlayerCapsule();
   camera.position.copy(playerSpawnPosition);
   yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
   pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
@@ -3015,11 +3120,12 @@ function updateMovement(dt) {
   movementVelocity.x = THREE.MathUtils.damp(movementVelocity.x, targetVelocity.x, damping, dt);
   movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, targetVelocity.y, damping, dt);
   movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, targetVelocity.z, damping, dt);
-  playerPosition.addScaledVector(movementVelocity, dt);
-
   if (!noclipEnabled) {
-    // Only floor collision for now: keep the player on a constant eye height.
+    movePlayerWithCollisions(movementVelocity.clone().multiplyScalar(dt));
     playerPosition.y = playerFloorHeight;
+    syncPlayerCapsule();
+  } else {
+    playerPosition.addScaledVector(movementVelocity, dt);
   }
 
   applyOperatorCameraOffsets(forward, right, dt);
@@ -3046,8 +3152,86 @@ function applyOperatorCameraOffsets(forward, right, dt) {
 
   const targetLean = zoomActive ? 1 : 0;
   leanAmount = THREE.MathUtils.damp(leanAmount, targetLean, movementConfig.leanDamping ?? 11, dt);
-  camera.position.addScaledVector(forward, leanAmount * (movementConfig.leanForward ?? 0.16));
-  camera.position.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
+  const leanOffset = forward
+    .clone()
+    .multiplyScalar(leanAmount * (movementConfig.leanForward ?? 0.16));
+  leanOffset.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
+  applyCollisionLimitedCameraOffset(leanOffset);
+}
+
+function movePlayerWithCollisions(delta) {
+  playerCapsule.translate(delta);
+  resolvePlayerCollisions();
+  playerPosition.set(
+    playerCapsule.start.x,
+    playerCapsule.start.y + CONFIG.playerEyeHeight - playerCollisionRadius,
+    playerCapsule.start.z,
+  );
+}
+
+function resolvePlayerCollisions() {
+  if (!collisionReady) return;
+
+  for (let iteration = 0; iteration < 4; iteration += 1) {
+    const collision = collisionOctree.capsuleIntersect(playerCapsule);
+    if (!collision) break;
+    playerCapsule.translate(collision.normal.multiplyScalar(collision.depth));
+    const velocityIntoSurface = movementVelocity.dot(collision.normal);
+    if (velocityIntoSurface < 0) {
+      movementVelocity.addScaledVector(collision.normal, -velocityIntoSurface);
+    }
+  }
+}
+
+function syncPlayerCapsule() {
+  const feetY = playerPosition.y - CONFIG.playerEyeHeight;
+  playerCapsule.start.set(playerPosition.x, feetY + playerCollisionRadius, playerPosition.z);
+  playerCapsule.end.set(
+    playerPosition.x,
+    feetY + playerCollisionHeight - playerCollisionRadius,
+    playerPosition.z,
+  );
+}
+
+function applyCollisionLimitedCameraOffset(offset) {
+  const distance = offset.length();
+  if (!collisionReady || distance <= 0.0001) {
+    camera.position.add(offset);
+    return;
+  }
+
+  const origin = camera.position.clone();
+  const probePosition = new THREE.Vector3();
+  const stepLength = Math.max(cameraCollisionRadius * 0.5, 0.01);
+  const stepCount = Math.max(1, Math.ceil(distance / stepLength));
+  let safeFraction = 0;
+
+  for (let step = 1; step <= stepCount; step += 1) {
+    const testFraction = step / stepCount;
+    probePosition.copy(origin).addScaledVector(offset, testFraction);
+    cameraCollisionCapsule.start.copy(probePosition);
+    cameraCollisionCapsule.end.copy(probePosition);
+
+    if (!collisionOctree.capsuleIntersect(cameraCollisionCapsule)) {
+      safeFraction = testFraction;
+      continue;
+    }
+
+    let low = safeFraction;
+    let high = testFraction;
+    for (let iteration = 0; iteration < 6; iteration += 1) {
+      const middle = (low + high) * 0.5;
+      probePosition.copy(origin).addScaledVector(offset, middle);
+      cameraCollisionCapsule.start.copy(probePosition);
+      cameraCollisionCapsule.end.copy(probePosition);
+      if (collisionOctree.capsuleIntersect(cameraCollisionCapsule)) high = middle;
+      else low = middle;
+    }
+    safeFraction = low;
+    break;
+  }
+
+  camera.position.copy(origin).addScaledVector(offset, safeFraction);
 }
 
 function updateCameraZoom(dt) {
@@ -3337,8 +3521,7 @@ window.operatorGameDebug = {
     return baseFovDegrees;
   },
   setDebugVisible: (visible) => {
-    if (debugOverlay) debugOverlay.hidden = !visible;
-    return Boolean(visible);
+    return setDebugPanelsVisible(visible);
   },
   setShadowQuality,
   setGtaoQuality,

@@ -198,8 +198,8 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.52,
-    "radius": 0.8,
+    "strength": 0.59,
+    "radius": 1,
     "threshold": 0.33
   },
   "antiAliasing": {
@@ -243,7 +243,7 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.034,
+    "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
     "gamma": 0.93,

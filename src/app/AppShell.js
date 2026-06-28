@@ -30,7 +30,6 @@ export function createAppShell({ gameApi }) {
   const ssrQualityValue = document.querySelector("#settingSsrQualityValue");
   const screenSpaceShadowQualityInput = document.querySelector("#settingScreenSpaceShadowQuality");
   const screenSpaceShadowQualityValue = document.querySelector("#settingScreenSpaceShadowQualityValue");
-  const debugInput = document.querySelector("#settingDebugWindow");
   const settings = loadSettings();
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
@@ -97,15 +96,6 @@ export function createAppShell({ gameApi }) {
       uiScaleInput.value = String(settings.uiScale);
       uiScaleInput.addEventListener("input", () => {
         settings.uiScale = Number(uiScaleInput.value);
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (debugInput) {
-      debugInput.checked = settings.showDebug;
-      debugInput.addEventListener("change", () => {
-        settings.showDebug = debugInput.checked;
         applySettings();
         saveSettings();
       });
@@ -494,12 +484,8 @@ export function createAppShell({ gameApi }) {
     ) {
       screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
     }
-    if (debugInput) debugInput.checked = settings.showDebug;
-
     document.body.style.setProperty("--ui-scale", String(settings.uiScale / 100));
-    document.body.classList.toggle("debug-hidden", !settings.showDebug);
     gameApi.setBaseFov?.(settings.fov);
-    gameApi.setDebugVisible?.(settings.showDebug);
     gameApi.setShadowQuality?.(settings.shadowQuality);
     gameApi.setGtaoQuality?.(settings.gtaoQuality);
     gameApi.setSsgiQuality?.(settings.ssgiQuality);
@@ -550,7 +536,6 @@ function loadSettings() {
     return {
       fov: clampNumber(parsed.fov, 55, 95, 72),
       uiScale: clampNumber(parsed.uiScale, 80, 130, 100),
-      showDebug: typeof parsed.showDebug === "boolean" ? parsed.showDebug : true,
       shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "max"], "min"),
       gtaoQuality: normalizeQuality(parsed.gtaoQuality, ["off", "min", "med", "max"], "off"),
       ssgiQuality: normalizeQuality(parsed.ssgiQuality, ["off", "min", "med", "max"], "off"),
@@ -565,7 +550,6 @@ function loadSettings() {
     return {
       fov: 72,
       uiScale: 100,
-      showDebug: true,
       shadowQuality: "min",
       gtaoQuality: "off",
       ssgiQuality: "off",
@@ -581,7 +565,6 @@ function saveSettings() {
     JSON.stringify({
       fov: Number(document.querySelector("#settingFov")?.value ?? 72),
       uiScale: Number(document.querySelector("#settingUiScale")?.value ?? 100),
-      showDebug: Boolean(document.querySelector("#settingDebugWindow")?.checked),
       shadowQuality: document.querySelector("#settingShadowQuality")?.value ?? "min",
       gtaoQuality: document.querySelector("#settingGtaoQuality")?.value ?? "off",
       ssgiQuality: document.querySelector("#settingSsgiQuality")?.value ?? "off",
