@@ -198,8 +198,8 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.59,
-    "radius": 1,
+    "strength": 0.85,
+    "radius": 0.87,
     "threshold": 0.33
   },
   "antiAliasing": {
@@ -210,14 +210,14 @@ export const POST_PROCESSING_OVERRIDES = {
     "enabled": true,
     "anamorphicGlare": {
       "enabled": true,
-      "strength": 0.25,
-      "threshold": 0.21,
-      "length": 0.195,
+      "strength": 0.19,
+      "threshold": 0.28,
+      "length": 0.065,
       "tint": "#ffffff"
     },
     "flareGhosts": {
       "enabled": true,
-      "strength": 0.05,
+      "strength": 0.11,
       "threshold": 0.55,
       "spacing": 0.76,
       "tint": "#ffffff",
@@ -239,14 +239,14 @@ export const POST_PROCESSING_OVERRIDES = {
     "assetPath": "assets/luts/Green1.cube",
     "format": "cube",
     "inputColorSpace": "display-srgb",
-    "intensity": 0.66
+    "intensity": 0.44
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.025,
+    "brightness": 0.037,
     "contrast": 1.074,
     "saturation": 0.88,
-    "gamma": 0.93,
+    "gamma": 0.88,
     "temperature": -0.13,
     "tint": -0.05,
     "emergencyTint": "#c2c2c2",
@@ -254,7 +254,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "vignette": {
       "enabled": true,
       "strength": 0.575,
-      "radius": 0.69,
+      "radius": 0.75,
       "softness": 0.38,
       "emergencyBoost": 0.46
     },
@@ -266,8 +266,8 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "sharpen": {
     "enabled": true,
-    "amount": 0.295,
-    "zoomBoost": 0.035
+    "amount": 0.185,
+    "zoomBoost": 0.5
   },
   "lensDistortion": {
     "enabled": true,

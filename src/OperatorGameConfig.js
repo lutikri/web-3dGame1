@@ -91,6 +91,7 @@ export const CONFIG = {
     position: new THREE.Vector3(0, 0, 0),
     rotation: new THREE.Euler(0, 0, 0),
     scale: new THREE.Vector3(1, 1, 1),
+    decals: LEVEL_REACTOR_1_CONFIG.decals,
     material: {
       color: "#7e807e",
       roughness: 0.82,
@@ -480,6 +481,7 @@ export const CONFIG = {
       maxIntervalSeconds: 80,
       durationSeconds: [0.28, 3.42],
       minFactor: [0.1, 1.2],
+      emissiveExponent: 2.5,
       retryChance: 0.85,
       pulseCount: [1, 5],
     },
@@ -502,6 +504,7 @@ export const CONFIG = {
   shadows: {
     defaultQuality: "min",
     type: THREE.PCFSoftShadowMap,
+    castNeedleShadows: false,
     presets: {
       off: { enabled: false, mapSize: 0 },
       min: { enabled: true, mapSize: 512 },

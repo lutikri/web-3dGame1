@@ -39,12 +39,14 @@ const defaultSceneDebugConfig = JSON.parse(
   JSON.stringify({
     materials: CONFIG.interior.specialMaterials,
     lighting: CONFIG.lighting,
+    decals: CONFIG.interior.decals,
   }),
 );
 restoreSavedSceneConfig({
   levelId: CONFIG.sceneDebug?.levelId ?? "reactor-1",
   materials: CONFIG.interior.specialMaterials,
   lighting: CONFIG.lighting,
+  decals: CONFIG.interior.decals,
 });
 
 const canvas = document.querySelector("#scene");
@@ -146,6 +148,8 @@ const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
 let interiorModel = null;
+let interiorDecalModel = null;
+let interiorDecalMaterial = null;
 let collisionModel = null;
 let collisionReady = false;
 let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
@@ -1008,6 +1012,7 @@ function init() {
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   loadInteriorModel();
+  loadInteriorDecals();
   loadCollisionModel();
   loadPanelModel();
   if (CONFIG.loading?.skip) triggerRoomLightBoot();
@@ -1070,8 +1075,10 @@ function applyShadowSettings(light, lightConfig) {
   light.shadow.mapSize.set(mapSize, mapSize);
   light.shadow.bias = lightConfig.shadowBias ?? -0.0005;
   light.shadow.normalBias = lightConfig.shadowNormalBias ?? 0.03;
+  light.shadow.radius = lightConfig.shadowRadius ?? 1;
   light.shadow.camera.near = lightConfig.shadowNear ?? 0.1;
   light.shadow.camera.far = lightConfig.shadowFar ?? lightConfig.distance ?? 10;
+  light.shadow.camera.updateProjectionMatrix();
 }
 
 function setupPostProcessing() {
@@ -1306,6 +1313,8 @@ function setupSceneDebugPanels() {
     applyShadowSettings,
     applyCollisionSettings,
     applyPlayerCollisionSettings,
+    decalConfig: CONFIG.interior.decals,
+    applyDecalMaterial: updateInteriorDecalMaterial,
     applyMaterialOverlay: (key) => {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
@@ -1765,6 +1774,122 @@ function loadInteriorModel() {
   );
 }
 
+function loadInteriorDecals() {
+  const decalConfig = CONFIG.interior?.decals;
+  if (!decalConfig?.assetPath || !decalConfig?.atlasPath) return;
+
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load(
+    decalConfig.atlasPath,
+    (atlas) => {
+      atlas.colorSpace = THREE.SRGBColorSpace;
+      atlas.flipY = false;
+      atlas.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+      interiorDecalMaterial = new THREE.MeshStandardMaterial({
+        name: "Interior1_DecalMaterial",
+        map: atlas,
+        transparent: true,
+        roughness: decalConfig.roughness ?? 0.8,
+        metalness: decalConfig.metalness ?? 0,
+        side: THREE.FrontSide,
+        polygonOffset: true,
+        polygonOffsetFactor: decalConfig.polygonOffsetFactor ?? -1,
+        polygonOffsetUnits: -1,
+      });
+      interiorDecalMaterial.onBeforeCompile = (shader) => {
+        shader.uniforms.decalBrightness = { value: 1 };
+        shader.uniforms.decalContrast = { value: 1 };
+        shader.uniforms.decalSaturation = { value: 1 };
+        shader.uniforms.decalTextureSoftness = { value: 0 };
+        shader.uniforms.decalAlphaTest = { value: 0.5 };
+        shader.uniforms.decalEdgeSoftness = { value: 0.05 };
+        shader.fragmentShader = shader.fragmentShader
+          .replace(
+            "#include <map_pars_fragment>",
+            `#include <map_pars_fragment>
+uniform float decalBrightness;
+uniform float decalContrast;
+uniform float decalSaturation;
+uniform float decalTextureSoftness;
+uniform float decalAlphaTest;
+uniform float decalEdgeSoftness;`,
+          )
+          .replace(
+            "#include <map_fragment>",
+            `#ifdef USE_MAP
+  vec4 sampledDiffuseColor = texture2D(map, vMapUv, decalTextureSoftness);
+  vec3 decalColor = (sampledDiffuseColor.rgb - 0.5) * decalContrast + 0.5;
+  float decalLuminance = dot(decalColor, vec3(0.2126, 0.7152, 0.0722));
+  decalColor = mix(vec3(decalLuminance), decalColor, decalSaturation) * decalBrightness;
+  diffuseColor.rgb *= decalColor;
+  diffuseColor.a *= sampledDiffuseColor.a;
+  diffuseColor.a *= smoothstep(
+    decalAlphaTest - decalEdgeSoftness,
+    decalAlphaTest + decalEdgeSoftness,
+    sampledDiffuseColor.a
+  );
+#endif`,
+          );
+        interiorDecalMaterial.userData.shader = shader;
+        updateInteriorDecalMaterial();
+      };
+      interiorDecalMaterial.customProgramCacheKey = () => "interior-decals-v1";
+      updateInteriorDecalMaterial();
+
+      new GLTFLoader().load(
+        decalConfig.assetPath,
+        (gltf) => {
+          interiorDecalModel = gltf.scene;
+          interiorDecalModel.name = "Interior1_Decals1";
+          interiorDecalModel.position.copy(CONFIG.interior.position);
+          interiorDecalModel.rotation.copy(CONFIG.interior.rotation);
+          interiorDecalModel.scale.copy(CONFIG.interior.scale);
+
+          let meshCount = 0;
+          interiorDecalModel.traverse((object) => {
+            if (!object.isMesh) return;
+            object.material = interiorDecalMaterial;
+            object.castShadow = false;
+            object.receiveShadow = true;
+            object.renderOrder = 1;
+            meshCount += 1;
+          });
+
+          scene.add(interiorDecalModel);
+          console.log(`[OperatorGame] Loaded Interior1 decals: ${meshCount} meshes`);
+        },
+        undefined,
+        (error) => {
+          console.error("[OperatorGame] Failed to load Interior1_Decals1.glb", error);
+        },
+      );
+    },
+    undefined,
+    (error) => {
+      console.error("[OperatorGame] Failed to load Interior1 decal atlas", error);
+    },
+  );
+}
+
+function updateInteriorDecalMaterial() {
+  if (!interiorDecalMaterial) return;
+  const config = CONFIG.interior.decals;
+  interiorDecalMaterial.color.set(config.tint ?? "#ffffff");
+  interiorDecalMaterial.opacity = config.opacity ?? 1;
+  interiorDecalMaterial.roughness = config.roughness ?? 0.9;
+  interiorDecalMaterial.metalness = config.metalness ?? 0;
+
+  const uniforms = interiorDecalMaterial.userData.shader?.uniforms;
+  if (!uniforms) return;
+  uniforms.decalBrightness.value = config.brightness ?? 1;
+  uniforms.decalContrast.value = config.contrast ?? 1;
+  uniforms.decalSaturation.value = config.saturation ?? 1;
+  uniforms.decalTextureSoftness.value = config.textureSoftness ?? 0;
+  uniforms.decalAlphaTest.value = config.alphaTest ?? 0.5;
+  uniforms.decalEdgeSoftness.value = Math.max(config.edgeSoftness ?? 0.05, 0.0001);
+}
+
 function loadCollisionModel() {
   const collisionConfig = CONFIG.player?.collision;
   if (!collisionConfig?.assetPath) return;
@@ -1888,6 +2013,7 @@ function registerPanelObject(object) {
   applyPanelPbrMaterial(object);
 
   if (object.name.includes("_Arrow_") || object.name.includes("_Arrrow_")) {
+    object.castShadow = CONFIG.shadows.castNeedleShadows;
     object.userData.initialRotation = object.rotation.clone();
     object.userData.needleAngle = THREE.MathUtils.degToRad(CONFIG.needleAnimation.inactiveDegrees);
     object.userData.needleSpeed = getRandomNeedleSpeed();
@@ -2479,9 +2605,11 @@ function updateIndicatorTest(dt) {
 }
 
 function updateLongTermLightFlicker(dt) {
+  const updatedStates = new Set();
   [...controlledLights, ...Object.values(materials.interiorCustom)].forEach((target) => {
     const state = target.userData.fixtureFlicker;
-    if (!state) return;
+    if (!state || updatedStates.has(state)) return;
+    updatedStates.add(state);
     updateFixtureFlickerState(state, dt);
   });
 }
@@ -2911,10 +3039,13 @@ function getRoomLightVisualFactor() {
 
 function updateRoomLightMaterials() {
   const visualFactor = getRoomLightVisualFactor();
+  const emissiveExponent = CONFIG.feedback.longTermLightFlicker.emissiveExponent ?? 1;
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
+    const fixtureFactor = getFixtureFlickerFactor(material);
+    const emissiveFlickerFactor = Math.pow(fixtureFactor, emissiveExponent);
     material.emissiveIntensity =
-      (material.userData.baseEmissiveIntensity ?? 1) * visualFactor * getFixtureFlickerFactor(material);
+      (material.userData.baseEmissiveIntensity ?? 1) * visualFactor * emissiveFlickerFactor;
     material.needsUpdate = true;
   });
 }

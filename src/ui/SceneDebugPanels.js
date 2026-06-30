@@ -41,7 +41,7 @@ const MATERIAL_TUNING_KEYS = [
   "roomLightControlled",
 ];
 
-function createSceneSnapshot(materials, lighting) {
+function createSceneSnapshot(materials, lighting, decals) {
   const materialTuning = Object.fromEntries(
     Object.entries(materials).map(([key, config]) => {
       const tuning = {};
@@ -52,7 +52,7 @@ function createSceneSnapshot(materials, lighting) {
       return [key, tuning];
     }),
   );
-  return { materials: materialTuning, lighting: clone(lighting) };
+  return { materials: materialTuning, lighting: clone(lighting), decals: clone(decals) };
 }
 
 async function saveProjectConfig(config) {
@@ -66,11 +66,12 @@ async function saveProjectConfig(config) {
   return result;
 }
 
-export function restoreSavedSceneConfig({ levelId, materials, lighting }) {
+export function restoreSavedSceneConfig({ levelId, materials, lighting, decals }) {
   const saved = readSaved(levelId);
   if (!saved) return false;
   mergeConfig(materials, saved.materials);
   mergeConfig(lighting, saved.lighting);
+  mergeConfig(decals, saved.decals);
   return true;
 }
 
@@ -93,6 +94,8 @@ export function createSceneDebugPanels({
   applyMaterialOverlay,
   applyCollisionSettings,
   applyPlayerCollisionSettings,
+  decalConfig,
+  applyDecalMaterial,
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
@@ -180,6 +183,24 @@ export function createSceneDebugPanels({
     folder.close();
   });
 
+  if (decalConfig) {
+    const folder = materialsGui.addFolder("Interior decals");
+    folder.addColor(decalConfig, "tint").name("Tint").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "brightness", 0, 2, 0.01).name("Brightness").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "contrast", 0, 2, 0.01).name("Contrast").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "saturation", 0, 2, 0.01).name("Saturation").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "opacity", 0, 1, 0.01).name("Opacity").onChange(applyDecalMaterial);
+    folder
+      .add(decalConfig, "textureSoftness", 0, 3, 0.05)
+      .name("Texture softness")
+      .onChange(applyDecalMaterial);
+    folder.add(decalConfig, "roughness", 0, 1, 0.01).name("Roughness").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "metalness", 0, 1, 0.01).name("Metalness").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "alphaTest", 0, 1, 0.01).name("Alpha cutoff").onChange(applyDecalMaterial);
+    folder.add(decalConfig, "edgeSoftness", 0, 0.3, 0.005).name("Edge softness").onChange(applyDecalMaterial);
+    folder.close();
+  }
+
   function applyAmbient() {
     if (!hemisphereLight) return;
     hemisphereLight.color.set(lightingConfig.ambientSky);
@@ -216,6 +237,28 @@ export function createSceneDebugPanels({
     folder.add(config.position, "y", -2, 10, 0.01).onChange(() => applyLight(key));
     folder.add(config.position, "z", -10, 10, 0.01).onChange(() => applyLight(key));
     folder.add(config, "castShadow").onChange(() => applyLight(key, true));
+    const shadows = folder.addFolder("Shadows");
+    shadows
+      .add(config, "shadowBias", -0.01, 0.01, 0.00001)
+      .name("Bias")
+      .onChange(() => applyLight(key, true));
+    shadows
+      .add(config, "shadowNormalBias", 0, 0.2, 0.0005)
+      .name("Normal bias")
+      .onChange(() => applyLight(key, true));
+    shadows
+      .add(config, "shadowRadius", 0, 10, 0.1)
+      .name("Radius (PCF/VSM)")
+      .onChange(() => applyLight(key, true));
+    shadows
+      .add(config, "shadowNear", 0.01, 2, 0.01)
+      .name("Camera near")
+      .onChange(() => applyLight(key, true));
+    shadows
+      .add(config, "shadowFar", 0.5, 30, 0.05)
+      .name("Camera far")
+      .onChange(() => applyLight(key, true));
+    shadows.close();
     folder.close();
   });
 
@@ -226,6 +269,7 @@ export function createSceneDebugPanels({
     });
     applyAmbient();
     Object.keys(lightingConfig.pointLights).forEach((key) => applyLight(key, true));
+    applyDecalMaterial?.();
   }
 
   function refresh() {
@@ -240,10 +284,13 @@ export function createSceneDebugPanels({
 
   const actions = {
     save() {
-      localStorage.setItem(getStorageKey(levelId), JSON.stringify(createSceneSnapshot(materialConfigs, lightingConfig)));
+      localStorage.setItem(
+        getStorageKey(levelId),
+        JSON.stringify(createSceneSnapshot(materialConfigs, lightingConfig, decalConfig)),
+      );
     },
     async saveProject() {
-      const result = await saveProjectConfig(createSceneSnapshot(materialConfigs, lightingConfig));
+      const result = await saveProjectConfig(createSceneSnapshot(materialConfigs, lightingConfig, decalConfig));
       localStorage.removeItem(getStorageKey(levelId));
       return result;
     },
@@ -252,6 +299,7 @@ export function createSceneDebugPanels({
       if (!saved) return false;
       mergeConfig(materialConfigs, saved.materials);
       mergeConfig(lightingConfig, saved.lighting);
+      mergeConfig(decalConfig, saved.decals);
       applyAll();
       refresh();
       return true;
@@ -259,11 +307,12 @@ export function createSceneDebugPanels({
     reset() {
       mergeConfig(materialConfigs, defaults.materials);
       mergeConfig(lightingConfig, defaults.lighting);
+      mergeConfig(decalConfig, defaults.decals);
       applyAll();
       refresh();
     },
     async copyConfig() {
-      const source = JSON.stringify(createSceneSnapshot(materialConfigs, lightingConfig), null, 2);
+      const source = JSON.stringify(createSceneSnapshot(materialConfigs, lightingConfig, decalConfig), null, 2);
       await navigator.clipboard.writeText(source);
       return source;
     },

@@ -50,7 +50,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         },
         "green": {
           "color": "#856100",
-          "opacity": 0.3,
+          "opacity": 0.06,
           "intensity": 0.68,
           "threshold": 0,
           "softness": 1,
@@ -58,8 +58,8 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         },
         "blue": {
           "color": "#3d2100",
-          "opacity": 0.8,
-          "intensity": 1.24,
+          "opacity": 0.59,
+          "intensity": 0.68,
           "threshold": 0,
           "softness": 1,
           "blend": "multiply"
@@ -123,6 +123,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         "shadowMapSize": 256,
         "shadowBias": -0.0001,
         "shadowNormalBias": 0.003,
+        "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 5
       },
@@ -141,6 +142,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         "shadowMapSize": 512,
         "shadowBias": -0.0005,
         "shadowNormalBias": 0.03,
+        "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 7
       },
@@ -158,6 +160,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         "shadowMapSize": 512,
         "shadowBias": -0.0006,
         "shadowNormalBias": 0.035,
+        "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 9
       },
@@ -175,6 +178,7 @@ export const LEVEL_REACTOR_1_OVERRIDES = {
         "shadowMapSize": 512,
         "shadowBias": -0.0006,
         "shadowNormalBias": 0.035,
+        "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 9
       }
