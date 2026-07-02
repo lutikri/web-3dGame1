@@ -4,7 +4,7 @@ const SCREEN_W = 1024;
 const SCREEN_H = 512;
 const UPDATE_INTERVAL = 0.35;
 
-export function createStatusScreen() {
+export function createStatusScreen({ brightness = 1 } = {}) {
   const canvas = document.createElement("canvas");
   canvas.width = SCREEN_W;
   canvas.height = SCREEN_H;
@@ -16,6 +16,7 @@ export function createStatusScreen() {
 
   const material = new THREE.MeshBasicMaterial({
     map: texture,
+    color: new THREE.Color().setRGB(brightness, brightness, brightness),
     toneMapped: false,
   });
 
@@ -78,6 +79,10 @@ function drawStandby(ctx) {
 }
 
 function drawStatus(ctx, data) {
+  if (data.terminalElapsed != null) {
+    drawTerminalStatus(ctx, data);
+    return;
+  }
   drawBackground(ctx);
 
   const warning = data.mode === "failed";
@@ -99,7 +104,11 @@ function drawStatus(ctx, data) {
   drawRow(ctx, "CONTAIN", `${Math.round(data.containment)}%`, 242, data.warning.fieldWeak);
   drawRow(ctx, "OUTPUT", `${Math.round(data.powerOutput)} / ${Math.round(data.targetOutput)} MW`, 294, data.warning.outputLow);
   drawRow(ctx, "BURN", `${Math.round(data.burnRate * 100)}%`, 346, data.warning.coreStall);
-  drawRow(ctx, "STALL", `${Math.round(data.coreStall)}%  PULSE ${Math.round(data.pulseCharge)}%`, 398, data.warning.coreStall);
+  const ignitionProgress = Math.round((data.ignitionHold / 0.5) * 100);
+  const stallReadout = data.reactionStalled
+    ? `${Math.round(data.coreStall)}%  IGN ${ignitionProgress}%`
+    : `${Math.round(data.coreStall)}%  PULSE ${Math.round(data.pulseCharge)}%`;
+  drawRow(ctx, "STALL", stallReadout, 398, data.warning.coreStall);
   drawRow(ctx, "STRESS", `${Math.round(data.coreStress)}%`, 450, data.warning.coreStress);
   drawEmergencyBanner(ctx, data);
 
@@ -107,6 +116,41 @@ function drawStatus(ctx, data) {
   ctx.font = "700 28px Consolas, monospace";
   ctx.fillText(`STATUS: ${data.status}`, 48, 492);
 
+  ctx.shadowBlur = 0;
+}
+
+function drawTerminalStatus(ctx, data) {
+  ctx.clearRect(0, 0, SCREEN_W, SCREEN_H);
+  ctx.fillStyle = "#010202";
+  ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+  if (data.terminalBlackout) return;
+
+  const complete = data.mode === "complete";
+  const destroyed = data.failureType === "coreDestroyed";
+  const color = complete ? "#72ff9d" : destroyed ? "#ff4b42" : "#ffcf5a";
+  const lines = complete
+    ? ["SHIFT COMPLETE", "CORE SECURED", "CONTROLLED SHUTDOWN"]
+    : destroyed
+      ? ["FAIL SAFE", "CORE DESTROYED", "EMERGENCY SHUTDOWN"]
+      : ["SHIFT FAILED", "FAIL-SAFE ACTIVE", "CORE SHUTDOWN"];
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 5;
+  ctx.strokeRect(34, 32, SCREEN_W - 68, SCREEN_H - 64);
+  ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 22;
+  ctx.textAlign = "center";
+  ctx.font = "900 72px Consolas, monospace";
+  ctx.fillText(lines[0], SCREEN_W / 2, 154);
+  ctx.font = "900 56px Consolas, monospace";
+  ctx.fillText(lines[1], SCREEN_W / 2, 262);
+  ctx.shadowBlur = 8;
+  ctx.font = "700 34px Consolas, monospace";
+  ctx.fillText(lines[2], SCREEN_W / 2, 360);
+  ctx.font = "700 24px Consolas, monospace";
+  ctx.fillText("AUTOMATIC PROTECTION SEQUENCE", SCREEN_W / 2, 430);
+  ctx.textAlign = "start";
   ctx.shadowBlur = 0;
 }
 
@@ -140,7 +184,9 @@ function drawEmergencyBanner(ctx, data) {
   ctx.font = "700 30px Consolas, monospace";
   ctx.fillText(
     stall
-      ? `BURN ${Math.round(data.burnRate * 100)}%  PULSE ${Math.round(data.pulseCharge)}%`
+      ? data.reactionStalled
+        ? `FUEL >30  COOLANT <58  HOLD PULSE ${Math.round((data.ignitionHold / 0.5) * 100)}%`
+        : `BURN ${Math.round(data.burnRate * 100)}%  PULSE ${Math.round(data.pulseCharge)}%`
       : `TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`,
     SCREEN_W / 2,
     286,

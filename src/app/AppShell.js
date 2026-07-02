@@ -1,5 +1,6 @@
 import { LEVELS } from "./LevelCatalog.js";
 import { BRIEFING_UI } from "./BriefingUiConfig.js";
+import { createSubtitleQueue } from "./SubtitleQueue.js";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -15,6 +16,7 @@ export function createAppShell({ gameApi }) {
   const briefingOverlay = document.querySelector("#briefingOverlay");
   const briefingSheetFrame = document.querySelector("#briefingSheetFrame");
   const briefingImage = document.querySelector("#briefingImage");
+  const subtitleQueue = createSubtitleQueue({ element: document.querySelector("#operatorSubtitle") });
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
   const fovInput = document.querySelector("#settingFov");
   const fovValue = document.querySelector("#settingFovValue");
@@ -45,7 +47,20 @@ export function createAppShell({ gameApi }) {
   wireBriefingInspect();
   wireSettings();
   wireProgression();
+  wireSubtitles();
   updateLevelProgressUi();
+
+  function wireSubtitles() {
+    window.addEventListener("operatorgame:subtitle", (event) => subtitleQueue.enqueue(event.detail));
+    window.addEventListener("operatorgame:subtitle-clear", (event) => {
+      subtitleQueue.clear({ resetSeen: Boolean(event.detail?.resetSeen) });
+      updateInputLock();
+    });
+    window.addEventListener("operatorgame:shift-results", () => {
+      subtitleQueue.clear();
+      subtitleQueue.setBlocked(true);
+    });
+  }
 
   function wireActions() {
     document.addEventListener("click", (event) => {
@@ -451,7 +466,11 @@ export function createAppShell({ gameApi }) {
   }
 
   function updateInputLock() {
-    gameApi.setInputLocked?.(Boolean(transitionActive || briefingActive || isOpen()));
+    const uiBlocked = Boolean(transitionActive || briefingActive || isOpen());
+    gameApi.setInputLocked?.(uiBlocked);
+    subtitleQueue.setBlocked(
+      uiBlocked || Boolean(document.querySelector("#resultsOverlay")?.classList.contains("is-visible")),
+    );
   }
 
   function applySettings() {

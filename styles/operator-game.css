@@ -170,6 +170,34 @@ body {
   pointer-events: auto;
 }
 
+.operator-subtitle {
+  --subtitle-fade-seconds: 0.9s;
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: clamp(38px, 7vh, 82px);
+  width: min(840px, calc(100vw - 64px));
+  transform: translate(-50%, 12px);
+  opacity: 0;
+  color: rgba(238, 244, 239, 0.96);
+  font: 500 clamp(18px, 1.65vw, 25px) / 1.35 "Segoe UI", sans-serif;
+  letter-spacing: 0.018em;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.95),
+    0 0 16px rgba(0, 0, 0, 0.82);
+  pointer-events: none;
+  transition:
+    opacity var(--subtitle-fade-seconds) ease,
+    transform var(--subtitle-fade-seconds) ease;
+}
+
+.operator-subtitle.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
 .briefing-overlay {
   position: fixed;
   z-index: 80;

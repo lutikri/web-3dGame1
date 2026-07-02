@@ -336,6 +336,20 @@ export const CONFIG = {
       flickerSeconds: 1.28,
       flickerFrequency: 22,
     },
+    bulkheadExit: {
+      meshName: "SM_Door1_Handle",
+      label: "BULKHEAD HANDLE",
+      rotationAxis: "x",
+      maxInteractionDistance: 2.2,
+      lockedStopDegrees: 20,
+      lockedAttemptSeconds: 1.65,
+      lockedKnockDegrees: 2.4,
+      unlockedTurnDegrees: 270,
+      unlockHoldSeconds: 2.8,
+      turnJerkDegrees: 2.1,
+      turnJerkFrequency: 9,
+      returnSeconds: 1.1,
+    },
     fans: {
       SM_Fan: {
         enabled: true,
@@ -495,6 +509,27 @@ export const CONFIG = {
       lightFlicker: 0.1,
       lampFlickerFrequency: 10,
       cameraShake: 0,
+    },
+    ignitionPulse: {
+      duration: 0.72,
+      cameraShake: 0.018,
+      needleKickDegrees: 14,
+    },
+    panelIndicators: {
+      amberEmissiveIntensity: 0.35,
+      greenEmissiveIntensity: 0.35,
+      redEmissiveIntensity: 0.55,
+      statusScreenBrightness: 0.4,
+    },
+    terminal: {
+      instrumentShutdownSeconds: 2.4,
+      emergencyEffectFadeSeconds: 1.6,
+      destroyedBlackoutSeconds: 1.4,
+      emergencyLightSettleSeconds: 0.45,
+      resultsHoldSeconds: 10,
+      completeLightFactor: 0.82,
+      failedLightFactor: 0.55,
+      destroyedLightFactor: 0.32,
     },
     indicatorTest: {
       duration: 3,

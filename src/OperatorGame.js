@@ -143,7 +143,15 @@ const roomLightButtons = [];
 const controlledLights = [];
 const pointLightsByKey = new Map();
 const interiorFans = [];
-const statusScreen = createStatusScreen();
+let bulkheadHandle = null;
+let bulkheadHandleHeld = false;
+let bulkheadHandleProgress = 0;
+let bulkheadLockedAttemptTime = -1;
+let bulkheadExitPending = false;
+let bulkheadExitComplete = false;
+const statusScreen = createStatusScreen({
+  brightness: CONFIG.feedback.panelIndicators.statusScreenBrightness,
+});
 const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
@@ -205,6 +213,9 @@ let forcedHoveredTarget = null;
 let startupFeedbackTimer = 0;
 let indicatorTestTimer = 0;
 let latestSnapshot = fusionCore.getSnapshot();
+let ignitionPulseFeedbackTimer = 0;
+let observedIgnitionPulseCount = latestSnapshot.ignitionPulseCount ?? 0;
+let appliedCameraFeedbackRoll = 0;
 let zoomActive = false;
 let baseFovDegrees = CONFIG.camera.fovDegrees;
 let shadowQuality = CONFIG.shadows.defaultQuality ?? "min";
@@ -218,7 +229,9 @@ let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
 let resultsSnapshot = null;
+let terminalSequenceElapsed = -1;
 let resultsVisible = false;
+const operatorThoughtsShown = new Set();
 let activeLevelId = "intro-shift";
 let activeLevelMode = "tutorial";
 let operatorViewMode = "level";
@@ -569,19 +582,19 @@ const materials = {
   lampAmber: new THREE.MeshStandardMaterial({
     color: MATERIAL_COLORS.lampAmber,
     emissive: MATERIAL_COLORS.lampAmberEmissive,
-    emissiveIntensity: 2.8,
+    emissiveIntensity: CONFIG.feedback.panelIndicators.amberEmissiveIntensity,
     roughness: 0.2,
   }),
   lampGreen: new THREE.MeshStandardMaterial({
     color: MATERIAL_COLORS.lampGreen,
     emissive: MATERIAL_COLORS.lampGreenEmissive,
-    emissiveIntensity: 2.5,
+    emissiveIntensity: CONFIG.feedback.panelIndicators.greenEmissiveIntensity,
     roughness: 0.2,
   }),
   lampRed: new THREE.MeshStandardMaterial({
     color: MATERIAL_COLORS.lampRed,
     emissive: MATERIAL_COLORS.lampRedEmissive,
-    emissiveIntensity: 3.6,
+    emissiveIntensity: CONFIG.feedback.panelIndicators.redEmissiveIntensity,
     roughness: 0.2,
   }),
 };
@@ -1719,6 +1732,87 @@ function updateInterior(dt) {
     fan.rotation.copy(fan.userData.initialRotation);
     applyAxisRotation(fan, fan.userData.fanAxis, fan.userData.fanAngle);
   });
+  updateBulkheadHandle(dt);
+}
+
+function updateBulkheadHandle(dt) {
+  if (!bulkheadHandle) return;
+  const config = CONFIG.interior.bulkheadExit;
+  let angle = 0;
+
+  if (bulkheadExitComplete) {
+    angle = THREE.MathUtils.degToRad(config.unlockedTurnDegrees);
+  } else if (bulkheadExitPending) {
+    const direction = bulkheadHandleHeld ? 1 / config.unlockHoldSeconds : -1 / config.returnSeconds;
+    bulkheadHandleProgress = THREE.MathUtils.clamp(bulkheadHandleProgress + direction * dt, 0, 1);
+    const easedProgress = bulkheadHandleProgress * bulkheadHandleProgress * (3 - 2 * bulkheadHandleProgress);
+    const jerkEnvelope = Math.sin(bulkheadHandleProgress * Math.PI);
+    const mechanicalJerk =
+      -Math.abs(Math.sin(bulkheadHandleProgress * Math.PI * config.turnJerkFrequency)) *
+      THREE.MathUtils.degToRad(config.turnJerkDegrees) *
+      jerkEnvelope;
+    angle = THREE.MathUtils.degToRad(config.unlockedTurnDegrees) * easedProgress + mechanicalJerk;
+    if (bulkheadHandleProgress >= 1 && !bulkheadExitComplete) {
+      bulkheadExitComplete = true;
+      bulkheadHandleHeld = false;
+      if (resultsSnapshot) showShiftResults(resultsSnapshot);
+    }
+  } else if (bulkheadLockedAttemptTime >= 0) {
+    bulkheadLockedAttemptTime += dt;
+    const progress = THREE.MathUtils.clamp(bulkheadLockedAttemptTime / config.lockedAttemptSeconds, 0, 1);
+    const stopAngle = THREE.MathUtils.degToRad(config.lockedStopDegrees);
+    if (progress < 0.45) {
+      const driveProgress = progress / 0.45;
+      const easedDrive = driveProgress * driveProgress * (3 - 2 * driveProgress);
+      const driveJerk =
+        -Math.abs(Math.sin(driveProgress * Math.PI * 5)) *
+        THREE.MathUtils.degToRad(config.lockedKnockDegrees * 0.45) *
+        Math.sin(driveProgress * Math.PI);
+      angle = stopAngle * easedDrive + driveJerk;
+    } else if (progress < 0.65) {
+      const knockProgress = (progress - 0.45) / 0.2;
+      const knock =
+        Math.sin(knockProgress * Math.PI * 7) *
+        (1 - knockProgress) *
+        THREE.MathUtils.degToRad(config.lockedKnockDegrees);
+      angle = stopAngle + knock;
+    } else {
+      const returnProgress = (progress - 0.65) / 0.35;
+      const easedReturn = returnProgress * returnProgress * (3 - 2 * returnProgress);
+      angle = stopAngle * (1 - easedReturn);
+    }
+    if (progress >= 1) bulkheadLockedAttemptTime = -1;
+  }
+
+  bulkheadHandle.rotation.copy(bulkheadHandle.userData.initialRotation);
+  applyAxisRotation(bulkheadHandle, config.rotationAxis, angle);
+}
+
+function beginBulkheadHandleInteraction() {
+  if (!bulkheadHandle || bulkheadExitComplete) return;
+  if ((bulkheadHandle.userData.lastHitDistance ?? Infinity) > CONFIG.interior.bulkheadExit.maxInteractionDistance) return;
+  if (bulkheadExitPending) {
+    bulkheadHandleHeld = true;
+    return;
+  }
+
+  bulkheadLockedAttemptTime = 0;
+  if (latestSnapshot.mode === "running") {
+    emitOperatorThought("door-live-core", "Yeah, no. Can't leave it burning.", 1, 3.2);
+  } else {
+    emitOperatorThought("door-interlocked", "Of course. Interlocked until shutdown.", 1, 3.2);
+  }
+}
+
+function resetBulkheadExit() {
+  bulkheadHandleHeld = false;
+  bulkheadHandleProgress = 0;
+  bulkheadLockedAttemptTime = -1;
+  bulkheadExitPending = false;
+  bulkheadExitComplete = false;
+  if (!bulkheadHandle) return;
+  bulkheadHandle.userData.controlLabel = CONFIG.interior.bulkheadExit.label;
+  bulkheadHandle.rotation.copy(bulkheadHandle.userData.initialRotation);
 }
 
 function loadPanelModel() {
@@ -1964,6 +2058,7 @@ function registerInteriorObject(object) {
   object.receiveShadow = true;
   ensureSecondUvSet(object);
   object.material = getInteriorMaterial(object);
+  if (object.name === CONFIG.interior.bulkheadExit?.meshName) registerBulkheadHandle(object);
 
   if (CONFIG.interior.lightToggleButton && interiorMaterialMatches(object, CONFIG.interior.lightToggleButton)) {
     registerRoomLightButton(object, CONFIG.interior.lightToggleButton);
@@ -2342,6 +2437,7 @@ function updateHoverTarget() {
   raycaster.setFromCamera(pointer, camera);
   const hit = raycaster.intersectObjects(interactive, true)[0];
   hoveredInteractive = hit ? findInteractiveRoot(hit.object) : null;
+  if (hoveredInteractive && hit) hoveredInteractive.userData.lastHitDistance = hit.distance;
   setHoveredKnob(hoveredInteractive?.userData.kind === "controlKnob" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
 }
@@ -2366,7 +2462,8 @@ function getTooltipTarget(object) {
   if (!object) return null;
   return object.userData.kind === "controlKnob" ||
     object.userData.kind === "controlButton" ||
-    object.userData.kind === "roomLightButton"
+    object.userData.kind === "roomLightButton" ||
+    object.userData.kind === "bulkheadHandle"
     ? object
     : null;
 }
@@ -2416,28 +2513,97 @@ function getTooltipText(target) {
 
 function updatePanel(dt) {
   const controlInputs = getControlInputs();
+  const previousSnapshot = latestSnapshot;
   const snapshot = fusionCore.update(dt, controlInputs);
+  const ignitionPulseCount = snapshot.ignitionPulseCount ?? 0;
+  if (ignitionPulseCount > observedIgnitionPulseCount) {
+    ignitionPulseFeedbackTimer = CONFIG.feedback.ignitionPulse.duration;
+  }
+  observedIgnitionPulseCount = ignitionPulseCount;
   latestSnapshot = snapshot;
+  updateOperatorThoughts(previousSnapshot, snapshot, controlInputs);
   updateShiftRecorder(dt, snapshot, controlInputs);
   updateShiftCompletion(dt, snapshot);
-  statusScreen.setSnapshot(snapshot);
+  const panelSnapshot = getTerminalPresentationSnapshot(snapshot);
+  statusScreen.setSnapshot(panelSnapshot);
   statusScreen.update(dt);
   updateControlButtons(dt);
 
   needles.forEach((needle) => {
-    if (!freezeNeedles) updateGaugeNeedle(needle, snapshot, dt);
+    if (!freezeNeedles) updateGaugeNeedle(needle, panelSnapshot, dt);
     needle.rotation.copy(needle.userData.initialRotation);
     applyNeedleAxisRotation(needle, needle.userData.needleDebugAxis ?? "z", needle.userData.needleAngle);
   });
 
   lamps.forEach((lamp) => {
-    lamp.material = getStartupLampMaterial(lamps.indexOf(lamp)) ?? getLampMaterial(lamp, snapshot);
+    lamp.material = getStartupLampMaterial(lamps.indexOf(lamp)) ?? getLampMaterial(lamp, panelSnapshot);
     lamp.scale.copy(lamp.userData.initialScale);
   });
 }
 
+function registerBulkheadHandle(object) {
+  if (bulkheadHandle) return;
+  bulkheadHandle = object;
+  object.userData.kind = "bulkheadHandle";
+  object.userData.controlLabel = CONFIG.interior.bulkheadExit.label;
+  object.userData.initialRotation = object.rotation.clone();
+  interactive.push(object);
+}
+
+function updateOperatorThoughts(previousSnapshot, snapshot, controls) {
+  if (snapshot.mode !== "running") return;
+  if (!previousSnapshot.warning?.fieldWeak && snapshot.warning?.fieldWeak && snapshot.elapsed > 3) {
+    emitOperatorThought("field-weak", "Easy. Need a field under it first.");
+  }
+  if (!previousSnapshot.reactionStalled && snapshot.reactionStalled) {
+    emitOperatorThought("first-quench", "Damn. Drowned it. Back off the coolant... give it fuel...", 2, 4.2);
+  }
+  if (snapshot.reactionStalled && controls.fuelInjection >= 30 && controls.coolantFlow <= 58) {
+    emitOperatorThought("pulse-ready", "Come on. Take the spark.", 1, 2.8);
+  }
+  if (previousSnapshot.reactionStalled && !snapshot.reactionStalled) {
+    emitOperatorThought("restart-success", "There you are.", 2, 2.4);
+  }
+  if (!previousSnapshot.warning?.tempCritical && snapshot.warning?.tempCritical) {
+    emitOperatorThought("first-redline", "Nope. That's way too hot.", 2, 3);
+  }
+  if (previousSnapshot.phase?.name !== snapshot.phase?.name && snapshot.phase?.name === "SUSTAINED HIGH LOAD") {
+    emitOperatorThought("high-load", "Hold together. Just a little longer.", 1, 3.6);
+  }
+}
+
+function emitOperatorThought(id, text, priority = 0, duration = 3.4) {
+  if (operatorThoughtsShown.has(id)) return;
+  operatorThoughtsShown.add(id);
+  window.dispatchEvent(
+    new CustomEvent("operatorgame:subtitle", {
+      detail: { id, text, priority, duration },
+    }),
+  );
+}
+
+function resetOperatorThoughts() {
+  operatorThoughtsShown.clear();
+  window.dispatchEvent(new CustomEvent("operatorgame:subtitle-clear", { detail: { resetSeen: true } }));
+}
+
 function getLampMaterial(lamp, snapshot) {
   if (indicatorTestTimer > 0) return getIndicatorTestMaterial(lamps.indexOf(lamp));
+  if (snapshot.terminalElapsed != null) {
+    if (snapshot.terminalBlackout) return materials.lampOff;
+    if (snapshot.mode === "complete") {
+      return lamp.name === "LightCase1_Light_ReactionEfficiency" || lamp.name === "LightCase1_Light_FuelQuality"
+        ? materials.lampGreen
+        : materials.lampOff;
+    }
+    const warningKey = LAMP_WARNING_KEYS[lamp.name];
+    if (snapshot.failureType === "coreDestroyed") {
+      if (warningKey === "coreStress" || warningKey === "tempHigh") return materials.lampRed;
+      if (warningKey === "instability") return materials.lampAmber;
+      return materials.lampOff;
+    }
+    return warningKey === "coreStall" || warningKey === "outputLow" ? materials.lampAmber : materials.lampOff;
+  }
 
   if (lamp.name === "LightCase1_Light_UnderDemand") {
     if (snapshot.warning?.underDemandCritical) return materials.lampRed;
@@ -2527,9 +2693,35 @@ function updateShiftCompletion(dt, snapshot) {
   previousGameMode = snapshot.mode;
 
   if (finishedNow) {
-    resultsTimer = 5;
+    resultsTimer = getTerminalResultsDelay(snapshot);
     resultsSnapshot = snapshot;
+    terminalSequenceElapsed = 0;
   }
+  if (terminalSequenceElapsed >= 0) terminalSequenceElapsed += dt;
+  const thoughtDelay =
+    snapshot.failureType === "coreDestroyed" ? CONFIG.feedback.terminal.destroyedBlackoutSeconds : 0.8;
+  if (terminalSequenceElapsed >= thoughtDelay) {
+    if (snapshot.mode === "complete") {
+      emitOperatorThought("shift-complete", "Core's down. I'm done here.", 3, 4);
+    } else if (snapshot.failureType === "coreDestroyed") {
+      emitOperatorThought("core-destroyed", "That's gone. I need out. Now.", 4, 4);
+    } else if (snapshot.mode === "failed") {
+      emitOperatorThought("fail-safe", "Fail-safe caught it. Time to go.", 3, 4);
+    }
+  }
+
+  if (
+    bulkheadHandle &&
+    !bulkheadExitPending &&
+    !bulkheadExitComplete &&
+    terminalSequenceElapsed >= getBulkheadUnlockDelay(snapshot)
+  ) {
+    bulkheadExitPending = true;
+    bulkheadHandle.userData.controlLabel = "HOLD TO OPEN BULKHEAD";
+    updateControlTooltip();
+  }
+
+  if (bulkheadHandle && resultsSnapshot) return;
 
   if (resultsTimer <= 0 || resultsVisible) return;
   resultsTimer = Math.max(0, resultsTimer - dt);
@@ -2575,6 +2767,7 @@ function hideShiftResults() {
 
 function updateFeedback(dt) {
   startupFeedbackTimer = Math.max(0, startupFeedbackTimer - dt);
+  ignitionPulseFeedbackTimer = Math.max(0, ignitionPulseFeedbackTimer - dt);
   roomLightBootTimer = Math.max(0, roomLightBootTimer - dt);
   updateIndicatorTest(dt);
   updateLongTermLightFlicker(dt);
@@ -2612,6 +2805,58 @@ function updateLongTermLightFlicker(dt) {
     updatedStates.add(state);
     updateFixtureFlickerState(state, dt);
   });
+}
+
+function getBulkheadUnlockDelay(snapshot) {
+  const terminalConfig = CONFIG.feedback.terminal;
+  if (snapshot.failureType === "coreDestroyed") {
+    const fluorescentBootSeconds = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    return (
+      terminalConfig.destroyedBlackoutSeconds +
+      fluorescentBootSeconds +
+      terminalConfig.emergencyLightSettleSeconds
+    );
+  }
+  return terminalConfig.instrumentShutdownSeconds;
+}
+
+function getTerminalResultsDelay(snapshot) {
+  const terminalConfig = CONFIG.feedback.terminal;
+  if (snapshot.failureType === "coreDestroyed") {
+    const fluorescentBootSeconds = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    return (
+      terminalConfig.destroyedBlackoutSeconds +
+      fluorescentBootSeconds +
+      terminalConfig.emergencyLightSettleSeconds +
+      terminalConfig.resultsHoldSeconds
+    );
+  }
+  return terminalConfig.instrumentShutdownSeconds + terminalConfig.resultsHoldSeconds;
+}
+
+function getTerminalPresentationSnapshot(snapshot) {
+  if (terminalSequenceElapsed < 0 || (snapshot.mode !== "complete" && snapshot.mode !== "failed")) return snapshot;
+  const terminalConfig = CONFIG.feedback.terminal;
+  const shutdownProgress = THREE.MathUtils.smoothstep(
+    terminalSequenceElapsed,
+    0.12,
+    terminalConfig.instrumentShutdownSeconds,
+  );
+  const instrumentFactor = 1 - shutdownProgress;
+  const destroyed = snapshot.failureType === "coreDestroyed";
+  return {
+    ...snapshot,
+    plasmaTemp: snapshot.plasmaTemp * instrumentFactor,
+    containment: snapshot.containment * instrumentFactor,
+    powerOutput: snapshot.powerOutput * instrumentFactor,
+    burnRate: snapshot.burnRate * instrumentFactor,
+    coreStress: snapshot.coreStress * instrumentFactor,
+    outputSurge: snapshot.outputSurge * instrumentFactor,
+    reactionEfficiency: snapshot.reactionEfficiency * instrumentFactor,
+    shutdownLevel: Math.max(snapshot.shutdownLevel ?? 0, shutdownProgress),
+    terminalElapsed: terminalSequenceElapsed,
+    terminalBlackout: destroyed && terminalSequenceElapsed < terminalConfig.destroyedBlackoutSeconds,
+  };
 }
 
 function createFixtureFlickerState() {
@@ -2716,7 +2961,8 @@ function updateSceneLightFeedback() {
     : 1;
   const emergencyPulse = emergency ? THREE.MathUtils.lerp(0.72, 1.18, flickerWave(18, 2.7)) : 1;
   const roomLightFactor = getRoomLightVisualFactor();
-  const sceneFactor = startupLightFactor * outputPulse * emergencyPulse;
+  const terminalLightFactor = getTerminalLightFactor();
+  const sceneFactor = startupLightFactor * outputPulse * emergencyPulse * terminalLightFactor;
 
   controlledLights.forEach((light) => {
     const fixtureFactor = light.userData.roomLightControlled ? getFixtureFlickerFactor(light) : 1;
@@ -2787,18 +3033,30 @@ function getTubePatternFactor(elapsed) {
 }
 
 function applyCameraFeedback() {
+  camera.rotation.z -= appliedCameraFeedbackRoll;
+  appliedCameraFeedbackRoll = 0;
   const startup = getStartupFeedbackAmount();
+  const ignitionPulse = getIgnitionPulseFeedbackAmount();
   const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
   const emergency = getThermalEmergencyAmount();
   const shake =
     startup * CONFIG.feedback.startup.cameraShake +
+    ignitionPulse * CONFIG.feedback.ignitionPulse.cameraShake +
     outputLow * CONFIG.feedback.outputLow.cameraShake * flickerWave(11, 0.7) +
     emergency * CONFIG.feedback.thermalEmergency.cameraShake * flickerWave(14, 1.9);
   if (shake <= 0) return;
 
   camera.position.x += Math.sin(testTime * 39.1) * shake;
   camera.position.y += Math.sin(testTime * 53.7) * shake * 0.45;
-  camera.rotation.z += Math.sin(testTime * 31.3) * shake * 0.6;
+  appliedCameraFeedbackRoll = Math.sin(testTime * 31.3) * shake * 0.6;
+  camera.rotation.z += appliedCameraFeedbackRoll;
+}
+
+function getIgnitionPulseFeedbackAmount() {
+  const duration = CONFIG.feedback.ignitionPulse.duration;
+  if (ignitionPulseFeedbackTimer <= 0 || duration <= 0) return 0;
+  const progress = 1 - ignitionPulseFeedbackTimer / duration;
+  return Math.pow(1 - progress, 1.7) * (0.72 + flickerWave(31, 4.2) * 0.28);
 }
 
 function getStartupFeedbackAmount() {
@@ -2807,12 +3065,51 @@ function getStartupFeedbackAmount() {
 }
 
 function getThermalEmergencyAmount() {
-  if (latestSnapshot.mode !== "running") return 0;
   const temp = THREE.MathUtils.clamp((latestSnapshot.plasmaTemp - 158) / 34, 0, 1);
   const soak = THREE.MathUtils.clamp(((latestSnapshot.thermalSoak ?? 0) - 55) / 45, 0, 1);
   const stress = THREE.MathUtils.clamp((latestSnapshot.coreStress - 72) / 28, 0, 1);
   const surge = THREE.MathUtils.clamp(((latestSnapshot.outputSurge ?? 0) - 34) / 55, 0, 1) * 0.7;
-  return Math.max(temp, soak, stress, surge);
+  const amount = Math.max(temp, soak, stress, surge);
+  if (latestSnapshot.mode === "running") return amount;
+  if (terminalSequenceElapsed >= 0) {
+    return (
+      amount *
+      THREE.MathUtils.clamp(1 - terminalSequenceElapsed / CONFIG.feedback.terminal.emergencyEffectFadeSeconds, 0, 1)
+    );
+  }
+  return 0;
+}
+
+function getTerminalLightFactor() {
+  if (terminalSequenceElapsed < 0) return 1;
+  const terminalConfig = CONFIG.feedback.terminal;
+  if (latestSnapshot.mode === "complete") {
+    return THREE.MathUtils.lerp(
+      1,
+      terminalConfig.completeLightFactor,
+      THREE.MathUtils.smoothstep(terminalSequenceElapsed, 0.2, 2),
+    );
+  }
+  if (latestSnapshot.failureType === "coreDestroyed") {
+    if (terminalSequenceElapsed < terminalConfig.destroyedBlackoutSeconds) return 0;
+    const bootElapsed = terminalSequenceElapsed - terminalConfig.destroyedBlackoutSeconds;
+    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    if (bootElapsed <= bootDuration) return getTubePatternFactor(bootElapsed);
+    return THREE.MathUtils.lerp(
+      1,
+      terminalConfig.destroyedLightFactor,
+      THREE.MathUtils.smoothstep(
+        bootElapsed,
+        bootDuration,
+        bootDuration + terminalConfig.emergencyLightSettleSeconds,
+      ),
+    );
+  }
+  return THREE.MathUtils.lerp(
+    1,
+    terminalConfig.failedLightFactor,
+    THREE.MathUtils.smoothstep(terminalSequenceElapsed, 0.1, 1.6),
+  );
 }
 
 function flickerWave(frequency, seed = 0) {
@@ -2890,6 +3187,7 @@ function getDangerNeedleJitter(needle, snapshot) {
       : 1 + stressDanger * 8 + soakDanger * 9;
 
   return (
+    (1 - (snapshot.shutdownLevel ?? 0)) *
     THREE.MathUtils.degToRad(amountDegrees) *
     (Math.sin(testTime * 47 + needle.userData.needleNoiseSeed) * 0.65 +
       Math.sin(testTime * 91 + needle.userData.needleNoiseSeed * 0.7) * 0.35)
@@ -2921,7 +3219,14 @@ function getOperationalNeedleJitter(needle, snapshot, dt) {
     dt,
   );
 
-  return (needle.userData.needleJitterOffset ?? 0) + vibration;
+  const pulseKick =
+    getIgnitionPulseFeedbackAmount() *
+    THREE.MathUtils.degToRad(CONFIG.feedback.ignitionPulse.needleKickDegrees) *
+    Math.sin(testTime * 64 + needle.userData.needleNoiseSeed);
+  return (
+    ((needle.userData.needleJitterOffset ?? 0) + vibration) * (1 - (snapshot.shutdownLevel ?? 0)) +
+    pulseKick
+  );
 }
 
 function updateControlButtons(dt) {
@@ -3038,7 +3343,7 @@ function getRoomLightVisualFactor() {
 }
 
 function updateRoomLightMaterials() {
-  const visualFactor = getRoomLightVisualFactor();
+  const visualFactor = getRoomLightVisualFactor() * getTerminalLightFactor();
   const emissiveExponent = CONFIG.feedback.longTermLightFlicker.emissiveExponent ?? 1;
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
@@ -3069,11 +3374,15 @@ function setRoomLightButtonPressed(button, pressed) {
 function startShift() {
   resetShiftRecorder();
   hideShiftResults();
+  resetBulkheadExit();
+  resetOperatorThoughts();
   fusionCore.start();
   previousGameMode = "running";
   resultsTimer = 0;
   resultsSnapshot = null;
+  terminalSequenceElapsed = -1;
   triggerStartupFeedback();
+  emitOperatorThought("shift-start", "All right... let's wake you up.", 1, 3.6);
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 }
@@ -3081,10 +3390,13 @@ function startShift() {
 function resetShift() {
   resetShiftRecorder();
   hideShiftResults();
+  resetBulkheadExit();
+  resetOperatorThoughts();
   fusionCore.reset();
   previousGameMode = "standby";
   resultsTimer = 0;
   resultsSnapshot = null;
+  terminalSequenceElapsed = -1;
   startupFeedbackTimer = 0;
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
@@ -3160,12 +3472,14 @@ function resetLevelSession() {
   hideShiftResults();
   resetOperatorView();
   resetPanelControls();
+  resetBulkheadExit();
   freezeNeedles = false;
   needles.forEach((needle) => {
     needle.userData.needleDebugAxis = null;
   });
   resultsTimer = 0;
   resultsSnapshot = null;
+  terminalSequenceElapsed = -1;
 }
 
 function resetForMenu() {
@@ -3587,11 +3901,14 @@ canvas.addEventListener("mousedown", (event) => {
     setControlButtonPressed(hoveredInteractive, true);
   } else if (hoveredInteractive?.userData.kind === "roomLightButton") {
     setRoomLightButtonPressed(hoveredInteractive, true);
+  } else if (hoveredInteractive?.userData.kind === "bulkheadHandle") {
+    beginBulkheadHandleInteraction();
   }
 });
 
 window.addEventListener("mouseup", (event) => {
   if (event.button === 2) zoomActive = false;
+  if (event.button === 0) bulkheadHandleHeld = false;
   releaseAllControlButtons();
 });
 
@@ -3599,6 +3916,7 @@ canvas.addEventListener("contextmenu", (event) => event.preventDefault());
 
 window.addEventListener("blur", () => {
   zoomActive = false;
+  bulkheadHandleHeld = false;
   releaseAllControlButtons();
 });
 
