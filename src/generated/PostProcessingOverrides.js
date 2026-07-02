@@ -198,9 +198,9 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.85,
-    "radius": 0.87,
-    "threshold": 0.33
+    "strength": 0.65,
+    "radius": 0.8,
+    "threshold": 0.47
   },
   "antiAliasing": {
     "method": "off",
@@ -210,14 +210,14 @@ export const POST_PROCESSING_OVERRIDES = {
     "enabled": true,
     "anamorphicGlare": {
       "enabled": true,
-      "strength": 0.19,
-      "threshold": 0.28,
-      "length": 0.065,
+      "strength": 0.25,
+      "threshold": 0.21,
+      "length": 0.195,
       "tint": "#ffffff"
     },
     "flareGhosts": {
       "enabled": true,
-      "strength": 0.11,
+      "strength": 0.05,
       "threshold": 0.55,
       "spacing": 0.76,
       "tint": "#ffffff",
@@ -228,6 +228,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "lensDirt": {
       "enabled": true,
       "strength": 1,
+      "spread": 0.1025,
       "assetPath": "assets/LensDirt1.png",
       "tint": "#ffffff",
       "maxTextureSize": 1024,
@@ -239,14 +240,14 @@ export const POST_PROCESSING_OVERRIDES = {
     "assetPath": "assets/luts/Green1.cube",
     "format": "cube",
     "inputColorSpace": "display-srgb",
-    "intensity": 0.44
+    "intensity": 0.66
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.037,
+    "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
-    "gamma": 0.88,
+    "gamma": 0.93,
     "temperature": -0.13,
     "tint": -0.05,
     "emergencyTint": "#c2c2c2",
@@ -254,7 +255,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "vignette": {
       "enabled": true,
       "strength": 0.575,
-      "radius": 0.75,
+      "radius": 0.69,
       "softness": 0.38,
       "emergencyBoost": 0.46
     },
@@ -266,8 +267,8 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "sharpen": {
     "enabled": true,
-    "amount": 0.185,
-    "zoomBoost": 0.5
+    "amount": 0.295,
+    "zoomBoost": 0.035
   },
   "lensDistortion": {
     "enabled": true,
@@ -278,6 +279,6 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0.0014
+    "amount": 0.0032
   }
 };

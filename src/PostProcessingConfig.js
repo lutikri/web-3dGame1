@@ -227,6 +227,7 @@ export const POST_PROCESSING_CONFIG = {
     "lensDirt": {
       "enabled": true,
       "strength": 1,
+      "spread": 0.035,
       "assetPath": "assets/LensDirt1.png",
       "tint": "#ffffff",
       "maxTextureSize": 1024,

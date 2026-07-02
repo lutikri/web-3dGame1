@@ -183,9 +183,9 @@ const LEVEL_REACTOR_1_DEFAULTS = {
       },
     },
     fixtures: {
-      SM_Lamp1_2: {
+      SM_Lamp1: {
         lightNames: ["SM_Lamp1_2_Light"],
-        materialKeys: ["lamp1_2"],
+        materialKeys: ["lamp1"],
       },
     },
   },

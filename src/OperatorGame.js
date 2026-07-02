@@ -239,6 +239,10 @@ let roomLightsEnabled = CONFIG.interior.lightToggleButton?.initialOn ?? true;
 let roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
 let roomLightSwitchTimer = 0;
 let roomLightSwitchMode = "off";
+let roomLightAfterglowTimer = 0;
+let roomLightStarterFaultTimer = 0;
+let roomLightStarterFaultElapsed = 0;
+let roomLightToggleTimes = [];
 let roomLightBootTimer = 0;
 let hemisphereLight = null;
 const runtimeTextureLoading = {
@@ -454,6 +458,7 @@ const lensEffectsShader = {
     haloRadius: { value: 0.42 },
     dirtEnabled: { value: 0 },
     dirtStrength: { value: 0 },
+    dirtSpread: { value: 0 },
     dirtTint: { value: new THREE.Color("#ffffff") },
   },
   vertexShader: `
@@ -485,6 +490,7 @@ const lensEffectsShader = {
     uniform float haloRadius;
     uniform float dirtEnabled;
     uniform float dirtStrength;
+    uniform float dirtSpread;
     uniform vec3 dirtTint;
     varying vec2 vUv;
 
@@ -548,7 +554,17 @@ const lensEffectsShader = {
       vec3 dirt = vec3(0.0);
       if (dirtEnabled > 0.5 && hasLensDirtTexture > 0.5) {
         vec3 dirtMask = texture2D(lensDirtTexture, vUv).rgb;
-        dirt = sampleBloom(vUv) * dirtMask * dirtTint * dirtStrength;
+        vec2 spread = vec2(dirtSpread);
+        vec3 bloomIllumination = sampleBloom(vUv) * 0.28;
+        bloomIllumination += sampleBloom(vUv + vec2(spread.x, 0.0)) * 0.09;
+        bloomIllumination += sampleBloom(vUv - vec2(spread.x, 0.0)) * 0.09;
+        bloomIllumination += sampleBloom(vUv + vec2(0.0, spread.y)) * 0.09;
+        bloomIllumination += sampleBloom(vUv - vec2(0.0, spread.y)) * 0.09;
+        bloomIllumination += sampleBloom(vUv + spread) * 0.09;
+        bloomIllumination += sampleBloom(vUv - spread) * 0.09;
+        bloomIllumination += sampleBloom(vUv + vec2(spread.x, -spread.y)) * 0.09;
+        bloomIllumination += sampleBloom(vUv + vec2(-spread.x, spread.y)) * 0.09;
+        dirt = bloomIllumination * dirtMask * dirtTint * dirtStrength;
       }
 
       gl_FragColor = vec4(clamp(source.rgb + glare + ghosts + dirt, 0.0, 1.0), source.a);
@@ -1491,6 +1507,7 @@ function applyLensEffectsConfig(pass) {
   pass.uniforms.haloRadius.value = ghosts.haloRadius ?? 0.42;
   pass.uniforms.dirtEnabled.value = dirt.enabled ? 1 : 0;
   pass.uniforms.dirtStrength.value = dirt.strength ?? 0;
+  pass.uniforms.dirtSpread.value = dirt.spread ?? 0;
   pass.uniforms.dirtTint.value.set(dirt.tint ?? "#ffffff").convertLinearToSRGB();
 }
 
@@ -2784,6 +2801,7 @@ function triggerRoomLightBoot() {
   const wasEnabled = roomLightsEnabled;
   roomLightsEnabled = true;
   roomLightCurrentFactor = 0;
+  roomLightAfterglowTimer = 0;
   roomLightSwitchTimer = 0;
   roomLightSwitchMode = "on";
   roomLightBootTimer = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
@@ -2912,15 +2930,26 @@ function triggerFixtureFlicker(targetName = "") {
 }
 
 function createFixtureFlickerPulses(duration, flickerConfig) {
-  const pulseCount = Math.round(getRandomConfigRange(flickerConfig.pulseCount, 1, 4));
-  return Array.from({ length: pulseCount }, () => {
-    const center = Math.random();
-    const width = THREE.MathUtils.randFloat(0.035, 0.16);
+  const pulseCount = Math.max(3, Math.round(getRandomConfigRange(flickerConfig.pulseCount, 4, 9)));
+  const clusterEnd = THREE.MathUtils.randFloat(0.72, 0.94);
+
+  return Array.from({ length: pulseCount }, (_, index) => {
+    const sequenceProgress = pulseCount > 1 ? index / (pulseCount - 1) : 0;
+    const center = THREE.MathUtils.clamp(
+      0.035 + sequenceProgress * clusterEnd + THREE.MathUtils.randFloatSpread(0.075),
+      0.015,
+      0.98,
+    );
+    const pulseSeconds = THREE.MathUtils.randFloat(0.025, index === pulseCount - 1 ? 0.075 : 0.13);
+    const width = THREE.MathUtils.clamp(pulseSeconds / Math.max(duration, 0.001), 0.018, 0.19);
+    const minimumFactor = getRandomConfigRange(flickerConfig.minFactor, 0.04, 0.3);
+    const strikeStrength = index === 0 || index === pulseCount - 1 ? 1 : THREE.MathUtils.randFloat(0.72, 1);
+
     return {
       center,
       width,
-      depth: 1 - getRandomConfigRange(flickerConfig.minFactor, 0.72, 0.92),
-      wobble: THREE.MathUtils.randFloat(0.75, 1.25),
+      depth: (1 - minimumFactor) * strikeStrength,
+      edgePower: THREE.MathUtils.randFloat(0.85, 1.35),
       duration,
     };
   });
@@ -2934,7 +2963,8 @@ function getFixtureFlickerFactor(target) {
   const factor = state.pulses.reduce((currentFactor, pulse) => {
     const distance = Math.abs(progress - pulse.center) / pulse.width;
     if (distance >= 1) return currentFactor;
-    const dip = Math.pow(1 - distance, 2) * pulse.depth * pulse.wobble;
+    // A glow starter drops out and restrikes abruptly; a broad smooth sine dip reads more like a candle.
+    const dip = Math.pow(1 - distance, pulse.edgePower ?? 0.3) * pulse.depth;
     return Math.min(currentFactor, 1 - dip);
   }, 1);
   return THREE.MathUtils.clamp(factor, 0, 1.08);
@@ -3309,16 +3339,58 @@ function adjustNoclipSpeed(direction) {
 }
 
 function toggleRoomLights() {
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  const now = clock.elapsedTime;
+  const abuseWindowSeconds = switchConfig.abuseWindowSeconds ?? 4;
+
+  roomLightToggleTimes = roomLightToggleTimes.filter((time) => now - time <= abuseWindowSeconds);
+  roomLightToggleTimes.push(now);
+
+  if (roomLightStarterFaultTimer > 0) return;
+  if (roomLightToggleTimes.length >= (switchConfig.abuseToggleCount ?? 6)) {
+    triggerRoomLightStarterFault();
+    console.warn("[OperatorGame] Fluorescent starter fault triggered by rapid switching");
+    return;
+  }
+
   setRoomLightsEnabled(!roomLightsEnabled);
   console.log(`[OperatorGame] Room lights ${roomLightsEnabled ? "enabled" : "disabled"}`);
+}
+
+function triggerRoomLightStarterFault() {
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  roomLightsEnabled = true;
+  roomLightSwitchMode = "fault";
+  roomLightCurrentFactor = 0;
+  roomLightSwitchTimer = 0;
+  roomLightBootTimer = 0;
+  roomLightAfterglowTimer = 0;
+  roomLightStarterFaultTimer = switchConfig.starterFaultSeconds ?? 20;
+  roomLightStarterFaultElapsed = 0;
+  roomLightToggleTimes = [];
+  updateControlTooltip();
 }
 
 function updateRoomLightFade(dt) {
   const buttonConfig = CONFIG.interior.lightToggleButton ?? {};
   const target = roomLightsEnabled ? 1 : 0;
-  const fadeSeconds = Math.max(0.001, buttonConfig.fadeSeconds ?? 0.3);
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  const fadeSeconds = Math.max(
+    0.001,
+    roomLightsEnabled ? buttonConfig.fadeSeconds ?? 0.3 : switchConfig.lightFadeOutSeconds ?? 0.14,
+  );
   roomLightSwitchTimer = Math.max(0, roomLightSwitchTimer - dt);
-  if (roomLightSwitchMode === "on" && roomLightSwitchTimer > 0) {
+  roomLightAfterglowTimer = Math.max(0, roomLightAfterglowTimer - dt);
+  if (roomLightStarterFaultTimer > 0) {
+    roomLightStarterFaultTimer = Math.max(0, roomLightStarterFaultTimer - dt);
+    roomLightStarterFaultElapsed += dt;
+    roomLightCurrentFactor = getRoomLightStarterFaultFactor();
+    if (roomLightStarterFaultTimer <= 0) {
+      roomLightSwitchMode = "on";
+      roomLightSwitchTimer = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+      roomLightCurrentFactor = 0;
+    }
+  } else if (roomLightSwitchMode === "on" && roomLightSwitchTimer > 0) {
     roomLightCurrentFactor = getRoomLightVisualFactor();
   } else {
     roomLightCurrentFactor = THREE.MathUtils.damp(roomLightCurrentFactor, target, 4 / fadeSeconds, dt);
@@ -3327,6 +3399,8 @@ function updateRoomLightFade(dt) {
 }
 
 function getRoomLightVisualFactor() {
+  if (roomLightStarterFaultTimer > 0) return getRoomLightStarterFaultFactor();
+
   if (roomLightBootTimer > 0) {
     const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
     const elapsed = bootDuration - roomLightBootTimer;
@@ -3342,8 +3416,25 @@ function getRoomLightVisualFactor() {
   return roomLightCurrentFactor;
 }
 
+function getRoomLightStarterFaultFactor() {
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  const minimum = switchConfig.faultMinimumFactor ?? 0.025;
+  const maximum = switchConfig.faultMaximumFactor ?? 0.3;
+  const time = roomLightStarterFaultElapsed;
+  const irregularPhase = time * 5.4 + Math.sin(time * 1.37) * 2.1 + Math.sin(time * 0.43) * 1.4;
+  const strike = THREE.MathUtils.smoothstep(Math.sin(irregularPhase), 0.48, 0.94);
+  const starterChatter = THREE.MathUtils.lerp(0.55, 1, flickerWave(21, 8.2));
+  return THREE.MathUtils.lerp(minimum, maximum, strike * starterChatter);
+}
+
 function updateRoomLightMaterials() {
-  const visualFactor = getRoomLightVisualFactor() * getTerminalLightFactor();
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  const afterglowSeconds = Math.max(0.001, switchConfig.afterglowSeconds ?? 3);
+  const afterglowProgress = THREE.MathUtils.clamp(roomLightAfterglowTimer / afterglowSeconds, 0, 1);
+  const afterglowFactor =
+    (switchConfig.afterglowInitialFactor ?? 0.2) *
+    Math.pow(afterglowProgress, switchConfig.afterglowExponent ?? 2.4);
+  const visualFactor = Math.max(getRoomLightVisualFactor(), afterglowFactor) * getTerminalLightFactor();
   const emissiveExponent = CONFIG.feedback.longTermLightFlicker.emissiveExponent ?? 1;
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
@@ -3422,6 +3513,10 @@ function resetOperatorView() {
 }
 
 function setRoomLightsEnabled(enabled, { instant = false } = {}) {
+  const wasEnabled = roomLightsEnabled;
+  roomLightStarterFaultTimer = 0;
+  roomLightStarterFaultElapsed = 0;
+  if (instant) roomLightToggleTimes = [];
   roomLightsEnabled = Boolean(enabled);
   roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
   roomLightSwitchTimer = instant
@@ -3430,6 +3525,8 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
       ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
       : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
   roomLightBootTimer = 0;
+  roomLightAfterglowTimer =
+    !instant && wasEnabled && !roomLightsEnabled ? CONFIG.feedback.roomLightSwitch?.afterglowSeconds ?? 3 : 0;
   if (instant) roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
   updateControlTooltip();
 }
@@ -4084,6 +4181,7 @@ window.operatorGameDebug = {
     roomLightFactor: Number(roomLightCurrentFactor.toFixed(2)),
     roomLightSwitchTimer: Number(roomLightSwitchTimer.toFixed(2)),
     roomLightSwitchMode,
+    roomLightStarterFaultTimer: Number(roomLightStarterFaultTimer.toFixed(2)),
     roomLightBootTimer: Number(roomLightBootTimer.toFixed(2)),
     operatorViewMode,
     movementSpeed: Number(movementVelocity.length().toFixed(2)),

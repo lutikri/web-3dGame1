@@ -249,7 +249,7 @@ body {
   transform: translateY(-10px) translate(var(--briefing-pan-x), var(--briefing-pan-y)) scale(1);
   transform-origin: var(--briefing-origin-x) var(--briefing-origin-y);
   filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.55));
-  transition: opacity 0.42s ease, transform 0.18s ease-out;
+  transition: opacity 0.42s ease, transform 0.32s cubic-bezier(0.2, 0.7, 0.25, 1);
   will-change: transform;
 }
 
@@ -275,6 +275,14 @@ body {
   --briefing-scale: var(--briefing-zoom-scale);
 }
 
+.briefing-overlay.is-inspectable {
+  cursor: grab;
+}
+
+.briefing-overlay.is-inspecting {
+  cursor: grabbing;
+}
+
 .briefing-focus {
   position: fixed;
   z-index: 2;
@@ -293,7 +301,7 @@ body {
 }
 
 .briefing-overlay.is-inspecting .briefing-focus {
-  opacity: 1;
+  opacity: 0;
 }
 
 .briefing-overlay.is-visible .briefing-prompt {

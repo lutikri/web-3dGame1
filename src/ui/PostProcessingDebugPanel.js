@@ -91,6 +91,7 @@ export function createPostProcessingDebugPanel({ config, defaults = config, rebu
   const dirt = lensEffects.addFolder("Lens dirt");
   structural(dirt.add(config.lensEffects.lensDirt, "enabled"));
   range(dirt, config.lensEffects.lensDirt, "strength", 0, 1, 0.01);
+  range(dirt, config.lensEffects.lensDirt, "spread", 0, 0.15, 0.0025);
   structural(dirt.add(config.lensEffects.lensDirt, "assetPath"));
   live(dirt.addColor(config.lensEffects.lensDirt, "tint"));
   structural(dirt.add(config.lensEffects.lensDirt, "maxTextureSize", [512, 1024, 2048]));

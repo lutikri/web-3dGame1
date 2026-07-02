@@ -40,6 +40,7 @@ export function createAppShell({ gameApi }) {
   let transitionActive = false;
   let initialRouteHandled = false;
   let briefingActive = false;
+  let briefingInspectHeld = false;
   let briefingHideTimer = 0;
 
   applySettings();
@@ -197,17 +198,39 @@ export function createAppShell({ gameApi }) {
       if (!briefingActive) return;
       const rect = briefingSheetFrame.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
-      const insideImage =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom;
-
-      if (!insideImage) {
+      const insideImage = isPointInsideRect(event.clientX, event.clientY, rect);
+      briefingOverlay.classList.toggle("is-inspectable", insideImage);
+      if (!insideImage || !briefingInspectHeld) {
         stopBriefingInspect();
         return;
       }
+      updateBriefingInspectPosition(event, rect);
+    });
 
+    briefingOverlay.addEventListener("mousedown", (event) => {
+      if (!briefingActive || event.button !== 0) return;
+      const rect = briefingSheetFrame.getBoundingClientRect();
+      if (!isPointInsideRect(event.clientX, event.clientY, rect)) return;
+      event.preventDefault();
+      briefingInspectHeld = true;
+      briefingOverlay.classList.add("is-inspecting");
+      updateBriefingInspectPosition(event, rect);
+    });
+
+    window.addEventListener("mouseup", (event) => {
+      if (event.button !== 0 || !briefingInspectHeld) return;
+      briefingInspectHeld = false;
+      stopBriefingInspect();
+    });
+
+    briefingOverlay.addEventListener("mouseleave", () => {
+      briefingInspectHeld = false;
+      briefingOverlay.classList.remove("is-inspectable");
+      stopBriefingInspect();
+    });
+  }
+
+  function updateBriefingInspectPosition(event, rect) {
       const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
       const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
       briefingOverlay.style.setProperty("--briefing-origin-x", `${(x * 100).toFixed(1)}%`);
@@ -218,11 +241,10 @@ export function createAppShell({ gameApi }) {
       briefingOverlay.style.setProperty("--briefing-cursor-y", `${event.clientY.toFixed(1)}px`);
       briefingOverlay.style.setProperty("--briefing-focus-radius", `${getBriefingFocusRadius(rect).toFixed(1)}px`);
       briefingOverlay.classList.add("is-inspecting");
-    });
+  }
 
-    briefingOverlay.addEventListener("mouseleave", () => {
-      stopBriefingInspect();
-    });
+  function isPointInsideRect(x, y, rect) {
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   }
 
   function startIntroShift() {
@@ -383,6 +405,8 @@ export function createAppShell({ gameApi }) {
   function dismissBriefing() {
     if (!briefingOverlay || !briefingActive) return;
     briefingActive = false;
+    briefingInspectHeld = false;
+    stopBriefingInspect();
     updateInputLock();
     briefingOverlay.classList.remove("is-visible");
     briefingOverlay.classList.add("is-dismissed");
@@ -405,7 +429,8 @@ export function createAppShell({ gameApi }) {
 
   function resetBriefingInspectState() {
     if (!briefingOverlay) return;
-    briefingOverlay.classList.remove("is-inspecting");
+    briefingInspectHeld = false;
+    briefingOverlay.classList.remove("is-inspecting", "is-inspectable");
     briefingOverlay.style.setProperty("--briefing-base-scale", String(BRIEFING_UI.inspect.baseScale));
     briefingOverlay.style.setProperty("--briefing-zoom-scale", String(BRIEFING_UI.inspect.zoomScale));
     briefingOverlay.style.setProperty("--briefing-vignette-clear", `${BRIEFING_UI.vignette.clearStop}%`);
