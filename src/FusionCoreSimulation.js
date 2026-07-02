@@ -65,7 +65,19 @@ export function createFusionCoreSimulation() {
       Object.assign(state, createInitialState());
     },
 
+    triggerStartupFault() {
+      if (state.mode !== "running") return getSnapshot(state);
+      state.mode = "startupFault";
+      state.resetPending = 20;
+      state.status = "START-UP COMMAND CONFLICT";
+      return getSnapshot(state);
+    },
+
     update(dt, controls) {
+      if (state.mode === "startupFault") {
+        updateStartupFaultState(state, dt);
+        return getSnapshot(state);
+      }
       if (state.mode !== "running") return getSnapshot(state);
       updateRunningState(state, dt, controls);
       return getSnapshot(state);
@@ -103,11 +115,26 @@ function createInitialState() {
     pulseCooldown: 0,
     reactionEfficiency: 0,
     failureType: null,
+    resetPending: 0,
     status: "AWAITING START COMMAND",
     warning: {},
     averageEfficiency: 0,
     efficiencySamples: 0,
   };
+}
+
+function updateStartupFaultState(state, dt) {
+  state.resetPending = Math.max(0, state.resetPending - dt);
+  state.plasmaTemp = damp(state.plasmaTemp, 0, 2.4, dt);
+  state.containment = damp(state.containment, 0, 2.8, dt);
+  state.powerOutput = damp(state.powerOutput, 0, 3.5, dt);
+  state.burnRate = damp(state.burnRate, 0, 3.5, dt);
+  state.reactionEfficiency = damp(state.reactionEfficiency, 0, 3.5, dt);
+  state.outputSurge = damp(state.outputSurge, 0, 4, dt);
+  state.shutdownLevel = damp(state.shutdownLevel, 1, 3, dt);
+  state.warning = {};
+  state.status = state.resetPending > 0 ? "START-UP FAIL / RESET PENDING" : "RESET COMPLETE / READY";
+  if (state.resetPending <= 0) state.mode = "standby";
 }
 
 function updateRunningState(state, dt, controls) {
@@ -370,6 +397,7 @@ function getSnapshot(state) {
     pulseCooldown: state.pulseCooldown,
     reactionEfficiency: state.reactionEfficiency,
     failureType: state.failureType,
+    resetPending: state.resetPending,
     averageEfficiency: state.averageEfficiency,
     status: state.status,
     warning: { ...state.warning },

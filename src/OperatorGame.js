@@ -244,6 +244,9 @@ let roomLightStarterFaultTimer = 0;
 let roomLightStarterFaultElapsed = 0;
 let roomLightToggleTimes = [];
 let roomLightBootTimer = 0;
+let roomLightStartupPattern = [];
+let reactorStartupPattern = [];
+let terminalStartupPattern = [];
 let hemisphereLight = null;
 const runtimeTextureLoading = {
   total: 0,
@@ -2605,6 +2608,13 @@ function resetOperatorThoughts() {
 }
 
 function getLampMaterial(lamp, snapshot) {
+  if (snapshot.mode === "startupFault") {
+    const faultConfig = CONFIG.feedback.startupFault;
+    const faultAge = Math.max(0, faultConfig.resetSeconds - (snapshot.resetPending ?? 0));
+    if (faultAge < faultConfig.greenLampSeconds) return materials.lampGreen;
+    if (faultAge < faultConfig.greenLampSeconds + faultConfig.redLampSeconds) return materials.lampRed;
+    return materials.lampOff;
+  }
   if (indicatorTestTimer > 0) return getIndicatorTestMaterial(lamps.indexOf(lamp));
   if (snapshot.terminalElapsed != null) {
     if (snapshot.terminalBlackout) return materials.lampOff;
@@ -2710,6 +2720,8 @@ function updateShiftCompletion(dt, snapshot) {
   previousGameMode = snapshot.mode;
 
   if (finishedNow) {
+    terminalStartupPattern =
+      snapshot.failureType === "coreDestroyed" ? createFluorescentStartupPattern() : [];
     resultsTimer = getTerminalResultsDelay(snapshot);
     resultsSnapshot = snapshot;
     terminalSequenceElapsed = 0;
@@ -2795,16 +2807,18 @@ function updateFeedback(dt) {
 
 function triggerStartupFeedback() {
   startupFeedbackTimer = CONFIG.feedback.startup.duration;
+  reactorStartupPattern = createFluorescentStartupPattern();
 }
 
 function triggerRoomLightBoot() {
   const wasEnabled = roomLightsEnabled;
+  roomLightStartupPattern = createFluorescentStartupPattern();
   roomLightsEnabled = true;
   roomLightCurrentFactor = 0;
   roomLightAfterglowTimer = 0;
   roomLightSwitchTimer = 0;
   roomLightSwitchMode = "on";
-  roomLightBootTimer = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+  roomLightBootTimer = getFluorescentStartupDuration(roomLightStartupPattern);
   if (!wasEnabled) updateControlTooltip();
 }
 
@@ -2828,7 +2842,7 @@ function updateLongTermLightFlicker(dt) {
 function getBulkheadUnlockDelay(snapshot) {
   const terminalConfig = CONFIG.feedback.terminal;
   if (snapshot.failureType === "coreDestroyed") {
-    const fluorescentBootSeconds = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const fluorescentBootSeconds = getFluorescentStartupDuration(terminalStartupPattern);
     return (
       terminalConfig.destroyedBlackoutSeconds +
       fluorescentBootSeconds +
@@ -2841,7 +2855,7 @@ function getBulkheadUnlockDelay(snapshot) {
 function getTerminalResultsDelay(snapshot) {
   const terminalConfig = CONFIG.feedback.terminal;
   if (snapshot.failureType === "coreDestroyed") {
-    const fluorescentBootSeconds = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const fluorescentBootSeconds = getFluorescentStartupDuration(terminalStartupPattern);
     return (
       terminalConfig.destroyedBlackoutSeconds +
       fluorescentBootSeconds +
@@ -3042,12 +3056,44 @@ function getStartupLightFactor() {
 
   const startupConfig = CONFIG.feedback.startup;
   const elapsed = startupConfig.duration - startupFeedbackTimer;
-  return getTubePatternFactor(elapsed);
+  return getFluorescentStartupFactor(reactorStartupPattern, elapsed);
 }
 
-function getTubePatternFactor(elapsed) {
-  const startupConfig = CONFIG.feedback.startup;
-  const pattern = startupConfig.tubeOnPattern ?? [];
+function createFluorescentStartupPattern() {
+  const config = CONFIG.feedback.startup.fluorescentStartup ?? {};
+  const warmupSeconds = getRandomConfigRange(config.warmupSeconds, 0.12, 0.32);
+  const attemptCount = Math.max(2, Math.round(getRandomConfigRange(config.attemptCount, 3, 6)));
+  const pattern = [
+    { time: 0, factor: 0 },
+    { time: warmupSeconds * 0.55, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) * 0.45 },
+    { time: warmupSeconds, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) },
+  ];
+  let time = warmupSeconds;
+
+  for (let index = 0; index < attemptCount; index += 1) {
+    const finalAttempt = index === attemptCount - 1;
+    time += getRandomConfigRange(config.attemptOnSeconds, 0.055, 0.16);
+    pattern.push({
+      time,
+      factor: finalAttempt
+        ? getRandomConfigRange(config.finalOvershoot, 1, 1.06)
+        : getRandomConfigRange(config.strikeFactor, 0.42, 0.92),
+    });
+    if (finalAttempt) break;
+    time += getRandomConfigRange(config.attemptOffSeconds, 0.045, 0.13);
+    pattern.push({ time, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) });
+  }
+
+  time += getRandomConfigRange(config.settleSeconds, 0.16, 0.34);
+  pattern.push({ time, factor: 1 });
+  return pattern;
+}
+
+function getFluorescentStartupDuration(pattern) {
+  return pattern?.at(-1)?.time ?? 1.2;
+}
+
+function getFluorescentStartupFactor(pattern, elapsed) {
   if (pattern.length === 0) return 1;
 
   let factor = pattern[pattern.length - 1].factor;
@@ -3067,11 +3113,18 @@ function applyCameraFeedback() {
   appliedCameraFeedbackRoll = 0;
   const startup = getStartupFeedbackAmount();
   const ignitionPulse = getIgnitionPulseFeedbackAmount();
+  const startupFault =
+    latestSnapshot.mode === "startupFault"
+      ? Math.exp(
+          -Math.max(0, CONFIG.feedback.startupFault.resetSeconds - (latestSnapshot.resetPending ?? 0)) * 2,
+        )
+      : 0;
   const outputLow = latestSnapshot.mode === "running" && latestSnapshot.warning?.outputLow ? 1 : 0;
   const emergency = getThermalEmergencyAmount();
   const shake =
     startup * CONFIG.feedback.startup.cameraShake +
     ignitionPulse * CONFIG.feedback.ignitionPulse.cameraShake +
+    startupFault * CONFIG.feedback.startupFault.cameraShake +
     outputLow * CONFIG.feedback.outputLow.cameraShake * flickerWave(11, 0.7) +
     emergency * CONFIG.feedback.thermalEmergency.cameraShake * flickerWave(14, 1.9);
   if (shake <= 0) return;
@@ -3123,8 +3176,8 @@ function getTerminalLightFactor() {
   if (latestSnapshot.failureType === "coreDestroyed") {
     if (terminalSequenceElapsed < terminalConfig.destroyedBlackoutSeconds) return 0;
     const bootElapsed = terminalSequenceElapsed - terminalConfig.destroyedBlackoutSeconds;
-    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
-    if (bootElapsed <= bootDuration) return getTubePatternFactor(bootElapsed);
+    const bootDuration = getFluorescentStartupDuration(terminalStartupPattern);
+    if (bootElapsed <= bootDuration) return getFluorescentStartupFactor(terminalStartupPattern, bootElapsed);
     return THREE.MathUtils.lerp(
       1,
       terminalConfig.destroyedLightFactor,
@@ -3185,7 +3238,10 @@ function updateGaugeNeedle(needle, snapshot, dt) {
   }
 
   const value = snapshot[key] ?? 0;
-  const ratio = THREE.MathUtils.clamp((value - range[0]) / (range[1] - range[0]), 0, 1);
+  let ratio = THREE.MathUtils.clamp((value - range[0]) / (range[1] - range[0]), 0, 1);
+  if (snapshot.mode === "startupFault" && CONFIG.feedback.startupFault.sweepGaugeKeys.includes(key)) {
+    ratio = getStartupFaultNeedleRatio(snapshot, ratio);
+  }
   const targetAngle = THREE.MathUtils.degToRad(
     THREE.MathUtils.lerp(CONFIG.needleAnimation.inactiveDegrees, CONFIG.needleAnimation.activeDegrees, ratio),
   );
@@ -3386,8 +3442,9 @@ function updateRoomLightFade(dt) {
     roomLightStarterFaultElapsed += dt;
     roomLightCurrentFactor = getRoomLightStarterFaultFactor();
     if (roomLightStarterFaultTimer <= 0) {
+      roomLightStartupPattern = createFluorescentStartupPattern();
       roomLightSwitchMode = "on";
-      roomLightSwitchTimer = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+      roomLightSwitchTimer = getFluorescentStartupDuration(roomLightStartupPattern);
       roomLightCurrentFactor = 0;
     }
   } else if (roomLightSwitchMode === "on" && roomLightSwitchTimer > 0) {
@@ -3402,15 +3459,15 @@ function getRoomLightVisualFactor() {
   if (roomLightStarterFaultTimer > 0) return getRoomLightStarterFaultFactor();
 
   if (roomLightBootTimer > 0) {
-    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const bootDuration = getFluorescentStartupDuration(roomLightStartupPattern);
     const elapsed = bootDuration - roomLightBootTimer;
-    return getTubePatternFactor(elapsed);
+    return getFluorescentStartupFactor(roomLightStartupPattern, elapsed);
   }
 
   if (roomLightSwitchTimer > 0 && roomLightSwitchMode === "on") {
-    const bootDuration = CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2;
+    const bootDuration = getFluorescentStartupDuration(roomLightStartupPattern);
     const elapsed = bootDuration - roomLightSwitchTimer;
-    return getTubePatternFactor(elapsed);
+    return getFluorescentStartupFactor(roomLightStartupPattern, elapsed);
   }
 
   return roomLightCurrentFactor;
@@ -3434,8 +3491,12 @@ function updateRoomLightMaterials() {
   const afterglowFactor =
     (switchConfig.afterglowInitialFactor ?? 0.2) *
     Math.pow(afterglowProgress, switchConfig.afterglowExponent ?? 2.4);
-  const visualFactor = Math.max(getRoomLightVisualFactor(), afterglowFactor) * getTerminalLightFactor();
   const emissiveExponent = CONFIG.feedback.longTermLightFlicker.emissiveExponent ?? 1;
+  const startupEmissiveFactor = Math.pow(getStartupLightFactor(), emissiveExponent);
+  const visualFactor =
+    Math.max(getRoomLightVisualFactor(), afterglowFactor) *
+    startupEmissiveFactor *
+    getTerminalLightFactor();
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
     const fixtureFactor = getFixtureFlickerFactor(material);
@@ -3463,6 +3524,12 @@ function setRoomLightButtonPressed(button, pressed) {
 }
 
 function startShift() {
+  if (latestSnapshot.mode === "running") {
+    fusionCore.triggerStartupFault();
+    emitOperatorThought("startup-command-fault", "Shouldn't have done that.", 4, 3.6);
+    return;
+  }
+  if (latestSnapshot.mode !== "standby") return;
   resetShiftRecorder();
   hideShiftResults();
   resetBulkheadExit();
@@ -3518,11 +3585,12 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
   roomLightStarterFaultElapsed = 0;
   if (instant) roomLightToggleTimes = [];
   roomLightsEnabled = Boolean(enabled);
+  if (!instant && roomLightsEnabled) roomLightStartupPattern = createFluorescentStartupPattern();
   roomLightSwitchMode = roomLightsEnabled ? "on" : "off";
   roomLightSwitchTimer = instant
     ? 0
     : roomLightsEnabled
-      ? CONFIG.feedback.startup.tubeOnPattern?.at(-1)?.time ?? 1.2
+      ? getFluorescentStartupDuration(roomLightStartupPattern)
       : CONFIG.interior.lightToggleButton?.fadeSeconds ?? 0.3;
   roomLightBootTimer = 0;
   roomLightAfterglowTimer =
@@ -3709,6 +3777,18 @@ function movePlayerWithCollisions(delta) {
     playerCapsule.start.y + CONFIG.playerEyeHeight - playerCollisionRadius,
     playerCapsule.start.z,
   );
+}
+
+function getStartupFaultNeedleRatio(snapshot, fallbackRatio) {
+  const config = CONFIG.feedback.startupFault;
+  const age = Math.max(0, config.resetSeconds - (snapshot.resetPending ?? 0));
+  const upEnd = config.needleSweepUpSeconds;
+  const holdEnd = upEnd + config.needleSweepHoldSeconds;
+  const downEnd = holdEnd + config.needleSweepDownSeconds;
+  if (age < upEnd) return THREE.MathUtils.smoothstep(age, 0, upEnd);
+  if (age < holdEnd) return 1;
+  if (age < downEnd) return 1 - THREE.MathUtils.smoothstep(age, holdEnd, downEnd);
+  return fallbackRatio;
 }
 
 function resolvePlayerCollisions() {

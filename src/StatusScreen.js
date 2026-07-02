@@ -79,6 +79,10 @@ function drawStandby(ctx) {
 }
 
 function drawStatus(ctx, data) {
+  if (data.mode === "startupFault") {
+    drawStartupFault(ctx, data);
+    return;
+  }
   if (data.terminalElapsed != null) {
     drawTerminalStatus(ctx, data);
     return;
@@ -116,6 +120,33 @@ function drawStatus(ctx, data) {
   ctx.font = "700 28px Consolas, monospace";
   ctx.fillText(`STATUS: ${data.status}`, 48, 492);
 
+  ctx.shadowBlur = 0;
+}
+
+function drawStartupFault(ctx, data) {
+  ctx.clearRect(0, 0, SCREEN_W, SCREEN_H);
+  ctx.fillStyle = "#030000";
+  ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+  const blink = Math.floor(performance.now() / 140) % 2 === 0;
+  const color = blink ? "#ff4b42" : "#8f1f1b";
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 6;
+  ctx.strokeRect(34, 32, SCREEN_W - 68, SCREEN_H - 64);
+  ctx.fillStyle = color;
+  ctx.shadowColor = "#ff241a";
+  ctx.shadowBlur = blink ? 26 : 8;
+  ctx.textAlign = "center";
+  ctx.font = "900 76px Consolas, monospace";
+  ctx.fillText("START-UP FAIL", SCREEN_W / 2, 164);
+  ctx.font = "800 38px Consolas, monospace";
+  ctx.fillText("COMMAND SEQUENCE CONFLICT", SCREEN_W / 2, 254);
+  ctx.shadowBlur = 8;
+  ctx.font = "800 42px Consolas, monospace";
+  ctx.fillText(`RESET PENDING  ${Math.ceil(data.resetPending)} SEC`, SCREEN_W / 2, 354);
+  ctx.font = "700 25px Consolas, monospace";
+  ctx.fillText("START INHIBIT ACTIVE", SCREEN_W / 2, 425);
+  ctx.textAlign = "start";
   ctx.shadowBlur = 0;
 }
 
