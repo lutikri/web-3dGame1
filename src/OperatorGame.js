@@ -35,6 +35,38 @@ import {
 } from "./ui/PostProcessingDebugPanel.js";
 import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js";
 
+const bootOptions = window.operatorGameBootOptions ?? {};
+configureQualityProfile(bootOptions.qualityProfile ?? "high");
+
+function configureQualityProfile(profile) {
+  const post = CONFIG.postProcessing;
+  post.enabled = true;
+  post.antiAliasing.method = "off";
+  post.antiAliasing.msaaSamples = 0;
+  post.gtao.defaultQuality = "off";
+  post.ssgi.defaultQuality = "off";
+  post.ssr.defaultQuality = "off";
+  post.screenSpaceShadows.defaultQuality = "off";
+
+  const enabledEffects =
+    profile === "low"
+      ? ["lut", "colorAdjustments"]
+      : profile === "medium"
+        ? ["bloom", "lut", "colorAdjustments"]
+        : ["bloom", "lensEffects", "lut", "colorAdjustments", "sharpen", "lensDistortion", "chromaticAberration"];
+  for (const key of ["bloom", "lensEffects", "lut", "colorAdjustments", "sharpen", "lensDistortion", "chromaticAberration"]) {
+    if (post[key]) post[key].enabled = enabledEffects.includes(key);
+  }
+  CONFIG.shadows.defaultQuality = profile === "high" ? "min" : "off";
+  return profile;
+}
+
+function getQualityProfilePixelRatio(profile) {
+  if (profile === "low") return 0.6;
+  if (profile === "medium") return 0.75;
+  return 1;
+}
+
 const defaultSceneDebugConfig = JSON.parse(
   JSON.stringify({
     materials: CONFIG.interior.specialMaterials,
@@ -100,8 +132,8 @@ const playerCapsule = new Capsule(
 const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.innerWidth / window.innerHeight, 0.05, 80);
 camera.position.copy(playerSpawnPosition);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+renderer.setPixelRatio(getQualityProfilePixelRatio(bootOptions.qualityProfile ?? "high"));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.type = CONFIG.shadows.type;
@@ -223,7 +255,8 @@ let gtaoQuality = CONFIG.postProcessing.gtao.defaultQuality ?? "off";
 let ssgiQuality = CONFIG.postProcessing.ssgi.defaultQuality ?? "off";
 let ssrQuality = CONFIG.postProcessing.ssr.defaultQuality ?? "off";
 let screenSpaceShadowQuality = CONFIG.postProcessing.screenSpaceShadows.defaultQuality ?? "off";
-let loadingComplete = Boolean(CONFIG.loading?.skip);
+const fastDebugBoot = Boolean(CONFIG.debug?.enabled && CONFIG.debug?.fastLoadLevel);
+let loadingComplete = Boolean(CONFIG.loading?.skip || fastDebugBoot);
 let inputLocked = false;
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
@@ -257,6 +290,8 @@ const runtimeTextureLoading = {
 const defaultPostProcessingConfig = JSON.parse(JSON.stringify(CONFIG.postProcessing));
 
 const interiorCustomTextureMaps = {};
+const deferredTextureUpgradeQueue = [];
+let deferredTextureUpgradeActive = false;
 const interiorCustomTextureMapPromises = loadInteriorCustomMaterialTextures();
 let panelTextureMaps = null;
 const panelTextureMapPromise = createPanelTextureMaps();
@@ -685,19 +720,18 @@ function queueDeferredTextureLoad(key, paths) {
   };
 
   const waitForSceneThenLoad = () => {
+    if (bootOptions.disableFullTextures) return;
+    if (bootOptions.deferFullTextures) {
+      window.setTimeout(waitForSceneThenLoad, 250);
+      return;
+    }
     if (!loadingComplete) {
       window.setTimeout(waitForSceneThenLoad, 250);
       return;
     }
 
     const delayMs = (CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) * 1000;
-    window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadFullTextureMaps, { timeout: 3000 });
-      } else {
-        loadFullTextureMaps();
-      }
-    }, delayMs);
+    window.setTimeout(() => enqueueDeferredTextureUpgrade(loadFullTextureMaps), delayMs);
   };
 
   waitForSceneThenLoad();
@@ -719,22 +753,45 @@ function queueDeferredPanelTextureLoad(paths) {
   };
 
   const waitForSceneThenLoad = () => {
+    if (bootOptions.disableFullTextures) return;
+    if (bootOptions.deferFullTextures) {
+      window.setTimeout(waitForSceneThenLoad, 250);
+      return;
+    }
     if (!loadingComplete) {
       window.setTimeout(waitForSceneThenLoad, 250);
       return;
     }
 
     const delayMs = (CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) * 1000;
-    window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadFullTextureMaps, { timeout: 3000 });
-      } else {
-        loadFullTextureMaps();
-      }
-    }, delayMs);
+    window.setTimeout(() => enqueueDeferredTextureUpgrade(loadFullTextureMaps), delayMs);
   };
 
   waitForSceneThenLoad();
+}
+
+function enqueueDeferredTextureUpgrade(task) {
+  deferredTextureUpgradeQueue.push(task);
+  processDeferredTextureUpgradeQueue();
+}
+
+function processDeferredTextureUpgradeQueue() {
+  if (deferredTextureUpgradeActive || deferredTextureUpgradeQueue.length === 0) return;
+  deferredTextureUpgradeActive = true;
+  const task = deferredTextureUpgradeQueue.shift();
+  const run = async () => {
+    try {
+      await task();
+    } finally {
+      deferredTextureUpgradeActive = false;
+      window.setTimeout(processDeferredTextureUpgradeQueue, 250);
+    }
+  };
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 3000 });
+  } else {
+    window.setTimeout(run, 0);
+  }
 }
 
 async function loadInteriorTextureMaps(paths, options = {}) {
@@ -1034,8 +1091,9 @@ function createSolidTexture(r, g, b, a = 255) {
 init();
 
 function init() {
-  if (CONFIG.loading?.skip) skipLoadingOverlay();
+  if (CONFIG.loading?.skip || fastDebugBoot) skipLoadingOverlay();
   restoreSavedPostProcessingConfig(CONFIG.postProcessing);
+  configureQualityProfile(bootOptions.qualityProfile ?? "high");
   renderer.shadowMap.enabled = getShadowPreset(shadowQuality).enabled;
   setupLights();
   setupLightFixtures();
@@ -1043,11 +1101,12 @@ function init() {
   setupPostProcessing();
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
+  if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);
   loadInteriorModel();
   loadInteriorDecals();
   loadCollisionModel();
   loadPanelModel();
-  if (CONFIG.loading?.skip) triggerRoomLightBoot();
+  if (CONFIG.loading?.skip || fastDebugBoot) triggerRoomLightBoot();
   animate();
 }
 
@@ -2355,7 +2414,7 @@ function setLoadingStatus(text) {
 }
 
 function finishLoading() {
-  if (CONFIG.loading?.skip) {
+  if (CONFIG.loading?.skip || fastDebugBoot) {
     skipLoadingOverlay();
     return;
   }
@@ -3945,7 +4004,7 @@ function setInputLocked(locked) {
   return inputLocked;
 }
 
-window.addEventListener("resize", () => {
+function resizeRendererTargets() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -3964,7 +4023,9 @@ window.addEventListener("resize", () => {
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
   sharpenPass?.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
   updateFxaaResolution();
-});
+}
+
+window.addEventListener("resize", resizeRendererTargets);
 
 document.addEventListener("keydown", (event) => {
   const toggleSequence = String(CONFIG.sceneDebug?.toggleSequence ?? "debug3").toLowerCase();
@@ -4120,6 +4181,329 @@ document.addEventListener("pointerlockchange", () => {
   releaseAllControlButtons();
 });
 
+let performanceBenchmarkPromise = null;
+let lastPerformanceBenchmark = null;
+
+function runPerformanceBenchmark(options = {}) {
+  if (performanceBenchmarkPromise) return performanceBenchmarkPromise;
+
+  performanceBenchmarkPromise = executePerformanceBenchmark(options).finally(() => {
+    performanceBenchmarkPromise = null;
+  });
+  return performanceBenchmarkPromise;
+}
+
+async function executePerformanceBenchmark(options = {}) {
+  const benchmarkConfig = CONFIG.debug?.performanceBenchmark ?? {};
+  const warmupMs = Math.max(0, Number(options.warmupSeconds ?? benchmarkConfig.warmupSeconds ?? 0.75) * 1000);
+  const sampleMs = Math.max(500, Number(options.sampleSeconds ?? benchmarkConfig.sampleSeconds ?? 2) * 1000);
+  const textureWaitTimeoutMs = Math.max(
+    5000,
+    Number(options.textureWaitTimeoutSeconds ?? benchmarkConfig.textureWaitTimeoutSeconds ?? 45) * 1000,
+  );
+  const postProcessingBackup = structuredClone(CONFIG.postProcessing);
+  const pixelRatioBackup = renderer.getPixelRatio();
+  const qualityBackup = {
+    shadows: shadowQuality,
+    gtao: gtaoQuality,
+    ssgi: ssgiQuality,
+    ssr: ssrQuality,
+    screenSpaceShadows: screenSpaceShadowQuality,
+  };
+  const inputLockedBackup = inputLocked;
+  const results = [];
+  const screenshots = [];
+
+  const presets = options.quick
+    ? [
+        { name: "PROFILE LOW", post: true, dpr: 0.6, msaa: 0, effects: ["lut", "colorAdjustments"] },
+        {
+          name: "PROFILE MEDIUM",
+          post: true,
+          dpr: 0.75,
+          msaa: 0,
+          effects: ["bloom", "lut", "colorAdjustments"],
+        },
+        {
+          name: "PROFILE HIGH",
+          post: true,
+          dpr: 1,
+          msaa: 0,
+          shadows: "min",
+          effects: [
+            "bloom",
+            "lensEffects",
+            "lut",
+            "colorAdjustments",
+            "sharpen",
+            "lensDistortion",
+            "chromaticAberration",
+          ],
+        },
+      ]
+    : [
+    { name: "RAW DPR 0.50", post: false, dpr: 0.5 },
+    { name: "RAW DPR 0.75", post: false, dpr: 0.75 },
+    { name: "RAW DPR 1.00", post: false, dpr: 1 },
+    { name: "COMPOSER MSAA 0", post: true, dpr: 1, msaa: 0 },
+    { name: "COMPOSER MSAA 4", post: true, dpr: 1, msaa: 4 },
+    { name: "BLOOM", post: true, dpr: 1, effects: ["bloom"] },
+    { name: "BLOOM + LENS FX", post: true, dpr: 1, effects: ["bloom", "lensEffects"] },
+    { name: "LUT", post: true, dpr: 1, effects: ["lut"] },
+    { name: "COLOR + VIGNETTE", post: true, dpr: 1, effects: ["colorAdjustments"] },
+    { name: "SHARPEN", post: true, dpr: 1, effects: ["sharpen"] },
+    { name: "CHROMATIC", post: true, dpr: 1, effects: ["chromaticAberration"] },
+    { name: "SHADOWS 512", post: false, dpr: 1, shadows: "min" },
+    { name: "SHADOWS 2K", post: false, dpr: 1, shadows: "max" },
+    { name: "GTAO MIN", post: true, dpr: 1, gtao: "min" },
+    { name: "FULL DPR 0.50 / MSAA 0", restore: true, dpr: 0.5, msaa: 0 },
+    { name: "FULL DPR 0.75 / MSAA 0", restore: true, dpr: 0.75, msaa: 0 },
+    { name: "FULL DPR 1.00 / MSAA 0", restore: true, dpr: 1, msaa: 0 },
+    { name: "FULL DPR 1.00 / MSAA 4", restore: true, dpr: 1, msaa: 4 },
+      ];
+
+  inputLocked = true;
+  const loadingProfile = options.skipTextureWait
+    ? { durationSeconds: 0, textureCount: 0, completedTextures: 0, worstFrameMs: 0, p95FrameMs: 0 }
+    : await profileTextureStreaming(textureWaitTimeoutMs);
+  console.info(
+    `[OperatorGame benchmark] Textures settled after ${loadingProfile.durationSeconds}s; ` +
+      `worst frame ${loadingProfile.worstFrameMs} ms, p95 ${loadingProfile.p95FrameMs} ms`,
+  );
+  console.info(`[OperatorGame benchmark] Starting ${presets.length} presets at ${window.innerWidth}x${window.innerHeight}`);
+
+  try {
+    for (const preset of presets) {
+      applyBenchmarkPreset(preset, postProcessingBackup, qualityBackup);
+
+      await waitForBenchmarkTime(warmupMs);
+      const sample = await measureBenchmarkFrames(sampleMs);
+      const row = {
+        preset: preset.name,
+        avgFps: Number(sample.avgFps.toFixed(1)),
+        avgFrameMs: Number(sample.avgFrameMs.toFixed(2)),
+        p95FrameMs: Number(sample.p95FrameMs.toFixed(2)),
+        dpr: renderer.getPixelRatio(),
+        buffer: `${renderer.domElement.width}x${renderer.domElement.height}`,
+        msaa: composer?.renderTarget1?.samples ?? 0,
+      };
+      results.push(row);
+      screenshots.push({ name: preset.name, image: captureBenchmarkThumbnail() });
+      console.info(`[OperatorGame benchmark] ${preset.name}: ${row.avgFps} FPS, ${row.avgFrameMs} ms/frame`);
+    }
+  } finally {
+    restoreBenchmarkPostProcessingConfig(postProcessingBackup);
+    renderer.setPixelRatio(pixelRatioBackup);
+    gtaoQuality = qualityBackup.gtao;
+    ssgiQuality = qualityBackup.ssgi;
+    ssrQuality = qualityBackup.ssr;
+    screenSpaceShadowQuality = qualityBackup.screenSpaceShadows;
+    setShadowQuality(qualityBackup.shadows);
+    setupPostProcessing();
+    resizeRendererTargets();
+    inputLocked = inputLockedBackup;
+  }
+
+  lastPerformanceBenchmark = {
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+    drawingBuffer: `${renderer.domElement.width}x${renderer.domElement.height}`,
+    canvasAntialias: renderer.getContext().getContextAttributes()?.antialias ?? null,
+    loadingProfile,
+    results,
+    previews: Object.fromEntries(screenshots.map(({ name, image }) => [name, image])),
+  };
+  if (options.showReport !== false) showPerformanceBenchmarkReport(lastPerformanceBenchmark, screenshots);
+  console.table(results);
+  console.info(
+    `[OperatorGame benchmark result] ${JSON.stringify({
+      ...lastPerformanceBenchmark,
+      previews: Object.keys(lastPerformanceBenchmark.previews),
+    })}`,
+  );
+  return lastPerformanceBenchmark;
+}
+
+function applyBenchmarkPreset(preset, postProcessingBackup, qualityBackup) {
+  restoreBenchmarkPostProcessingConfig(preset.restore ? postProcessingBackup : defaultPostProcessingConfig);
+  CONFIG.postProcessing.enabled = Boolean(preset.post || preset.restore);
+  for (const key of ["bloom", "lut", "colorAdjustments", "sharpen", "lensEffects", "lensDistortion", "chromaticAberration"]) {
+    if (CONFIG.postProcessing[key] && !preset.restore) {
+      CONFIG.postProcessing[key].enabled = preset.effects?.includes(key) ?? false;
+    }
+  }
+  CONFIG.postProcessing.antiAliasing.method = "off";
+  CONFIG.postProcessing.antiAliasing.msaaSamples = preset.msaa ?? 0;
+  gtaoQuality = preset.restore ? qualityBackup.gtao : preset.gtao ?? "off";
+  ssgiQuality = preset.restore ? qualityBackup.ssgi : "off";
+  ssrQuality = preset.restore ? qualityBackup.ssr : "off";
+  screenSpaceShadowQuality = preset.restore ? qualityBackup.screenSpaceShadows : "off";
+  renderer.setPixelRatio(preset.dpr ?? 1);
+  setShadowQuality(preset.restore ? qualityBackup.shadows : preset.shadows ?? "off");
+  setupPostProcessing();
+  resizeRendererTargets();
+}
+
+async function profileTextureStreaming(timeoutMs) {
+  const frameTimes = [];
+  const startedAt = performance.now();
+  let previousFrame = startedAt;
+  let lastSignature = "";
+  let lastChangeAt = startedAt;
+  const earliestSettleAt =
+    startedAt + (Number(CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) + 3.5) * 1000;
+
+  while (performance.now() - startedAt < timeoutMs) {
+    await new Promise((resolve) =>
+      requestAnimationFrame((time) => {
+        frameTimes.push(time - previousFrame);
+        previousFrame = time;
+        resolve();
+      }),
+    );
+    const signature = `${runtimeTextureLoading.total}:${runtimeTextureLoading.completed}:${runtimeTextureLoading.active}`;
+    if (signature !== lastSignature) {
+      lastSignature = signature;
+      lastChangeAt = performance.now();
+    }
+    const quiet = performance.now() - lastChangeAt >= 2500;
+    const finished = runtimeTextureLoading.active === 0 && runtimeTextureLoading.completed === runtimeTextureLoading.total;
+    if (performance.now() >= earliestSettleAt && quiet && finished) break;
+  }
+
+  const sorted = [...frameTimes].sort((a, b) => a - b);
+  return {
+    durationSeconds: Number(((performance.now() - startedAt) / 1000).toFixed(2)),
+    textureCount: runtimeTextureLoading.total,
+    completedTextures: runtimeTextureLoading.completed,
+    worstFrameMs: Number((sorted.at(-1) ?? 0).toFixed(2)),
+    p95FrameMs: Number((sorted[Math.max(0, Math.floor(sorted.length * 0.95) - 1)] ?? 0).toFixed(2)),
+  };
+}
+
+function captureBenchmarkThumbnail() {
+  const source = renderer.domElement;
+  const width = Math.min(720, source.width);
+  const height = Math.max(1, Math.round((source.height / Math.max(1, source.width)) * width));
+  const thumbnail = document.createElement("canvas");
+  thumbnail.width = width;
+  thumbnail.height = height;
+  thumbnail.getContext("2d").drawImage(source, 0, 0, width, height);
+  return thumbnail.toDataURL("image/jpeg", 0.82);
+}
+
+function showPerformanceBenchmarkReport(report, screenshots) {
+  document.querySelector("#performanceBenchmarkReport")?.remove();
+  const overlay = document.createElement("section");
+  overlay.id = "performanceBenchmarkReport";
+  overlay.style.cssText =
+    "position:fixed;inset:0;z-index:100000;overflow:auto;background:#07100df2;color:#d7eadf;" +
+    "font:13px/1.4 ui-monospace,monospace;padding:24px;";
+  const title = document.createElement("h2");
+  title.textContent = `GPU BENCHMARK · ${report.viewport} · canvas AA ${report.canvasAntialias ? "ON" : "OFF"}`;
+  overlay.append(title);
+  const loading = document.createElement("p");
+  loading.textContent =
+    `Texture streaming: ${report.loadingProfile.durationSeconds}s, ` +
+    `${report.loadingProfile.completedTextures}/${report.loadingProfile.textureCount} textures, ` +
+    `worst frame ${report.loadingProfile.worstFrameMs}ms`;
+  overlay.append(loading);
+  const table = document.createElement("table");
+  table.style.cssText = "border-collapse:collapse;width:100%;margin-bottom:20px";
+  table.innerHTML =
+    "<thead><tr><th>Preset</th><th>FPS</th><th>Avg ms</th><th>P95 ms</th><th>DPR</th><th>Buffer</th><th>MSAA</th></tr></thead>";
+  const body = document.createElement("tbody");
+  report.results.forEach((row) => {
+    const tr = document.createElement("tr");
+    [row.preset, row.avgFps, row.avgFrameMs, row.p95FrameMs, row.dpr, row.buffer, row.msaa].forEach((value) => {
+      const td = document.createElement("td");
+      td.textContent = String(value);
+      td.style.cssText = "border:1px solid #365044;padding:5px 8px";
+      tr.append(td);
+    });
+    body.append(tr);
+  });
+  table.append(body);
+  overlay.append(table);
+  const gallery = document.createElement("div");
+  gallery.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px";
+  screenshots.forEach(({ name, image }) => {
+    const card = document.createElement("a");
+    card.href = image;
+    card.download = `${name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}.jpg`;
+    card.style.cssText = "color:inherit;text-decoration:none;border:1px solid #365044;padding:8px";
+    const label = document.createElement("div");
+    label.textContent = name;
+    const img = document.createElement("img");
+    img.src = image;
+    img.alt = `${name} benchmark screenshot`;
+    img.style.cssText = "display:block;width:100%;margin-top:6px";
+    card.append(label, img);
+    gallery.append(card);
+  });
+  overlay.append(gallery);
+  document.body.append(overlay);
+}
+
+function restoreBenchmarkPostProcessingConfig(source) {
+  Object.keys(CONFIG.postProcessing).forEach((key) => delete CONFIG.postProcessing[key]);
+  Object.assign(CONFIG.postProcessing, structuredClone(source));
+}
+
+function waitForBenchmarkTime(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function measureBenchmarkFrames(durationMs) {
+  return new Promise((resolve) => {
+    const frameTimes = [];
+    let startTime = 0;
+    let previousTime = 0;
+
+    function sampleFrame(time) {
+      if (!startTime) {
+        startTime = time;
+        previousTime = time;
+      } else {
+        frameTimes.push(time - previousTime);
+        previousTime = time;
+      }
+
+      if (time - startTime < durationMs) {
+        requestAnimationFrame(sampleFrame);
+        return;
+      }
+
+      const elapsedSeconds = Math.max(0.001, (time - startTime) / 1000);
+      const sortedFrameTimes = [...frameTimes].sort((a, b) => a - b);
+      const p95Index = Math.min(sortedFrameTimes.length - 1, Math.floor(sortedFrameTimes.length * 0.95));
+      resolve({
+        avgFps: frameTimes.length / elapsedSeconds,
+        avgFrameMs: frameTimes.length ? frameTimes.reduce((sum, value) => sum + value, 0) / frameTimes.length : 0,
+        p95FrameMs: sortedFrameTimes[Math.max(0, p95Index)] ?? 0,
+      });
+    }
+
+    requestAnimationFrame(sampleFrame);
+  });
+}
+
+function applyQualityProfile(profile = "low") {
+  const normalized = ["low", "medium", "high"].includes(profile) ? profile : "low";
+  configureQualityProfile(normalized);
+  bootOptions.qualityProfile = normalized;
+  bootOptions.deferFullTextures = false;
+  bootOptions.disableFullTextures = normalized === "low";
+  renderer.setPixelRatio(getQualityProfilePixelRatio(normalized));
+  gtaoQuality = "off";
+  ssgiQuality = "off";
+  ssrQuality = "off";
+  screenSpaceShadowQuality = "off";
+  setShadowQuality(normalized === "high" ? "min" : "off");
+  setupPostProcessing();
+  resizeRendererTargets();
+  return normalized;
+}
+
 window.operatorGameDebug = {
   scene,
   camera,
@@ -4245,6 +4629,9 @@ window.operatorGameDebug = {
     geometries: renderer.info.memory.geometries,
     textures: renderer.info.memory.textures,
   }),
+  runPerformanceBenchmark,
+  getPerformanceBenchmark: () => lastPerformanceBenchmark,
+  applyQualityProfile,
   resumeNeedles: () => {
     freezeNeedles = false;
     needles.forEach((needle) => {
@@ -4370,3 +4757,10 @@ window.operatorGameDebug = {
     needleAngles: needles.map((needle) => Number(THREE.MathUtils.radToDeg(needle.userData.needleAngle ?? 0).toFixed(1))),
   }),
 };
+
+if (CONFIG.debug?.enabled && CONFIG.debug?.performanceBenchmark?.autoRun) {
+  const delayMs = Math.max(0, Number(CONFIG.debug.performanceBenchmark.startDelaySeconds ?? 6) * 1000);
+  window.setTimeout(() => {
+    runPerformanceBenchmark().catch((error) => console.error("[OperatorGame benchmark] Failed", error));
+  }, delayMs);
+}

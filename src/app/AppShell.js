@@ -4,6 +4,7 @@ import { createSubtitleQueue } from "./SubtitleQueue.js";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
+const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const INTRO_LEVEL_ID = "intro-shift";
 
 export function createAppShell({ gameApi }) {
@@ -33,6 +34,7 @@ export function createAppShell({ gameApi }) {
   const screenSpaceShadowQualityInput = document.querySelector("#settingScreenSpaceShadowQuality");
   const screenSpaceShadowQualityValue = document.querySelector("#settingScreenSpaceShadowQualityValue");
   const settings = loadSettings();
+  const debugConfig = gameApi?.config?.debug ?? {};
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
   let currentPanel = null;
@@ -182,6 +184,15 @@ export function createAppShell({ gameApi }) {
     if (initialRouteHandled) return;
     initialRouteHandled = true;
 
+    const fastLoadLevelId = debugConfig.enabled ? debugConfig.fastLoadLevel : null;
+    const fastLoadLevel = LEVELS[fastLoadLevelId];
+    if (fastLoadLevelId && fastLoadLevel?.playable) {
+      hideOverlay();
+      gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
+      if (!debugConfig.skipBriefing) showLevelBriefing(fastLoadLevelId);
+      return;
+    }
+
     if (progress.finishedLevels[INTRO_LEVEL_ID]) {
       gameApi.resetForMenu?.();
       showPanel("main-menu");
@@ -308,6 +319,9 @@ export function createAppShell({ gameApi }) {
       showPanel("level-select");
     } else if (action === "quick-main-menu") {
       showPanel("main-menu");
+    } else if (action === "redetect-graphics") {
+      localStorage.removeItem(PREFLIGHT_STORAGE_KEY);
+      window.location.reload();
     }
   }
 

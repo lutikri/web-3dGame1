@@ -28,6 +28,18 @@ export const CONFIG = {
   loading: {
     skip: false,
   },
+  debug: {
+    enabled: true,
+    fastLoadLevel: "intro-shift",
+    skipBriefing: true,
+    performanceBenchmark: {
+      autoRun: false,
+      startDelaySeconds: 0.5,
+      warmupSeconds: 0.5,
+      sampleSeconds: 1.5,
+      textureWaitTimeoutSeconds: 45,
+    },
+  },
   app: {
     firstVisitEmulation: false,
   },
@@ -448,17 +460,6 @@ export const CONFIG = {
     },
   },
 
-// operatorGameDebug.listNeedles()
-// operatorGameDebug.setNeedleRotation(0, "x", 45)
-// operatorGameDebug.setNeedleRotation(0, "y", 45)
-// operatorGameDebug.setNeedleRotation(0, "z", 45)
-// operatorGameDebug.getObjectTransform("GaugeSmall_Arrow_TargetOutput")
-// operatorGameDebug.listObjects("Arrow")
-// operatorGameDebug.findObject("GaugeSmall_Arrow_TargetOutput")
-// operatorGameDebug.resumeNeedles()
-// operatorGameDebug.startGame()
-// operatorGameDebug.resetGame()
-//window.operatorGameDebug.getPerformance()
 
 
   room: {
