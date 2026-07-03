@@ -554,6 +554,7 @@ export const CONFIG = {
     presets: {
       off: { enabled: false, mapSize: 0 },
       min: { enabled: true, mapSize: 512 },
+      med: { enabled: true, mapSize: 1024 },
       max: { enabled: true, mapSize: 2048 },
     },
   },

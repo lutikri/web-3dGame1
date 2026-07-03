@@ -36,6 +36,7 @@ export const POST_PROCESSING_CONFIG = {
       },
       "max": {
         "enabled": true,
+        "resolutionScale": 0.5,
         "blendIntensity": 0.8,
         "radius": 0.42,
         "distanceExponent": 1.7,
@@ -272,7 +273,7 @@ export const POST_PROCESSING_CONFIG = {
   "lensDistortion": {
     "enabled": true,
     "barrelAmount": 0,
-    "fisheyeAmount": 0.18,
+    "fisheyeAmount": 0.14,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },

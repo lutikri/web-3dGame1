@@ -21,6 +21,7 @@ import {
   updateShiftRecorder as updateShiftRecorderState,
 } from "./game/ShiftReport.js";
 import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
@@ -41,6 +42,7 @@ import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebug
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 configureQualityProfile(bootOptions.qualityProfile ?? "high");
+CONFIG.postProcessing.colorAdjustments.gamma = Number(bootOptions.displayGamma ?? 0.93);
 
 function configureQualityProfile(profile) {
   return applyGraphicsQualityProfileToConfig(CONFIG, profile);
@@ -1077,6 +1079,7 @@ function init() {
   if (CONFIG.loading?.skip || fastDebugBoot) skipLoadingOverlay();
   restoreSavedPostProcessingConfig(CONFIG.postProcessing);
   configureQualityProfile(bootOptions.qualityProfile ?? "high");
+  CONFIG.postProcessing.colorAdjustments.gamma = Number(bootOptions.displayGamma ?? 0.93);
   renderer.shadowMap.enabled = getShadowPreset(shadowQuality).enabled;
   setupLights();
   setupLightFixtures();
@@ -1194,10 +1197,20 @@ function setupPostProcessing() {
 
   const gtaoConfig = getGtaoPreset(gtaoQuality);
   if (gtaoConfig.enabled) {
-    gtaoPass = new GTAOPass(scene, camera, window.innerWidth, window.innerHeight);
+    const gtaoScale = gtaoConfig.resolutionScale ?? 1;
+    gtaoPass = new GTAOPass(
+      scene,
+      camera,
+      Math.max(1, Math.round(window.innerWidth * gtaoScale)),
+      Math.max(1, Math.round(window.innerHeight * gtaoScale)),
+    );
     gtaoPass.output = GTAOPass.OUTPUT.Default;
     applyGtaoPresetToPass(gtaoPass, gtaoConfig);
     composer.addPass(gtaoPass);
+    gtaoPass.setSize(
+      Math.max(1, Math.round(window.innerWidth * gtaoScale)),
+      Math.max(1, Math.round(window.innerHeight * gtaoScale)),
+    );
   }
 
   const ssrConfig = getSsrPreset(ssrQuality);
@@ -1860,9 +1873,9 @@ function beginBulkheadHandleInteraction() {
 
   bulkheadLockedAttemptTime = 0;
   if (latestSnapshot.mode === "running") {
-    emitOperatorThought("door-live-core", "Yeah, no. Can't leave it burning.", 1, 3.2);
+    emitOperatorThought("door-live-core", 1, 3.2);
   } else {
-    emitOperatorThought("door-interlocked", "Of course. Interlocked until shutdown.", 1, 3.2);
+    emitOperatorThought("door-interlocked", 1, 3.2);
   }
 }
 
@@ -2491,6 +2504,7 @@ function updateDebugOverlay() {
 function updateHoverTarget() {
   if (forcedHoveredTarget) {
     hoveredInteractive = forcedHoveredTarget;
+    document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
     setHoveredKnob(forcedHoveredTarget.userData.kind === "controlKnob" ? forcedHoveredTarget : null);
     setHoveredTooltipTarget(forcedHoveredTarget);
     return;
@@ -2499,6 +2513,7 @@ function updateHoverTarget() {
   raycaster.setFromCamera(pointer, camera);
   const hit = raycaster.intersectObjects(interactive, true)[0];
   hoveredInteractive = hit ? findInteractiveRoot(hit.object) : null;
+  document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
   if (hoveredInteractive && hit) hoveredInteractive.userData.lastHitDistance = hit.distance;
   setHoveredKnob(hoveredInteractive?.userData.kind === "controlKnob" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
@@ -2564,13 +2579,14 @@ function updateControlTooltip() {
 }
 
 function getTooltipText(target) {
+  const label = translateControlLabel(target.userData.controlLabel);
   if (target.userData.kind === "controlKnob") {
-    return `${target.userData.controlLabel} ${Math.round(target.userData.controlPercent)}%`;
+    return `${label} ${Math.round(target.userData.controlPercent)}%`;
   }
   if (target.userData.kind === "roomLightButton") {
-    return `${target.userData.controlLabel} ${roomLightsEnabled ? "ON" : "OFF"}`;
+    return `${label} ${roomLightsEnabled ? translate("controls.on") : translate("controls.off")}`;
   }
-  return target.userData.controlLabel;
+  return label;
 }
 
 function updatePanel(dt) {
@@ -2615,31 +2631,33 @@ function registerBulkheadHandle(object) {
 function updateOperatorThoughts(previousSnapshot, snapshot, controls) {
   if (snapshot.mode !== "running") return;
   if (!previousSnapshot.warning?.fieldWeak && snapshot.warning?.fieldWeak && snapshot.elapsed > 3) {
-    emitOperatorThought("field-weak", "Easy. Need a field under it first.");
+    emitOperatorThought("field-weak");
   }
   if (!previousSnapshot.reactionStalled && snapshot.reactionStalled) {
-    emitOperatorThought("first-quench", "Damn. Drowned it. Back off the coolant... give it fuel...", 2, 4.2);
+    emitOperatorThought("first-quench", 2, 4.2);
   }
   if (snapshot.reactionStalled && controls.fuelInjection >= 30 && controls.coolantFlow <= 58) {
-    emitOperatorThought("pulse-ready", "Come on. Take the spark.", 1, 2.8);
+    emitOperatorThought("pulse-ready", 1, 2.8);
   }
   if (previousSnapshot.reactionStalled && !snapshot.reactionStalled) {
-    emitOperatorThought("restart-success", "There you are.", 2, 2.4);
+    emitOperatorThought("restart-success", 2, 2.4);
   }
   if (!previousSnapshot.warning?.tempCritical && snapshot.warning?.tempCritical) {
-    emitOperatorThought("first-redline", "Nope. That's way too hot.", 2, 3);
+    emitOperatorThought("first-redline", 2, 3);
   }
   if (previousSnapshot.phase?.name !== snapshot.phase?.name && snapshot.phase?.name === "SUSTAINED HIGH LOAD") {
-    emitOperatorThought("high-load", "Hold together. Just a little longer.", 1, 3.6);
+    emitOperatorThought("high-load", 1, 3.6);
   }
 }
 
-function emitOperatorThought(id, text, priority = 0, duration = 3.4) {
+function emitOperatorThought(id, priority = 0, duration = 3.4) {
   if (operatorThoughtsShown.has(id)) return;
   operatorThoughtsShown.add(id);
+  const subtitleKey = `subtitles.${id}`;
+  const localizedText = translateRequired(subtitleKey);
   window.dispatchEvent(
     new CustomEvent("operatorgame:subtitle", {
-      detail: { id, text, priority, duration },
+      detail: { id, text: localizedText, priority, duration },
     }),
   );
 }
@@ -2773,11 +2791,11 @@ function updateShiftCompletion(dt, snapshot) {
     snapshot.failureType === "coreDestroyed" ? CONFIG.feedback.terminal.destroyedBlackoutSeconds : 0.8;
   if (terminalSequenceElapsed >= thoughtDelay) {
     if (snapshot.mode === "complete") {
-      emitOperatorThought("shift-complete", "Core's down. I'm done here.", 3, 4);
+      emitOperatorThought("shift-complete", 3, 4);
     } else if (snapshot.failureType === "coreDestroyed") {
-      emitOperatorThought("core-destroyed", "That's gone. I need out. Now.", 4, 4);
+      emitOperatorThought("core-destroyed", 4, 4);
     } else if (snapshot.mode === "failed") {
-      emitOperatorThought("fail-safe", "Fail-safe caught it. Time to go.", 3, 4);
+      emitOperatorThought("fail-safe", 3, 4);
     }
   }
 
@@ -3568,7 +3586,7 @@ function setRoomLightButtonPressed(button, pressed) {
 function startShift() {
   if (latestSnapshot.mode === "running") {
     fusionCore.triggerStartupFault();
-    emitOperatorThought("startup-command-fault", "Shouldn't have done that.", 4, 3.6);
+    emitOperatorThought("startup-command-fault", 4, 3.6);
     return;
   }
   if (latestSnapshot.mode !== "standby") return;
@@ -3582,7 +3600,7 @@ function startShift() {
   resultsSnapshot = null;
   terminalSequenceElapsed = -1;
   triggerStartupFeedback();
-  emitOperatorThought("shift-start", "All right... let's wake you up.", 1, 3.6);
+  emitOperatorThought("shift-start", 1, 3.6);
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 }
@@ -4002,7 +4020,13 @@ function resizeRendererTargets() {
     );
   }
   realismScreenSpaceShadowEffect?.setSize?.(window.innerWidth, window.innerHeight);
-  gtaoPass?.setSize(window.innerWidth, window.innerHeight);
+  if (gtaoPass) {
+    const gtaoScale = getGtaoPreset(gtaoQuality).resolutionScale ?? 1;
+    gtaoPass.setSize(
+      Math.max(1, Math.round(window.innerWidth * gtaoScale)),
+      Math.max(1, Math.round(window.innerHeight * gtaoScale)),
+    );
+  }
   bloomPass?.setSize(window.innerWidth, window.innerHeight);
   sharpenPass?.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
   updateFxaaResolution();
@@ -4206,6 +4230,7 @@ async function executePerformanceBenchmark(options = {}) {
           dpr: quality.pixelRatio,
           msaa: 0,
           shadows: quality.shadowQuality,
+          gtao: quality.gtaoQuality,
           effects: quality.effects,
         };
       })
@@ -4256,7 +4281,9 @@ async function executePerformanceBenchmark(options = {}) {
         msaa: composer?.renderTarget1?.samples ?? 0,
       };
       results.push(row);
-      screenshots.push({ name: preset.name, image: captureBenchmarkThumbnail() });
+      if (options.showReport !== false) {
+        screenshots.push({ name: preset.name, image: captureBenchmarkThumbnail() });
+      }
       console.info(`[OperatorGame benchmark] ${preset.name}: ${row.avgFps} FPS, ${row.avgFrameMs} ms/frame`);
     }
   } finally {
@@ -4278,14 +4305,12 @@ async function executePerformanceBenchmark(options = {}) {
     canvasAntialias: renderer.getContext().getContextAttributes()?.antialias ?? null,
     loadingProfile,
     results,
-    previews: Object.fromEntries(screenshots.map(({ name, image }) => [name, image])),
   };
   if (options.showReport !== false) showPerformanceBenchmarkReport(lastPerformanceBenchmark, screenshots);
   console.table(results);
   console.info(
     `[OperatorGame benchmark result] ${JSON.stringify({
       ...lastPerformanceBenchmark,
-      previews: Object.keys(lastPerformanceBenchmark.previews),
     })}`,
   );
   return lastPerformanceBenchmark;
@@ -4462,7 +4487,7 @@ function applyQualityProfile(profile = "low") {
   bootOptions.deferFullTextures = false;
   bootOptions.disableFullTextures = !quality.fullTextures;
   renderer.setPixelRatio(quality.pixelRatio);
-  gtaoQuality = "off";
+  gtaoQuality = quality.gtaoQuality;
   ssgiQuality = "off";
   ssrQuality = "off";
   screenSpaceShadowQuality = "off";
@@ -4470,6 +4495,13 @@ function applyQualityProfile(profile = "low") {
   setupPostProcessing();
   resizeRendererTargets();
   return normalized;
+}
+
+function setDisplayGamma(gamma = 0.93) {
+  const value = THREE.MathUtils.clamp(Number(gamma) || 0.93, 0.75, 1.25);
+  CONFIG.postProcessing.colorAdjustments.gamma = value;
+  if (colorAdjustmentPass) applyColorAdjustmentConfig(colorAdjustmentPass, 0);
+  return value;
 }
 
 window.operatorGameDebug = {
@@ -4600,6 +4632,7 @@ window.operatorGameDebug = {
   runPerformanceBenchmark,
   getPerformanceBenchmark: () => lastPerformanceBenchmark,
   applyQualityProfile,
+  setDisplayGamma,
   resumeNeedles: () => {
     freezeNeedles = false;
     needles.forEach((needle) => {

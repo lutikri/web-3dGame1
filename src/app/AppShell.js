@@ -6,6 +6,7 @@ const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const INTRO_LEVEL_ID = "intro-shift";
+const BRIEFING_DISMISS_MS = 300;
 
 export function createAppShell({ gameApi }) {
   const overlay = document.querySelector("#appOverlay");
@@ -42,8 +43,14 @@ export function createAppShell({ gameApi }) {
   let transitionActive = false;
   let initialRouteHandled = false;
   let briefingActive = false;
+  let briefingQueue = [];
+  let briefingLevelId = null;
   let briefingInspectHeld = false;
   let briefingHideTimer = 0;
+  let resolveInitialRouteReady = null;
+  const initialRouteReady = new Promise((resolve) => {
+    resolveInitialRouteReady = resolve;
+  });
 
   applySettings();
   wireActions();
@@ -190,12 +197,16 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
       if (!debugConfig.skipBriefing) showLevelBriefing(fastLoadLevelId);
+      resolveInitialRouteReady?.();
+      resolveInitialRouteReady = null;
       return;
     }
 
     if (progress.finishedLevels[INTRO_LEVEL_ID]) {
       gameApi.resetForMenu?.();
       showPanel("main-menu");
+      resolveInitialRouteReady?.();
+      resolveInitialRouteReady = null;
       return;
     }
 
@@ -266,6 +277,8 @@ export function createAppShell({ gameApi }) {
       gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
       showLevelBriefing(INTRO_LEVEL_ID);
       transitionActive = false;
+      resolveInitialRouteReady?.();
+      resolveInitialRouteReady = null;
     }, 120);
   }
 
@@ -401,14 +414,30 @@ export function createAppShell({ gameApi }) {
   }
 
   function showLevelBriefing(levelId) {
-    const briefing = LEVELS[levelId]?.briefingImage;
-    if (!briefing || !briefingOverlay || !briefingImage) return;
+    const briefingConfig = LEVELS[levelId]?.briefingImage;
+    const language = document.documentElement.lang === "ru" ? "ru" : "en";
+    const localizedBriefing =
+      typeof briefingConfig === "string" ? briefingConfig : briefingConfig?.[language] ?? briefingConfig?.en;
+    const sheets = Array.isArray(localizedBriefing) ? localizedBriefing : localizedBriefing ? [localizedBriefing] : [];
+    if (sheets.length === 0 || !briefingOverlay || !briefingImage) return;
 
     window.clearTimeout(briefingHideTimer);
+    briefingLevelId = levelId;
+    briefingQueue = [...sheets];
     briefingActive = true;
     updateInputLock();
+    briefingQueue.slice(1).forEach((source) => {
+      const preload = new Image();
+      preload.src = source;
+    });
+    showNextBriefingSheet();
+  }
+
+  function showNextBriefingSheet() {
+    const briefing = briefingQueue.shift();
+    if (!briefing || !briefingOverlay || !briefingImage) return;
     briefingImage.src = briefing;
-    briefingImage.alt = `${LEVELS[levelId]?.title ?? levelId} briefing`;
+    briefingImage.alt = `${LEVELS[briefingLevelId]?.title ?? briefingLevelId} briefing`;
     briefingOverlay.hidden = false;
     briefingOverlay.classList.remove("is-visible", "is-dismissed");
     resetBriefingInspectState();
@@ -418,19 +447,27 @@ export function createAppShell({ gameApi }) {
 
   function dismissBriefing() {
     if (!briefingOverlay || !briefingActive) return;
-    briefingActive = false;
     briefingInspectHeld = false;
     stopBriefingInspect();
+    if (briefingQueue.length > 0) {
+      briefingOverlay.classList.remove("is-visible");
+      briefingOverlay.classList.add("is-dismissed");
+      briefingHideTimer = window.setTimeout(showNextBriefingSheet, BRIEFING_DISMISS_MS);
+      return;
+    }
+    briefingActive = false;
     updateInputLock();
     briefingOverlay.classList.remove("is-visible");
     briefingOverlay.classList.add("is-dismissed");
-    briefingHideTimer = window.setTimeout(() => hideBriefing(true), 980);
+    briefingHideTimer = window.setTimeout(() => hideBriefing(true), BRIEFING_DISMISS_MS);
   }
 
   function hideBriefing(immediate = false) {
     if (!briefingOverlay) return;
     window.clearTimeout(briefingHideTimer);
     briefingActive = false;
+    briefingQueue = [];
+    briefingLevelId = null;
     updateInputLock();
     briefingOverlay.classList.remove("is-visible", "is-dismissed");
     resetBriefingInspectState();
@@ -556,6 +593,7 @@ export function createAppShell({ gameApi }) {
   }
 
   return {
+    initialRouteReady,
     hideOverlay,
     showMainMenu: () => showPanel("main-menu"),
     showLevelSelect: () => showPanel("level-select"),
@@ -594,7 +632,7 @@ function loadSettings() {
     return {
       fov: clampNumber(parsed.fov, 55, 95, 72),
       uiScale: clampNumber(parsed.uiScale, 80, 130, 100),
-      shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "max"], "min"),
+      shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "med", "max"], "min"),
       gtaoQuality: normalizeQuality(parsed.gtaoQuality, ["off", "min", "med", "max"], "off"),
       ssgiQuality: normalizeQuality(parsed.ssgiQuality, ["off", "min", "med", "max"], "off"),
       ssrQuality: normalizeQuality(parsed.ssrQuality, ["off", "min", "med", "max"], "off"),

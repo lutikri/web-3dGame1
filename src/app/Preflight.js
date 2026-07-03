@@ -2,6 +2,11 @@ import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js"
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
+const QUALITY_PREVIEWS = {
+  low: "assets/img-performance/set-min.jpg",
+  medium: "assets/img-performance/set-med.jpg",
+  high: "assets/img-performance/set-max.jpg",
+};
 
 const COPY = {
   en: {
@@ -21,6 +26,13 @@ const COPY = {
     medium: ["MEDIUM", "BALANCED"],
     high: ["HIGH", "FULL EFFECTS"],
     apply: "APPLY",
+    brightnessTitle: "DISPLAY BRIGHTNESS",
+    brightnessHint: "Move the slider until the left bar merges with the black frame. The second bar should be barely visible.",
+    brightnessControl: "GAME BRIGHTNESS",
+    brightnessApply: "CONTINUE",
+    setupComplete: "SETUP COMPLETE",
+    setupAgain: "Run it again later: P → Settings → Setup Wizard.",
+    okay: "OK",
   },
   ru: {
     checking: "ПРОВЕРКА ГРАФИЧЕСКОЙ ПРОИЗВОДИТЕЛЬНОСТИ",
@@ -39,6 +51,13 @@ const COPY = {
     medium: ["MEDIUM", "БАЛАНС"],
     high: ["HIGH", "ВСЕ ЭФФЕКТЫ"],
     apply: "ПРИМЕНИТЬ",
+    brightnessTitle: "ЯРКОСТЬ ЭКРАНА",
+    brightnessHint: "Двигайте ползунок, пока левая полоса не сольётся с чёрной рамкой шкалы. Вторая полоса должна быть едва заметна.",
+    brightnessControl: "ЯРКОСТЬ ИГРЫ",
+    brightnessApply: "ПРОДОЛЖИТЬ",
+    setupComplete: "НАСТРОЙКА ЗАВЕРШЕНА",
+    setupAgain: "Настроить заново: P → Настройки → Мастер настройки.",
+    okay: "OK",
   },
 };
 
@@ -55,7 +74,12 @@ export function createPreflight() {
   async function prepare() {
     if (saved?.profile) {
       document.documentElement.lang = saved.language;
-      return { firstRun: false, language: saved.language, profile: saved.profile };
+      return {
+        firstRun: false,
+        language: saved.language,
+        profile: saved.profile,
+        displayGamma: saved.displayGamma ?? 0.93,
+      };
     }
 
     overlay = createOverlay();
@@ -65,7 +89,7 @@ export function createPreflight() {
     document.documentElement.lang = language;
     gpuInfo = probeGraphics();
     showGpuCheck();
-    return { firstRun: true, language, profile: "low" };
+    return { firstRun: true, language, profile: "low", displayGamma: 0.93 };
   }
 
   async function chooseProfile(benchmark) {
@@ -78,16 +102,68 @@ export function createPreflight() {
     return new Promise((resolve) => showProfileChoice({ benchmark, recommendation, resolve }));
   }
 
-  function complete(profile) {
+  function complete(profile, displayGamma = 0.93, { removeOverlay = true } = {}) {
     const quality = getGraphicsQualityProfile(profile);
     selectedProfile = profile;
-    saved = { language, profile, gpu: gpuInfo?.renderer ?? "Unknown", measuredAt: Date.now() };
+    saved = { language, profile, displayGamma, gpu: gpuInfo?.renderer ?? "Unknown", measuredAt: Date.now() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     saveAppQualitySettings(profile);
     window.operatorGameBootOptions.qualityProfile = profile;
     window.operatorGameBootOptions.deferFullTextures = false;
     window.operatorGameBootOptions.disableFullTextures = !quality.fullTextures;
+    if (removeOverlay) remove();
+  }
+
+  async function finish() {
+    if (!overlay) return;
+    overlay.classList.add("is-finishing");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     remove();
+  }
+
+  function calibrateBrightness(onChange, initialGamma = 0.93) {
+    const copy = COPY[language];
+    const panel = getPanel();
+    panel.innerHTML = `
+      <div class="preflight-kicker">DISPLAY CALIBRATION</div>
+      <h1>${copy.brightnessTitle}</h1>
+      <p>${copy.brightnessHint}</p>
+      <div class="preflight-black-frame">
+        <div class="preflight-black-levels">
+          ${[0, 4, 8, 12, 20, 32].map((level) => `<span data-black-level="${level}"></span>`).join("")}
+        </div>
+      </div>
+      <label class="preflight-gamma-control">
+        <span>${copy.brightnessControl}</span>
+        <input type="range" min="0.75" max="1.25" step="0.01" value="${initialGamma}" data-gamma />
+        <strong data-gamma-value>100%</strong>
+      </label>
+      <button type="button" data-gamma-apply>${copy.brightnessApply}</button>`;
+
+    const input = panel.querySelector("[data-gamma]");
+    const update = () => {
+      const gamma = Number(input.value);
+      panel.querySelector("[data-gamma-value]").textContent = `${Math.round((gamma / 0.93) * 100)}%`;
+      panel.querySelectorAll("[data-black-level]").forEach((bar) => {
+        const source = Number(bar.dataset.blackLevel) / 255;
+        const corrected = Math.round(Math.pow(source, 1 / gamma) * 255);
+        bar.style.backgroundColor = `rgb(${corrected}, ${corrected}, ${corrected})`;
+      });
+      onChange?.(gamma);
+    };
+    input.addEventListener("input", update);
+    update();
+    return new Promise((resolve) => {
+      panel.querySelector("[data-gamma-apply]").addEventListener("click", () => {
+        const gamma = Number(input.value);
+        panel.innerHTML = `
+          <div class="preflight-kicker">OPERATOR CONSOLE</div>
+          <h1>${copy.setupComplete}</h1>
+          <p>${copy.setupAgain}</p>
+          <button type="button" data-setup-ok>${copy.okay}</button>`;
+        panel.querySelector("[data-setup-ok]").addEventListener("click", () => resolve(gamma), { once: true });
+      }, { once: true });
+    });
   }
 
   function remove() {
@@ -206,11 +282,27 @@ export function createPreflight() {
       <h1>${copy.choose}</h1>
       <p>${copy.measured}: ${window.innerWidth}×${window.innerHeight}</p>
       <div class="preflight-quality-grid">
-        ${["low", "medium", "high"].map((profile) => qualityCard(profile, recommendation, estimates[profile], copy, benchmark)).join("")}
+        ${["low", "medium", "high"].map((profile) => qualityCard(profile, recommendation, estimates[profile], copy)).join("")}
       </div>
+      <img class="preflight-quality-zoom" alt="" aria-hidden="true" />
       <button class="preflight-apply" type="button" data-apply-profile>${copy.apply} ${recommendation.toUpperCase()}</button>`;
 
+    const zoomPreview = panel.querySelector(".preflight-quality-zoom");
+    let previewArmed = false;
+    window.setTimeout(() => {
+      previewArmed = true;
+    }, 320);
     panel.querySelectorAll("[data-profile]").forEach((button) => {
+      const previewTarget = button.querySelector(".preflight-quality-preview");
+      const showPreview = () => {
+        if (!previewArmed) return;
+        zoomPreview.src = button.dataset.preview;
+        zoomPreview.classList.add("is-visible");
+      };
+      const hidePreview = () => zoomPreview.classList.remove("is-visible");
+      previewTarget.addEventListener("mouseenter", () => showPreview());
+      previewTarget.addEventListener("mousemove", () => showPreview());
+      previewTarget.addEventListener("mouseleave", hidePreview);
       button.addEventListener("click", () => {
         selectedProfile = button.dataset.profile;
         panel.querySelectorAll("[data-profile]").forEach((card) => card.classList.toggle("is-selected", card === button));
@@ -224,15 +316,14 @@ export function createPreflight() {
     return overlay.querySelector(".preflight-panel");
   }
 
-  return { prepare, chooseProfile, complete, remove };
+  return { prepare, chooseProfile, calibrateBrightness, complete, finish, remove };
 }
 
-function qualityCard(profile, recommendation, fps, copy, benchmark) {
+function qualityCard(profile, recommendation, fps, copy) {
   const [title, description] = copy[profile];
-  const preview = benchmark?.previews?.[`PROFILE ${profile.toUpperCase()}`];
-  const previewStyle = preview ? ` style="background-image:url('${preview}')"` : "";
-  return `<button type="button" class="preflight-quality-card ${profile === recommendation ? "is-selected" : ""}" data-profile="${profile}">
-    <span class="preflight-quality-preview is-${profile}"${previewStyle}></span>
+  const preview = QUALITY_PREVIEWS[profile];
+  return `<button type="button" class="preflight-quality-card ${profile === recommendation ? "is-selected" : ""}" data-profile="${profile}" data-preview="${preview}">
+    <span class="preflight-quality-preview is-${profile}" style="background-image:url('${preview}')"></span>
     <strong>${title}${profile === recommendation ? ` · ${copy.recommended}` : ""}</strong>
     <span>${description}</span>
     <em>${fps} FPS</em>
@@ -339,12 +430,13 @@ function saveAppQualitySettings(profile) {
     settings = {};
   }
   const shadows = getGraphicsQualityProfile(profile).shadowQuality;
+  const gtao = getGraphicsQualityProfile(profile).gtaoQuality;
   localStorage.setItem(
     SETTINGS_KEY,
     JSON.stringify({
       ...settings,
       shadowQuality: shadows,
-      gtaoQuality: "off",
+      gtaoQuality: gtao,
       ssgiQuality: "off",
       ssrQuality: "off",
       screenSpaceShadowQuality: "off",
@@ -366,6 +458,7 @@ function preloadFirstRunAssets() {
     "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",
+    ...Object.values(QUALITY_PREVIEWS),
   ];
   criticalAssets.forEach((url) => {
     fetch(url, { cache: "force-cache", priority: "low" }).catch(() => {});

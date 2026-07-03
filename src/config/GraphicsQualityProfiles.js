@@ -12,18 +12,21 @@ export const GRAPHICS_QUALITY_PROFILES = {
   low: {
     pixelRatio: 0.6,
     shadowQuality: "off",
+    gtaoQuality: "off",
     fullTextures: false,
     effects: ["lut", "colorAdjustments"],
   },
   medium: {
     pixelRatio: 0.75,
     shadowQuality: "off",
+    gtaoQuality: "off",
     fullTextures: true,
     effects: ["bloom", "lut", "colorAdjustments"],
   },
   high: {
     pixelRatio: 1,
-    shadowQuality: "min",
+    shadowQuality: "med",
+    gtaoQuality: "max",
     fullTextures: true,
     effects: [
       "bloom",
@@ -49,7 +52,7 @@ export function applyGraphicsQualityProfileToConfig(config, profile = "low") {
   post.enabled = true;
   post.antiAliasing.method = "off";
   post.antiAliasing.msaaSamples = 0;
-  post.gtao.defaultQuality = "off";
+  post.gtao.defaultQuality = quality.gtaoQuality;
   post.ssgi.defaultQuality = "off";
   post.ssr.defaultQuality = "off";
   post.screenSpaceShadows.defaultQuality = "off";

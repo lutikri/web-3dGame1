@@ -27,14 +27,14 @@
       <div id="loadingOverlay" class="loading-overlay" aria-live="polite">
         <div class="loading-panel">
           <div class="loading-header">
-            <span>CORE BOOT</span>
+            <span data-i18n="loading.coreBoot">CORE BOOT</span>
             <span id="loadingPercent">00%</span>
           </div>
           <div class="loading-body">
             <div class="loading-spinner" aria-hidden="true"></div>
             <div class="loading-copy">
-              <strong id="loadingStatus">INITIALIZING OPERATOR CONSOLE</strong>
-              <span id="loadingShiftTitle" class="loading-shift-title">YOUR FIRST FUSION SHIFT</span>
+              <strong id="loadingStatus" data-i18n="loading.initializing">INITIALIZING OPERATOR CONSOLE</strong>
+              <span id="loadingShiftTitle" class="loading-shift-title" data-i18n="loading.firstShift">YOUR FIRST FUSION SHIFT</span>
             </div>
           </div>
           <div class="loading-bar" aria-hidden="true">
@@ -45,14 +45,14 @@
       <div id="routeLoadingOverlay" class="loading-overlay route-loading-overlay" aria-live="polite" hidden>
         <div class="loading-panel">
           <div class="loading-header">
-            <span id="routeLoadingHeader">SHIFT LOAD</span>
+            <span id="routeLoadingHeader" data-i18n="loading.shiftLoad">SHIFT LOAD</span>
             <span id="routeLoadingPercent">00%</span>
           </div>
           <div class="loading-body">
             <div class="loading-spinner" aria-hidden="true"></div>
             <div class="loading-copy">
-              <strong id="routeLoadingStatus">PREPARING OPERATOR CONSOLE</strong>
-              <span id="routeLoadingTitle" class="loading-shift-title">SHIFT</span>
+              <strong id="routeLoadingStatus" data-i18n="loading.preparing">PREPARING OPERATOR CONSOLE</strong>
+              <span id="routeLoadingTitle" class="loading-shift-title" data-i18n="loading.shift">SHIFT</span>
             </div>
           </div>
           <div class="loading-bar" aria-hidden="true">
@@ -65,22 +65,22 @@
           <img id="briefingImage" alt="" draggable="false" />
         </div>
         <div class="briefing-focus" aria-hidden="true"></div>
-        <div class="briefing-prompt">HOLD TO INSPECT · ENTER TO CONTINUE</div>
+        <div class="briefing-prompt" data-i18n="briefing.prompt">HOLD TO INSPECT · ENTER TO CONTINUE</div>
       </div>
       <div id="operatorSubtitle" class="operator-subtitle" aria-live="polite" hidden></div>
       <div id="resultsOverlay" class="results-overlay" hidden>
         <div class="results-panel">
           <div class="results-header">
-            <span>SHIFT REPORT</span>
+            <span data-i18n="results.report">SHIFT REPORT</span>
             <span id="resultsOutcome">--</span>
           </div>
-          <h1 id="resultsProfile">OPERATOR PROFILE</h1>
-          <p id="resultsSummary">Awaiting shift data.</p>
+          <h1 id="resultsProfile" data-i18n="results.profile">OPERATOR PROFILE</h1>
+          <p id="resultsSummary" data-i18n="results.awaiting">Awaiting shift data.</p>
           <div id="resultsStats" class="results-stats"></div>
           <div class="results-actions">
-            <button id="resultsRestartButton" data-app-action="restart" type="button">START NEW SHIFT</button>
-            <button data-app-action="level-select" type="button">LEVEL SELECT</button>
-            <button data-app-action="main-menu" type="button">MAIN MENU</button>
+            <button id="resultsRestartButton" data-app-action="restart" type="button" data-i18n="actions.newShift">START NEW SHIFT</button>
+            <button data-app-action="level-select" type="button" data-i18n="actions.levelSelect">LEVEL SELECT</button>
+            <button data-app-action="main-menu" type="button" data-i18n="actions.mainMenu">MAIN MENU</button>
           </div>
         </div>
       </div>
@@ -88,94 +88,95 @@
         <section id="mainMenuPanel" class="app-panel main-menu-panel" data-app-panel="main-menu" hidden>
           <div class="brand-lockup">
             <span>OperatorGame</span>
-            <strong>FUSION CORE SHIFT CONSOLE</strong>
+            <strong data-i18n="menu.subtitle">FUSION CORE SHIFT CONSOLE</strong>
           </div>
           <div class="menu-actions">
-            <button data-app-action="level-select" type="button">PLAY</button>
-            <button data-app-action="profile" type="button">PROFILE</button>
-            <button data-app-action="settings" type="button">SETTINGS</button>
+            <button data-app-action="level-select" type="button" data-i18n="actions.play">PLAY</button>
+            <button data-app-action="profile" type="button" data-i18n="actions.profile">PROFILE</button>
+            <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
           </div>
         </section>
         <section id="levelSelectPanel" class="app-panel level-panel" data-app-panel="level-select" hidden>
           <div class="panel-header">
-            <span>LEVEL ROUTE</span>
-            <button data-app-action="main-menu" type="button" aria-label="Back">BACK</button>
+            <span data-i18n="levels.route">LEVEL ROUTE</span>
+            <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
           </div>
           <div class="level-map">
             <button class="level-node is-active" data-level-id="intro-shift" type="button">
-              <strong>INTRO SHIFT</strong>
-              <span>First supervised fusion operation</span>
+              <strong data-i18n="levels.intro.title">INTRO SHIFT</strong>
+              <span data-i18n="levels.intro.description">First supervised fusion operation</span>
             </button>
             <div class="route-split" aria-hidden="true"></div>
             <button class="level-node is-locked" data-level-id="unexpected-stuff" type="button" disabled>
-              <strong>UNEXPECTED STUFF</strong>
-              <span>Instrument faults route</span>
+              <strong data-i18n="levels.unexpected.title">UNEXPECTED STUFF</strong>
+              <span data-i18n="levels.unexpected.description">Instrument faults route</span>
             </button>
             <button class="level-node is-locked" data-level-id="fuel-problems" type="button" disabled>
-              <strong>FUEL PROBLEMS</strong>
-              <span>Fuel quality route</span>
+              <strong data-i18n="levels.fuel.title">FUEL PROBLEMS</strong>
+              <span data-i18n="levels.fuel.description">Fuel quality route</span>
             </button>
           </div>
           <div class="side-modes">
             <button class="mode-card" data-level-id="freeplay" type="button">
-              <strong>FREEPLAY</strong>
-              <span>Same console, loose targets</span>
+              <strong data-i18n="levels.freeplay.title">FREEPLAY</strong>
+              <span data-i18n="levels.freeplay.description">Same console, loose targets</span>
             </button>
             <button class="mode-card is-locked" data-level-id="competitive" type="button" disabled>
-              <strong>COMPETITIVE</strong>
-              <span>Score route placeholder</span>
+              <strong data-i18n="levels.competitive.title">COMPETITIVE</strong>
+              <span data-i18n="levels.competitive.description">Score route placeholder</span>
             </button>
           </div>
         </section>
         <section id="profilePanel" class="app-panel dossier-panel" data-app-panel="profile" hidden>
           <div class="panel-header">
-            <span>OPERATOR DOSSIER</span>
-            <button data-app-action="main-menu" type="button" aria-label="Back">BACK</button>
+            <span data-i18n="profile.dossier">OPERATOR DOSSIER</span>
+            <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
           </div>
           <div class="dossier-card">
-            <span>STATUS</span>
-            <strong>PROVISIONAL SHIFT OPERATOR</strong>
-            <p>Performance history, route unlocks, incident tags, and operator notes will live here.</p>
+            <span data-i18n="profile.status">STATUS</span>
+            <strong data-i18n="profile.provisional">PROVISIONAL SHIFT OPERATOR</strong>
+            <p data-i18n="profile.placeholder">Performance history, route unlocks, incident tags, and operator notes will live here.</p>
           </div>
         </section>
         <section id="pausePanel" class="app-panel pause-panel" data-app-panel="pause" hidden>
           <div class="panel-header">
-            <span>PAUSED</span>
-            <button data-app-action="resume" type="button" aria-label="Resume">RESUME</button>
+            <span data-i18n="pause.title">PAUSED</span>
+            <button data-app-action="resume" type="button" aria-label="Resume" data-i18n="actions.resume">RESUME</button>
           </div>
           <div class="menu-actions">
-            <button data-app-action="resume" type="button">RESUME</button>
-            <button data-app-action="main-menu" type="button">MENU</button>
-            <button data-app-action="restart" type="button">RESTART</button>
-            <button data-app-action="settings" type="button">SETTINGS</button>
+            <button data-app-action="resume" type="button" data-i18n="actions.resume">RESUME</button>
+            <button data-app-action="main-menu" type="button" data-i18n="actions.menu">MENU</button>
+            <button data-app-action="restart" type="button" data-i18n="actions.restart">RESTART</button>
+            <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
           </div>
         </section>
         <section id="settingsPanel" class="app-panel settings-panel" data-app-panel="settings" hidden>
           <div class="panel-header">
-            <span>SETTINGS</span>
-            <button data-app-action="back" type="button" aria-label="Back">BACK</button>
+            <span data-i18n="settings.title">SETTINGS</span>
+            <button data-app-action="back" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
           </div>
           <label class="setting-row">
-            <span>FOV</span>
+            <span data-i18n="settings.fov">FOV</span>
             <input id="settingFov" type="range" min="55" max="95" step="1" />
             <strong id="settingFovValue">72</strong>
           </label>
           <label class="setting-row">
-            <span>UI SCALE</span>
+            <span data-i18n="settings.uiScale">UI SCALE</span>
             <input id="settingUiScale" type="range" min="80" max="130" step="5" />
             <strong id="settingUiScaleValue">100%</strong>
           </label>
           <label class="setting-row">
-            <span>SHADOWS</span>
+            <span data-i18n="settings.shadows">SHADOWS</span>
             <select id="settingShadowQuality">
               <option value="off">OFF</option>
               <option value="min">MIN 512</option>
+              <option value="med">HIGH 1K</option>
               <option value="max">MAX 2K</option>
             </select>
             <strong id="settingShadowQualityValue">MIN</strong>
           </label>
           <label class="setting-row">
-            <span>GTAO</span>
+            <span data-i18n="settings.gtao">GTAO</span>
             <select id="settingGtaoQuality">
               <option value="off">OFF</option>
               <option value="min">MIN</option>
@@ -184,7 +185,7 @@
             </select>
             <strong id="settingGtaoQualityValue">OFF</strong>
           </label>
-          <button data-app-action="redetect-graphics" type="button">AUTO-DETECT GRAPHICS AGAIN</button>
+          <button class="settings-action-button" data-app-action="redetect-graphics" type="button" data-i18n="settings.wizard">SETUP WIZARD</button>
         </section>
       </div>
     </div>
