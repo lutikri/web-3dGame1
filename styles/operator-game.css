@@ -973,11 +973,6 @@ body.app-ui-open #lockButton {
   color: #c5d4c9;
 }
 
-.preflight-close-note {
-  min-height: 1.4em;
-  color: #d4ae55 !important;
-}
-
 @media (max-width: 760px) {
   .preflight-quality-grid {
     grid-template-columns: 1fr;

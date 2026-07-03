@@ -22,6 +22,10 @@ import {
 } from "./game/ShiftReport.js";
 import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js";
 import {
+  applyGraphicsQualityProfileToConfig,
+  getGraphicsQualityProfile,
+} from "./config/GraphicsQualityProfiles.js";
+import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
@@ -39,32 +43,11 @@ const bootOptions = window.operatorGameBootOptions ?? {};
 configureQualityProfile(bootOptions.qualityProfile ?? "high");
 
 function configureQualityProfile(profile) {
-  const post = CONFIG.postProcessing;
-  post.enabled = true;
-  post.antiAliasing.method = "off";
-  post.antiAliasing.msaaSamples = 0;
-  post.gtao.defaultQuality = "off";
-  post.ssgi.defaultQuality = "off";
-  post.ssr.defaultQuality = "off";
-  post.screenSpaceShadows.defaultQuality = "off";
-
-  const enabledEffects =
-    profile === "low"
-      ? ["lut", "colorAdjustments"]
-      : profile === "medium"
-        ? ["bloom", "lut", "colorAdjustments"]
-        : ["bloom", "lensEffects", "lut", "colorAdjustments", "sharpen", "lensDistortion", "chromaticAberration"];
-  for (const key of ["bloom", "lensEffects", "lut", "colorAdjustments", "sharpen", "lensDistortion", "chromaticAberration"]) {
-    if (post[key]) post[key].enabled = enabledEffects.includes(key);
-  }
-  CONFIG.shadows.defaultQuality = profile === "high" ? "min" : "off";
-  return profile;
+  return applyGraphicsQualityProfileToConfig(CONFIG, profile);
 }
 
 function getQualityProfilePixelRatio(profile) {
-  if (profile === "low") return 0.6;
-  if (profile === "medium") return 0.75;
-  return 1;
+  return getGraphicsQualityProfile(profile).pixelRatio;
 }
 
 const defaultSceneDebugConfig = JSON.parse(
@@ -4215,32 +4198,17 @@ async function executePerformanceBenchmark(options = {}) {
   const screenshots = [];
 
   const presets = options.quick
-    ? [
-        { name: "PROFILE LOW", post: true, dpr: 0.6, msaa: 0, effects: ["lut", "colorAdjustments"] },
-        {
-          name: "PROFILE MEDIUM",
+    ? ["low", "medium", "high"].map((profile) => {
+        const quality = getGraphicsQualityProfile(profile);
+        return {
+          name: `PROFILE ${profile.toUpperCase()}`,
           post: true,
-          dpr: 0.75,
+          dpr: quality.pixelRatio,
           msaa: 0,
-          effects: ["bloom", "lut", "colorAdjustments"],
-        },
-        {
-          name: "PROFILE HIGH",
-          post: true,
-          dpr: 1,
-          msaa: 0,
-          shadows: "min",
-          effects: [
-            "bloom",
-            "lensEffects",
-            "lut",
-            "colorAdjustments",
-            "sharpen",
-            "lensDistortion",
-            "chromaticAberration",
-          ],
-        },
-      ]
+          shadows: quality.shadowQuality,
+          effects: quality.effects,
+        };
+      })
     : [
     { name: "RAW DPR 0.50", post: false, dpr: 0.5 },
     { name: "RAW DPR 0.75", post: false, dpr: 0.75 },
@@ -4488,17 +4456,17 @@ function measureBenchmarkFrames(durationMs) {
 }
 
 function applyQualityProfile(profile = "low") {
-  const normalized = ["low", "medium", "high"].includes(profile) ? profile : "low";
-  configureQualityProfile(normalized);
+  const normalized = configureQualityProfile(profile);
+  const quality = getGraphicsQualityProfile(normalized);
   bootOptions.qualityProfile = normalized;
   bootOptions.deferFullTextures = false;
-  bootOptions.disableFullTextures = normalized === "low";
-  renderer.setPixelRatio(getQualityProfilePixelRatio(normalized));
+  bootOptions.disableFullTextures = !quality.fullTextures;
+  renderer.setPixelRatio(quality.pixelRatio);
   gtaoQuality = "off";
   ssgiQuality = "off";
   ssrQuality = "off";
   screenSpaceShadowQuality = "off";
-  setShadowQuality(normalized === "high" ? "min" : "off");
+  setShadowQuality(quality.shadowQuality);
   setupPostProcessing();
   resizeRendererTargets();
   return normalized;

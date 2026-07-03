@@ -1,3 +1,5 @@
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js";
+
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
 
@@ -19,11 +21,6 @@ const COPY = {
     medium: ["MEDIUM", "BALANCED"],
     high: ["HIGH", "FULL EFFECTS"],
     apply: "APPLY",
-    guideText:
-      "Windows: Settings → System → Display → Graphics → add Chrome/Edge → Options → High performance. Restart the browser and run detection again.",
-    close: "BACK",
-    restart: "RESTART BROWSER",
-    closeManually: "Close and restart the browser manually.",
   },
   ru: {
     checking: "ПРОВЕРКА ГРАФИЧЕСКОЙ ПРОИЗВОДИТЕЛЬНОСТИ",
@@ -42,11 +39,6 @@ const COPY = {
     medium: ["MEDIUM", "БАЛАНС"],
     high: ["HIGH", "ВСЕ ЭФФЕКТЫ"],
     apply: "ПРИМЕНИТЬ",
-    guideText:
-      "Windows: Параметры → Система → Дисплей → Графика → добавьте Chrome/Edge → Параметры → Высокая производительность. Перезапустите браузер и повторите проверку.",
-    close: "НАЗАД",
-    restart: "ПЕРЕЗАПУСТИТЬ БРАУЗЕР",
-    closeManually: "Закройте и перезапустите браузер вручную.",
   },
 };
 
@@ -87,13 +79,14 @@ export function createPreflight() {
   }
 
   function complete(profile) {
+    const quality = getGraphicsQualityProfile(profile);
     selectedProfile = profile;
     saved = { language, profile, gpu: gpuInfo?.renderer ?? "Unknown", measuredAt: Date.now() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     saveAppQualitySettings(profile);
     window.operatorGameBootOptions.qualityProfile = profile;
     window.operatorGameBootOptions.deferFullTextures = false;
-    window.operatorGameBootOptions.disableFullTextures = profile === "low";
+    window.operatorGameBootOptions.disableFullTextures = !quality.fullTextures;
     remove();
   }
 
@@ -171,9 +164,7 @@ export function createPreflight() {
         ${["11", "10", "7", "xp"].map((version) => `<button type="button" data-windows="${version}">WINDOWS ${version.toUpperCase()}</button>`).join("")}
       </div>
       <div class="preflight-os-guide" data-os-guide></div>
-      <p class="preflight-close-note" data-close-note></p>
       <div class="preflight-language-actions">
-        <button type="button" data-restart-browser>${copy.restart}</button>
         <button type="button" data-guide-continue ${benchmarkComplete ? "" : "disabled"}>${copy.continue}</button>
       </div>`;
     overlay.append(guide);
@@ -186,10 +177,6 @@ export function createPreflight() {
     };
     guide.querySelectorAll("[data-windows]").forEach((button) => {
       button.addEventListener("click", () => showWindowsGuide(button.dataset.windows));
-    });
-    guide.querySelector("[data-restart-browser]").addEventListener("click", () => {
-      window.close();
-      guide.querySelector("[data-close-note]").textContent = copy.closeManually;
     });
     guide.querySelector("[data-guide-continue]").addEventListener(
       "click",
@@ -351,7 +338,7 @@ function saveAppQualitySettings(profile) {
   } catch {
     settings = {};
   }
-  const shadows = profile === "high" ? "min" : "off";
+  const shadows = getGraphicsQualityProfile(profile).shadowQuality;
   localStorage.setItem(
     SETTINGS_KEY,
     JSON.stringify({

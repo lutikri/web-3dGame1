@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js";
 import { LEVEL_REACTOR_1_CONFIG } from "./levels/LevelReactor1Config.js";
 
 function applyLevelMaterialTuning(materials, tuning) {
@@ -28,18 +29,7 @@ export const CONFIG = {
   loading: {
     skip: false,
   },
-  debug: {
-    enabled: true,
-    fastLoadLevel: "intro-shift",
-    skipBriefing: true,
-    performanceBenchmark: {
-      autoRun: false,
-      startDelaySeconds: 0.5,
-      warmupSeconds: 0.5,
-      sampleSeconds: 1.5,
-      textureWaitTimeoutSeconds: 45,
-    },
-  },
+  debug: DEBUG_CONFIG,
   app: {
     firstVisitEmulation: false,
   },

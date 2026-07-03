@@ -1,12 +1,14 @@
 import { createPreflight } from "./app/Preflight.js";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js";
 
 const preflight = createPreflight();
 const bootChoice = await preflight.prepare();
+const bootQuality = getGraphicsQualityProfile(bootChoice.profile ?? "low");
 
 window.operatorGameBootOptions = {
   qualityProfile: bootChoice.profile ?? "low",
   deferFullTextures: bootChoice.firstRun,
-  disableFullTextures: bootChoice.profile === "low" && !bootChoice.firstRun,
+  disableFullTextures: !bootQuality.fullTextures && !bootChoice.firstRun,
 };
 
 await import("./OperatorGame.js");
