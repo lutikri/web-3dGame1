@@ -4,9 +4,15 @@ export const LEVELS = {
     mode: "tutorial",
     description: "Current first fusion shift scenario.",
     briefingImage: {
-      en: ["assets/shift-briefs/Intro1-us.png"],
-      ru: ["assets/shift-briefs/Intro1-ru.png", "assets/shift-briefs/Intro1_2-ru.png"],
+      en: ["assets/ui/briefings/Intro1-us.png"],
+      ru: ["assets/ui/briefings/Intro1-ru.png", "assets/ui/briefings/Intro1_2-ru.png"],
     },
+    playable: true,
+  },
+  "exploring-around": {
+    title: "EXPLORING AROUND",
+    mode: "tutorial",
+    description: "The tutorial shift in the service corridor.",
     playable: true,
   },
   "unexpected-stuff": {

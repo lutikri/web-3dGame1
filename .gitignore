@@ -1,4 +1,5 @@
 3dGameAssetsDev/
+asset-source/
 logs/
 server-*.log
 server-*.err.log
@@ -8,6 +9,6 @@ node_modules/
 screenshots/
 recordings/
 
-# Original/source texture PNGs; runtime textures live in assets/runtime-textures/.
+# Original/source texture PNGs live in asset-source/textures/.
 assets/T_*.png
 assets/luts/Green2.cube

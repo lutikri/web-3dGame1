@@ -3,9 +3,9 @@ import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js"
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
 const QUALITY_PREVIEWS = {
-  low: "assets/img-performance/set-min.jpg",
-  medium: "assets/img-performance/set-med.jpg",
-  high: "assets/img-performance/set-max.jpg",
+  low: "assets/ui/performance/set-min.jpg",
+  medium: "assets/ui/performance/set-med.jpg",
+  high: "assets/ui/performance/set-max.jpg",
 };
 
 const COPY = {
@@ -84,6 +84,7 @@ export function createPreflight() {
 
     overlay = createOverlay();
     document.body.append(overlay);
+    document.documentElement.classList.remove("preflight-boot");
     preloadFirstRunAssets();
     language = await chooseLanguage();
     document.documentElement.lang = language;
@@ -452,9 +453,9 @@ function escapeHtml(value) {
 
 function preloadFirstRunAssets() {
   const criticalAssets = [
-    "assets/Panel1.glb",
-    "assets/Interior1_Panel1.glb",
-    "assets/Interior1_Collision.glb",
+    "assets/mesh/SM_Panel1.glb",
+    "assets/mesh/SM_Interior1_Panel1.glb",
+    "assets/mesh/SM_Interior1_Collision.glb",
     "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",

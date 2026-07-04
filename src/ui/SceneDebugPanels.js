@@ -66,6 +66,17 @@ async function saveProjectConfig(config) {
   return result;
 }
 
+async function saveLevelProjectConfig(config) {
+  const response = await fetch("/__save-config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: "exploringAround", config }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save level config");
+  return result;
+}
+
 export function restoreSavedSceneConfig({ levelId, materials, lighting, decals }) {
   const saved = readSaved(levelId);
   if (!saved) return false;
@@ -96,12 +107,17 @@ export function createSceneDebugPanels({
   applyPlayerCollisionSettings,
   decalConfig,
   applyDecalMaterial,
+  levelEnvironmentConfigs = {},
+  applyLevelAmbient,
+  applyLevelPrefab,
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
+  const prefabsGui = new GUI({ title: "LEVEL PREFABS", width: 320 });
   const gameGui = new GUI({ title: "GAME", width: 320 });
   positionGui(materialsGui, 1);
   positionGui(lightsGui, 2);
+  positionGui(prefabsGui, 2);
   positionGui(gameGui, 3);
 
   const collisionConfig = gameConfig?.collision;
@@ -125,6 +141,15 @@ export function createSceneDebugPanels({
       .name("Body height")
       .onChange(applyPlayerCollisionSettings);
     if (collisionConfig) {
+      playerCollisionFolder
+        .add(collisionConfig, "stepHeight", 0, 0.6, 0.01)
+        .name("Step height");
+      playerCollisionFolder
+        .add(collisionConfig, "stepForwardDistance", 0, 0.5, 0.01)
+        .name("Step forward probe");
+      playerCollisionFolder
+        .add(collisionConfig, "floorNormalThreshold", 0.1, 0.95, 0.01)
+        .name("Floor normal threshold");
       playerCollisionFolder
         .add(collisionConfig, "cameraRadius", 0.02, 0.3, 0.01)
         .name("Lean camera radius")
@@ -262,6 +287,119 @@ export function createSceneDebugPanels({
     folder.close();
   });
 
+  Object.entries(levelEnvironmentConfigs).forEach(([environmentId, environmentConfig]) => {
+    const environmentFolder = prefabsGui.addFolder(environmentId);
+    let saveProjectController = null;
+    const levelActions = {
+      async saveProject() {
+        saveProjectController?.name("Saving...");
+        try {
+          const result = await saveLevelProjectConfig(clone(environmentConfig));
+          saveProjectController?.name("Saved — reloading");
+          window.setTimeout(() => window.location.reload(), 180);
+          return result;
+        } catch (error) {
+          saveProjectController?.name("SAVE FAILED");
+          console.error("[Scene debug] Failed to save level config", error);
+          throw error;
+        }
+      },
+      async copyConfig() {
+        const source = JSON.stringify(environmentConfig, null, 2);
+        await navigator.clipboard.writeText(source);
+        return source;
+      },
+    };
+    const presetFolder = environmentFolder.addFolder("Preset");
+    saveProjectController = presetFolder.add(levelActions, "saveProject").name("Save to project");
+    presetFolder.add(levelActions, "copyConfig").name("Copy level config");
+    const ambientConfig = environmentConfig.lighting;
+    if (ambientConfig) {
+      const ambientFolder = environmentFolder.addFolder("Ambient");
+      ambientFolder.addColor(ambientConfig, "ambientSky").onChange(() => applyLevelAmbient?.(environmentId));
+      ambientFolder.addColor(ambientConfig, "ambientGround").onChange(() => applyLevelAmbient?.(environmentId));
+      ambientFolder
+        .add(ambientConfig, "ambientIntensity", 0, 2, 0.005)
+        .onChange(() => applyLevelAmbient?.(environmentId));
+    }
+
+    (environmentConfig.prefabs ?? []).forEach((prefabConfig) => {
+      const folder = environmentFolder.addFolder(prefabConfig.name);
+      const placement = folder.addFolder("Position");
+      placement
+        .add(prefabConfig.position, "x", -30, 30, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      placement
+        .add(prefabConfig.position, "y", -5, 10, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      placement
+        .add(prefabConfig.position, "z", -30, 30, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      if (!prefabConfig.light) {
+        folder.close();
+        return;
+      }
+      const lightConfig = prefabConfig.light;
+      folder.add(lightConfig, "enabled").name("Light enabled").onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder.addColor(lightConfig, "color").onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder
+        .add(lightConfig, "intensity", 0, 20, 0.01)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder
+        .add(lightConfig, "distance", 0, 30, 0.05)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder
+        .add(lightConfig, "decay", 0, 4, 0.01)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder
+        .add(lightConfig, "castShadow")
+        .name("Cast shadows")
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+
+      const offset = folder.addFolder("Light offset");
+      offset
+        .add(lightConfig.localOffset, "x", -2, 2, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      offset
+        .add(lightConfig.localOffset, "y", -2, 2, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      offset
+        .add(lightConfig.localOffset, "z", -2, 2, 0.001)
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+
+      const flicker = lightConfig.flicker;
+      if (flicker) {
+        const flickerFolder = folder.addFolder("Random flicker");
+        flickerFolder.add(flicker, "enabled");
+        flickerFolder.add(flicker, "minIntervalSeconds", 0.1, 180, 0.1).name("Min interval");
+        flickerFolder.add(flicker, "maxIntervalSeconds", 0.1, 300, 0.1).name("Max interval");
+        flickerFolder.add(flicker, "minDurationSeconds", 0.01, 2, 0.01).name("Min duration");
+        flickerFolder.add(flicker, "maxDurationSeconds", 0.01, 3, 0.01).name("Max duration");
+        flickerFolder.add(flicker, "pulseCount", 2, 15, 1).name("Pulse count");
+        flickerFolder.add(flicker, "minFactor", 0, 1, 0.01);
+        flickerFolder.add(flicker, "retryChance", 0, 1, 0.01);
+        flickerFolder.close();
+      }
+
+      const shadows = folder.addFolder("Shadows");
+      shadows
+        .add(lightConfig, "shadowBias", -0.01, 0.01, 0.00001)
+        .name("Bias")
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      shadows
+        .add(lightConfig, "shadowNormalBias", 0, 0.2, 0.0005)
+        .name("Normal bias")
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      shadows
+        .add(lightConfig, "shadowRadius", 0, 10, 0.1)
+        .name("Radius")
+        .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      shadows.close();
+      folder.close();
+    });
+    environmentFolder.close();
+  });
+
   function applyAll() {
     Object.keys(materialConfigs).forEach((key) => {
       applyMaterial(key);
@@ -276,6 +414,7 @@ export function createSceneDebugPanels({
     [
       ...materialsGui.controllersRecursive(),
       ...lightsGui.controllersRecursive(),
+      ...prefabsGui.controllersRecursive(),
       ...gameGui.controllersRecursive(),
     ].forEach((controller) => {
       controller.updateDisplay();
@@ -336,15 +475,30 @@ export function createSceneDebugPanels({
   let visible = true;
   const setVisible = (nextVisible) => {
     visible = Boolean(nextVisible);
-    [materialsGui, lightsGui, gameGui].forEach((gui) => (visible ? gui.show() : gui.hide()));
+    updateGuiVisibility();
     return visible;
   };
 
+  let activeLevelId = null;
+  function updateGuiVisibility() {
+    const usesLevelPrefabs = Boolean(activeLevelId && levelEnvironmentConfigs[activeLevelId]);
+    [materialsGui, gameGui].forEach((gui) => (visible ? gui.show() : gui.hide()));
+    if (visible && !usesLevelPrefabs) lightsGui.show();
+    else lightsGui.hide();
+    if (visible && usesLevelPrefabs) prefabsGui.show();
+    else prefabsGui.hide();
+  }
+  updateGuiVisibility();
+
   return {
     ...actions,
-    guis: [materialsGui, lightsGui, gameGui],
+    guis: [materialsGui, lightsGui, prefabsGui, gameGui],
     isVisible: () => visible,
     setVisible,
+    setActiveLevel(levelId) {
+      activeLevelId = levelId;
+      updateGuiVisibility();
+    },
     toggle: () => setVisible(!visible),
   };
 }

@@ -81,7 +81,7 @@ document.body.appendChild(controlTooltip);
 const textureLoadingIndicator = document.createElement("div");
 textureLoadingIndicator.className = "texture-loading-indicator";
 textureLoadingIndicator.hidden = true;
-textureLoadingIndicator.innerHTML = `<span class="texture-loading-spinner" aria-hidden="true"></span><span>Loading Textures 0 / 0</span>`;
+textureLoadingIndicator.innerHTML = `<span class="texture-loading-spinner" aria-hidden="true"></span><span>${translate("loading.textures")} 0 / 0</span>`;
 document.body.appendChild(textureLoadingIndicator);
 
 const loadingOverlay = createLoadingOverlay({
@@ -146,7 +146,9 @@ const collisionDebugMaterial = new THREE.MeshBasicMaterial({
   depthWrite: false,
   side: THREE.DoubleSide,
 });
-collisionDebugMaterial.visible = false;
+collisionDebugMaterial.visible = Boolean(CONFIG.player?.collision?.show);
+const playerCollisionDebug = createPlayerCollisionDebug();
+scene.add(playerCollisionDebug.group);
 const pointer = new THREE.Vector2(0, 0);
 const worldUp = new THREE.Vector3(0, 1, 0);
 const keys = new Set();
@@ -159,6 +161,7 @@ const controlButtons = [];
 const roomLightButtons = [];
 const controlledLights = [];
 const pointLightsByKey = new Map();
+const levelLights = new Map();
 const interiorFans = [];
 let bulkheadHandle = null;
 let bulkheadHandleHeld = false;
@@ -176,6 +179,9 @@ let interiorModel = null;
 let interiorDecalModel = null;
 let interiorDecalMaterial = null;
 let collisionModel = null;
+const levelEnvironmentModels = new Map();
+const levelCollisionModels = new Map();
+const levelPrefabInstances = new Map();
 let collisionReady = false;
 let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
 let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
@@ -226,6 +232,8 @@ let frameTimeMs = 0;
 let hoveredInteractive = null;
 let hoveredKnob = null;
 let hoveredTooltipTarget = null;
+let hoveredHingedDoor = null;
+let draggedHingedDoor = null;
 let forcedHoveredTarget = null;
 let startupFeedbackTimer = 0;
 let indicatorTestTimer = 0;
@@ -644,6 +652,7 @@ Promise.all(interiorCustomTextureMapPromises)
       interiorCustomTextureMaps[key] = textureMaps;
       applyTextureMapsToMaterial(materials.interiorCustom[key], textureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = deferredPaths ? "preview" : "full";
+      syncLevelPrefabMaterialClones(key);
       if (deferredPaths) queueDeferredTextureLoad(key, deferredPaths);
     });
     Object.entries(materials.interiorCustom).forEach(([key, material]) => {
@@ -697,6 +706,7 @@ function queueDeferredTextureLoad(key, paths) {
       interiorCustomTextureMaps[key] = fullTextureMaps;
       applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = "full";
+      syncLevelPrefabMaterialClones(key);
       textureStreaming.disposeTextureMaps(previousTextureMaps);
       console.log(`[OperatorGame] Upgraded ${key} textures to full resolution`);
     } catch (error) {
@@ -831,7 +841,7 @@ function updateTextureLoadingIndicator() {
   textureLoadingIndicator.classList.toggle("is-active", shouldShow);
   const label = textureLoadingIndicator.querySelector("span:last-child");
   if (label) {
-    label.textContent = `Loading Textures ${runtimeTextureLoading.completed} / ${runtimeTextureLoading.total}`;
+    label.textContent = `${translate("loading.textures")} ${runtimeTextureLoading.completed} / ${runtimeTextureLoading.total}`;
   }
 }
 
@@ -1091,6 +1101,7 @@ function init() {
   loadInteriorModel();
   loadInteriorDecals();
   loadCollisionModel();
+  loadLevelEnvironments();
   loadPanelModel();
   if (CONFIG.loading?.skip || fastDebugBoot) triggerRoomLightBoot();
   animate();
@@ -1102,6 +1113,7 @@ function setupLights() {
     CONFIG.lighting.ambientGround,
     CONFIG.lighting.ambientIntensity,
   );
+  hemi.userData.levelId = "default";
   hemi.userData.baseIntensity = hemi.intensity;
   hemisphereLight = hemi;
   controlledLights.push(hemi);
@@ -1115,9 +1127,11 @@ function setupLights() {
       lightConfig.decay,
     );
     light.name = `PointLight_${name}`;
+    light.userData.levelId = "default";
     light.position.copy(lightConfig.position);
     light.userData.baseIntensity = light.intensity;
     light.userData.lightKey = name;
+    light.userData.lightConfig = lightConfig;
     light.userData.roomLightControlled = Boolean(lightConfig.roomLightControlled);
     if (light.userData.roomLightControlled) light.userData.fixtureFlicker = createFixtureFlickerState();
     pointLightsByKey.set(name, light);
@@ -1125,6 +1139,49 @@ function setupLights() {
     applyShadowSettings(light, lightConfig);
     scene.add(light);
   }
+
+  Object.entries(CONFIG.levelEnvironments ?? {}).forEach(([levelId, environmentConfig]) => {
+    const lightingConfig = environmentConfig.lighting;
+    if (!lightingConfig) return;
+
+    const lights = [];
+    const levelHemi = new THREE.HemisphereLight(
+      lightingConfig.ambientSky ?? "#ffffff",
+      lightingConfig.ambientGround ?? "#080808",
+      lightingConfig.ambientIntensity ?? 0,
+    );
+    levelHemi.name = `HemisphereLight_${levelId}`;
+    levelHemi.userData.levelId = levelId;
+    levelHemi.userData.baseIntensity = levelHemi.intensity;
+    levelHemi.visible = activeLevelId === levelId;
+    controlledLights.push(levelHemi);
+    lights.push(levelHemi);
+    scene.add(levelHemi);
+
+    Object.entries(lightingConfig.pointLights ?? {}).forEach(([name, lightConfig]) => {
+      const light = new THREE.PointLight(
+        lightConfig.color,
+        lightConfig.intensity,
+        lightConfig.distance,
+        lightConfig.decay,
+      );
+      light.name = `PointLight_${levelId}_${name}`;
+      light.position.copy(lightConfig.position);
+      light.userData.levelId = levelId;
+      light.userData.baseIntensity = light.intensity;
+      light.userData.lightKey = name;
+      light.userData.lightConfig = lightConfig;
+      light.userData.roomLightControlled = Boolean(lightConfig.roomLightControlled);
+      light.visible = activeLevelId === levelId;
+      pointLightsByKey.set(`${levelId}:${name}`, light);
+      controlledLights.push(light);
+      lights.push(light);
+      applyShadowSettings(light, lightConfig);
+      scene.add(light);
+    });
+
+    levelLights.set(levelId, lights);
+  });
 }
 
 function setupLightFixtures() {
@@ -1402,10 +1459,14 @@ function setupSceneDebugPanels() {
     applyPlayerCollisionSettings,
     decalConfig: CONFIG.interior.decals,
     applyDecalMaterial: updateInteriorDecalMaterial,
+    levelEnvironmentConfigs: CONFIG.levelEnvironments,
+    applyLevelAmbient: applyLevelAmbientConfig,
+    applyLevelPrefab: applyLevelPrefabConfig,
     applyMaterialOverlay: (key) => {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
   });
+  sceneDebugPanels.setActiveLevel(operatorViewMode === "menu" ? null : activeLevelId);
   if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
 }
 
@@ -1635,11 +1696,17 @@ function setShadowQuality(quality = "min") {
   renderer.shadowMap.type = CONFIG.shadows.type;
 
   pointLightsByKey.forEach((light) => {
-    const lightKey = light.userData.lightKey;
-    const lightConfig = CONFIG.lighting.pointLights?.[lightKey] ?? {};
+    const lightConfig = light.userData.lightConfig ?? {};
     light.shadow?.map?.dispose?.();
     if (light.shadow) light.shadow.map = null;
     applyShadowSettings(light, lightConfig);
+  });
+  levelPrefabInstances.forEach((runtime) => {
+    if (!runtime.light) return;
+    const lightConfig = runtime.light.userData.lightConfig ?? {};
+    runtime.light.shadow?.map?.dispose?.();
+    if (runtime.light.shadow) runtime.light.shadow.map = null;
+    applyShadowSettings(runtime.light, lightConfig);
   });
 
   return shadowQuality;
@@ -1899,11 +1966,11 @@ function loadPanelModel() {
       panelModel.name = "Panel1";
 
       panelModel.traverse(registerPanelObject);
-      applyPanelTransform(panelModel);
+      applyActivePanelTransform();
       scene.add(panelModel);
 
       finishLoading();
-      console.log(`[OperatorGame] Loaded Panel1.glb: ${needles.length} arrows, ${lamps.length} lamps`);
+      console.log(`[OperatorGame] Loaded SM_Panel1.glb: ${needles.length} arrows, ${lamps.length} lamps`);
     },
     (event) => {
       if (!event.lengthComputable) {
@@ -1915,7 +1982,7 @@ function loadPanelModel() {
     },
     (error) => {
       setLoadingStatus("PANEL LOAD FAILURE");
-      console.error("[OperatorGame] Failed to load Panel1.glb", error);
+      console.error("[OperatorGame] Failed to load SM_Panel1.glb", error);
     },
   );
 }
@@ -1934,11 +2001,12 @@ function loadInteriorModel() {
       interiorModel.scale.copy(CONFIG.interior.scale);
       interiorModel.traverse(registerInteriorObject);
       scene.add(interiorModel);
-      console.log("[OperatorGame] Loaded Interior1_Panel1.glb");
+      updateActiveLevelEnvironment();
+      console.log("[OperatorGame] Loaded SM_Interior1_Panel1.glb");
     },
     undefined,
     (error) => {
-      console.error("[OperatorGame] Failed to load Interior1_Panel1.glb", error);
+      console.error("[OperatorGame] Failed to load SM_Interior1_Panel1.glb", error);
     },
   );
 }
@@ -2026,11 +2094,12 @@ uniform float decalEdgeSoftness;`,
           });
 
           scene.add(interiorDecalModel);
+          updateActiveLevelEnvironment();
           console.log(`[OperatorGame] Loaded Interior1 decals: ${meshCount} meshes`);
         },
         undefined,
         (error) => {
-          console.error("[OperatorGame] Failed to load Interior1_Decals1.glb", error);
+          console.error("[OperatorGame] Failed to load SM_Interior1_Decals1.glb", error);
         },
       );
     },
@@ -2082,28 +2151,361 @@ function loadCollisionModel() {
         collisionMeshes.push(object);
       });
       scene.add(collisionModel);
-      applyCollisionSettings();
+      updateActiveLevelEnvironment();
       console.log(`[OperatorGame] Loaded collision mesh: ${collisionMeshes.length} meshes`);
     },
     undefined,
     (error) => {
-      console.error("[OperatorGame] Failed to load Interior1_Collision.glb", error);
+      console.error("[OperatorGame] Failed to load SM_Interior1_Collision.glb", error);
     },
   );
 }
 
-function applyCollisionSettings() {
-  if (!collisionModel) return;
+function loadLevelEnvironments() {
+  const loader = new GLTFLoader();
 
-  const collisionConfig = CONFIG.player?.collision;
-  collisionModel.position.copy(collisionConfig?.position ?? CONFIG.interior.position);
-  collisionModel.updateMatrixWorld(true);
-  collisionDebugMaterial.visible = Boolean(collisionConfig?.show);
+  Object.entries(CONFIG.levelEnvironments ?? {}).forEach(([levelId, environmentConfig]) => {
+    loader.load(
+      environmentConfig.assetPath,
+      (gltf) => {
+        const model = gltf.scene;
+        model.name = `${levelId}_Environment`;
+        applyEnvironmentTransform(model, environmentConfig);
+        model.traverse(registerInteriorObject);
+        model.visible = activeLevelId === levelId;
+        levelEnvironmentModels.set(levelId, model);
+        scene.add(model);
+        updateActiveLevelEnvironment();
+        console.log(`[OperatorGame] Loaded level environment: ${levelId}`);
+      },
+      undefined,
+      (error) => console.error(`[OperatorGame] Failed to load environment: ${levelId}`, error),
+    );
+
+    loader.load(
+      environmentConfig.collisionAssetPath,
+      (gltf) => {
+        const model = gltf.scene;
+        model.name = `${levelId}_Collision`;
+        applyEnvironmentTransform(model, environmentConfig);
+        const requiredNameParts = environmentConfig.collision?.meshNameIncludes ?? [];
+        if (requiredNameParts.length > 0) {
+          const excludedMeshes = [];
+          model.traverse((object) => {
+            if (!object.isMesh) return;
+            const normalizedName = object.name.toLowerCase();
+            const included = requiredNameParts.some((part) => normalizedName.includes(String(part).toLowerCase()));
+            if (!included) excludedMeshes.push(object);
+          });
+          excludedMeshes.forEach((object) => object.parent?.remove(object));
+        }
+        model.traverse((object) => {
+          if (!object.isMesh) return;
+          object.castShadow = false;
+          object.receiveShadow = false;
+          object.material = collisionDebugMaterial;
+          object.renderOrder = 1000;
+        });
+        model.visible = activeLevelId === levelId && Boolean(CONFIG.player?.collision?.show);
+        levelCollisionModels.set(levelId, model);
+        scene.add(model);
+        updateActiveLevelEnvironment();
+        console.log(`[OperatorGame] Loaded level collision: ${levelId}`);
+      },
+      undefined,
+      (error) => console.error(`[OperatorGame] Failed to load level collision: ${levelId}`, error),
+    );
+
+    const prefabGroup = new THREE.Group();
+    prefabGroup.name = `${levelId}_Prefabs`;
+    prefabGroup.visible = activeLevelId === levelId;
+    levelEnvironmentModels.set(`${levelId}:prefabs`, prefabGroup);
+    scene.add(prefabGroup);
+
+    (environmentConfig.prefabs ?? []).forEach((prefabConfig) => {
+      loader.load(
+        prefabConfig.assetPath,
+        (gltf) => {
+          const prefab = gltf.scene;
+          prefab.name = prefabConfig.name;
+          prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
+          prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
+          prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
+          const emissiveMaterials = [];
+          const collisionMeshes = [];
+          const parts = new Map();
+          prefab.traverse((object) => {
+            if (object.name) {
+              object.userData.prefabInitialRotation = object.rotation.clone();
+              parts.set(object.name, object);
+            }
+            if (!object.isMesh) return;
+            const isCollider = /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(object.name);
+            object.visible = isCollider ? Boolean(CONFIG.player?.collision?.show) : true;
+            object.castShadow = !isCollider;
+            object.receiveShadow = !isCollider;
+            if (isCollider) {
+              object.material = collisionDebugMaterial;
+              object.renderOrder = 1000;
+              collisionMeshes.push(object);
+            } else {
+              ensureSecondUvSet(object);
+              const sourceMaterial = materials.interiorCustom[prefabConfig.materialKey] ?? materials.interior;
+              object.material = prefabConfig.light ? sourceMaterial.clone() : sourceMaterial;
+              if (prefabConfig.light) {
+                object.material.userData.baseEmissiveIntensity = sourceMaterial.userData.baseEmissiveIntensity;
+                emissiveMaterials.push(object.material);
+              }
+            }
+          });
+          const runtime = {
+            root: prefab,
+            light: null,
+            emissiveMaterials,
+            materialKey: prefabConfig.materialKey,
+            collisionMeshes,
+            parts,
+            flickerTime: Math.random() * 100,
+            flickerSeed: Math.random() * 1000,
+            startupPattern: prefabConfig.light?.fluorescentStartup ? createFluorescentStartupPattern() : [],
+            startupElapsed: 0,
+            wasLightEnabled: prefabConfig.light?.enabled !== false,
+            fixtureFlicker: createPrefabFlickerState(prefabConfig.light?.flicker),
+            wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
+          };
+          if (prefabConfig.light) {
+            const lightConfig = prefabConfig.light;
+            const light = new THREE.PointLight(
+              lightConfig.color,
+              lightConfig.intensity,
+              lightConfig.distance,
+              lightConfig.decay,
+            );
+            light.name = `${prefabConfig.name}_PointLight`;
+            light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
+            light.userData.baseIntensity = lightConfig.intensity;
+            light.userData.lightConfig = lightConfig;
+            light.userData.fixtureFlicker = runtime.fixtureFlicker;
+            applyShadowSettings(light, lightConfig);
+            prefab.add(light);
+            runtime.light = light;
+          }
+          levelPrefabInstances.set(`${levelId}:${prefabConfig.name}`, runtime);
+          registerPrefabInteraction(levelId, prefabConfig, runtime);
+          syncLevelPrefabMaterialClones(prefabConfig.materialKey);
+          prefabGroup.add(prefab);
+          applyLevelPrefabConfig(levelId, prefabConfig.name, true);
+          updateActiveLevelEnvironment();
+        },
+        undefined,
+        (error) => console.error(`[OperatorGame] Failed to load prefab: ${prefabConfig.name}`, error),
+      );
+    });
+  });
+}
+
+function applyEnvironmentTransform(model, config) {
+  model.position.copy(config.position ?? new THREE.Vector3());
+  model.rotation.copy(config.rotation ?? new THREE.Euler());
+  model.scale.copy(config.scale ?? new THREE.Vector3(1, 1, 1));
+  model.updateMatrixWorld(true);
+}
+
+function updateActiveLevelEnvironment() {
+  const displayedLevelId = operatorViewMode === "menu" ? null : activeLevelId;
+  const levelConfig = displayedLevelId ? CONFIG.levelEnvironments?.[displayedLevelId] : null;
+  const usesLevelEnvironment = Boolean(levelConfig);
+
+  if (interiorModel) interiorModel.visible = !usesLevelEnvironment;
+  if (interiorDecalModel) interiorDecalModel.visible = !usesLevelEnvironment;
+  if (collisionModel) collisionModel.visible = !usesLevelEnvironment && Boolean(CONFIG.player?.collision?.show);
+
+  levelEnvironmentModels.forEach((model, key) => {
+    const levelId = key.split(":")[0];
+    model.visible = levelId === displayedLevelId;
+  });
+  levelCollisionModels.forEach((model, levelId) => {
+    model.visible = levelId === displayedLevelId && Boolean(CONFIG.player?.collision?.show);
+  });
+  levelPrefabInstances.forEach((runtime, key) => {
+    const levelId = key.split(":")[0];
+    runtime.collisionMeshes.forEach((mesh) => {
+      mesh.visible = levelId === displayedLevelId && Boolean(CONFIG.player?.collision?.show);
+    });
+  });
+  controlledLights.forEach((light) => {
+    const lightLevelId = light.userData.levelId ?? "default";
+    light.visible = usesLevelEnvironment ? lightLevelId === displayedLevelId : lightLevelId === "default";
+  });
+  applyActivePanelTransform();
+  sceneDebugPanels?.setActiveLevel?.(displayedLevelId);
+
+  const activeCollision = (displayedLevelId && levelCollisionModels.get(displayedLevelId)) || collisionModel;
+  if (!activeCollision) return;
+  activeCollision.updateMatrixWorld(true);
   collisionOctree = new Octree();
-  collisionOctree.fromGraphNode(collisionModel);
+  collisionOctree.fromGraphNode(activeCollision);
+  if (displayedLevelId) {
+    levelPrefabInstances.forEach((runtime, key) => {
+      if (!key.startsWith(`${displayedLevelId}:`)) return;
+      if (runtime.collisionDisabled) return;
+      runtime.collisionMeshes.forEach((mesh) => collisionOctree.fromGraphNode(mesh));
+    });
+  }
   collisionReady = true;
   syncPlayerCapsule();
   resolvePlayerCollisions();
+}
+
+function applyLevelAmbientConfig(levelId) {
+  const lightingConfig = CONFIG.levelEnvironments?.[levelId]?.lighting;
+  const hemi = levelLights.get(levelId)?.find((light) => light.isHemisphereLight);
+  if (!lightingConfig || !hemi) return;
+  hemi.color.set(lightingConfig.ambientSky);
+  hemi.groundColor.set(lightingConfig.ambientGround);
+  hemi.intensity = lightingConfig.ambientIntensity;
+  hemi.userData.baseIntensity = hemi.intensity;
+}
+
+function syncLevelPrefabMaterialClones(materialKey) {
+  const textureMaps = interiorCustomTextureMaps[materialKey];
+  const materialConfig = CONFIG.interior.specialMaterials?.[materialKey];
+  if (!textureMaps || !materialConfig) return;
+  levelPrefabInstances.forEach((runtime) => {
+    if (runtime.materialKey !== materialKey) return;
+    runtime.emissiveMaterials.forEach((material) => {
+      applyTextureMapsToMaterial(material, textureMaps, materialConfig);
+      material.userData.baseEmissiveIntensity = materialConfig.emissiveIntensity ?? 0;
+    });
+  });
+}
+
+function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
+  const environmentConfig = CONFIG.levelEnvironments?.[levelId];
+  const prefabConfig = environmentConfig?.prefabs?.find((entry) => entry.name === prefabName);
+  const runtime = levelPrefabInstances.get(`${levelId}:${prefabName}`);
+  if (!prefabConfig || !runtime) return;
+
+  runtime.root.position.copy(prefabConfig.position ?? new THREE.Vector3());
+  runtime.root.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
+  runtime.root.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
+  Object.entries(prefabConfig.parts ?? {}).forEach(([partName, partConfig]) => {
+    const part = runtime.parts.get(partName);
+    if (!part) return;
+    part.rotation.copy(part.userData.prefabInitialRotation);
+    const rotation = partConfig.rotationDegrees ?? {};
+    part.rotateX(THREE.MathUtils.degToRad(rotation.x ?? 0));
+    part.rotateY(THREE.MathUtils.degToRad(rotation.y ?? 0));
+    part.rotateZ(THREE.MathUtils.degToRad(rotation.z ?? 0));
+  });
+  runtime.root.updateMatrixWorld(true);
+  if (runtime.door) applyHingedDoorRotation(runtime);
+  const lightConfig = prefabConfig.light;
+  if (!lightConfig || !runtime.light) {
+    if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
+    return;
+  }
+  runtime.light.visible = lightConfig.enabled !== false;
+  runtime.light.color.set(lightConfig.color);
+  runtime.light.userData.baseIntensity = lightConfig.intensity;
+  runtime.light.distance = lightConfig.distance;
+  runtime.light.decay = lightConfig.decay;
+  runtime.light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
+  if (lightConfig.enabled !== false && !runtime.wasLightEnabled && lightConfig.fluorescentStartup) {
+    runtime.startupPattern = createFluorescentStartupPattern();
+    runtime.startupElapsed = 0;
+  }
+  runtime.wasLightEnabled = lightConfig.enabled !== false;
+  if (structural) applyShadowSettings(runtime.light, lightConfig);
+  if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
+}
+
+function registerPrefabInteraction(levelId, prefabConfig, runtime) {
+  const interaction = prefabConfig.interaction;
+  if (interaction?.type !== "hingedDoor") return;
+  const doorMesh = runtime.parts.get(interaction.meshName);
+  const colliderMesh = runtime.parts.get(interaction.colliderName);
+  if (!doorMesh) return;
+
+  doorMesh.userData.kind = "hingedDoor";
+  doorMesh.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
+  doorMesh.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+  interactive.push(doorMesh);
+  runtime.root.updateMatrixWorld(true);
+  doorMesh.updateWorldMatrix(true, false);
+  colliderMesh?.updateWorldMatrix(true, false);
+  runtime.door = {
+    mesh: doorMesh,
+    collider: colliderMesh,
+    interaction,
+    degrees: interaction.initialDegrees ?? 0,
+    colliderFromDoor: colliderMesh
+      ? new THREE.Matrix4().copy(doorMesh.matrixWorld).invert().multiply(colliderMesh.matrixWorld)
+      : null,
+  };
+  applyHingedDoorRotation(runtime);
+}
+
+function applyHingedDoorRotation(runtime) {
+  const door = runtime?.door;
+  if (!door) return;
+  door.mesh.rotation.copy(door.mesh.userData.prefabInitialRotation);
+  applyAxisRotation(door.mesh, door.interaction.axis ?? "y", THREE.MathUtils.degToRad(door.degrees));
+  runtime.root.updateMatrixWorld(true);
+  if (door.collider && door.colliderFromDoor) {
+    door.mesh.updateWorldMatrix(true, false);
+    door.collider.parent?.updateWorldMatrix(true, false);
+    const colliderWorld = new THREE.Matrix4().multiplyMatrices(door.mesh.matrixWorld, door.colliderFromDoor);
+    const parentInverse = new THREE.Matrix4().copy(door.collider.parent.matrixWorld).invert();
+    const colliderLocal = new THREE.Matrix4().multiplyMatrices(parentInverse, colliderWorld);
+    colliderLocal.decompose(door.collider.position, door.collider.quaternion, door.collider.scale);
+  }
+  runtime.root.updateMatrixWorld(true);
+}
+
+function setHoveredHingedDoor(doorMesh) {
+  if (hoveredHingedDoor === doorMesh) return;
+  hoveredHingedDoor = doorMesh;
+  document.body.classList.toggle("door-interactive-hover", Boolean(hoveredHingedDoor));
+}
+
+function beginHingedDoorDrag(doorMesh) {
+  const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
+  if (!runtime?.door) return;
+  draggedHingedDoor = runtime;
+  runtime.collisionDisabled = true;
+  updateActiveLevelEnvironment();
+}
+
+function updateHingedDoorDrag(movementX) {
+  const door = draggedHingedDoor?.door;
+  if (!door) return;
+  const interaction = door.interaction;
+  door.degrees = THREE.MathUtils.clamp(
+    door.degrees + movementX * (interaction.dragDegreesPerPixel ?? 0.28),
+    interaction.minDegrees ?? -105,
+    interaction.maxDegrees ?? 5,
+  );
+  applyHingedDoorRotation(draggedHingedDoor);
+}
+
+function endHingedDoorDrag() {
+  if (!draggedHingedDoor) return;
+  draggedHingedDoor.collisionDisabled = false;
+  applyHingedDoorRotation(draggedHingedDoor);
+  draggedHingedDoor = null;
+  updateActiveLevelEnvironment();
+}
+
+function applyCollisionSettings() {
+  const collisionConfig = CONFIG.player?.collision;
+  if (collisionModel) {
+    collisionModel.position.copy(collisionConfig?.position ?? CONFIG.interior.position);
+    collisionModel.updateMatrixWorld(true);
+  }
+  collisionDebugMaterial.visible = Boolean(collisionConfig?.show);
+  playerCollisionDebug.group.visible = Boolean(collisionConfig?.show);
+  updateActiveLevelEnvironment();
 }
 
 function applyPlayerCollisionSettings() {
@@ -2114,6 +2516,71 @@ function applyPlayerCollisionSettings() {
   cameraCollisionCapsule.radius = cameraCollisionRadius;
   syncPlayerCapsule();
   resolvePlayerCollisions();
+  updatePlayerCollisionDebug();
+}
+
+function createPlayerCollisionDebug() {
+  const bodyMaterial = new THREE.MeshBasicMaterial({
+    color: 0x36f1ff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.9,
+    depthTest: false,
+  });
+  const stepMaterial = new THREE.MeshBasicMaterial({
+    color: 0x56ff72,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.8,
+    depthTest: false,
+  });
+  const leanMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff4de1,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.9,
+    depthTest: false,
+  });
+  const group = new THREE.Group();
+  group.name = "PlayerCollisionDebug";
+  group.renderOrder = 1100;
+  group.visible = Boolean(CONFIG.player?.collision?.show);
+
+  const bottom = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), bodyMaterial);
+  const top = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), bodyMaterial);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 1, true), bodyMaterial);
+  const step = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 24, 1, true), stepMaterial);
+  const lean = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), leanMaterial);
+  bottom.name = "PlayerCapsule_Bottom";
+  top.name = "PlayerCapsule_Top";
+  body.name = "PlayerCapsule_Body";
+  step.name = "PlayerStepHeight";
+  lean.name = "PlayerLeanCollision";
+  [bottom, top, body, step, lean].forEach((mesh) => {
+    mesh.renderOrder = 1100;
+    group.add(mesh);
+  });
+  return { group, bottom, top, body, step, lean };
+}
+
+function updatePlayerCollisionDebug() {
+  if (!playerCollisionDebug.group.visible) return;
+  const radius = playerCapsule.radius;
+  const segmentHeight = Math.max(0.001, playerCapsule.end.y - playerCapsule.start.y);
+  playerCollisionDebug.bottom.position.copy(playerCapsule.start);
+  playerCollisionDebug.top.position.copy(playerCapsule.end);
+  playerCollisionDebug.bottom.scale.setScalar(radius);
+  playerCollisionDebug.top.scale.setScalar(radius);
+  playerCollisionDebug.body.position.copy(playerCapsule.start).add(playerCapsule.end).multiplyScalar(0.5);
+  playerCollisionDebug.body.scale.set(radius, segmentHeight, radius);
+
+  const feetY = playerCapsule.start.y - radius;
+  const stepHeight = Math.max(0.001, CONFIG.player?.collision?.stepHeight ?? 0);
+  playerCollisionDebug.step.position.set(playerCapsule.start.x, feetY + stepHeight * 0.5, playerCapsule.start.z);
+  playerCollisionDebug.step.scale.set(radius * 1.35, stepHeight, radius * 1.35);
+
+  playerCollisionDebug.lean.position.copy(camera.position);
+  playerCollisionDebug.lean.scale.setScalar(cameraCollisionRadius);
 }
 
 function registerInteriorObject(object) {
@@ -2280,8 +2747,10 @@ function interiorMaterialMatches(object, config) {
   const matchNames = [...(config.meshNames ?? []), config.meshName].filter(Boolean);
   const objectNames = getInteriorObjectMatchNames(object);
   const normalizedObjectNames = objectNames.map(normalizeMatchName);
+  const normalizedPrefixes = (config.namePrefixes ?? []).map(normalizeMatchName);
 
-  return matchNames.some((name) => {
+  return normalizedPrefixes.some((prefix) => normalizedObjectNames.some((name) => name.startsWith(prefix))) ||
+    matchNames.some((name) => {
     const normalizedName = normalizeMatchName(name);
     return objectNames.includes(name) || normalizedObjectNames.includes(normalizedName);
   });
@@ -2341,6 +2810,16 @@ function applyPanelTransform(model) {
   model.scale.copy(CONFIG.panel.scale);
 }
 
+function applyActivePanelTransform() {
+  if (!panelModel) return;
+  applyPanelTransform(panelModel);
+  const panelConfig = operatorViewMode === "menu" ? null : CONFIG.levelEnvironments?.[activeLevelId]?.panel;
+  if (panelConfig?.position) panelModel.position.copy(panelConfig.position);
+  if (panelConfig?.rotation) panelModel.rotation.copy(panelConfig.rotation);
+  if (panelConfig?.scale) panelModel.scale.copy(panelConfig.scale);
+  panelModel.updateMatrixWorld(true);
+}
+
 function addBox(name, size, position, material, options = {}) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
   mesh.name = name;
@@ -2363,6 +2842,8 @@ function animate() {
   updateInterior(dt);
   updatePanel(dt);
   updateFeedback(dt);
+  updateLevelPrefabLights(dt);
+  updatePlayerCollisionDebug();
   updateRuntimeTextureLoading(dt);
   updateDebugOverlay();
   if (realismComposer) {
@@ -2378,6 +2859,85 @@ function animate() {
   } else {
     requestAnimationFrame(animate);
   }
+}
+
+function updateLevelPrefabLights(dt) {
+  levelPrefabInstances.forEach((runtime, key) => {
+    if (!runtime.light) return;
+    const [levelId, prefabName] = key.split(":");
+    const prefabConfig = CONFIG.levelEnvironments?.[levelId]?.prefabs?.find((entry) => entry.name === prefabName);
+    const lightConfig = prefabConfig?.light;
+    if (!lightConfig) return;
+
+    runtime.flickerTime += dt;
+    const flicker = lightConfig.flicker ?? {};
+    if (flicker.enabled && !runtime.wasFlickerEnabled) {
+      runtime.fixtureFlicker.nextIn = THREE.MathUtils.randFloat(0.12, 0.45);
+    }
+    runtime.wasFlickerEnabled = Boolean(flicker.enabled);
+    updatePrefabFlickerState(runtime.fixtureFlicker, dt, flicker);
+    let factor = flicker.enabled ? getFixtureFlickerFactor(runtime.light) : 1;
+    runtime.startupElapsed += dt;
+    if (lightConfig.fluorescentStartup && runtime.startupPattern.length) {
+      const startupDuration = getFluorescentStartupDuration(runtime.startupPattern);
+      if (runtime.startupElapsed <= startupDuration) {
+        factor *= getFluorescentStartupFactor(runtime.startupPattern, runtime.startupElapsed);
+      }
+    }
+
+    const enabledFactor = lightConfig.enabled === false ? 0 : factor;
+    runtime.light.intensity = lightConfig.intensity * enabledFactor;
+    runtime.emissiveMaterials.forEach((material) => {
+      const baseIntensity =
+        CONFIG.interior.specialMaterials?.[prefabConfig.materialKey]?.emissiveIntensity ??
+        material.userData.baseEmissiveIntensity ??
+        1;
+      material.emissiveIntensity = baseIntensity * enabledFactor;
+    });
+  });
+}
+
+function createPrefabFlickerState(config = {}) {
+  return {
+    seed: Math.random() * 1000,
+    nextIn: THREE.MathUtils.randFloat(
+      config.minIntervalSeconds ?? 35,
+      config.maxIntervalSeconds ?? 110,
+    ),
+    elapsed: 0,
+    duration: 0,
+    pulses: [],
+  };
+}
+
+function updatePrefabFlickerState(state, dt, config) {
+  if (!config?.enabled) {
+    state.elapsed = 0;
+    state.duration = 0;
+    state.pulses = [];
+    return;
+  }
+  if (state.duration > 0) {
+    state.elapsed += dt;
+    if (state.elapsed >= state.duration) {
+      state.elapsed = 0;
+      state.duration = 0;
+      state.pulses = [];
+    }
+    return;
+  }
+  state.nextIn -= dt;
+  if (state.nextIn > 0) return;
+  state.duration = THREE.MathUtils.randFloat(
+    config.minDurationSeconds ?? 0.08,
+    config.maxDurationSeconds ?? 0.42,
+  );
+  state.elapsed = 0;
+  state.pulses = createFixtureFlickerPulses(state.duration, config);
+  state.nextIn =
+    Math.random() < (config.retryChance ?? 0.35)
+      ? THREE.MathUtils.randFloat(0.8, 3.5)
+      : THREE.MathUtils.randFloat(config.minIntervalSeconds ?? 35, config.maxIntervalSeconds ?? 110);
 }
 
 function renderRealismComposer(dt) {
@@ -2506,6 +3066,7 @@ function updateHoverTarget() {
     hoveredInteractive = forcedHoveredTarget;
     document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
     setHoveredKnob(forcedHoveredTarget.userData.kind === "controlKnob" ? forcedHoveredTarget : null);
+    setHoveredHingedDoor(forcedHoveredTarget.userData.kind === "hingedDoor" ? forcedHoveredTarget : null);
     setHoveredTooltipTarget(forcedHoveredTarget);
     return;
   }
@@ -2513,9 +3074,16 @@ function updateHoverTarget() {
   raycaster.setFromCamera(pointer, camera);
   const hit = raycaster.intersectObjects(interactive, true)[0];
   hoveredInteractive = hit ? findInteractiveRoot(hit.object) : null;
+  if (
+    hoveredInteractive?.userData.maxInteractionDistance &&
+    hit?.distance > hoveredInteractive.userData.maxInteractionDistance
+  ) {
+    hoveredInteractive = null;
+  }
   document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
   if (hoveredInteractive && hit) hoveredInteractive.userData.lastHitDistance = hit.distance;
   setHoveredKnob(hoveredInteractive?.userData.kind === "controlKnob" ? hoveredInteractive : null);
+  setHoveredHingedDoor(hoveredInteractive?.userData.kind === "hingedDoor" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
 }
 
@@ -3661,6 +4229,7 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
 
 function enterMenuView() {
   operatorViewMode = "menu";
+  updateActiveLevelEnvironment();
   document.exitPointerLock?.();
   keys.clear();
   movementVelocity.set(0, 0, 0);
@@ -3717,6 +4286,12 @@ function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } =
   activeLevelId = levelId;
   activeLevelMode = mode;
   operatorViewMode = "level";
+  updateActiveLevelEnvironment();
+  levelPrefabInstances.forEach((runtime, key) => {
+    if (!key.startsWith(`${activeLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
+    runtime.startupPattern = createFluorescentStartupPattern();
+    runtime.startupElapsed = 0;
+  });
   setRoomLightsEnabled(true, { instant: false });
   resetLevelSession();
   resetShiftRecorder();
@@ -3830,8 +4405,62 @@ function applyOperatorCameraOffsets(forward, right, dt) {
 }
 
 function movePlayerWithCollisions(delta) {
+  const originalStart = playerCapsule.start.clone();
+  const originalEnd = playerCapsule.end.clone();
+  const originalVelocity = movementVelocity.clone();
   playerCapsule.translate(delta);
   resolvePlayerCollisions();
+
+  const desiredHorizontalDistance = Math.hypot(delta.x, delta.z);
+  const normalHorizontalDistance = Math.hypot(
+    playerCapsule.start.x - originalStart.x,
+    playerCapsule.start.z - originalStart.z,
+  );
+  const stepHeight = Math.max(0, CONFIG.player?.collision?.stepHeight ?? 0);
+  if (
+    stepHeight > 0 &&
+    desiredHorizontalDistance > 0.0001 &&
+    normalHorizontalDistance < desiredHorizontalDistance * 0.7
+  ) {
+    const normalStart = playerCapsule.start.clone();
+    const normalEnd = playerCapsule.end.clone();
+    const normalVelocity = movementVelocity.clone();
+
+    playerCapsule.start.copy(originalStart);
+    playerCapsule.end.copy(originalEnd);
+    movementVelocity.copy(originalVelocity);
+    playerCapsule.translate(new THREE.Vector3(0, stepHeight, 0));
+    const blockedAbove = collisionOctree.capsuleIntersect(playerCapsule);
+    if (!blockedAbove) {
+      const stepDelta = delta.clone();
+      const stepForwardDistance = Math.max(0, CONFIG.player?.collision?.stepForwardDistance ?? 0.2);
+      const horizontalLength = Math.hypot(stepDelta.x, stepDelta.z);
+      if (horizontalLength > 0.0001 && horizontalLength < stepForwardDistance) {
+        const scale = stepForwardDistance / horizontalLength;
+        stepDelta.x *= scale;
+        stepDelta.z *= scale;
+      }
+      playerCapsule.translate(stepDelta);
+      resolvePlayerCollisions();
+      playerCapsule.translate(new THREE.Vector3(0, -stepHeight, 0));
+      resolvePlayerCollisions();
+      const steppedHorizontalDistance = Math.hypot(
+        playerCapsule.start.x - originalStart.x,
+        playerCapsule.start.z - originalStart.z,
+      );
+      const acceptableFloor = playerCapsule.start.y >= originalStart.y - 0.02;
+      if (steppedHorizontalDistance <= normalHorizontalDistance + 0.001 || !acceptableFloor) {
+        playerCapsule.start.copy(normalStart);
+        playerCapsule.end.copy(normalEnd);
+        movementVelocity.copy(normalVelocity);
+      }
+    } else {
+      playerCapsule.start.copy(normalStart);
+      playerCapsule.end.copy(normalEnd);
+      movementVelocity.copy(normalVelocity);
+    }
+  }
+
   playerPosition.set(
     playerCapsule.start.x,
     playerCapsule.start.y + CONFIG.playerEyeHeight - playerCollisionRadius,
@@ -3857,7 +4486,13 @@ function resolvePlayerCollisions() {
   for (let iteration = 0; iteration < 4; iteration += 1) {
     const collision = collisionOctree.capsuleIntersect(playerCapsule);
     if (!collision) break;
-    playerCapsule.translate(collision.normal.multiplyScalar(collision.depth));
+    const floorThreshold = CONFIG.player?.collision?.floorNormalThreshold ?? 0.55;
+    const collisionNormal = collision.normal.clone();
+    const correction =
+      collisionNormal.y >= floorThreshold
+        ? new THREE.Vector3(0, collision.depth / Math.max(collisionNormal.y, 0.001), 0)
+        : collisionNormal.multiplyScalar(collision.depth);
+    playerCapsule.translate(correction);
     const velocityIntoSurface = movementVelocity.dot(collision.normal);
     if (velocityIntoSurface < 0) {
       movementVelocity.addScaledVector(collision.normal, -velocityIntoSurface);
@@ -3994,6 +4629,8 @@ function requestPointerLock() {
 function setInputLocked(locked) {
   inputLocked = Boolean(locked);
   if (inputLocked) {
+    endHingedDoorDrag();
+    setHoveredHingedDoor(null);
     document.exitPointerLock?.();
     keys.clear();
     movementVelocity.set(0, 0, 0);
@@ -4083,6 +4720,11 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("mousemove", (event) => {
   if (inputLocked) return;
 
+  if (draggedHingedDoor) {
+    updateHingedDoorDrag(event.movementX);
+    return;
+  }
+
   if (document.pointerLockElement !== canvas) {
     updatePointerFromEvent(event);
     return;
@@ -4148,12 +4790,17 @@ canvas.addEventListener("mousedown", (event) => {
     setRoomLightButtonPressed(hoveredInteractive, true);
   } else if (hoveredInteractive?.userData.kind === "bulkheadHandle") {
     beginBulkheadHandleInteraction();
+  } else if (hoveredInteractive?.userData.kind === "hingedDoor") {
+    beginHingedDoorDrag(hoveredInteractive);
   }
 });
 
 window.addEventListener("mouseup", (event) => {
   if (event.button === 2) zoomActive = false;
-  if (event.button === 0) bulkheadHandleHeld = false;
+  if (event.button === 0) {
+    bulkheadHandleHeld = false;
+    endHingedDoorDrag();
+  }
   releaseAllControlButtons();
 });
 
@@ -4162,6 +4809,7 @@ canvas.addEventListener("contextmenu", (event) => event.preventDefault());
 window.addEventListener("blur", () => {
   zoomActive = false;
   bulkheadHandleHeld = false;
+  endHingedDoorDrag();
   releaseAllControlButtons();
 });
 

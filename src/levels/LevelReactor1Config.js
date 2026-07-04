@@ -28,7 +28,7 @@ const LEVEL_REACTOR_1_DEFAULTS = {
     fogFar: 10,
   },
   decals: {
-    assetPath: "assets/Interior1_Decals1.glb",
+    assetPath: "assets/mesh/SM_Interior1_Decals1.glb",
     atlasPath: "assets/Interior1DecalAtlas1.png",
     tint: "#ffffff",
     brightness: 0.72,

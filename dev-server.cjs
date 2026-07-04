@@ -19,6 +19,10 @@ const configSaveTargets = {
     filePath: path.join(root, "src", "generated", "LevelReactor1Overrides.js"),
     exportName: "LEVEL_REACTOR_1_OVERRIDES",
   },
+  exploringAround: {
+    filePath: path.join(root, "src", "generated", "LevelExploringAroundOverrides.js"),
+    exportName: "LEVEL_EXPLORING_AROUND_OVERRIDES",
+  },
 };
 const liveReloadScript = `
 <script>

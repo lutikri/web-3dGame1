@@ -37,6 +37,7 @@ export function createAppShell({ gameApi }) {
   const settings = loadSettings();
   const debugConfig = gameApi?.config?.debug ?? {};
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
+  const returnToMenuAfterPreflight = Boolean(window.operatorGameBootOptions?.returnToMenuAfterPreflight);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
   let currentPanel = null;
   let previousPanel = "main-menu";
@@ -191,6 +192,14 @@ export function createAppShell({ gameApi }) {
     if (initialRouteHandled) return;
     initialRouteHandled = true;
 
+    if (returnToMenuAfterPreflight) {
+      gameApi.resetForMenu?.();
+      showPanel("main-menu");
+      resolveInitialRouteReady?.();
+      resolveInitialRouteReady = null;
+      return;
+    }
+
     const fastLoadLevelId = debugConfig.enabled ? debugConfig.fastLoadLevel : null;
     const fastLoadLevel = LEVELS[fastLoadLevelId];
     if (fastLoadLevelId && fastLoadLevel?.playable) {
@@ -333,8 +342,14 @@ export function createAppShell({ gameApi }) {
     } else if (action === "quick-main-menu") {
       showPanel("main-menu");
     } else if (action === "redetect-graphics") {
+      transitionActive = true;
+      gameApi.releasePointerLock?.();
+      showRouteCurtain();
+      sessionStorage.setItem("operatorGame.preflight.returnToMenu", "1");
       localStorage.removeItem(PREFLIGHT_STORAGE_KEY);
-      window.location.reload();
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => window.location.reload());
+      });
     }
   }
 

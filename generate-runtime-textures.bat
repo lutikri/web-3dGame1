@@ -10,6 +10,7 @@ Add-Type -AssemblyName System.Drawing
 
 $root = $env:TEXTURE_TOOL_ROOT.TrimEnd("\")
 $assets = Join-Path $root "assets"
+$sourceDir = Join-Path $root "asset-source\textures"
 $outDir = Join-Path $assets "runtime-textures"
 $tmpDir = Join-Path $outDir "_tmp"
 $basisu = Join-Path $root "node_modules\basisu\bin\win\x64_sse\basisu.exe"
@@ -51,6 +52,15 @@ $jobs = @(
   @{ Source = "T_DoorLamp1_Normal.png"; Prefix = "T_DoorLamp1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_DoorLamp1_OcclusionRoughnessMetallic.png"; Prefix = "T_DoorLamp1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
   @{ Source = "T_DoorLamp1_Emissive.png"; Prefix = "T_DoorLamp1_Emissive_Interactive"; Preview = 512; Mode = "srgb"; Quality = 170 },
+
+  @{ Source = "T_DoorLamp2_BaseColor.png"; Prefix = "T_DoorLamp2_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
+  @{ Source = "T_DoorLamp2_Normal.png"; Prefix = "T_DoorLamp2_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_DoorLamp2_OcclusionRoughnessMetallic.png"; Prefix = "T_DoorLamp2_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+  @{ Source = "T_DoorLamp2_Emissive.png"; Prefix = "T_DoorLamp2_Emissive_Interactive"; Preview = 512; Mode = "srgb"; Quality = 170 },
+
+  @{ Source = "T_TrimConcrete1_BaseColor.png"; Prefix = "T_TrimConcrete1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
+  @{ Source = "T_TrimConcrete1_Normal.png"; Prefix = "T_TrimConcrete1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
+  @{ Source = "T_TrimConcrete1_OcclusionRoughnessMetallic.png"; Prefix = "T_TrimConcrete1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
 
   @{ Source = "T_Lamp1_BaseColor.png"; Prefix = "T_Lamp1_BaseColor_Critical"; Preview = 512; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_Lamp1_Normal.png"; Prefix = "T_Lamp1_Normal_Critical"; Preview = 512; Mode = "normal"; Quality = 200 },
@@ -111,7 +121,7 @@ function Invoke-BasisuKtx2($inputPath, $outputPath, $mode, $quality) {
 }
 
 function Get-JobPaths($job) {
-  $source = Join-Path $assets $job.Source
+  $source = Join-Path $sourceDir $job.Source
   $previewPng = Join-Path $tmpDir "$($job.Prefix)_Preview_$($job.Preview).png"
   $previewRuntimePng = Join-Path $outDir "$($job.Prefix)_Preview_$($job.Preview).png"
   $previewKtx2 = Join-Path $outDir "$($job.Prefix)_Preview_$($job.Preview)_ETC1S.ktx2"

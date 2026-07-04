@@ -22,7 +22,7 @@ Main runtime files:
 - `src/scene/TextureStreaming.js`
 - `src/ui/LoadingOverlay.js`
 - `styles/operator-game.css`
-- `assets/Panel1.glb`
+- `assets/mesh/SM_Panel1.glb`
 - `assets/runtime-textures/T_Panel1_*_Preview_1024_ETC1S.ktx2`
 - `assets/runtime-textures/T_Panel1_*_Full_ETC1S.ktx2`
 

@@ -32,7 +32,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 
 ## Level Briefings
 
-- Level briefing sheets are level-driven. Add or change the sheet path in `src/app/LevelCatalog.js` with `briefingImage`, for example `assets/shift-briefs/Intro1-us.png`.
+- Level briefing sheets are level-driven. Add or change the sheet path in `src/app/LevelCatalog.js` with `briefingImage`, for example `assets/ui/briefings/Intro1-us.png`.
 - Briefing sheets are shown by `AppShell` after level start, before player control is released.
 - While a briefing is visible, gameplay input is locked through `gameApi.setInputLocked(true)`: no pointer lock, WASD, pause, panel clicks, zoom, or held controls should pass through.
 - Pressing `Enter` dismisses the sheet. The sheet animates downward and then hides; after dismissal, input unlocks.
@@ -42,7 +42,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 ## Scene Rules
 
 - Keep general knobs in `src/OperatorGameConfig.js` rather than hardcoding tunable values in `OperatorGame.js`.
-- `Panel1.glb` uses baked texture maps:
+- `assets/mesh/SM_Panel1.glb` uses baked texture maps:
   - `T_Panel1_BaseColor.png`
   - `T_Panel1_Normal.png`
   - `T_Panel1_OcclusionRoughnessMetallic.png`

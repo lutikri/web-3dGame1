@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js";
 import { DEBUG_CONFIG } from "./config/DebugConfig.js";
 import { LEVEL_REACTOR_1_CONFIG } from "./levels/LevelReactor1Config.js";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./levels/LevelExploringAroundConfig.js";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -11,7 +12,7 @@ function applyLevelMaterialTuning(materials, tuning) {
 }
 
 export const CONFIG = {
-  assetPath: "assets/Panel1.glb",
+  assetPath: "assets/mesh/SM_Panel1.glb",
   playerEyeHeight: 1.45,
   player: {
     spawnPosition: new THREE.Vector3(0, 1.45, 2),
@@ -20,11 +21,17 @@ export const CONFIG = {
     collisionRadius: 0.15,
     collisionHeight: 1.7,
     collision: {
-      assetPath: "assets/Interior1_Collision.glb",
+      assetPath: "assets/mesh/SM_Interior1_Collision.glb",
       cameraRadius: 0.12,
+      stepHeight: 0.22,
+      stepForwardDistance: 0.2,
+      floorNormalThreshold: 0.55,
       show: false,
       position: new THREE.Vector3(0, 0, 0),
     },
+  },
+  levelEnvironments: {
+    "exploring-around": LEVEL_EXPLORING_AROUND_CONFIG,
   },
   loading: {
     skip: false,
@@ -89,7 +96,7 @@ export const CONFIG = {
     },
   },
   interior: {
-    assetPath: "assets/Interior1_Panel1.glb",
+    assetPath: "assets/mesh/SM_Interior1_Panel1.glb",
     position: new THREE.Vector3(0, 0, 0),
     rotation: new THREE.Euler(0, 0, 0),
     scale: new THREE.Vector3(1, 1, 1),
@@ -176,6 +183,7 @@ export const CONFIG = {
       },
       bricks1: {
         meshNames: ["SM_Interior1"],
+        namePrefixes: ["SM_Interior1"],
         maps: {
           preview: {
             baseColor: "assets/runtime-textures/T_Bricks1Old_BaseColor_Background_Preview_1024_ETC1S.ktx2",
@@ -234,6 +242,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       details1: {
+        namePrefixes: ["SM_Details1", "SM_Details_", "SM_Fan"],
         meshNames: [
           "SM_Fan",
           "SM_Details1_1",
@@ -269,6 +278,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       pipes1: {
+        namePrefixes: ["SM_Pipes1"],
         meshNames: [
           "SM_Pipes1_1",
           "SM_Pipes1_2",
@@ -304,6 +314,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       beams1: {
+        namePrefixes: ["SM_Beams", "M_Beams"],
         meshNames: ["SM_Beams_1", "SM_Beams_2", "SM_Beams_PipeAttachemts1"],
         maps: {
           preview: {
@@ -324,6 +335,51 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#000000",
         emissiveIntensity: 0,
+      },
+      trimConcrete1: {
+        namePrefixes: ["SM_TrimConcrete"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_TrimConcrete1_BaseColor_Background_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_TrimConcrete1_Normal_Background_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_TrimConcrete1_OcclusionRoughnessMetallic_Background_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_TrimConcrete1_BaseColor_Background_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_TrimConcrete1_Normal_Background_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_TrimConcrete1_OcclusionRoughnessMetallic_Background_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      doorLamp2: {
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_DoorLamp2_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_DoorLamp2_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_DoorLamp2_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_DoorLamp2_Emissive_Interactive_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_DoorLamp2_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_DoorLamp2_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_DoorLamp2_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_DoorLamp2_Emissive_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#ff1b0a",
+        emissiveIntensity: 4,
       },
     }, LEVEL_REACTOR_1_CONFIG.materials),
     lightToggleButton: {

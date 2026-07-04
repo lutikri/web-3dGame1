@@ -3,6 +3,8 @@ import { applyLocalization } from "./app/Localization.js";
 import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js";
 
 const preflight = createPreflight();
+const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
+sessionStorage.removeItem("operatorGame.preflight.returnToMenu");
 const bootChoice = await preflight.prepare();
 applyLocalization(bootChoice.language);
 const bootQuality = getGraphicsQualityProfile(bootChoice.profile ?? "low");
@@ -12,6 +14,7 @@ window.operatorGameBootOptions = {
   displayGamma: bootChoice.displayGamma ?? 0.93,
   deferFullTextures: bootChoice.firstRun,
   disableFullTextures: !bootQuality.fullTextures && !bootChoice.firstRun,
+  returnToMenuAfterPreflight,
 };
 
 await import("./OperatorGame.js");

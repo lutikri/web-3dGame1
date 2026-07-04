@@ -1,6 +1,6 @@
 export const DEBUG_CONFIG = {
-  enabled: false,
-  fastLoadLevel: "intro-shift",
+  enabled: true,
+  fastLoadLevel: "exploring-around",
   skipBriefing: false,
   performanceBenchmark: {
     autoRun: false,

@@ -129,6 +129,11 @@ body.interactive-hover .crosshair {
   opacity: 1;
 }
 
+body.door-interactive-hover .crosshair {
+  border-color: #42ff79;
+  box-shadow: 0 0 9px rgba(66, 255, 121, 0.75);
+}
+
 #lockButton {
   display: none;
 }
@@ -847,6 +852,10 @@ body.app-ui-open #lockButton {
   to {
     transform: rotate(360deg);
   }
+}
+
+html.preflight-boot #app {
+  visibility: hidden;
 }
 
 .preflight-overlay {

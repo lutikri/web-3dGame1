@@ -6,6 +6,13 @@
     <title>OperatorGame</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="styles/operator-game.css" />
+    <script>
+      try {
+        if (!localStorage.getItem("operatorGame.preflight.v1")) {
+          document.documentElement.classList.add("preflight-boot");
+        }
+      } catch {}
+    </script>
     <script type="importmap">
       {
         "imports": {
@@ -105,6 +112,10 @@
             <button class="level-node is-active" data-level-id="intro-shift" type="button">
               <strong data-i18n="levels.intro.title">INTRO SHIFT</strong>
               <span data-i18n="levels.intro.description">First supervised fusion operation</span>
+            </button>
+            <button class="level-node is-active" data-level-id="exploring-around" type="button">
+              <strong data-i18n="levels.exploring.title">EXPLORING AROUND</strong>
+              <span data-i18n="levels.exploring.description">The tutorial shift in the service corridor</span>
             </button>
             <div class="route-split" aria-hidden="true"></div>
             <button class="level-node is-locked" data-level-id="unexpected-stuff" type="button" disabled>
