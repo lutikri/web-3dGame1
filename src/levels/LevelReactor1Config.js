@@ -53,16 +53,6 @@ const LEVEL_REACTOR_1_DEFAULTS = {
       emissiveIntensity: 2.35,
       roomLightControlled: true,
     },
-    lamp1_2: {
-      color: "#ffffff",
-      roughness: 1,
-      metalness: 1,
-      normalScale: 1,
-      aoMapIntensity: 1,
-      emissive: "#ffffff",
-      emissiveIntensity: 2.35,
-      roomLightControlled: true,
-    },
     doorLamp1: {
       color: "#ffffff",
       roughness: 1,

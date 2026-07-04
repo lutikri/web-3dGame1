@@ -198,6 +198,7 @@ export function createPostProcessingDebugPanel({ config, defaults = config, rebu
 
   return {
     ...actions,
+    getProjectConfig: () => config,
     gui,
     hide: () => gui.hide(),
     show: () => gui.show(),

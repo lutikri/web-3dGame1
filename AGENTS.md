@@ -50,6 +50,16 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - Lamp lens meshes named like `LightCase1_Light_*` intentionally use runtime emissive materials so the test-button animation can switch them on/off.
 - If AO maps are applied to GLB meshes, make sure `uv2` exists; copying `uv` to `uv2` is acceptable for this asset.
 
+## Prefabs And Level Instances
+
+- Reusable objects such as lamps, doors, pumps, and control cabinets are prefabs. Their behavior must have one shared implementation, not separate approximations per level.
+- Level configs describe prefab instances: asset, transform, startup delay, state, and intentional per-instance overrides. They must not duplicate animation, flicker, interaction, collision, or physics algorithms.
+- When a new level needs behavior already present elsewhere, extract or reuse the existing behavior before adding level-specific code. A similarly looking second implementation is not acceptable.
+- Fluorescent startup, normal fixture flicker, and faulty-starter behavior are shared lighting behaviors. Prefab options select those behaviors; they do not reimplement them.
+- Prefer adding reusable prefab capabilities first, then expose instance parameters in the level config and `LEVEL PREFABS` debug panel.
+- Saved level overrides must merge prefab arrays by stable prefab `name`, preserving newly added default fields and allowing old saved configs to migrate safely.
+- The current tutorial room predates the prefab-instance pipeline. Migrate it to the shared prefab system when that scene is next reworked; do not use its legacy structure as justification for duplicating behavior in new levels.
+
 ## Fusion Core Scene Direction
 
 This scene is moving toward a first-person Fusion Core operator game, not a refinery sim or literal nuclear reactor sim. Keep the player-facing language industrial, believable, and instrument-like rather than arcade.

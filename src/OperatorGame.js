@@ -39,8 +39,17 @@ import {
   restoreSavedPostProcessingConfig,
 } from "./ui/PostProcessingDebugPanel.js";
 import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
+let physicsSystem = null;
+try {
+  physicsSystem = await createPhysicsSystem();
+  console.log("[OperatorGame] Rapier physics initialized");
+} catch (error) {
+  console.error("[OperatorGame] Rapier initialization failed; using Octree fallback", error);
+}
 configureQualityProfile(bootOptions.qualityProfile ?? "high");
 CONFIG.postProcessing.colorAdjustments.gamma = Number(bootOptions.displayGamma ?? 0.93);
 
@@ -97,7 +106,6 @@ scene.background = new THREE.Color(CONFIG.world.backgroundColor);
 scene.fog = new THREE.Fog(CONFIG.world.fogColor, CONFIG.world.fogNear, CONFIG.world.fogFar);
 
 const playerSpawnPosition = CONFIG.player?.spawnPosition ?? new THREE.Vector3(0, CONFIG.playerEyeHeight, 4.8);
-const playerFloorHeight = playerSpawnPosition.y ?? CONFIG.playerEyeHeight;
 const playerPosition = playerSpawnPosition.clone();
 let playerCollisionRadius = CONFIG.player?.collisionRadius ?? 0.28;
 let playerCollisionHeight = Math.max(CONFIG.player?.collisionHeight ?? 1.7, playerCollisionRadius * 2);
@@ -149,9 +157,17 @@ const collisionDebugMaterial = new THREE.MeshBasicMaterial({
 collisionDebugMaterial.visible = Boolean(CONFIG.player?.collision?.show);
 const playerCollisionDebug = createPlayerCollisionDebug();
 scene.add(playerCollisionDebug.group);
+physicsSystem?.createCharacter({
+  eyePosition: playerPosition,
+  eyeHeight: CONFIG.playerEyeHeight,
+  height: playerCollisionHeight,
+  radius: playerCollisionRadius,
+  config: CONFIG.player?.collision ?? {},
+});
 const pointer = new THREE.Vector2(0, 0);
 const worldUp = new THREE.Vector3(0, 1, 0);
 const keys = new Set();
+let jumpQueued = false;
 const interactive = [];
 const lamps = [];
 const needles = [];
@@ -1462,12 +1478,33 @@ function setupSceneDebugPanels() {
     levelEnvironmentConfigs: CONFIG.levelEnvironments,
     applyLevelAmbient: applyLevelAmbientConfig,
     applyLevelPrefab: applyLevelPrefabConfig,
+    saveAllProjectConfigs,
     applyMaterialOverlay: (key) => {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
   });
   sceneDebugPanels.setActiveLevel(operatorViewMode === "menu" ? null : activeLevelId);
   if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
+}
+
+async function saveAllProjectConfigs() {
+  const configs = {
+    reactor1Scene: sceneDebugPanels?.getProjectConfig?.(),
+    postProcessing: postProcessingDebugPanel?.getProjectConfig?.(),
+  };
+  for (const environmentConfig of Object.values(CONFIG.levelEnvironments ?? {})) {
+    if (!environmentConfig.saveKind) continue;
+    configs[environmentConfig.saveKind] = environmentConfig;
+  }
+  const response = await fetch("/__save-config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: "allConfigs", config: configs }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save project configs");
+  window.setTimeout(() => window.location.reload(), 180);
+  return true;
 }
 
 function setDebugPanelsVisible(visible) {
@@ -2151,6 +2188,7 @@ function loadCollisionModel() {
         collisionMeshes.push(object);
       });
       scene.add(collisionModel);
+      physicsSystem?.addStaticScene("default", collisionModel);
       updateActiveLevelEnvironment();
       console.log(`[OperatorGame] Loaded collision mesh: ${collisionMeshes.length} meshes`);
     },
@@ -2209,6 +2247,7 @@ function loadLevelEnvironments() {
         model.visible = activeLevelId === levelId && Boolean(CONFIG.player?.collision?.show);
         levelCollisionModels.set(levelId, model);
         scene.add(model);
+        physicsSystem?.addStaticScene(levelId, model);
         updateActiveLevelEnvironment();
         console.log(`[OperatorGame] Loaded level collision: ${levelId}`);
       },
@@ -2269,8 +2308,9 @@ function loadLevelEnvironments() {
             flickerSeed: Math.random() * 1000,
             startupPattern: prefabConfig.light?.fluorescentStartup ? createFluorescentStartupPattern() : [],
             startupElapsed: 0,
+            faultyStarterElapsed: 0,
             wasLightEnabled: prefabConfig.light?.enabled !== false,
-            fixtureFlicker: createPrefabFlickerState(prefabConfig.light?.flicker),
+            fixtureFlicker: createFixtureFlickerState(prefabConfig.light?.flicker),
             wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
           };
           if (prefabConfig.light) {
@@ -2341,6 +2381,7 @@ function updateActiveLevelEnvironment() {
   sceneDebugPanels?.setActiveLevel?.(displayedLevelId);
 
   const activeCollision = (displayedLevelId && levelCollisionModels.get(displayedLevelId)) || collisionModel;
+  physicsSystem?.setActiveScene(displayedLevelId ?? "default");
   if (!activeCollision) return;
   activeCollision.updateMatrixWorld(true);
   collisionOctree = new Octree();
@@ -2348,7 +2389,7 @@ function updateActiveLevelEnvironment() {
   if (displayedLevelId) {
     levelPrefabInstances.forEach((runtime, key) => {
       if (!key.startsWith(`${displayedLevelId}:`)) return;
-      if (runtime.collisionDisabled) return;
+      if (runtime.collisionDisabled || runtime.physicsDoorKey) return;
       runtime.collisionMeshes.forEach((mesh) => collisionOctree.fromGraphNode(mesh));
     });
   }
@@ -2439,11 +2480,28 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
     collider: colliderMesh,
     interaction,
     degrees: interaction.initialDegrees ?? 0,
+    releaseAngularVelocity: 0,
     colliderFromDoor: colliderMesh
       ? new THREE.Matrix4().copy(doorMesh.matrixWorld).invert().multiply(colliderMesh.matrixWorld)
       : null,
   };
   applyHingedDoorRotation(runtime);
+  if (physicsSystem && colliderMesh) {
+    runtime.physicsDoorKey = `${levelId}:${prefabConfig.name}`;
+    physicsSystem.createHingedDoor({
+      key: runtime.physicsDoorKey,
+      sceneKey: levelId,
+      doorMesh,
+      colliderMesh,
+      initialDegrees: interaction.initialDegrees ?? 0,
+      minDegrees: interaction.minDegrees ?? -105,
+      maxDegrees: interaction.maxDegrees ?? 5,
+      density: interaction.density,
+      angularDamping: interaction.angularDamping,
+      motorStiffness: interaction.motorStiffness,
+      motorDamping: interaction.motorDamping,
+    });
+  }
 }
 
 function applyHingedDoorRotation(runtime) {
@@ -2473,6 +2531,13 @@ function beginHingedDoorDrag(doorMesh) {
   const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
   if (!runtime?.door) return;
   draggedHingedDoor = runtime;
+  runtime.door.releaseAngularVelocity = 0;
+  if (runtime.physicsDoorKey) {
+    runtime.door.degrees =
+      physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? runtime.door.degrees;
+    physicsSystem?.setDoorDragTarget(runtime.physicsDoorKey, runtime.door.degrees, true);
+    return;
+  }
   runtime.collisionDisabled = true;
   updateActiveLevelEnvironment();
 }
@@ -2486,11 +2551,34 @@ function updateHingedDoorDrag(movementX) {
     interaction.minDegrees ?? -105,
     interaction.maxDegrees ?? 5,
   );
+  const deltaRadians = THREE.MathUtils.degToRad(
+    movementX * (interaction.dragDegreesPerPixel ?? 0.28),
+  );
+  door.releaseAngularVelocity = THREE.MathUtils.lerp(
+    door.releaseAngularVelocity ?? 0,
+    THREE.MathUtils.clamp(deltaRadians * 60, -3.5, 3.5),
+    0.35,
+  );
+  if (draggedHingedDoor.physicsDoorKey) {
+    physicsSystem?.setDoorDragTarget(draggedHingedDoor.physicsDoorKey, door.degrees, true);
+    return;
+  }
   applyHingedDoorRotation(draggedHingedDoor);
 }
 
 function endHingedDoorDrag() {
   if (!draggedHingedDoor) return;
+  if (draggedHingedDoor.physicsDoorKey) {
+    physicsSystem?.setDoorDragTarget(
+      draggedHingedDoor.physicsDoorKey,
+      draggedHingedDoor.door.degrees,
+      false,
+      draggedHingedDoor.door.releaseAngularVelocity ?? 0,
+    );
+    draggedHingedDoor.door.releaseAngularVelocity = 0;
+    draggedHingedDoor = null;
+    return;
+  }
   draggedHingedDoor.collisionDisabled = false;
   applyHingedDoorRotation(draggedHingedDoor);
   draggedHingedDoor = null;
@@ -2516,6 +2604,13 @@ function applyPlayerCollisionSettings() {
   cameraCollisionCapsule.radius = cameraCollisionRadius;
   syncPlayerCapsule();
   resolvePlayerCollisions();
+  physicsSystem?.createCharacter({
+    eyePosition: playerPosition,
+    eyeHeight: CONFIG.playerEyeHeight,
+    height: playerCollisionHeight,
+    radius: playerCollisionRadius,
+    config: CONFIG.player?.collision ?? {},
+  });
   updatePlayerCollisionDebug();
 }
 
@@ -2843,6 +2938,7 @@ function animate() {
   updatePanel(dt);
   updateFeedback(dt);
   updateLevelPrefabLights(dt);
+  physicsSystem?.step(dt);
   updatePlayerCollisionDebug();
   updateRuntimeTextureLoading(dt);
   updateDebugOverlay();
@@ -2869,19 +2965,39 @@ function updateLevelPrefabLights(dt) {
     const lightConfig = prefabConfig?.light;
     if (!lightConfig) return;
 
-    runtime.flickerTime += dt;
-    const flicker = lightConfig.flicker ?? {};
-    if (flicker.enabled && !runtime.wasFlickerEnabled) {
-      runtime.fixtureFlicker.nextIn = THREE.MathUtils.randFloat(0.12, 0.45);
-    }
-    runtime.wasFlickerEnabled = Boolean(flicker.enabled);
-    updatePrefabFlickerState(runtime.fixtureFlicker, dt, flicker);
-    let factor = flicker.enabled ? getFixtureFlickerFactor(runtime.light) : 1;
     runtime.startupElapsed += dt;
-    if (lightConfig.fluorescentStartup && runtime.startupPattern.length) {
+    const startupDelay = Math.max(0, lightConfig.startupDelaySeconds ?? 0);
+    const poweredElapsed = runtime.startupElapsed - startupDelay;
+    let factor = poweredElapsed < 0 ? 0 : 1;
+
+    if (poweredElapsed >= 0 && lightConfig.faultyStarterLoop) {
+      runtime.faultyStarterElapsed += dt;
+      factor = getFluorescentStarterFaultFactor({
+        elapsed: runtime.faultyStarterElapsed,
+        visualTime: testTime,
+        config: CONFIG.feedback.roomLightSwitch,
+        seed: runtime.flickerSeed,
+      });
+    } else if (poweredElapsed >= 0) {
+      runtime.flickerTime += dt;
+      const flicker = lightConfig.flicker ?? {};
+      if (flicker.enabled && !runtime.wasFlickerEnabled) {
+        runtime.fixtureFlicker.nextIn = THREE.MathUtils.randFloat(0.12, 0.45);
+      }
+      runtime.wasFlickerEnabled = Boolean(flicker.enabled);
+      updateFixtureFlickerState(runtime.fixtureFlicker, dt, flicker);
+      factor = flicker.enabled ? getFixtureFlickerFactor(runtime.light) : 1;
+    }
+
+    if (
+      poweredElapsed >= 0 &&
+      !lightConfig.faultyStarterLoop &&
+      lightConfig.fluorescentStartup &&
+      runtime.startupPattern.length
+    ) {
       const startupDuration = getFluorescentStartupDuration(runtime.startupPattern);
-      if (runtime.startupElapsed <= startupDuration) {
-        factor *= getFluorescentStartupFactor(runtime.startupPattern, runtime.startupElapsed);
+      if (poweredElapsed <= startupDuration) {
+        factor *= getFluorescentStartupFactor(runtime.startupPattern, poweredElapsed);
       }
     }
 
@@ -2895,49 +3011,6 @@ function updateLevelPrefabLights(dt) {
       material.emissiveIntensity = baseIntensity * enabledFactor;
     });
   });
-}
-
-function createPrefabFlickerState(config = {}) {
-  return {
-    seed: Math.random() * 1000,
-    nextIn: THREE.MathUtils.randFloat(
-      config.minIntervalSeconds ?? 35,
-      config.maxIntervalSeconds ?? 110,
-    ),
-    elapsed: 0,
-    duration: 0,
-    pulses: [],
-  };
-}
-
-function updatePrefabFlickerState(state, dt, config) {
-  if (!config?.enabled) {
-    state.elapsed = 0;
-    state.duration = 0;
-    state.pulses = [];
-    return;
-  }
-  if (state.duration > 0) {
-    state.elapsed += dt;
-    if (state.elapsed >= state.duration) {
-      state.elapsed = 0;
-      state.duration = 0;
-      state.pulses = [];
-    }
-    return;
-  }
-  state.nextIn -= dt;
-  if (state.nextIn > 0) return;
-  state.duration = THREE.MathUtils.randFloat(
-    config.minDurationSeconds ?? 0.08,
-    config.maxDurationSeconds ?? 0.42,
-  );
-  state.elapsed = 0;
-  state.pulses = createFixtureFlickerPulses(state.duration, config);
-  state.nextIn =
-    Math.random() < (config.retryChance ?? 0.35)
-      ? THREE.MathUtils.randFloat(0.8, 3.5)
-      : THREE.MathUtils.randFloat(config.minIntervalSeconds ?? 35, config.maxIntervalSeconds ?? 110);
 }
 
 function renderRealismComposer(dt) {
@@ -3519,8 +3592,11 @@ function getTerminalPresentationSnapshot(snapshot) {
   };
 }
 
-function createFixtureFlickerState() {
-  const flickerConfig = CONFIG.feedback.longTermLightFlicker;
+function createFixtureFlickerState(overrides = null) {
+  const flickerConfig = {
+    ...(CONFIG.feedback.longTermLightFlicker ?? {}),
+    ...(overrides ?? {}),
+  };
   return {
     seed: Math.random() * 1000,
     nextIn: getRandomRangeValue(flickerConfig?.minIntervalSeconds ?? 45, flickerConfig?.maxIntervalSeconds ?? 140),
@@ -3530,8 +3606,11 @@ function createFixtureFlickerState() {
   };
 }
 
-function updateFixtureFlickerState(state, dt) {
-  const flickerConfig = CONFIG.feedback.longTermLightFlicker;
+function updateFixtureFlickerState(state, dt, overrides = null) {
+  const flickerConfig = {
+    ...(CONFIG.feedback.longTermLightFlicker ?? {}),
+    ...(overrides ?? {}),
+  };
   if (!flickerConfig?.enabled) return;
 
   if (state.duration > 0) {
@@ -4102,14 +4181,11 @@ function getRoomLightVisualFactor() {
 }
 
 function getRoomLightStarterFaultFactor() {
-  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
-  const minimum = switchConfig.faultMinimumFactor ?? 0.025;
-  const maximum = switchConfig.faultMaximumFactor ?? 0.3;
-  const time = roomLightStarterFaultElapsed;
-  const irregularPhase = time * 5.4 + Math.sin(time * 1.37) * 2.1 + Math.sin(time * 0.43) * 1.4;
-  const strike = THREE.MathUtils.smoothstep(Math.sin(irregularPhase), 0.48, 0.94);
-  const starterChatter = THREE.MathUtils.lerp(0.55, 1, flickerWave(21, 8.2));
-  return THREE.MathUtils.lerp(minimum, maximum, strike * starterChatter);
+  return getFluorescentStarterFaultFactor({
+    elapsed: roomLightStarterFaultElapsed,
+    visualTime: testTime,
+    config: CONFIG.feedback.roomLightSwitch,
+  });
 }
 
 function updateRoomLightMaterials() {
@@ -4192,19 +4268,25 @@ function resetOperatorView() {
   operatorViewMode = "level";
   document.exitPointerLock?.();
   keys.clear();
+  jumpQueued = false;
   movementVelocity.set(0, 0, 0);
   headBobTime = 0;
   leanAmount = 0;
   zoomActive = false;
-  playerPosition.copy(playerSpawnPosition);
+  const levelPlayerConfig = CONFIG.levelEnvironments?.[activeLevelId]?.player;
+  const spawnPosition = levelPlayerConfig?.spawnPosition ?? playerSpawnPosition;
+  const spawnRotation = levelPlayerConfig?.rotationDegrees;
+  playerPosition.copy(spawnPosition);
+  physicsSystem?.teleportCharacter(playerPosition);
   syncPlayerCapsule();
-  camera.position.copy(playerSpawnPosition);
-  yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
-  pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
+  camera.position.copy(spawnPosition);
+  yaw = THREE.MathUtils.degToRad(spawnRotation?.y ?? CONFIG.player?.spawnYawDegrees ?? 0);
+  pitch = THREE.MathUtils.degToRad(spawnRotation?.x ?? CONFIG.player?.spawnPitchDegrees ?? 0);
   pointer.set(0, 0);
   camera.rotation.order = "YXZ";
   camera.rotation.y = yaw;
   camera.rotation.x = pitch;
+  camera.rotation.z = THREE.MathUtils.degToRad(spawnRotation?.z ?? 0);
 }
 
 function setRoomLightsEnabled(enabled, { instant = false } = {}) {
@@ -4291,6 +4373,7 @@ function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } =
     if (!key.startsWith(`${activeLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
     runtime.startupPattern = createFluorescentStartupPattern();
     runtime.startupElapsed = 0;
+    runtime.faultyStarterElapsed = 0;
   });
   setRoomLightsEnabled(true, { instant: false });
   resetLevelSession();
@@ -4366,8 +4449,9 @@ function updateMovement(dt) {
   movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, targetVelocity.y, damping, dt);
   movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, targetVelocity.z, damping, dt);
   if (!noclipEnabled) {
-    movePlayerWithCollisions(movementVelocity.clone().multiplyScalar(dt));
-    playerPosition.y = playerFloorHeight;
+    if (jumpQueued) physicsSystem?.jump(CONFIG.player?.collision?.jumpSpeed ?? 3.2);
+    jumpQueued = false;
+    movePlayerWithCollisions(movementVelocity.clone().multiplyScalar(dt), dt);
     syncPlayerCapsule();
   } else {
     playerPosition.addScaledVector(movementVelocity, dt);
@@ -4404,7 +4488,18 @@ function applyOperatorCameraOffsets(forward, right, dt) {
   applyCollisionLimitedCameraOffset(leanOffset);
 }
 
-function movePlayerWithCollisions(delta) {
+function movePlayerWithCollisions(delta, dt = 1 / 60) {
+  const physicsSceneKey =
+    operatorViewMode !== "menu" && CONFIG.levelEnvironments?.[activeLevelId] ? activeLevelId : "default";
+  if (physicsSystem?.hasCharacter() && physicsSystem.hasScene(physicsSceneKey)) {
+    const nextPosition = physicsSystem.moveCharacter(delta, dt);
+    if (nextPosition) {
+      playerPosition.copy(nextPosition);
+      syncPlayerCapsule();
+      return;
+    }
+  }
+
   const originalStart = playerCapsule.start.clone();
   const originalEnd = playerCapsule.end.clone();
   const originalVelocity = movementVelocity.clone();
@@ -4432,15 +4527,7 @@ function movePlayerWithCollisions(delta) {
     playerCapsule.translate(new THREE.Vector3(0, stepHeight, 0));
     const blockedAbove = collisionOctree.capsuleIntersect(playerCapsule);
     if (!blockedAbove) {
-      const stepDelta = delta.clone();
-      const stepForwardDistance = Math.max(0, CONFIG.player?.collision?.stepForwardDistance ?? 0.2);
-      const horizontalLength = Math.hypot(stepDelta.x, stepDelta.z);
-      if (horizontalLength > 0.0001 && horizontalLength < stepForwardDistance) {
-        const scale = stepForwardDistance / horizontalLength;
-        stepDelta.x *= scale;
-        stepDelta.z *= scale;
-      }
-      playerCapsule.translate(stepDelta);
+      playerCapsule.translate(delta);
       resolvePlayerCollisions();
       playerCapsule.translate(new THREE.Vector3(0, -stepHeight, 0));
       resolvePlayerCollisions();
@@ -4633,6 +4720,7 @@ function setInputLocked(locked) {
     setHoveredHingedDoor(null);
     document.exitPointerLock?.();
     keys.clear();
+    jumpQueued = false;
     movementVelocity.set(0, 0, 0);
     zoomActive = false;
     releaseAllControlButtons();
@@ -4711,6 +4799,7 @@ document.addEventListener("keydown", (event) => {
     noclipEnabled = !noclipEnabled;
     console.log(`[OperatorGame] Noclip ${noclipEnabled ? "enabled" : "disabled"}`);
   }
+  if (event.code === "Space" && !event.repeat && !noclipEnabled) jumpQueued = true;
   keys.add(event.code);
 });
 document.addEventListener("keyup", (event) => {
@@ -5156,6 +5245,7 @@ window.operatorGameDebug = {
   scene,
   camera,
   renderer,
+  physics: physicsSystem,
   config: CONFIG,
   startGame: startShift,
   resetGame: resetForMenu,

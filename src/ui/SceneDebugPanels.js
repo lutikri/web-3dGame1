@@ -110,6 +110,7 @@ export function createSceneDebugPanels({
   levelEnvironmentConfigs = {},
   applyLevelAmbient,
   applyLevelPrefab,
+  saveAllProjectConfigs,
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
@@ -131,6 +132,14 @@ export function createSceneDebugPanels({
   }
 
   if (gameConfig) {
+    const projectFolder = gameGui.addFolder("Project configs");
+    const projectActions = {
+      async saveAll() {
+        return saveAllProjectConfigs?.();
+      },
+    };
+    projectFolder.add(projectActions, "saveAll").name("UPDATE ALL CONFIGS");
+
     const playerCollisionFolder = gameGui.addFolder("Player collision");
     playerCollisionFolder
       .add(gameConfig, "collisionRadius", 0.1, 0.6, 0.01)
@@ -143,10 +152,21 @@ export function createSceneDebugPanels({
     if (collisionConfig) {
       playerCollisionFolder
         .add(collisionConfig, "stepHeight", 0, 0.6, 0.01)
-        .name("Step height");
+        .name("Step height")
+        .onChange(applyPlayerCollisionSettings);
       playerCollisionFolder
-        .add(collisionConfig, "stepForwardDistance", 0, 0.5, 0.01)
-        .name("Step forward probe");
+        .add(collisionConfig, "stepMinWidth", 0.01, 0.6, 0.01)
+        .name("Step min width")
+        .onChange(applyPlayerCollisionSettings);
+      playerCollisionFolder
+        .add(collisionConfig, "snapToGround", 0, 1, 0.01)
+        .name("Snap to ground")
+        .onChange(applyPlayerCollisionSettings);
+      playerCollisionFolder
+        .add(collisionConfig, "controllerOffset", 0.001, 0.1, 0.001)
+        .name("Skin offset")
+        .onChange(applyPlayerCollisionSettings);
+      playerCollisionFolder.add(collisionConfig, "jumpSpeed", 0, 8, 0.1).name("Jump speed");
       playerCollisionFolder
         .add(collisionConfig, "floorNormalThreshold", 0.1, 0.95, 0.01)
         .name("Floor normal threshold");
@@ -351,6 +371,9 @@ export function createSceneDebugPanels({
       folder
         .add(lightConfig, "decay", 0, 4, 0.01)
         .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      folder.add(lightConfig, "fluorescentStartup").name("Starter on power-up");
+      folder.add(lightConfig, "startupDelaySeconds", 0, 30, 0.1).name("Startup delay");
+      folder.add(lightConfig, "faultyStarterLoop").name("Faulty starter loop");
       folder
         .add(lightConfig, "castShadow")
         .name("Cast shadows")
@@ -369,14 +392,13 @@ export function createSceneDebugPanels({
 
       const flicker = lightConfig.flicker;
       if (flicker) {
+        flicker.minIntervalSeconds ??= 35;
+        flicker.maxIntervalSeconds ??= 110;
+        flicker.retryChance ??= 0.35;
         const flickerFolder = folder.addFolder("Random flicker");
         flickerFolder.add(flicker, "enabled");
         flickerFolder.add(flicker, "minIntervalSeconds", 0.1, 180, 0.1).name("Min interval");
         flickerFolder.add(flicker, "maxIntervalSeconds", 0.1, 300, 0.1).name("Max interval");
-        flickerFolder.add(flicker, "minDurationSeconds", 0.01, 2, 0.01).name("Min duration");
-        flickerFolder.add(flicker, "maxDurationSeconds", 0.01, 3, 0.01).name("Max duration");
-        flickerFolder.add(flicker, "pulseCount", 2, 15, 1).name("Pulse count");
-        flickerFolder.add(flicker, "minFactor", 0, 1, 0.01);
         flickerFolder.add(flicker, "retryChance", 0, 1, 0.01);
         flickerFolder.close();
       }
@@ -492,6 +514,7 @@ export function createSceneDebugPanels({
 
   return {
     ...actions,
+    getProjectConfig: () => createSceneSnapshot(materialConfigs, lightingConfig, decalConfig),
     guis: [materialsGui, lightsGui, prefabsGui, gameGui],
     isVisible: () => visible,
     setVisible,

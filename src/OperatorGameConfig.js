@@ -24,7 +24,13 @@ export const CONFIG = {
       assetPath: "assets/mesh/SM_Interior1_Collision.glb",
       cameraRadius: 0.12,
       stepHeight: 0.22,
-      stepForwardDistance: 0.2,
+      stepMinWidth: 0.12,
+      snapToGround: 0.35,
+      controllerOffset: 0.015,
+      mass: 75,
+      jumpSpeed: 3.2,
+      maxSlopeDegrees: 50,
+      minSlideDegrees: 55,
       floorNormalThreshold: 0.55,
       show: false,
       position: new THREE.Vector3(0, 0, 0),
@@ -108,32 +114,7 @@ export const CONFIG = {
     },
     specialMaterials: applyLevelMaterialTuning({
       lamp1: {
-        meshNames: ["SM_Lamp1", "SM_Lamp1_1", "SM_Lamp1001"],
-        maps: {
-          preview: {
-            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Preview_512_ETC1S.ktx2",
-            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Preview_512_ETC1S.ktx2",
-            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Preview_512_ETC1S.ktx2",
-            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Preview_512_ETC1S.ktx2",
-          },
-          full: {
-            baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Full_ETC1S.ktx2",
-            normal: "assets/runtime-textures/T_Lamp1_Normal_Critical_Full_ETC1S.ktx2",
-            orm: "assets/runtime-textures/T_Lamp1_OcclusionRoughnessMetallic_Critical_Full_ETC1S.ktx2",
-            emissive: "assets/runtime-textures/T_Lamp1_Emissive_Critical_Full_ETC1S.ktx2",
-          },
-        },
-        color: "#ffffff",
-        roughness: 1,
-        metalness: 1,
-        normalScale: 1,
-        aoMapIntensity: 1,
-        emissive: "#ffffff",
-        emissiveIntensity: 2.35,
-        roomLightControlled: true,
-      },
-      lamp1_2: {
-        meshNames: ["SM_Lamp1_2"],
+        meshNames: ["SM_Lamp1", "SM_Lamp1_1", "SM_Lamp1_2", "SM_Lamp1001"],
         maps: {
           preview: {
             baseColor: "assets/runtime-textures/T_Lamp1_BaseColor_Critical_Preview_512_ETC1S.ktx2",

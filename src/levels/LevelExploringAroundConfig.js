@@ -8,10 +8,21 @@ function blenderPosition(x, y, z) {
 
 function applyOverrides(target, overrides) {
   Object.entries(overrides ?? {}).forEach(([key, value]) => {
+    if (Array.isArray(value) && Array.isArray(target[key])) {
+      const targetArray = target[key];
+      const namedObjects = value.every((entry) => entry && typeof entry === "object" && entry.name);
+      if (namedObjects) {
+        value.forEach((entry) => {
+          const targetEntry = targetArray.find((candidate) => candidate?.name === entry.name);
+          if (targetEntry) applyOverrides(targetEntry, entry);
+        });
+      }
+      return;
+    }
     if (value && typeof value === "object" && !Array.isArray(value)) {
       if (!target[key] || typeof target[key] !== "object") target[key] = {};
       applyOverrides(target[key], value);
-    } else {
+    } else if (key in target) {
       target[key] = value;
     }
   });
@@ -20,7 +31,17 @@ function applyOverrides(target, overrides) {
 
 const corridorLampXs = [1.6, 5.10382, 8.60764, 12.11146];
 
-function lampPrefab(name, position, { intensity = 1.5, castShadow = false, rotateAroundUp = false } = {}) {
+function lampPrefab(
+  name,
+  position,
+  {
+    intensity = 1.5,
+    castShadow = false,
+    rotateAroundUp = false,
+    startupDelaySeconds = 0,
+    faultyStarterLoop = false,
+  } = {},
+) {
   return {
     name,
     assetPath: "assets/mesh/SM_Lamp1.glb",
@@ -42,14 +63,12 @@ function lampPrefab(name, position, { intensity = 1.5, castShadow = false, rotat
       shadowNear: 0.1,
       shadowFar: 6,
       fluorescentStartup: true,
+      startupDelaySeconds,
+      faultyStarterLoop,
       flicker: {
         enabled: false,
         minIntervalSeconds: 35,
         maxIntervalSeconds: 110,
-        minDurationSeconds: 0.08,
-        maxDurationSeconds: 0.42,
-        pulseCount: 6,
-        minFactor: 0.55,
         retryChance: 0.35,
       },
     },
@@ -57,6 +76,7 @@ function lampPrefab(name, position, { intensity = 1.5, castShadow = false, rotat
 }
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
+  saveKind: "exploringAround",
   assetPath: "assets/mesh/SM_Interior2.glb",
   collisionAssetPath: "assets/mesh/SM_Interior2_Collision.glb",
   collision: {
@@ -84,6 +104,10 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         maxDegrees: 5,
         dragDegreesPerPixel: 0.28,
         maxDistance: 2.8,
+        density: 180,
+        angularDamping: 0.65,
+        motorStiffness: 55,
+        motorDamping: 10,
       },
     },
     {
@@ -101,6 +125,10 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         maxDegrees: 5,
         dragDegreesPerPixel: 0.28,
         maxDistance: 2.8,
+        density: 180,
+        angularDamping: 0.65,
+        motorStiffness: 55,
+        motorDamping: 10,
       },
     },
     ...corridorLampXs.map((x, index) =>
@@ -108,6 +136,8 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         intensity: 1.35,
         castShadow: index === 1,
         rotateAroundUp: true,
+        startupDelaySeconds: (index + 1) * 2,
+        faultyStarterLoop: index === 1,
       }),
     ),
     lampPrefab("Lamp1_ControlRoom", blenderPosition(3.60587, 1.811, 2.3792), {
@@ -119,6 +149,10 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     ambientSky: "#71808c",
     ambientGround: "#08090a",
     ambientIntensity: 0.018,
+  },
+  player: {
+    spawnPosition: new THREE.Vector3(0.45, 1.52, 1.56),
+    rotationDegrees: new THREE.Vector3(1.1, 280, 0),
   },
 };
 

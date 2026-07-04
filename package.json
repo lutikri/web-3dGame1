@@ -4,5 +4,8 @@
   },
   "devDependencies": {
     "basisu": "^1.16.3"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.19.3"
   }
 }
