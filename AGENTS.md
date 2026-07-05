@@ -135,6 +135,9 @@ Shift result/operator profile behavior:
 
 ## Verification
 
+- Run `npm run check` first. It performs syntax validation and fast unit/contract tests without opening a browser.
+- For level lifecycle changes, open `http://localhost:5173/?runtimeSmoke=1`. The page automatically runs `intro-shift -> exploring-around -> menu preview` and logs `[RuntimeSmoke] PASS` or a precise ownership failure; do not manually click through menus for this check.
+- Reserve manual playtesting for visual and subjective behavior such as door feel, lamp flicker quality, lighting, collision comfort, and presentation timing.
 - After scene changes, reload `http://localhost:5173/` and check the browser console.
 - The debug API is available as `window.operatorGameDebug`.
 - Useful checks:

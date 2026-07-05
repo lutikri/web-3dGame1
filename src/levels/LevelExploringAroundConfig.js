@@ -1,44 +1,18 @@
 import * as THREE from "three";
 import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js";
 import { createPrefabInstance } from "../prefabs/PrefabRegistry.js";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
 }
 
-function applyOverrides(target, overrides) {
-  Object.entries(overrides ?? {}).forEach(([key, value]) => {
-    if (Array.isArray(value) && Array.isArray(target[key])) {
-      const targetArray = target[key];
-      const namedObjects = value.every((entry) => entry && typeof entry === "object" && entry.name);
-      if (namedObjects) {
-        value.forEach((entry) => {
-          const targetEntry = targetArray.find((candidate) => candidate?.name === entry.name);
-          if (targetEntry) {
-            const instanceOverride = { ...entry };
-            ["assetPath", "materialKey", "behavior", "interaction", "prefabType"].forEach(
-              (protectedKey) => delete instanceOverride[protectedKey],
-            );
-            applyOverrides(targetEntry, instanceOverride);
-          }
-        });
-      }
-      return;
-    }
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      if (!target[key] || typeof target[key] !== "object") target[key] = {};
-      applyOverrides(target[key], value);
-    } else {
-      target[key] = value;
-    }
-  });
-  return target;
-}
-
 const corridorLampXs = [1.6, 5.10382, 8.60764, 12.11146];
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
+  schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
   saveKind: "exploringAround",
   assetPath: "assets/mesh/SM_Interior2.glb",
   collisionAssetPath: "assets/mesh/SM_Interior2_Collision.glb",
@@ -170,7 +144,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   },
 };
 
-export const LEVEL_EXPLORING_AROUND_CONFIG = applyOverrides(
+export const LEVEL_EXPLORING_AROUND_CONFIG = applyLevelOverrides(
   LEVEL_EXPLORING_AROUND_DEFAULTS,
-  LEVEL_EXPLORING_AROUND_OVERRIDES,
+  migrateLevelOverrides(LEVEL_EXPLORING_AROUND_OVERRIDES),
 );

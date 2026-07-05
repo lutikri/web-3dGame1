@@ -3,9 +3,12 @@ import { applyLocalization } from "./app/Localization.js";
 import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js";
 
 const preflight = createPreflight();
+const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
 sessionStorage.removeItem("operatorGame.preflight.returnToMenu");
-const bootChoice = await preflight.prepare();
+const bootChoice = runtimeSmokeMode
+  ? { language: "en", profile: "low", displayGamma: 0.93, firstRun: false }
+  : await preflight.prepare();
 applyLocalization(bootChoice.language);
 const bootQuality = getGraphicsQualityProfile(bootChoice.profile ?? "low");
 
@@ -53,6 +56,18 @@ window.operatorGameApp = createAppShell({
 if (finishPreflightAfterShell) {
   await window.operatorGameApp.initialRouteReady;
   await preflight.finish();
+}
+
+if (runtimeSmokeMode) {
+  const { runLevelRuntimeSmoke } = await import("./runtime/RuntimeSmoke.js");
+  await window.operatorGameApp.initialRouteReady;
+  try {
+    window.operatorGameRuntimeSmokeResult = await runLevelRuntimeSmoke(window.operatorGameDebug);
+    console.log("[RuntimeSmoke] PASS", window.operatorGameRuntimeSmokeResult);
+  } catch (error) {
+    window.operatorGameRuntimeSmokeResult = { ok: false, error: error.message };
+    console.error("[RuntimeSmoke] FAIL", error);
+  }
 }
 
 async function waitForPreviewScene(gameApi, timeoutMs = 15000) {

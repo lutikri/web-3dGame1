@@ -428,5 +428,14 @@ export async function createPhysicsSystem() {
     hasCharacter: () => Boolean(character),
     hasScene: (key) => sceneColliders.has(key),
     getCharacter: () => character,
+    getStats: () => ({
+      activeSceneKey,
+      staticColliderCount: [...sceneColliders.values()].reduce(
+        (total, colliders) => total + colliders.length,
+        0,
+      ),
+      doorCount: doors.size,
+      hasCharacter: Boolean(character),
+    }),
   };
 }

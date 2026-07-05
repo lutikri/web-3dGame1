@@ -43,6 +43,9 @@ import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebug
 import { createPhysicsSystem } from "./physics/PhysicsSystem.js";
 import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js";
 import { getLevelEnvironmentId } from "./levels/LevelRegistry.js";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js";
+import { AssetCache } from "./runtime/AssetCache.js";
+import { LevelRuntime } from "./runtime/LevelRuntime.js";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -205,9 +208,15 @@ let collisionModel = null;
 const levelEnvironmentModels = new Map();
 const levelCollisionModels = new Map();
 const levelPrefabInstances = new Map();
-const levelAssetCache = new Map();
+const levelAssetCache = new AssetCache({
+  load: (assetPath) => new GLTFLoader().loadAsync(assetPath),
+  instantiate: (gltf) => gltf.scene.clone(true),
+});
 let loadedRuntimeLevelId = null;
-let levelLoadPromise = null;
+const levelRuntimeManager = new LevelRuntimeManager({
+  load: createLevelEnvironmentRuntime,
+  dispose: disposeLevelEnvironmentRuntime,
+});
 let collisionReady = false;
 let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
 let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
@@ -1111,9 +1120,9 @@ function createSolidTexture(r, g, b, a = 255) {
   return texture;
 }
 
-init();
+await init();
 
-function init() {
+async function init() {
   if (CONFIG.loading?.skip || fastDebugBoot) skipLoadingOverlay();
   restoreSavedPostProcessingConfig(CONFIG.postProcessing);
   configureQualityProfile(bootOptions.qualityProfile ?? "high");
@@ -1126,8 +1135,9 @@ function init() {
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);
-  loadLevelEnvironment("intro-shift");
+  const initialLevelLoad = loadLevelEnvironment("intro-shift");
   loadPanelModel();
+  await initialLevelLoad;
   if (CONFIG.loading?.skip || fastDebugBoot) triggerRoomLightBoot();
   animate();
 }
@@ -1984,30 +1994,6 @@ function loadPanelModel() {
   );
 }
 
-function loadInteriorModel() {
-  if (!CONFIG.interior?.assetPath) return;
-
-  const loader = new GLTFLoader();
-  loader.load(
-    CONFIG.interior.assetPath,
-    (gltf) => {
-      interiorModel = gltf.scene;
-      interiorModel.name = "Interior1_Panel1";
-      interiorModel.position.copy(CONFIG.interior.position);
-      interiorModel.rotation.copy(CONFIG.interior.rotation);
-      interiorModel.scale.copy(CONFIG.interior.scale);
-      interiorModel.traverse(registerInteriorObject);
-      scene.add(interiorModel);
-      updateActiveLevelEnvironment();
-      console.log("[OperatorGame] Loaded SM_Interior1_Panel1.glb");
-    },
-    undefined,
-    (error) => {
-      console.error("[OperatorGame] Failed to load SM_Interior1_Panel1.glb", error);
-    },
-  );
-}
-
 function loadInteriorDecals() {
   const decalConfig = CONFIG.interior?.decals;
   if (!decalConfig?.assetPath || !decalConfig?.atlasPath) return;
@@ -2125,53 +2111,13 @@ function updateInteriorDecalMaterial() {
   uniforms.decalEdgeSoftness.value = Math.max(config.edgeSoftness ?? 0.05, 0.0001);
 }
 
-function loadCollisionModel() {
-  const collisionConfig = CONFIG.player?.collision;
-  if (!collisionConfig?.assetPath) return;
-
-  const loader = new GLTFLoader();
-  loader.load(
-    collisionConfig.assetPath,
-    (gltf) => {
-      collisionModel = gltf.scene;
-      collisionModel.name = "Interior1_Collision";
-      collisionModel.position.copy(collisionConfig.position ?? CONFIG.interior.position);
-      collisionModel.rotation.copy(CONFIG.interior.rotation);
-      collisionModel.scale.copy(CONFIG.interior.scale);
-      collisionModel.updateMatrixWorld(true);
-      collisionModel.traverse((object) => {
-        if (!object.isMesh) return;
-        object.castShadow = false;
-        object.receiveShadow = false;
-        object.material = collisionDebugMaterial;
-        object.renderOrder = 1000;
-        collisionMeshes.push(object);
-      });
-      scene.add(collisionModel);
-      physicsSystem?.addStaticScene("default", collisionModel);
-      updateActiveLevelEnvironment();
-      console.log(`[OperatorGame] Loaded collision mesh: ${collisionMeshes.length} meshes`);
-    },
-    undefined,
-    (error) => {
-      console.error("[OperatorGame] Failed to load SM_Interior1_Collision.glb", error);
-    },
-  );
-}
-
 async function loadSceneAsset(assetPath) {
-  let assetPromise = levelAssetCache.get(assetPath);
-  if (!assetPromise) {
-    assetPromise = new GLTFLoader().loadAsync(assetPath);
-    levelAssetCache.set(assetPath, assetPromise);
-  }
-  const gltf = await assetPromise;
-  return gltf.scene.clone(true);
+  return levelAssetCache.instantiate(assetPath);
 }
 
 function createLevelLights(levelId, environmentConfig) {
   const lightingConfig = environmentConfig.lighting;
-  if (!lightingConfig) return;
+  if (!lightingConfig) return [];
   const lights = [];
   const levelHemi = new THREE.HemisphereLight(
     lightingConfig.ambientSky ?? "#ffffff",
@@ -2206,21 +2152,24 @@ function createLevelLights(levelId, environmentConfig) {
     scene.add(light);
   });
   levelLights.set(levelId, lights);
+  return lights;
 }
 
 async function loadLevelEnvironment(requestedLevelId) {
   const levelId = getLevelEnvironmentId(requestedLevelId);
-  if (loadedRuntimeLevelId === levelId && levelEnvironmentModels.has(levelId)) return levelId;
-  if (levelLoadPromise) await levelLoadPromise;
-  if (loadedRuntimeLevelId === levelId && levelEnvironmentModels.has(levelId)) return levelId;
-  if (loadedRuntimeLevelId && loadedRuntimeLevelId !== levelId) unloadLevelEnvironment(loadedRuntimeLevelId);
+  const result = await levelRuntimeManager.request(levelId);
+  loadedRuntimeLevelId = result.levelId;
+  return result.status === "superseded" ? null : result.levelId;
+}
 
-  const environmentConfig = CONFIG.levelEnvironments?.[requestedLevelId] ?? CONFIG.levelEnvironments?.[levelId];
-  if (!environmentConfig) throw new Error(`[LevelRuntime] Unknown environment: ${requestedLevelId}`);
-  loadedRuntimeLevelId = levelId;
+async function createLevelEnvironmentRuntime(levelId) {
+  const environmentConfig = CONFIG.levelEnvironments?.[levelId];
+  if (!environmentConfig) throw new Error(`[LevelRuntime] Unknown environment: ${levelId}`);
+  const levelRuntime = new LevelRuntime(levelId);
+  levelRuntime.defer(() => disposeLevelOwnedObjects(levelId));
   createLevelLights(levelId, environmentConfig);
 
-  levelLoadPromise = (async () => {
+  try {
     const prefabGroup = new THREE.Group();
     prefabGroup.name = `${levelId}_Prefabs`;
     levelEnvironmentModels.set(`${levelId}:prefabs`, prefabGroup);
@@ -2349,23 +2298,27 @@ async function loadLevelEnvironment(requestedLevelId) {
         applyLevelPrefabConfig(levelId, prefabConfig.name, true);
       });
 
-    await Promise.all([environmentTask, collisionTask, ...prefabTasks]);
+    const taskResults = await Promise.allSettled([environmentTask, collisionTask, ...prefabTasks]);
+    const failedTask = taskResults.find((result) => result.status === "rejected");
+    if (failedTask) throw failedTask.reason;
     updateActiveLevelEnvironment();
     console.log(`[LevelRuntime] Loaded only: ${levelId}`);
-    return levelId;
-  })();
-
-  try {
-    return await levelLoadPromise;
+    return levelRuntime.activate();
   } catch (error) {
-    unloadLevelEnvironment(levelId);
+    try {
+      await levelRuntime.dispose();
+    } catch (cleanupError) {
+      console.error(`[LevelRuntime] Cleanup failed after loading "${levelId}"`, cleanupError);
+    }
     throw error;
-  } finally {
-    levelLoadPromise = null;
   }
 }
 
-function unloadLevelEnvironment(levelId) {
+function disposeLevelEnvironmentRuntime(runtime) {
+  return runtime.dispose();
+}
+
+function disposeLevelOwnedObjects(levelId) {
   stopPositionGizmo();
   physicsSystem?.resetWorld(playerPosition);
   [levelId, `${levelId}:prefabs`].forEach((key) => {
@@ -2380,6 +2333,7 @@ function unloadLevelEnvironment(levelId) {
   [...levelPrefabInstances.entries()].forEach(([key, runtime]) => {
     if (!key.startsWith(`${levelId}:`)) return;
     runtime.emissiveMaterials.forEach((material) => material.dispose());
+    runtime.light?.shadow?.dispose?.();
     levelPrefabInstances.delete(key);
   });
   for (let index = interactive.length - 1; index >= 0; index -= 1) {
@@ -2394,6 +2348,7 @@ function unloadLevelEnvironment(levelId) {
   const ownedLights = levelLights.get(levelId) ?? [];
   ownedLights.forEach((light) => {
     scene.remove(light);
+    light.shadow?.dispose?.();
     const controlledIndex = controlledLights.indexOf(light);
     if (controlledIndex >= 0) controlledLights.splice(controlledIndex, 1);
   });
@@ -2405,167 +2360,6 @@ function unloadLevelEnvironment(levelId) {
   collisionOctree = new Octree();
   collisionReady = false;
   console.log(`[LevelRuntime] Unloaded: ${levelId}`);
-}
-
-function loadLevelEnvironments() {
-  const loader = new GLTFLoader();
-
-  Object.entries(CONFIG.levelEnvironments ?? {}).forEach(([levelId, environmentConfig]) => {
-    loader.load(
-      environmentConfig.assetPath,
-      (gltf) => {
-        const model = gltf.scene;
-        model.name = `${levelId}_Environment`;
-        applyEnvironmentTransform(model, environmentConfig);
-        const excludedNameParts = environmentConfig.render?.meshNameExcludes ?? [];
-        const excludedMeshes = [];
-        model.traverse((object) => {
-          if (
-            object.isMesh &&
-            excludedNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()))
-          ) {
-            excludedMeshes.push(object);
-            return;
-          }
-          registerInteriorObject(object, environmentConfig);
-        });
-        excludedMeshes.forEach((object) => object.parent?.remove(object));
-        model.visible = activeLevelId === levelId;
-        levelEnvironmentModels.set(levelId, model);
-        scene.add(model);
-        updateActiveLevelEnvironment();
-        console.log(`[OperatorGame] Loaded level environment: ${levelId}`);
-      },
-      undefined,
-      (error) => console.error(`[OperatorGame] Failed to load environment: ${levelId}`, error),
-    );
-
-    loader.load(
-      environmentConfig.collisionAssetPath,
-      (gltf) => {
-        const model = gltf.scene;
-        model.name = `${levelId}_Collision`;
-        applyEnvironmentTransform(model, environmentConfig);
-        const requiredNameParts = environmentConfig.collision?.meshNameIncludes ?? [];
-        if (requiredNameParts.length > 0) {
-          const excludedMeshes = [];
-          model.traverse((object) => {
-            if (!object.isMesh) return;
-            const normalizedName = object.name.toLowerCase();
-            const included = requiredNameParts.some((part) => normalizedName.includes(String(part).toLowerCase()));
-            if (!included) excludedMeshes.push(object);
-          });
-          excludedMeshes.forEach((object) => object.parent?.remove(object));
-        }
-        model.traverse((object) => {
-          if (!object.isMesh) return;
-          object.castShadow = false;
-          object.receiveShadow = false;
-          object.material = collisionDebugMaterial;
-          object.renderOrder = 1000;
-        });
-        model.visible = activeLevelId === levelId && Boolean(CONFIG.player?.collision?.show);
-        levelCollisionModels.set(levelId, model);
-        scene.add(model);
-        physicsSystem?.addStaticScene(levelId, model);
-        appendPanelPhysics(levelId);
-        updateActiveLevelEnvironment();
-        console.log(`[OperatorGame] Loaded level collision: ${levelId}`);
-      },
-      undefined,
-      (error) => console.error(`[OperatorGame] Failed to load level collision: ${levelId}`, error),
-    );
-
-    const prefabGroup = new THREE.Group();
-    prefabGroup.name = `${levelId}_Prefabs`;
-    prefabGroup.visible = activeLevelId === levelId;
-    levelEnvironmentModels.set(`${levelId}:prefabs`, prefabGroup);
-    scene.add(prefabGroup);
-
-    (environmentConfig.prefabs ?? []).forEach((prefabConfig) => {
-      if (prefabConfig.behavior === "operatorPanel") return;
-      loader.load(
-        prefabConfig.assetPath,
-        (gltf) => {
-          const prefab = gltf.scene;
-          prefab.name = prefabConfig.name;
-          prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
-          prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
-          prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
-          const emissiveMaterials = [];
-          const collisionMeshes = [];
-          const parts = new Map();
-          prefab.traverse((object) => {
-            if (object.name) {
-              object.userData.prefabInitialRotation = object.rotation.clone();
-              parts.set(object.name, object);
-            }
-            if (!object.isMesh) return;
-            const isCollider = /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(object.name);
-            object.userData.prefabCollider = isCollider;
-            object.visible = isCollider ? Boolean(CONFIG.player?.collision?.show) : true;
-            object.castShadow = !isCollider;
-            object.receiveShadow = !isCollider;
-            if (isCollider) {
-              object.material = collisionDebugMaterial;
-              object.renderOrder = 1000;
-              collisionMeshes.push(object);
-            } else {
-              ensureSecondUvSet(object);
-              const sourceMaterial = materials.interiorCustom[prefabConfig.materialKey] ?? materials.interior;
-              object.material = prefabConfig.light ? sourceMaterial.clone() : sourceMaterial;
-              if (prefabConfig.light) {
-                object.material.userData.baseEmissiveIntensity = sourceMaterial.userData.baseEmissiveIntensity;
-                emissiveMaterials.push(object.material);
-              }
-            }
-          });
-          const runtime = {
-            root: prefab,
-            light: null,
-            emissiveMaterials,
-            materialKey: prefabConfig.materialKey,
-            collisionMeshes,
-            parts,
-            flickerTime: Math.random() * 100,
-            flickerSeed: Math.random() * 1000,
-            startupPattern: prefabConfig.light?.fluorescentStartup ? createFluorescentStartupPattern() : [],
-            startupElapsed: 0,
-            faultyStarterElapsed: 0,
-            afterglowRemaining: 0,
-            wasLightEnabled: prefabConfig.light?.enabled !== false,
-            fixtureFlicker: createFixtureFlickerState(prefabConfig.light?.flicker),
-            wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
-          };
-          if (prefabConfig.light) {
-            const lightConfig = prefabConfig.light;
-            const light = new THREE.PointLight(
-              lightConfig.color,
-              lightConfig.intensity,
-              lightConfig.distance,
-              lightConfig.decay,
-            );
-            light.name = `${prefabConfig.name}_PointLight`;
-            light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
-            light.userData.baseIntensity = lightConfig.intensity;
-            light.userData.lightConfig = lightConfig;
-            light.userData.fixtureFlicker = runtime.fixtureFlicker;
-            applyShadowSettings(light, lightConfig);
-            prefab.add(light);
-            runtime.light = light;
-          }
-          levelPrefabInstances.set(`${levelId}:${prefabConfig.name}`, runtime);
-          registerPrefabInteraction(levelId, prefabConfig, runtime);
-          syncLevelPrefabMaterialClones(prefabConfig.materialKey);
-          prefabGroup.add(prefab);
-          applyLevelPrefabConfig(levelId, prefabConfig.name, true);
-          updateActiveLevelEnvironment();
-        },
-        undefined,
-        (error) => console.error(`[OperatorGame] Failed to load prefab: ${prefabConfig.name}`, error),
-      );
-    });
-  });
 }
 
 function applyEnvironmentTransform(model, config) {
@@ -4850,7 +4644,8 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
 }
 
 async function enterMenuView() {
-  await loadLevelEnvironment("intro-shift");
+  const loadedLevelId = await loadLevelEnvironment("intro-shift");
+  if (loadedLevelId !== "intro-shift") return false;
   resetLevelDoors();
   operatorViewMode = "menu";
   updateActiveLevelEnvironment();
@@ -4871,6 +4666,7 @@ async function enterMenuView() {
   }
 
   setRoomLightsEnabled(Boolean(menuView?.roomLightsOn), { instant: true });
+  return true;
 }
 
 function resetPanelControls() {
@@ -4908,7 +4704,8 @@ async function resetForMenu() {
 
 async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
   stopPositionGizmo();
-  await loadLevelEnvironment(levelId);
+  const loadedLevelId = await loadLevelEnvironment(levelId);
+  if (loadedLevelId !== getLevelEnvironmentId(levelId)) return false;
   activeLevelId = levelId;
   activeLevelMode = mode;
   operatorViewMode = "level";
@@ -4926,6 +4723,7 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   fusionCore.reset();
   previousGameMode = "standby";
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  return true;
 }
 
 function runControlButtonAction(button) {
@@ -5807,6 +5605,7 @@ window.operatorGameDebug = {
   resetGame: resetForMenu,
   restartGame: enterLevelSession,
   startLevel: enterLevelSession,
+  loadLevel: enterLevelSession,
   resetForMenu,
   showLoadingScreen: showRouteLoading,
   finishLoadingScreen: finishRouteLoading,
@@ -5874,6 +5673,21 @@ window.operatorGameDebug = {
     }
     return roomLightsEnabled;
   },
+  inspectRuntime: () => ({
+    activeLevelId,
+    activeLevelMode,
+    loadedRuntimeLevelId,
+    operatorViewMode,
+    transition: levelRuntimeManager.snapshot().status,
+    cachedAssets: [...levelAssetCache.keys()],
+    environmentRoots: [...levelEnvironmentModels.keys()],
+    collisionLevels: [...levelCollisionModels.keys()],
+    prefabInstances: [...levelPrefabInstances.keys()],
+    levelLights: Object.fromEntries(
+      [...levelLights.entries()].map(([levelId, lights]) => [levelId, lights.map((light) => light.name)]),
+    ),
+    physics: physicsSystem?.getStats?.() ?? null,
+  }),
   findObject: findSceneObject,
   getObjectTransform,
   listObjects: listSceneObjects,

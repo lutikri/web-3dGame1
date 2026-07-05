@@ -1,5 +1,6 @@
 import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js";
 import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js";
 
 export const LEVEL_DEFINITIONS = {
   "intro-shift": {
@@ -79,19 +80,7 @@ function validateLevelDefinitions(definitions) {
     }
     const environment = level.environment;
     if (!environment) return;
-    if (!environment.assetPath || !environment.collisionAssetPath) {
-      throw new Error(`[LevelRegistry] Missing environment assets for level: ${registryId}`);
-    }
-    const prefabNames = new Set();
-    (environment.prefabs ?? []).forEach((prefab) => {
-      if (!prefab.name || !prefab.prefabType || !prefab.assetPath || !prefab.behavior) {
-        throw new Error(`[LevelRegistry] Invalid prefab instance in level: ${registryId}`);
-      }
-      if (prefabNames.has(prefab.name)) {
-        throw new Error(`[LevelRegistry] Duplicate prefab name "${prefab.name}" in level: ${registryId}`);
-      }
-      prefabNames.add(prefab.name);
-    });
+    validateLevelEnvironmentConfig(registryId, environment);
   });
 }
 

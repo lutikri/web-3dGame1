@@ -1,4 +1,5 @@
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import { createLevelOverrideSnapshot } from "../levels/LevelConfigSerialization.js";
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -182,7 +183,7 @@ export function createSceneDebugPanels({
           if (!environmentConfig?.saveKind) throw new Error("No active level config to save");
           const result = await saveLevelAndSceneProjectConfig(
             environmentConfig.saveKind,
-            clone(environmentConfig),
+            createLevelOverrideSnapshot(environmentConfig),
             createSceneSnapshot(materialConfigs, lightingConfig, decalConfig),
           );
           saveLevelController?.name("SAVED");
@@ -377,7 +378,10 @@ export function createSceneDebugPanels({
       async saveProject() {
         saveProjectController?.name("Saving...");
         try {
-          const result = await saveLevelProjectConfig(environmentConfig.saveKind, clone(environmentConfig));
+          const result = await saveLevelProjectConfig(
+            environmentConfig.saveKind,
+            createLevelOverrideSnapshot(environmentConfig),
+          );
           saveProjectController?.name("Saved — reloading");
           window.setTimeout(() => window.location.reload(), 180);
           return result;
@@ -388,7 +392,7 @@ export function createSceneDebugPanels({
         }
       },
       async copyConfig() {
-        const source = JSON.stringify(environmentConfig, null, 2);
+        const source = JSON.stringify(createLevelOverrideSnapshot(environmentConfig), null, 2);
         await navigator.clipboard.writeText(source);
         return source;
       },

@@ -96,11 +96,22 @@ const PREFAB_DEFINITIONS = {
   },
 };
 
+const REGISTRY_OWNED_KEYS = new Set([
+  "assetPath",
+  "materialKey",
+  "behavior",
+  "interaction",
+  "prefabType",
+]);
+
 export function createPrefabInstance(prefabType, instance) {
   const definition = PREFAB_DEFINITIONS[prefabType];
   if (!definition) throw new Error(`[PrefabRegistry] Unknown prefab type: ${prefabType}`);
   const resolved = cloneValue(definition);
-  mergeKnown(resolved, instance.overrides ?? {});
+  const instanceOverrides = Object.fromEntries(
+    Object.entries(instance.overrides ?? {}).filter(([key]) => !REGISTRY_OWNED_KEYS.has(key)),
+  );
+  mergeKnown(resolved, instanceOverrides);
   resolved.prefabType = prefabType;
   resolved.name = instance.name;
   resolved.position = instance.position?.clone?.() ?? instance.position ?? new THREE.Vector3();

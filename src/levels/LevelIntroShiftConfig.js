@@ -1,37 +1,15 @@
 import * as THREE from "three";
 import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js";
 import { createPrefabInstance } from "../prefabs/PrefabRegistry.js";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
 }
 
-function applyOverrides(target, overrides) {
-  Object.entries(overrides ?? {}).forEach(([key, value]) => {
-    if (Array.isArray(value) && Array.isArray(target[key])) {
-      value.forEach((entry) => {
-        const targetEntry = entry?.name && target[key].find((candidate) => candidate?.name === entry.name);
-        if (targetEntry) {
-          const instanceOverride = { ...entry };
-          ["assetPath", "materialKey", "behavior", "interaction", "prefabType"].forEach(
-            (protectedKey) => delete instanceOverride[protectedKey],
-          );
-          applyOverrides(targetEntry, instanceOverride);
-        }
-      });
-      return;
-    }
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      if (!target[key] || typeof target[key] !== "object") target[key] = {};
-      applyOverrides(target[key], value);
-    } else {
-      target[key] = value;
-    }
-  });
-  return target;
-}
-
 const LEVEL_INTRO_SHIFT_DEFAULTS = {
+  schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
   saveKind: "introShift",
   assetPath: "assets/mesh/SM_Interior1_1.glb",
   collisionAssetPath: "assets/mesh/SM_Interior1_1.glb",
@@ -130,7 +108,7 @@ const LEVEL_INTRO_SHIFT_DEFAULTS = {
   },
 };
 
-export const LEVEL_INTRO_SHIFT_CONFIG = applyOverrides(
+export const LEVEL_INTRO_SHIFT_CONFIG = applyLevelOverrides(
   LEVEL_INTRO_SHIFT_DEFAULTS,
-  LEVEL_INTRO_SHIFT_OVERRIDES,
+  migrateLevelOverrides(LEVEL_INTRO_SHIFT_OVERRIDES),
 );
