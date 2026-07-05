@@ -8,6 +8,7 @@ node_modules/
 *.psd
 screenshots/
 recordings/
+deprecated/
 
 # Original/source texture PNGs live in asset-source/textures/.
 assets/T_*.png

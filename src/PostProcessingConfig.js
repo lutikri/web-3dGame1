@@ -229,7 +229,7 @@ export const POST_PROCESSING_CONFIG = {
       "enabled": true,
       "strength": 1,
       "spread": 0.035,
-      "assetPath": "assets/LensDirt1.png",
+      "assetPath": "assets/LensDirt1.webp",
       "tint": "#ffffff",
       "maxTextureSize": 1024,
       "scale": 7.9
