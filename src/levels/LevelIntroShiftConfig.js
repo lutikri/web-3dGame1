@@ -37,6 +37,26 @@ const LEVEL_INTRO_SHIFT_DEFAULTS = {
       },
     },
   },
+  session: {
+    completion: "all",
+    objectives: [
+      { id: "operate-core", type: "survive", seconds: 180 },
+      {
+        id: "open-bulkhead",
+        type: "event",
+        event: "doorOpened",
+        target: "DoorBulk1_Tutorial",
+      },
+    ],
+    bindings: [
+      {
+        source: "SM_Details_LightButton1",
+        event: "press",
+        action: "togglePrefabLight",
+        target: "Lamp1_TutorialCabin",
+      },
+    ],
+  },
   prefabs: [
     createPrefabInstance("operatorPanel", {
       name: "Panel1",

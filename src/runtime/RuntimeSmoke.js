@@ -19,6 +19,11 @@ export async function runLevelRuntimeSmoke(gameApi) {
     assertOwnedKeys(state.collisionLevels, expectedEnvironment, `${name}: collision levels`);
     assertOwnedKeys(state.prefabInstances, expectedEnvironment, `${name}: prefab instances`);
     assertEqual(state.physics?.activeSceneKey, expectedEnvironment, `${name}: physics scene`);
+    if (name === "menu-preview") {
+      assertEqual(state.levelSession, null, `${name}: level session reset`);
+    } else {
+      assertEqual(state.levelSession?.levelId, name, `${name}: level session`);
+    }
     steps.push({
       name,
       loadedRuntimeLevelId: state.loadedRuntimeLevelId,

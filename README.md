@@ -1,98 +1,149 @@
 # OperatorGame
 
-Main page:
+Браузерная first-person игра об операторе промышленной установки термоядерного ядра. Игрок не строит реактор и не управляет заводом: он проводит смену за физическим пультом, удерживая систему в рабочем диапазоне под растущей нагрузкой.
 
-- `index.html`
+## Короткий дизайн-док
 
-Run locally with live reload:
+### Фантазия игрока
 
-- `npm run dev`
-- Open `http://localhost:5173/`
+Игрок — не герой и не инженер с всеведущим интерфейсом, а сменный оператор старого тяжёлого оборудования. Информация приходит через стрелочные приборы, лампы, небольшие экраны, звук и поведение помещения. Ошибка должна сначала ощущаться как симптом, а уже затем пониматься как причина.
 
-Main runtime files:
+### Основной цикл
 
-- `index.html`
-- `src/main.js`
-- `src/app/AppShell.js`
-- `src/app/LevelCatalog.js`
-- `src/OperatorGame.js`
-- `src/OperatorGameConfig.js`
-- `src/game/ShiftReport.js`
-- `src/panels/Panel1Bindings.js`
-- `src/scene/TextureStreaming.js`
-- `src/ui/LoadingOverlay.js`
-- `styles/operator-game.css`
-- `assets/mesh/SM_Panel1.glb`
-- `assets/runtime-textures/T_Panel1_*_Preview_1024_ETC1S.ktx2`
-- `assets/runtime-textures/T_Panel1_*_Full_ETC1S.ktx2`
+1. Получить краткий shift brief.
+2. Осмотреть панель и состояние помещения.
+3. Подготовить магнитное поле и выполнить зажигание плазмы.
+4. Балансировать `Fuel Injection`, `Magnetic Field` и `Coolant Flow`.
+5. Следовать меняющемуся `Grid Demand`, не перегревая ядро.
+6. Пережить неисправности или применить аварийный `Vent/Purge`.
+7. Получить отчёт смены и профиль поведения оператора.
 
-Runtime folders should stay small and browser-facing:
+### Главные принципы
 
-- `src/`: game code
-- `styles/`: browser styling
-- `assets/`: compressed runtime assets loaded by the game
+- Управление причинное, а не аркадное: игрок меняет реальные входы системы, а не нажимает кнопку «починить».
+- Высокая температура не всегда является ошибкой. Финальная нагрузка намеренно требует работы рядом с опасной зоной.
+- Состояние читается не только по цифрам: важны стрелки, свет, звук, flicker, blackout и реакция помещения.
+- Интерфейс является частью мира. Обычный HUD используется минимально.
+- Неисправности должны создавать диагностическую задачу, а не случайно отнимать здоровье.
+- Интерактивные объекты и поведение повторно используются как prefabs между уровнями.
 
-Development/support material is kept outside the runtime path:
+### Текущие уровни
 
-- `3dGameAssetsDev/`: ignored source art, Blender/Substance files, and original texture PNGs
-- `tools/`: tracked helper scripts
-- `recordings/`: generated gameplay captures
-- `screenshots/`: generated visual checks
-- `logs/`: local dev-server output
+- `intro-shift` — маленькая быстро загружаемая операторская, обучение базовой смене.
+- `exploring-around` — операторская и сервисный коридор; основа для исследования оборудования и дополнительных контролов.
+- `freeplay` — использует окружение `intro-shift`, но запускает другой режим сессии.
 
-Legacy prototype:
+### Направления механик
 
-- `legacy/refinery/index.html`
+- Сервисный коридор: насосы, электрика, охлаждение и локальные панели.
+- Неисправности приборов: показания могут расходиться с физическими симптомами.
+- Качество и подача топлива.
+- Локальное отключение питания и последовательное восстановление оборудования.
+- Физические предметы и препятствия, которые взаимодействуют с player collision.
+- Причинно связанные звук, вибрация, свет и состояние ядра.
 
-Generated artifacts:
+## Архитектура
 
-- `recordings/`
-- `screenshots/`
+### Уровни
 
-## Texture Compression
+`src/levels/LevelRegistry.js` — единая точка регистрации metadata и runtime environment.
 
-Runtime texture PNG sources live in `assets/`.
+Каждый level environment описывает:
 
-Run this after changing those source textures:
+- architecture и collision GLB;
+- player spawn;
+- fog и ambient lighting;
+- собственные point lights;
+- список prefab instances;
+- встроенные environment behaviors, например вентиляторы.
 
-- `generate-runtime-textures.bat`
+В runtime существует только одно окружение. При переходе старый `LevelRuntime` полностью освобождает scene objects, lights, interactions и Rapier world. Исходные GLB могут оставаться в общем `AssetCache`.
 
-The script uses `basisu` to write preview and full KTX2 textures into `assets/runtime-textures/`.
+### Prefabs
 
-## Scene Knobs
+`src/prefabs/PrefabRegistry.js` хранит общие assets, materials, interaction, physics и behavior defaults.
 
-Panel placement, room size, player height, colors, and lighting live in `src/OperatorGameConfig.js`.
+Level config может задавать только instance-owned данные:
 
-Useful entries:
+- уникальное имя;
+- position/rotation/scale;
+- startup state;
+- light tuning и явно разрешённые параметры экземпляра.
 
-- `CONFIG.panel.position`
-- `CONFIG.panel.rotation`
-- `CONFIG.panel.width`
-- `CONFIG.lighting.sunPosition`
-- `CONFIG.lighting.sunIntensity`
-- `CONFIG.lighting.panelFillPosition`
-- `CONFIG.lighting.panelFillIntensity`
+Алгоритм двери, fluorescent flicker или physics нельзя копировать в level config.
 
-## Three.js Lighting Notes
+### Runtime modules
 
-Common light types:
+- `src/runtime/LevelRuntimeManager.js` — атомарные переходы, latest request wins.
+- `src/runtime/LevelRuntime.js` — единый idempotent `dispose()`.
+- `src/runtime/AssetCache.js` — кэш source assets и повторные instances.
+- `src/runtime/RuntimeSmoke.js` — автоматическая проверка переходов.
+- `src/scene/LevelSceneBuilder.js` — architecture, collision и prefab instances.
+- `src/lighting/LightingRuntime.js` — level-owned ambient и point lights.
+- `src/interactions/DoorInteractionSystem.js` — общее физическое управление дверями.
+- `src/player/PlayerController.js` — runtime-граница движения и player collision.
+- `src/postprocessing/PostProcessingRuntime.js` — lifecycle post-processing pipeline.
+- `src/panels/OperatorPanelRuntime.js` — lifecycle и видимость операторской панели.
+- `src/levels/LevelSession.js` — objectives, bindings, events и checkpoint текущей смены.
+- `src/physics/PhysicsSystem.js` — Rapier character, static collision и физические двери.
 
-- `AmbientLight`: flat global light. Easy, but no direction or shape.
-- `HemisphereLight`: sky/ground ambient. Good baseline for rooms.
-- `DirectionalLight`: sun-like light. Best general shadow caster.
-- `PointLight`: bulb-like local light.
-- `SpotLight`: cone light, useful for lamps and focused fixtures.
-- `RectAreaLight`: soft rectangular panel light. Good for screens/ceiling panels, but does not cast shadows in the usual realtime shadow-map path.
+`Panel1` не является обязательным: уровень без prefab с behavior `operatorPanel` загружает только своё окружение и скрывает общую панель.
 
-Shadows:
+Level-specific логика описывается через `session.objectives` и `session.bindings`. Tutorial сейчас требует провести 180 секунд активной смены и открыть свою гермодверь; встроенная кнопка комнаты переключает конкретный prefab светильника. Уникальные будущие механики должны подписываться на события `LevelSession`, не обращаться напрямую к глобалам `OperatorGame`.
 
-- Enable with `renderer.shadowMap.enabled = true`.
-- Set `light.castShadow = true`.
-- Set meshes with `mesh.castShadow = true` and/or `mesh.receiveShadow = true`.
-- Directional and spot lights are the most common shadow lights.
+### Конфиги
 
-Ambient occlusion:
+Level configs имеют `schemaVersion`, проходят validation и migration. Generated overrides лежат в `src/generated/` и сохраняют только instance-owned prefab fields.
 
-- Baked AO: put an AO map in the GLB material, usually the best hard-surface option.
-- SSAO/GTAO: post-processing pass, useful later but heavier and more setup.
-- Geometry/light placement: bevels plus shadowed creases often do more than screen AO early on.
+Debug `SAVE LEVEL` сохраняет активное окружение и глобальную настройку материалов.
+
+## Разработка
+
+Установка и запуск:
+
+```text
+npm install
+npm run dev
+```
+
+Открыть `http://localhost:5173/`.
+
+Быстрая проверка без браузера:
+
+```text
+npm run check
+```
+
+Автоматический runtime smoke без ручных кликов:
+
+```text
+http://localhost:5173/?runtimeSmoke=1
+```
+
+Ожидаемый результат в консоли: `[RuntimeSmoke] PASS`.
+
+Ручная проверка нужна для субъективных вещей: ощущения двери, качества flicker, света, collision comfort и presentation timing.
+
+## Runtime assets
+
+- `src/` — browser runtime code.
+- `styles/` — UI и HUD styling.
+- `assets/` — GLB, compressed textures, briefings и runtime images.
+- `asset-source/` и `3dGameAssetsDev/` — исходники арта и текстур.
+- `src/generated/` — настройки, сохранённые локальной debug-панелью.
+
+После изменения runtime texture sources запустить:
+
+```text
+generate-runtime-textures.bat
+```
+
+Preview и full KTX2 записываются в `assets/runtime-textures/`.
+
+## Ближайший технический roadmap
+
+1. Вынести создание architecture/collision/prefabs из `OperatorGame.js` в `LevelSceneBuilder`.
+2. Перенести реализацию prefab behaviors в отдельный behavior registry.
+3. Выделить `LightingRuntime`, `PlayerController`, `DoorInteractionSystem` и `PostProcessingRuntime`.
+4. Добавить reference counting и ограничение памяти в `AssetCache`.
+5. Удалить оставшиеся default-environment fallback state из `OperatorGame.js`.

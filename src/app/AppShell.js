@@ -177,11 +177,13 @@ export function createAppShell({ gameApi }) {
   function wireProgression() {
     window.addEventListener("operatorgame:loading-complete", handleInitialRoute, { once: true });
     window.addEventListener("operatorgame:shift-results", (event) => {
-      const { levelId, snapshot } = event.detail ?? {};
+      const { levelId, snapshot, levelSession } = event.detail ?? {};
       if (levelId !== INTRO_LEVEL_ID || !["complete", "failed"].includes(snapshot?.mode)) return;
 
       progress.finishedLevels[INTRO_LEVEL_ID] = true;
-      if (snapshot.mode === "complete") progress.completedLevels[INTRO_LEVEL_ID] = true;
+      if (snapshot.mode === "complete" && levelSession?.status === "complete") {
+        progress.completedLevels[INTRO_LEVEL_ID] = true;
+      }
       if (!firstVisitEmulation) saveProgress(progress);
       updateLevelProgressUi();
     });

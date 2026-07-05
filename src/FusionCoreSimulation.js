@@ -86,6 +86,23 @@ export function createFusionCoreSimulation() {
     getSnapshot() {
       return getSnapshot(state);
     },
+
+    exportState() {
+      return structuredClone(state);
+    },
+
+    restoreState(saved) {
+      if (!saved || typeof saved !== "object") return false;
+      const initial = createInitialState();
+      Object.keys(initial).forEach((key) => {
+        if (!(key in saved)) return;
+        const value = saved[key];
+        if (typeof initial[key] === "number" && !Number.isFinite(value)) return;
+        if (typeof initial[key] === "string" && typeof value !== "string") return;
+        state[key] = key === "warning" ? { ...(value ?? {}) } : value;
+      });
+      return true;
+    },
   };
 }
 

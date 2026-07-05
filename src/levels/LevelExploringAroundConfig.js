@@ -37,6 +37,17 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
       },
     },
   },
+  session: {
+    objectives: [],
+    bindings: [
+      {
+        source: "SM_Details_LightButton1",
+        event: "press",
+        action: "togglePrefabLight",
+        target: "Lamp1_TutorialCabin",
+      },
+    ],
+  },
   prefabs: [
     createPrefabInstance("operatorPanel", {
       name: "Panel1",

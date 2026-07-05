@@ -35,6 +35,12 @@ export function validateLevelEnvironmentConfig(levelId, config) {
   assertVector(config.scale, "scale", fail);
   assertVector(config.player?.spawnPosition, "player.spawnPosition", fail);
   assertVector(config.player?.rotationDegrees, "player.rotationDegrees", fail);
+  if (!config.world?.backgroundColor || !config.world?.fogColor) {
+    fail("world backgroundColor and fogColor are required");
+  }
+  if (!Number.isFinite(config.world.fogNear) || !Number.isFinite(config.world.fogFar)) {
+    fail("world fogNear/fogFar must be finite");
+  }
 
   const names = new Set();
   (config.prefabs ?? []).forEach((prefab, index) => {
@@ -48,6 +54,27 @@ export function validateLevelEnvironmentConfig(levelId, config) {
     assertVector(prefab.rotation, `${label}.rotation`, fail);
     assertVector(prefab.scale, `${label}.scale`, fail);
     if (prefab.light?.localOffset) assertVector(prefab.light.localOffset, `${label}.light.localOffset`, fail);
+  });
+
+  const objectiveIds = new Set();
+  (config.session?.objectives ?? []).forEach((objective, index) => {
+    if (!objective?.id || !objective.type) fail(`session.objectives[${index}] is incomplete`);
+    if (objectiveIds.has(objective.id)) fail(`duplicate objective id "${objective.id}"`);
+    objectiveIds.add(objective.id);
+    if (objective.type === "survive" && !(objective.seconds > 0)) {
+      fail(`session objective "${objective.id}" requires positive seconds`);
+    }
+  });
+  (config.session?.bindings ?? []).forEach((binding, index) => {
+    if (!binding?.source || !binding.action || !binding.target) {
+      fail(`session.bindings[${index}] is incomplete`);
+    }
+    if (
+      binding.action === "togglePrefabLight" &&
+      !(config.prefabs ?? []).some((prefab) => prefab.name === binding.target && prefab.light)
+    ) {
+      fail(`session binding target "${binding.target}" is not a light prefab`);
+    }
   });
 
   Object.entries(config.lighting?.pointLights ?? {}).forEach(([name, light]) => {

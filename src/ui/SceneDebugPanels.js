@@ -134,7 +134,8 @@ export function createSceneDebugPanels({
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
-  const prefabsGui = new GUI({ title: "LEVEL PREFABS", width: 320 });
+  const prefabsGui = new GUI({ title: "LEVEL", width: 360 });
+  const environmentFolders = new Map();
   const gameGui = new GUI({ title: "GAME", width: 320 });
   positionGui(materialsGui, 1);
   positionGui(lightsGui, 2);
@@ -373,6 +374,7 @@ export function createSceneDebugPanels({
 
   Object.entries(levelEnvironmentConfigs).forEach(([environmentId, environmentConfig]) => {
     const environmentFolder = prefabsGui.addFolder(environmentId);
+    environmentFolders.set(environmentId, environmentFolder);
     let saveProjectController = null;
     const levelActions = {
       async saveProject() {
@@ -707,8 +709,16 @@ export function createSceneDebugPanels({
     [materialsGui, gameGui].forEach((gui) => (visible ? gui.show() : gui.hide()));
     if (visible && !usesLevelPrefabs) lightsGui.show();
     else lightsGui.hide();
-    if (visible && usesLevelPrefabs) prefabsGui.show();
-    else prefabsGui.hide();
+    environmentFolders.forEach((folder, environmentId) => {
+      if (environmentId === activeLevelId) folder.show();
+      else folder.hide();
+    });
+    if (visible && usesLevelPrefabs) {
+      prefabsGui.title(`LEVEL: ${activeLevelId.toUpperCase()}`);
+      prefabsGui.show();
+    } else {
+      prefabsGui.hide();
+    }
   }
   updateGuiVisibility();
 
