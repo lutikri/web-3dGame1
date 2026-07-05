@@ -59,21 +59,38 @@ async function saveProjectConfig(config) {
   const response = await fetch("/__save-config", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kind: "reactor1Scene", config }),
+    body: JSON.stringify({ kind: "globalScene", config }),
   });
   const result = await response.json();
   if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save scene config");
   return result;
 }
 
-async function saveLevelProjectConfig(config) {
+async function saveLevelProjectConfig(kind, config) {
   const response = await fetch("/__save-config", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kind: "exploringAround", config }),
+    body: JSON.stringify({ kind, config }),
   });
   const result = await response.json();
   if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save level config");
+  return result;
+}
+
+async function saveLevelAndSceneProjectConfig(kind, levelConfig, sceneConfig) {
+  const response = await fetch("/__save-config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      kind: "allConfigs",
+      config: {
+        [kind]: levelConfig,
+        globalScene: sceneConfig,
+      },
+    }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save level and materials");
   return result;
 }
 
@@ -110,7 +127,9 @@ export function createSceneDebugPanels({
   levelEnvironmentConfigs = {},
   applyLevelAmbient,
   applyLevelPrefab,
-  saveAllProjectConfigs,
+  applyLevelWorld,
+  createLevelPointLight,
+  togglePositionGizmo,
 }) {
   const materialsGui = new GUI({ title: "MATERIALS", width: 320 });
   const lightsGui = new GUI({ title: "SCENE LIGHTS", width: 320 });
@@ -121,6 +140,22 @@ export function createSceneDebugPanels({
   positionGui(prefabsGui, 2);
   positionGui(gameGui, 3);
 
+  function addPositionEditor(folder, descriptor, onChange) {
+    const actions = {
+      edit() {
+        togglePositionGizmo?.({
+          ...descriptor,
+          position: descriptor.position,
+          onChange: () => {
+            onChange?.();
+            refresh();
+          },
+        });
+      },
+    };
+    folder.add(actions, "edit").name("EDIT");
+  }
+
   const collisionConfig = gameConfig?.collision;
   if (collisionConfig) {
     const collisionFolder = gameGui.addFolder("Collision mesh");
@@ -129,16 +164,39 @@ export function createSceneDebugPanels({
     positionFolder.add(collisionConfig.position, "x", -10, 10, 0.01).onChange(applyCollisionSettings);
     positionFolder.add(collisionConfig.position, "y", -10, 10, 0.01).onChange(applyCollisionSettings);
     positionFolder.add(collisionConfig.position, "z", -10, 10, 0.01).onChange(applyCollisionSettings);
+    addPositionEditor(
+      positionFolder,
+      { id: "collision", type: "collision", position: collisionConfig.position },
+      applyCollisionSettings,
+    );
   }
 
   if (gameConfig) {
     const projectFolder = gameGui.addFolder("Project configs");
+    let saveLevelController = null;
     const projectActions = {
-      async saveAll() {
-        return saveAllProjectConfigs?.();
+      async saveLevel() {
+        saveLevelController?.name("SAVING...");
+        try {
+          const environmentConfig = activeLevelId && levelEnvironmentConfigs[activeLevelId];
+          if (!environmentConfig?.saveKind) throw new Error("No active level config to save");
+          const result = await saveLevelAndSceneProjectConfig(
+            environmentConfig.saveKind,
+            clone(environmentConfig),
+            createSceneSnapshot(materialConfigs, lightingConfig, decalConfig),
+          );
+          saveLevelController?.name("SAVED");
+          window.setTimeout(() => saveLevelController?.name("SAVE LEVEL"), 1600);
+          return result;
+        } catch (error) {
+          saveLevelController?.name("SAVE FAILED");
+          console.error("[Scene debug] Failed to save active level", error);
+          window.setTimeout(() => saveLevelController?.name("SAVE LEVEL"), 3000);
+          throw error;
+        }
       },
     };
-    projectFolder.add(projectActions, "saveAll").name("UPDATE ALL CONFIGS");
+    saveLevelController = projectFolder.add(projectActions, "saveLevel").name("SAVE LEVEL");
 
     const playerCollisionFolder = gameGui.addFolder("Player collision");
     playerCollisionFolder
@@ -281,6 +339,11 @@ export function createSceneDebugPanels({
     folder.add(config.position, "x", -10, 10, 0.01).onChange(() => applyLight(key));
     folder.add(config.position, "y", -2, 10, 0.01).onChange(() => applyLight(key));
     folder.add(config.position, "z", -10, 10, 0.01).onChange(() => applyLight(key));
+    addPositionEditor(
+      folder,
+      { id: `global-light:${key}`, type: "globalPointLight", key, position: config.position },
+      () => applyLight(key),
+    );
     folder.add(config, "castShadow").onChange(() => applyLight(key, true));
     const shadows = folder.addFolder("Shadows");
     shadows
@@ -314,7 +377,7 @@ export function createSceneDebugPanels({
       async saveProject() {
         saveProjectController?.name("Saving...");
         try {
-          const result = await saveLevelProjectConfig(clone(environmentConfig));
+          const result = await saveLevelProjectConfig(environmentConfig.saveKind, clone(environmentConfig));
           saveProjectController?.name("Saved — reloading");
           window.setTimeout(() => window.location.reload(), 180);
           return result;
@@ -333,6 +396,39 @@ export function createSceneDebugPanels({
     const presetFolder = environmentFolder.addFolder("Preset");
     saveProjectController = presetFolder.add(levelActions, "saveProject").name("Save to project");
     presetFolder.add(levelActions, "copyConfig").name("Copy level config");
+    const worldConfig = environmentConfig.world;
+    if (worldConfig) {
+      const worldFolder = environmentFolder.addFolder("Fog / world");
+      worldFolder
+        .addColor(worldConfig, "backgroundColor")
+        .name("Background")
+        .onChange(() => applyLevelWorld?.(environmentId));
+      worldFolder
+        .addColor(worldConfig, "fogColor")
+        .name("Fog color")
+        .onChange(() => applyLevelWorld?.(environmentId));
+      worldFolder
+        .add(worldConfig, "fogNear", 0, 100, 0.05)
+        .name("Fog near")
+        .onChange(() => applyLevelWorld?.(environmentId));
+      worldFolder
+        .add(worldConfig, "fogFar", 0.1, 300, 0.1)
+        .name("Fog far")
+        .onChange(() => applyLevelWorld?.(environmentId));
+    }
+    const playerConfig = environmentConfig.player;
+    if (playerConfig?.spawnPosition) {
+      const spawnFolder = environmentFolder.addFolder("Player spawn");
+      spawnFolder.add(playerConfig.spawnPosition, "x", -50, 50, 0.01);
+      spawnFolder.add(playerConfig.spawnPosition, "y", -10, 30, 0.01);
+      spawnFolder.add(playerConfig.spawnPosition, "z", -50, 50, 0.01);
+      addPositionEditor(spawnFolder, {
+        id: `spawn:${environmentId}`,
+        type: "playerSpawn",
+        levelId: environmentId,
+        position: playerConfig.spawnPosition,
+      });
+    }
     const ambientConfig = environmentConfig.lighting;
     if (ambientConfig) {
       const ambientFolder = environmentFolder.addFolder("Ambient");
@@ -341,6 +437,70 @@ export function createSceneDebugPanels({
       ambientFolder
         .add(ambientConfig, "ambientIntensity", 0, 2, 0.005)
         .onChange(() => applyLevelAmbient?.(environmentId));
+
+      const pointLightsFolder = environmentFolder.addFolder("Point lights");
+      const addPointLightFolder = (key, config) => {
+        const folder = pointLightsFolder.addFolder(key);
+        const apply = (structural = false) => {
+          const light = pointLights.get(`${environmentId}:${key}`);
+          if (!light) return;
+          light.color.set(config.color);
+          light.intensity = config.intensity;
+          light.userData.baseIntensity = config.intensity;
+          light.distance = config.distance;
+          light.decay = config.decay;
+          light.position.copy(config.position);
+          if (structural) applyShadowSettings?.(light, config);
+        };
+        folder.addColor(config, "color").onChange(() => apply());
+        folder.add(config, "intensity", 0, 20, 0.01).onChange(() => apply());
+        folder.add(config, "distance", 0, 50, 0.05).onChange(() => apply());
+        folder.add(config, "decay", 0, 4, 0.01).onChange(() => apply());
+        folder.add(config.position, "x", -50, 50, 0.01).onChange(() => apply());
+        folder.add(config.position, "y", -10, 30, 0.01).onChange(() => apply());
+        folder.add(config.position, "z", -50, 50, 0.01).onChange(() => apply());
+        addPositionEditor(
+          folder,
+          {
+            id: `level-light:${environmentId}:${key}`,
+            type: "levelPointLight",
+            levelId: environmentId,
+            key,
+            position: config.position,
+          },
+          () => apply(),
+        );
+        folder.add(config, "castShadow").onChange(() => apply(true));
+        folder.close();
+      };
+      Object.entries(ambientConfig.pointLights ?? {}).forEach(([key, config]) => addPointLightFolder(key, config));
+      const pointLightActions = {
+        add() {
+          ambientConfig.pointLights ??= {};
+          let index = Object.keys(ambientConfig.pointLights).length + 1;
+          let key = `DebugLight_${index}`;
+          while (ambientConfig.pointLights[key]) key = `DebugLight_${++index}`;
+          const config = {
+            color: "#ffffff",
+            intensity: 1,
+            distance: 5,
+            decay: 1,
+            position: { x: 0, y: 1.5, z: 0 },
+            castShadow: false,
+            shadowMapSize: 512,
+            shadowBias: -0.0002,
+            shadowNormalBias: 0.01,
+            shadowRadius: 1,
+            shadowNear: 0.1,
+            shadowFar: 10,
+          };
+          ambientConfig.pointLights[key] = config;
+          createLevelPointLight?.(environmentId, key, config);
+          addPointLightFolder(key, config);
+          pointLightsFolder.open();
+        },
+      };
+      pointLightsFolder.add(pointLightActions, "add").name("SPAWN POINT LIGHT");
     }
 
     (environmentConfig.prefabs ?? []).forEach((prefabConfig) => {
@@ -355,6 +515,17 @@ export function createSceneDebugPanels({
       placement
         .add(prefabConfig.position, "z", -30, 30, 0.001)
         .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name, true));
+      addPositionEditor(
+        placement,
+        {
+          id: `prefab:${environmentId}:${prefabConfig.name}`,
+          type: "prefab",
+          levelId: environmentId,
+          key: prefabConfig.name,
+          position: prefabConfig.position,
+        },
+        () => applyLevelPrefab?.(environmentId, prefabConfig.name, true),
+      );
       if (!prefabConfig.light) {
         folder.close();
         return;
@@ -374,6 +545,20 @@ export function createSceneDebugPanels({
       folder.add(lightConfig, "fluorescentStartup").name("Starter on power-up");
       folder.add(lightConfig, "startupDelaySeconds", 0, 30, 0.1).name("Startup delay");
       folder.add(lightConfig, "faultyStarterLoop").name("Faulty starter loop");
+      if (lightConfig.afterglow) {
+        const afterglowFolder = folder.addFolder("Phosphor afterglow");
+        afterglowFolder.add(lightConfig.afterglow, "enabled");
+        afterglowFolder
+          .add(lightConfig.afterglow, "durationSeconds", 0, 10, 0.05)
+          .name("Duration");
+        afterglowFolder
+          .add(lightConfig.afterglow, "initialFactor", 0, 1, 0.01)
+          .name("Initial glow");
+        afterglowFolder
+          .add(lightConfig.afterglow, "exponent", 0.1, 6, 0.05)
+          .name("Falloff");
+        afterglowFolder.close();
+      }
       folder
         .add(lightConfig, "castShadow")
         .name("Cast shadows")
@@ -389,6 +574,17 @@ export function createSceneDebugPanels({
       offset
         .add(lightConfig.localOffset, "z", -2, 2, 0.001)
         .onChange(() => applyLevelPrefab?.(environmentId, prefabConfig.name));
+      addPositionEditor(
+        offset,
+        {
+          id: `prefab-light:${environmentId}:${prefabConfig.name}`,
+          type: "prefabLightOffset",
+          levelId: environmentId,
+          key: prefabConfig.name,
+          position: lightConfig.localOffset,
+        },
+        () => applyLevelPrefab?.(environmentId, prefabConfig.name),
+      );
 
       const flicker = lightConfig.flicker;
       if (flicker) {

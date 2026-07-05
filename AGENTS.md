@@ -15,7 +15,10 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - `src/FusionCoreSimulation.js`: core gameplay loop, phases, warning flags, and derived gauge values.
 - `src/StatusScreen.js`: canvas-driven material for the small status display.
 - `src/app/AppShell.js`: app/menu shell, route transitions, settings, progress routing, and level briefing overlay behavior.
-- `src/app/LevelCatalog.js`: playable level metadata. Add per-level briefing sheets here via `briefingImage`.
+- `src/levels/LevelRegistry.js`: single registration point for level metadata, briefing sheets, playability, and runtime environment.
+- `src/prefabs/PrefabRegistry.js`: shared prefab asset, material, interaction, physics, light, and behavior defaults.
+- `src/levels/LevelExploringAroundConfig.js`: instance layout and intentional per-level overrides for the Exploring Around environment.
+- `src/levels/LevelIntroShiftConfig.js`: tutorial environment layout, collision filtering, fog, lights, fan behavior, and prefab instances.
 - `src/app/BriefingUiConfig.js`: small UI-only tuning surface for level briefing sheet zoom, pan, and vignette behavior.
 - `assets/`: runtime GLB and baked PBR textures.
 - `styles/operator-game.css`: HUD/canvas styling.
@@ -32,7 +35,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 
 ## Level Briefings
 
-- Level briefing sheets are level-driven. Add or change the sheet path in `src/app/LevelCatalog.js` with `briefingImage`, for example `assets/ui/briefings/Intro1-us.png`.
+- Level briefing sheets are level-driven. Add or change `briefingImage` on the level definition in `src/levels/LevelRegistry.js`, for example `assets/ui/briefings/Intro1-us.png`.
 - Briefing sheets are shown by `AppShell` after level start, before player control is released.
 - While a briefing is visible, gameplay input is locked through `gameApi.setInputLocked(true)`: no pointer lock, WASD, pause, panel clicks, zoom, or held controls should pass through.
 - Pressing `Enter` dismisses the sheet. The sheet animates downward and then hides; after dismissal, input unlocks.
@@ -52,12 +55,24 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 
 ## Prefabs And Level Instances
 
+- Level runtime loading must be exclusive, not eager: only the menu-preview/active environment may own scene objects, lights, interactions, collision, and Rapier bodies. Never load every registered level and hide inactive ones.
+- On a major route change, await unloading the previous environment and loading the target environment while the route curtain is opaque. Shared source GLBs/textures may remain cached, but cloned level instances and physics state must be destroyed.
+- If a proposed shortcut contradicts stated loading, memory, scaling, or level-isolation goals, explicitly surface the compromise to the user before implementing it. Do not silently preserve an incompatible legacy lifecycle.
+- Register a level once in `src/levels/LevelRegistry.js`. The same definition supplies AppShell metadata and the runtime environment.
+- A level environment owns architecture/collision assets, player spawn, ambient lighting, panel placement, and named prefab instances.
+- Define reusable prefab defaults once in `src/prefabs/PrefabRegistry.js`. Instantiate them in a level with `createPrefabInstance(type, { name, position, rotation, overrides })`.
 - Reusable objects such as lamps, doors, pumps, and control cabinets are prefabs. Their behavior must have one shared implementation, not separate approximations per level.
-- Level configs describe prefab instances: asset, transform, startup delay, state, and intentional per-instance overrides. They must not duplicate animation, flicker, interaction, collision, or physics algorithms.
+- Level configs describe prefab instances: stable name, transform, startup state, and intentional per-instance overrides. They must not duplicate assets, materials, animation, flicker, interaction, collision, or physics algorithms.
+- Every prefab instance name must be unique within its level. Registry validation should fail immediately for malformed instances; AppShell validation should report levels missing from the menu.
+- Levels that reuse an environment, such as `freeplay`, must use `environmentId` aliases so assets, physics, lights, and debug controls are not loaded twice.
+- Embedded environment behaviors such as fans belong under `environment.behaviors`; shared placed objects such as panels, doors, and lamps belong in `PrefabRegistry`.
 - When a new level needs behavior already present elsewhere, extract or reuse the existing behavior before adding level-specific code. A similarly looking second implementation is not acceptable.
 - Fluorescent startup, normal fixture flicker, and faulty-starter behavior are shared lighting behaviors. Prefab options select those behaviors; they do not reimplement them.
+- Fluorescent prefab lights must also participate in global startup/terminal blackout factors and own their configurable phosphor afterglow; migrating a lamp to a prefab must not bypass scene feedback.
 - Prefer adding reusable prefab capabilities first, then expose instance parameters in the level config and `LEVEL PREFABS` debug panel.
 - Saved level overrides must merge prefab arrays by stable prefab `name`, preserving newly added default fields and allowing old saved configs to migrate safely.
+- Saved prefab instances must not override registry-owned asset, material, behavior, type, or interaction defaults. Level saves may override placement, light tuning, startup state, and other explicitly instance-owned values.
+- The debug `SAVE LEVEL` action saves the active environment together with global material tuning. Editable positions and prefab light offsets should provide an `EDIT` viewport transform gizmo and stay synchronized with their numeric controls.
 - The current tutorial room predates the prefab-instance pipeline. Migrate it to the shared prefab system when that scene is next reworked; do not use its legacy structure as justification for duplicating behavior in new levels.
 
 ## Fusion Core Scene Direction

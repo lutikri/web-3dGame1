@@ -6,7 +6,7 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "enabled": true,
   "gtao": {
-    "defaultQuality": "off",
+    "defaultQuality": "max",
     "presets": {
       "off": {
         "enabled": false
@@ -37,6 +37,7 @@ export const POST_PROCESSING_OVERRIDES = {
       },
       "max": {
         "enabled": true,
+        "resolutionScale": 0.5,
         "blendIntensity": 0.8,
         "radius": 0.42,
         "distanceExponent": 1.7,
@@ -198,13 +199,13 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.65,
+    "strength": 0.52,
     "radius": 0.8,
-    "threshold": 0.47
+    "threshold": 0.33
   },
   "antiAliasing": {
     "method": "off",
-    "msaaSamples": 4
+    "msaaSamples": 0
   },
   "lensEffects": {
     "enabled": true,
@@ -228,7 +229,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "lensDirt": {
       "enabled": true,
       "strength": 1,
-      "spread": 0.1025,
+      "spread": 0.035,
       "assetPath": "assets/LensDirt1.png",
       "tint": "#ffffff",
       "maxTextureSize": 1024,
@@ -273,12 +274,12 @@ export const POST_PROCESSING_OVERRIDES = {
   "lensDistortion": {
     "enabled": true,
     "barrelAmount": 0,
-    "fisheyeAmount": 0.18,
+    "fisheyeAmount": 0.14,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0.0032
+    "amount": 0.0014
   }
 };

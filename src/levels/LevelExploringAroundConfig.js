@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -14,7 +15,13 @@ function applyOverrides(target, overrides) {
       if (namedObjects) {
         value.forEach((entry) => {
           const targetEntry = targetArray.find((candidate) => candidate?.name === entry.name);
-          if (targetEntry) applyOverrides(targetEntry, entry);
+          if (targetEntry) {
+            const instanceOverride = { ...entry };
+            ["assetPath", "materialKey", "behavior", "interaction", "prefabType"].forEach(
+              (protectedKey) => delete instanceOverride[protectedKey],
+            );
+            applyOverrides(targetEntry, instanceOverride);
+          }
         });
       }
       return;
@@ -22,7 +29,7 @@ function applyOverrides(target, overrides) {
     if (value && typeof value === "object" && !Array.isArray(value)) {
       if (!target[key] || typeof target[key] !== "object") target[key] = {};
       applyOverrides(target[key], value);
-    } else if (key in target) {
+    } else {
       target[key] = value;
     }
   });
@@ -30,50 +37,6 @@ function applyOverrides(target, overrides) {
 }
 
 const corridorLampXs = [1.6, 5.10382, 8.60764, 12.11146];
-
-function lampPrefab(
-  name,
-  position,
-  {
-    intensity = 1.5,
-    castShadow = false,
-    rotateAroundUp = false,
-    startupDelaySeconds = 0,
-    faultyStarterLoop = false,
-  } = {},
-) {
-  return {
-    name,
-    assetPath: "assets/mesh/SM_Lamp1.glb",
-    materialKey: "lamp1",
-    position,
-    rotation: new THREE.Euler(0, rotateAroundUp ? Math.PI / 2 : 0, 0),
-    light: {
-      enabled: true,
-      color: "#d9e8ff",
-      intensity,
-      distance: 5,
-      decay: 1,
-      localOffset: blenderPosition(0.060629, 0, -0.41959),
-      castShadow,
-      shadowMapSize: 512,
-      shadowBias: -0.0002,
-      shadowNormalBias: 0.012,
-      shadowRadius: 1,
-      shadowNear: 0.1,
-      shadowFar: 6,
-      fluorescentStartup: true,
-      startupDelaySeconds,
-      faultyStarterLoop,
-      flicker: {
-        enabled: false,
-        minIntervalSeconds: 35,
-        maxIntervalSeconds: 110,
-        retryChance: 0.35,
-      },
-    },
-  };
-}
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   saveKind: "exploringAround",
@@ -85,70 +48,121 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   position: new THREE.Vector3(0, 0, 0),
   rotation: new THREE.Euler(0, 0, 0),
   scale: new THREE.Vector3(1, 1, 1),
-  panel: {
-    position: blenderPosition(3.6, 2.44, -0.055),
+  world: {
+    backgroundColor: "#080b0d",
+    fogColor: "#080b0d",
+    fogNear: 1,
+    fogFar: 18,
+  },
+  behaviors: {
+    fans: {
+      "SM_Fan.002": {
+        enabled: true,
+        axis: "z",
+        speedDegreesPerSecond: 120,
+      },
+    },
   },
   prefabs: [
-    {
+    createPrefabInstance("operatorPanel", {
+      name: "Panel1",
+      position: blenderPosition(3.6, 2.44, -0.055),
+    }),
+    createPrefabInstance("bulkheadDoor", {
       name: "DoorBulk1_A",
-      assetPath: "assets/mesh/SM_DoorBulk1.glb",
-      materialKey: "doorLamp2",
-      position: blenderPosition(3.6, 0.006729, 0.151831),
-      interaction: {
-        type: "hingedDoor",
-        meshName: "SM_DoorBulk1_Door",
-        colliderName: "SM_DoorBulk1_Door_Coll",
-        axis: "y",
-        initialDegrees: -20,
-        minDegrees: -105,
-        maxDegrees: 5,
-        dragDegreesPerPixel: 0.28,
-        maxDistance: 2.8,
-        density: 180,
-        angularDamping: 0.65,
-        motorStiffness: 55,
-        motorDamping: 10,
-      },
-    },
-    {
+      position: new THREE.Vector3(3.6, 0.151831, -0.02457743734996512),
+    }),
+    createPrefabInstance("bulkheadDoor", {
       name: "DoorBulk1_B",
-      assetPath: "assets/mesh/SM_DoorBulk1.glb",
-      materialKey: "doorLamp2",
       position: blenderPosition(13.1869, 0.006729, 0.151831),
-      interaction: {
-        type: "hingedDoor",
-        meshName: "SM_DoorBulk1_Door",
-        colliderName: "SM_DoorBulk1_Door_Coll",
-        axis: "y",
-        initialDegrees: -20,
-        minDegrees: -105,
-        maxDegrees: 5,
-        dragDegreesPerPixel: 0.28,
-        maxDistance: 2.8,
-        density: 180,
-        angularDamping: 0.65,
-        motorStiffness: 55,
-        motorDamping: 10,
-      },
-    },
+    }),
     ...corridorLampXs.map((x, index) =>
-      lampPrefab(`Lamp1_Corridor_${index + 1}`, blenderPosition(x, -1.23, 2.38), {
-        intensity: 1.35,
-        castShadow: index === 1,
-        rotateAroundUp: true,
-        startupDelaySeconds: (index + 1) * 2,
-        faultyStarterLoop: index === 1,
+      createPrefabInstance("fluorescentLamp", {
+        name: `Lamp1_Corridor_${index + 1}`,
+        position: blenderPosition(x, -1.23, 2.38),
+        rotation: new THREE.Euler(0, Math.PI / 2, 0),
+        overrides: {
+          light: {
+            intensity: 1.35,
+            castShadow: index === 1,
+            startupDelaySeconds: (index + 1) * 2,
+            faultyStarterLoop: index === 1,
+          },
+        },
       }),
     ),
-    lampPrefab("Lamp1_ControlRoom", blenderPosition(3.60587, 1.811, 2.3792), {
-      intensity: 1.5,
-      castShadow: true,
+    createPrefabInstance("fluorescentLamp", {
+      name: "Lamp1_TutorialCabin",
+      position: new THREE.Vector3(3.5663008893845523, 2.39028, -1.7304095448416588),
+      overrides: {
+        light: {
+          color: "#fffdfa",
+          intensity: 1.98,
+          distance: 3.25,
+          decay: 0.33,
+          localOffset: new THREE.Vector3(0.060629, -0.45930362303042627, 0),
+          castShadow: true,
+          shadowBias: 0.00024,
+          shadowRadius: 5.2,
+          fluorescentStartup: true,
+          roomLightControlled: true,
+          startupDelaySeconds: 3,
+          flicker: {
+            enabled: true,
+            minIntervalSeconds: 35,
+            maxIntervalSeconds: 110,
+            retryChance: 0.35,
+          },
+        },
+      },
+    }),
+    createPrefabInstance("redBulkLamp", {
+      name: "LampBulkRed_Exploring",
+      position: blenderPosition(3.02204, 0.030289, 2.0058),
+      overrides: {
+        light: {
+          intensity: 3.17,
+          distance: 1.5,
+          decay: 0.4,
+          localOffset: new THREE.Vector3(0, 0, -0.12778707579195908),
+        },
+      },
     }),
   ],
   lighting: {
     ambientSky: "#71808c",
     ambientGround: "#08090a",
     ambientIntensity: 0.018,
+    pointLights: {
+      fill: {
+        color: "#75bcff",
+        intensity: 0.25,
+        distance: 2.5,
+        decay: 0.63,
+        position: new THREE.Vector3(3.3063295628550096, 1.4615465941703416, -1.6873887166078796),
+        castShadow: false,
+        shadowMapSize: 512,
+        shadowBias: -0.0005,
+        shadowNormalBias: 0.03,
+        shadowRadius: 1,
+        shadowNear: 0.1,
+        shadowFar: 7,
+      },
+      LampFan: {
+        color: "#ff9875",
+        intensity: 0.6,
+        distance: 3,
+        decay: 0.49,
+        position: new THREE.Vector3(3.1715786524857754, 2.2591211289988005, -2.910675730137223),
+        castShadow: true,
+        shadowMapSize: 512,
+        shadowBias: -0.0006,
+        shadowNormalBias: 0.035,
+        shadowRadius: 1,
+        shadowNear: 0.1,
+        shadowFar: 9,
+      },
+    },
   },
   player: {
     spawnPosition: new THREE.Vector3(0.45, 1.52, 1.56),

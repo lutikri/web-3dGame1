@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
 import { LUTCubeLoader } from "three/addons/loaders/LUTCubeLoader.js";
@@ -41,6 +42,7 @@ import {
 import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js";
 import { createPhysicsSystem } from "./physics/PhysicsSystem.js";
 import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -69,7 +71,7 @@ const defaultSceneDebugConfig = JSON.parse(
   }),
 );
 restoreSavedSceneConfig({
-  levelId: CONFIG.sceneDebug?.levelId ?? "reactor-1",
+  levelId: CONFIG.sceneDebug?.levelId ?? "global",
   materials: CONFIG.interior.specialMaterials,
   lighting: CONFIG.lighting,
   decals: CONFIG.interior.decals,
@@ -130,6 +132,10 @@ renderer.setPixelRatio(getQualityProfilePixelRatio(bootOptions.qualityProfile ??
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.type = CONFIG.shadows.type;
+const debugTransformControls = new TransformControls(camera, renderer.domElement);
+debugTransformControls.setMode("translate");
+debugTransformControls.setSize(0.85);
+scene.add(debugTransformControls);
 
 const textureStreaming = createTextureStreaming({
   renderer,
@@ -191,6 +197,7 @@ const statusScreen = createStatusScreen({
 const fusionCore = createFusionCoreSimulation();
 
 let panelModel = null;
+const panelCollisionMeshes = [];
 let interiorModel = null;
 let interiorDecalModel = null;
 let interiorDecalMaterial = null;
@@ -198,6 +205,9 @@ let collisionModel = null;
 const levelEnvironmentModels = new Map();
 const levelCollisionModels = new Map();
 const levelPrefabInstances = new Map();
+const levelAssetCache = new Map();
+let loadedRuntimeLevelId = null;
+let levelLoadPromise = null;
 let collisionReady = false;
 let yaw = THREE.MathUtils.degToRad(CONFIG.player?.spawnYawDegrees ?? 0);
 let pitch = THREE.MathUtils.degToRad(CONFIG.player?.spawnPitchDegrees ?? 0);
@@ -267,6 +277,8 @@ let screenSpaceShadowQuality = CONFIG.postProcessing.screenSpaceShadows.defaultQ
 const fastDebugBoot = Boolean(CONFIG.debug?.enabled && CONFIG.debug?.fastLoadLevel);
 let loadingComplete = Boolean(CONFIG.loading?.skip || fastDebugBoot);
 let inputLocked = false;
+let debugTransformEdit = null;
+let debugTransformInputLockBackup = false;
 let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
@@ -1114,10 +1126,7 @@ function init() {
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);
-  loadInteriorModel();
-  loadInteriorDecals();
-  loadCollisionModel();
-  loadLevelEnvironments();
+  loadLevelEnvironment("intro-shift");
   loadPanelModel();
   if (CONFIG.loading?.skip || fastDebugBoot) triggerRoomLightBoot();
   animate();
@@ -1156,48 +1165,6 @@ function setupLights() {
     scene.add(light);
   }
 
-  Object.entries(CONFIG.levelEnvironments ?? {}).forEach(([levelId, environmentConfig]) => {
-    const lightingConfig = environmentConfig.lighting;
-    if (!lightingConfig) return;
-
-    const lights = [];
-    const levelHemi = new THREE.HemisphereLight(
-      lightingConfig.ambientSky ?? "#ffffff",
-      lightingConfig.ambientGround ?? "#080808",
-      lightingConfig.ambientIntensity ?? 0,
-    );
-    levelHemi.name = `HemisphereLight_${levelId}`;
-    levelHemi.userData.levelId = levelId;
-    levelHemi.userData.baseIntensity = levelHemi.intensity;
-    levelHemi.visible = activeLevelId === levelId;
-    controlledLights.push(levelHemi);
-    lights.push(levelHemi);
-    scene.add(levelHemi);
-
-    Object.entries(lightingConfig.pointLights ?? {}).forEach(([name, lightConfig]) => {
-      const light = new THREE.PointLight(
-        lightConfig.color,
-        lightConfig.intensity,
-        lightConfig.distance,
-        lightConfig.decay,
-      );
-      light.name = `PointLight_${levelId}_${name}`;
-      light.position.copy(lightConfig.position);
-      light.userData.levelId = levelId;
-      light.userData.baseIntensity = light.intensity;
-      light.userData.lightKey = name;
-      light.userData.lightConfig = lightConfig;
-      light.userData.roomLightControlled = Boolean(lightConfig.roomLightControlled);
-      light.visible = activeLevelId === levelId;
-      pointLightsByKey.set(`${levelId}:${name}`, light);
-      controlledLights.push(light);
-      lights.push(light);
-      applyShadowSettings(light, lightConfig);
-      scene.add(light);
-    });
-
-    levelLights.set(levelId, lights);
-  });
 }
 
 function setupLightFixtures() {
@@ -1461,7 +1428,7 @@ function setupSceneDebugPanels() {
   if (!panelConfig.enabled || sceneDebugPanels) return;
 
   sceneDebugPanels = createSceneDebugPanels({
-    levelId: panelConfig.levelId ?? "reactor-1",
+    levelId: panelConfig.levelId ?? "global",
     materialConfigs: CONFIG.interior.specialMaterials,
     materialInstances: materials.interiorCustom,
     lightingConfig: CONFIG.lighting,
@@ -1478,7 +1445,9 @@ function setupSceneDebugPanels() {
     levelEnvironmentConfigs: CONFIG.levelEnvironments,
     applyLevelAmbient: applyLevelAmbientConfig,
     applyLevelPrefab: applyLevelPrefabConfig,
-    saveAllProjectConfigs,
+    applyLevelWorld: applyLevelWorldConfig,
+    createLevelPointLight,
+    togglePositionGizmo,
     applyMaterialOverlay: (key) => {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
@@ -1487,28 +1456,9 @@ function setupSceneDebugPanels() {
   if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
 }
 
-async function saveAllProjectConfigs() {
-  const configs = {
-    reactor1Scene: sceneDebugPanels?.getProjectConfig?.(),
-    postProcessing: postProcessingDebugPanel?.getProjectConfig?.(),
-  };
-  for (const environmentConfig of Object.values(CONFIG.levelEnvironments ?? {})) {
-    if (!environmentConfig.saveKind) continue;
-    configs[environmentConfig.saveKind] = environmentConfig;
-  }
-  const response = await fetch("/__save-config", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kind: "allConfigs", config: configs }),
-  });
-  const result = await response.json();
-  if (!response.ok || !result.ok) throw new Error(result.error ?? "Unable to save project configs");
-  window.setTimeout(() => window.location.reload(), 180);
-  return true;
-}
-
 function setDebugPanelsVisible(visible) {
   debugPanelsVisible = Boolean(visible);
+  if (!debugPanelsVisible) stopPositionGizmo();
   if (debugOverlay) debugOverlay.hidden = !debugPanelsVisible;
   if (fpsMeter) fpsMeter.hidden = !debugPanelsVisible;
   document.body.classList.toggle("debug-hidden", !debugPanelsVisible);
@@ -2002,9 +1952,19 @@ function loadPanelModel() {
       panelModel = gltf.scene;
       panelModel.name = "Panel1";
 
-      panelModel.traverse(registerPanelObject);
+      panelModel.traverse((object) => {
+        if (object.isMesh && /coll/i.test(object.name)) {
+          object.material = collisionDebugMaterial;
+          object.visible = Boolean(CONFIG.player?.collision?.show);
+          object.renderOrder = 1000;
+          panelCollisionMeshes.push(object);
+          return;
+        }
+        registerPanelObject(object);
+      });
       applyActivePanelTransform();
       scene.add(panelModel);
+      levelCollisionModels.forEach((_collision, levelId) => appendPanelPhysics(levelId));
 
       finishLoading();
       console.log(`[OperatorGame] Loaded SM_Panel1.glb: ${needles.length} arrows, ${lamps.length} lamps`);
@@ -2199,6 +2159,254 @@ function loadCollisionModel() {
   );
 }
 
+async function loadSceneAsset(assetPath) {
+  let assetPromise = levelAssetCache.get(assetPath);
+  if (!assetPromise) {
+    assetPromise = new GLTFLoader().loadAsync(assetPath);
+    levelAssetCache.set(assetPath, assetPromise);
+  }
+  const gltf = await assetPromise;
+  return gltf.scene.clone(true);
+}
+
+function createLevelLights(levelId, environmentConfig) {
+  const lightingConfig = environmentConfig.lighting;
+  if (!lightingConfig) return;
+  const lights = [];
+  const levelHemi = new THREE.HemisphereLight(
+    lightingConfig.ambientSky ?? "#ffffff",
+    lightingConfig.ambientGround ?? "#080808",
+    lightingConfig.ambientIntensity ?? 0,
+  );
+  levelHemi.name = `HemisphereLight_${levelId}`;
+  levelHemi.userData.levelId = levelId;
+  levelHemi.userData.baseIntensity = levelHemi.intensity;
+  controlledLights.push(levelHemi);
+  lights.push(levelHemi);
+  scene.add(levelHemi);
+
+  Object.entries(lightingConfig.pointLights ?? {}).forEach(([name, lightConfig]) => {
+    const light = new THREE.PointLight(
+      lightConfig.color,
+      lightConfig.intensity,
+      lightConfig.distance,
+      lightConfig.decay,
+    );
+    light.name = `PointLight_${levelId}_${name}`;
+    light.position.copy(lightConfig.position);
+    light.userData.levelId = levelId;
+    light.userData.baseIntensity = light.intensity;
+    light.userData.lightKey = name;
+    light.userData.lightConfig = lightConfig;
+    light.userData.roomLightControlled = Boolean(lightConfig.roomLightControlled);
+    pointLightsByKey.set(`${levelId}:${name}`, light);
+    controlledLights.push(light);
+    lights.push(light);
+    applyShadowSettings(light, lightConfig);
+    scene.add(light);
+  });
+  levelLights.set(levelId, lights);
+}
+
+async function loadLevelEnvironment(requestedLevelId) {
+  const levelId = getLevelEnvironmentId(requestedLevelId);
+  if (loadedRuntimeLevelId === levelId && levelEnvironmentModels.has(levelId)) return levelId;
+  if (levelLoadPromise) await levelLoadPromise;
+  if (loadedRuntimeLevelId === levelId && levelEnvironmentModels.has(levelId)) return levelId;
+  if (loadedRuntimeLevelId && loadedRuntimeLevelId !== levelId) unloadLevelEnvironment(loadedRuntimeLevelId);
+
+  const environmentConfig = CONFIG.levelEnvironments?.[requestedLevelId] ?? CONFIG.levelEnvironments?.[levelId];
+  if (!environmentConfig) throw new Error(`[LevelRuntime] Unknown environment: ${requestedLevelId}`);
+  loadedRuntimeLevelId = levelId;
+  createLevelLights(levelId, environmentConfig);
+
+  levelLoadPromise = (async () => {
+    const prefabGroup = new THREE.Group();
+    prefabGroup.name = `${levelId}_Prefabs`;
+    levelEnvironmentModels.set(`${levelId}:prefabs`, prefabGroup);
+    scene.add(prefabGroup);
+
+    const environmentTask = loadSceneAsset(environmentConfig.assetPath).then((model) => {
+      model.name = `${levelId}_Environment`;
+      applyEnvironmentTransform(model, environmentConfig);
+      const excludedNameParts = environmentConfig.render?.meshNameExcludes ?? [];
+      const excludedMeshes = [];
+      model.traverse((object) => {
+        if (
+          object.isMesh &&
+          excludedNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()))
+        ) {
+          excludedMeshes.push(object);
+          return;
+        }
+        registerInteriorObject(object, environmentConfig, levelId);
+      });
+      excludedMeshes.forEach((object) => object.parent?.remove(object));
+      levelEnvironmentModels.set(levelId, model);
+      scene.add(model);
+    });
+
+    const collisionTask = loadSceneAsset(environmentConfig.collisionAssetPath).then((model) => {
+      model.name = `${levelId}_Collision`;
+      applyEnvironmentTransform(model, environmentConfig);
+      const requiredNameParts = environmentConfig.collision?.meshNameIncludes ?? [];
+      const excludedMeshes = [];
+      model.traverse((object) => {
+        if (!object.isMesh) return;
+        const included =
+          requiredNameParts.length === 0 ||
+          requiredNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()));
+        if (!included) {
+          excludedMeshes.push(object);
+          return;
+        }
+        object.castShadow = false;
+        object.receiveShadow = false;
+        object.material = collisionDebugMaterial;
+        object.renderOrder = 1000;
+      });
+      excludedMeshes.forEach((object) => object.parent?.remove(object));
+      model.visible = Boolean(CONFIG.player?.collision?.show);
+      levelCollisionModels.set(levelId, model);
+      scene.add(model);
+      physicsSystem?.addStaticScene(levelId, model);
+      appendPanelPhysics(levelId);
+    });
+
+    const prefabTasks = (environmentConfig.prefabs ?? [])
+      .filter((prefabConfig) => prefabConfig.behavior !== "operatorPanel")
+      .map(async (prefabConfig) => {
+        const prefab = await loadSceneAsset(prefabConfig.assetPath);
+        prefab.name = prefabConfig.name;
+        prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
+        prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
+        prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
+        const emissiveMaterials = [];
+        const collisionMeshes = [];
+        const parts = new Map();
+        prefab.traverse((object) => {
+          if (object.name) {
+            object.userData.prefabInitialRotation = object.rotation.clone();
+            parts.set(object.name, object);
+          }
+          if (!object.isMesh) return;
+          const isCollider = /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(object.name);
+          object.userData.prefabCollider = isCollider;
+          object.visible = isCollider ? Boolean(CONFIG.player?.collision?.show) : true;
+          object.castShadow = !isCollider;
+          object.receiveShadow = !isCollider;
+          if (isCollider) {
+            object.material = collisionDebugMaterial;
+            object.renderOrder = 1000;
+            collisionMeshes.push(object);
+          } else {
+            ensureSecondUvSet(object);
+            const sourceMaterial = materials.interiorCustom[prefabConfig.materialKey] ?? materials.interior;
+            object.material = prefabConfig.light ? sourceMaterial.clone() : sourceMaterial;
+            if (prefabConfig.light) {
+              object.material.userData.baseEmissiveIntensity = sourceMaterial.userData.baseEmissiveIntensity;
+              emissiveMaterials.push(object.material);
+            }
+          }
+        });
+        const runtime = {
+          root: prefab,
+          light: null,
+          emissiveMaterials,
+          materialKey: prefabConfig.materialKey,
+          collisionMeshes,
+          parts,
+          flickerTime: Math.random() * 100,
+          flickerSeed: Math.random() * 1000,
+          startupPattern: prefabConfig.light?.fluorescentStartup ? createFluorescentStartupPattern() : [],
+          startupElapsed: 0,
+          faultyStarterElapsed: 0,
+          afterglowRemaining: 0,
+          wasLightEnabled: prefabConfig.light?.enabled !== false,
+          fixtureFlicker: createFixtureFlickerState(prefabConfig.light?.flicker),
+          wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
+        };
+        if (prefabConfig.light) {
+          const lightConfig = prefabConfig.light;
+          const light = new THREE.PointLight(
+            lightConfig.color,
+            lightConfig.intensity,
+            lightConfig.distance,
+            lightConfig.decay,
+          );
+          light.name = `${prefabConfig.name}_PointLight`;
+          light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
+          light.userData.baseIntensity = lightConfig.intensity;
+          light.userData.lightConfig = lightConfig;
+          light.userData.fixtureFlicker = runtime.fixtureFlicker;
+          applyShadowSettings(light, lightConfig);
+          prefab.add(light);
+          runtime.light = light;
+        }
+        levelPrefabInstances.set(`${levelId}:${prefabConfig.name}`, runtime);
+        registerPrefabInteraction(levelId, prefabConfig, runtime);
+        prefabGroup.add(prefab);
+        applyLevelPrefabConfig(levelId, prefabConfig.name, true);
+      });
+
+    await Promise.all([environmentTask, collisionTask, ...prefabTasks]);
+    updateActiveLevelEnvironment();
+    console.log(`[LevelRuntime] Loaded only: ${levelId}`);
+    return levelId;
+  })();
+
+  try {
+    return await levelLoadPromise;
+  } catch (error) {
+    unloadLevelEnvironment(levelId);
+    throw error;
+  } finally {
+    levelLoadPromise = null;
+  }
+}
+
+function unloadLevelEnvironment(levelId) {
+  stopPositionGizmo();
+  physicsSystem?.resetWorld(playerPosition);
+  [levelId, `${levelId}:prefabs`].forEach((key) => {
+    const model = levelEnvironmentModels.get(key);
+    if (model) scene.remove(model);
+    levelEnvironmentModels.delete(key);
+  });
+  const collision = levelCollisionModels.get(levelId);
+  if (collision) scene.remove(collision);
+  levelCollisionModels.delete(levelId);
+
+  [...levelPrefabInstances.entries()].forEach(([key, runtime]) => {
+    if (!key.startsWith(`${levelId}:`)) return;
+    runtime.emissiveMaterials.forEach((material) => material.dispose());
+    levelPrefabInstances.delete(key);
+  });
+  for (let index = interactive.length - 1; index >= 0; index -= 1) {
+    if (interactive[index]?.userData.levelId === levelId) interactive.splice(index, 1);
+  }
+  for (let index = roomLightButtons.length - 1; index >= 0; index -= 1) {
+    if (roomLightButtons[index]?.userData.levelId === levelId) roomLightButtons.splice(index, 1);
+  }
+  for (let index = interiorFans.length - 1; index >= 0; index -= 1) {
+    if (interiorFans[index]?.userData.levelId === levelId) interiorFans.splice(index, 1);
+  }
+  const ownedLights = levelLights.get(levelId) ?? [];
+  ownedLights.forEach((light) => {
+    scene.remove(light);
+    const controlledIndex = controlledLights.indexOf(light);
+    if (controlledIndex >= 0) controlledLights.splice(controlledIndex, 1);
+  });
+  levelLights.delete(levelId);
+  [...pointLightsByKey.keys()]
+    .filter((key) => key.startsWith(`${levelId}:`))
+    .forEach((key) => pointLightsByKey.delete(key));
+  loadedRuntimeLevelId = null;
+  collisionOctree = new Octree();
+  collisionReady = false;
+  console.log(`[LevelRuntime] Unloaded: ${levelId}`);
+}
+
 function loadLevelEnvironments() {
   const loader = new GLTFLoader();
 
@@ -2209,7 +2417,19 @@ function loadLevelEnvironments() {
         const model = gltf.scene;
         model.name = `${levelId}_Environment`;
         applyEnvironmentTransform(model, environmentConfig);
-        model.traverse(registerInteriorObject);
+        const excludedNameParts = environmentConfig.render?.meshNameExcludes ?? [];
+        const excludedMeshes = [];
+        model.traverse((object) => {
+          if (
+            object.isMesh &&
+            excludedNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()))
+          ) {
+            excludedMeshes.push(object);
+            return;
+          }
+          registerInteriorObject(object, environmentConfig);
+        });
+        excludedMeshes.forEach((object) => object.parent?.remove(object));
         model.visible = activeLevelId === levelId;
         levelEnvironmentModels.set(levelId, model);
         scene.add(model);
@@ -2248,6 +2468,7 @@ function loadLevelEnvironments() {
         levelCollisionModels.set(levelId, model);
         scene.add(model);
         physicsSystem?.addStaticScene(levelId, model);
+        appendPanelPhysics(levelId);
         updateActiveLevelEnvironment();
         console.log(`[OperatorGame] Loaded level collision: ${levelId}`);
       },
@@ -2262,6 +2483,7 @@ function loadLevelEnvironments() {
     scene.add(prefabGroup);
 
     (environmentConfig.prefabs ?? []).forEach((prefabConfig) => {
+      if (prefabConfig.behavior === "operatorPanel") return;
       loader.load(
         prefabConfig.assetPath,
         (gltf) => {
@@ -2280,6 +2502,7 @@ function loadLevelEnvironments() {
             }
             if (!object.isMesh) return;
             const isCollider = /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(object.name);
+            object.userData.prefabCollider = isCollider;
             object.visible = isCollider ? Boolean(CONFIG.player?.collision?.show) : true;
             object.castShadow = !isCollider;
             object.receiveShadow = !isCollider;
@@ -2309,6 +2532,7 @@ function loadLevelEnvironments() {
             startupPattern: prefabConfig.light?.fluorescentStartup ? createFluorescentStartupPattern() : [],
             startupElapsed: 0,
             faultyStarterElapsed: 0,
+            afterglowRemaining: 0,
             wasLightEnabled: prefabConfig.light?.enabled !== false,
             fixtureFlicker: createFixtureFlickerState(prefabConfig.light?.flicker),
             wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
@@ -2352,9 +2576,11 @@ function applyEnvironmentTransform(model, config) {
 }
 
 function updateActiveLevelEnvironment() {
-  const displayedLevelId = operatorViewMode === "menu" ? null : activeLevelId;
-  const levelConfig = displayedLevelId ? CONFIG.levelEnvironments?.[displayedLevelId] : null;
+  const requestedLevelId = operatorViewMode === "menu" ? "intro-shift" : activeLevelId;
+  const displayedLevelId = getLevelEnvironmentId(requestedLevelId);
+  const levelConfig = requestedLevelId ? CONFIG.levelEnvironments?.[requestedLevelId] : null;
   const usesLevelEnvironment = Boolean(levelConfig);
+  applyLevelWorldConfig(requestedLevelId);
 
   if (interiorModel) interiorModel.visible = !usesLevelEnvironment;
   if (interiorDecalModel) interiorDecalModel.visible = !usesLevelEnvironment;
@@ -2387,6 +2613,10 @@ function updateActiveLevelEnvironment() {
   collisionOctree = new Octree();
   collisionOctree.fromGraphNode(activeCollision);
   if (displayedLevelId) {
+    panelCollisionMeshes.forEach((mesh) => {
+      mesh.visible = Boolean(CONFIG.player?.collision?.show);
+      collisionOctree.fromGraphNode(mesh);
+    });
     levelPrefabInstances.forEach((runtime, key) => {
       if (!key.startsWith(`${displayedLevelId}:`)) return;
       if (runtime.collisionDisabled || runtime.physicsDoorKey) return;
@@ -2397,6 +2627,143 @@ function updateActiveLevelEnvironment() {
   syncPlayerCapsule();
   resolvePlayerCollisions();
 }
+
+function appendPanelPhysics(levelId) {
+  if (!panelModel || !levelCollisionModels.has(levelId)) return;
+  const panelConfig = CONFIG.levelEnvironments?.[levelId]?.prefabs?.find(
+    (prefab) => prefab.behavior === "operatorPanel",
+  );
+  if (!panelConfig) return;
+
+  panelModel.position.copy(panelConfig.position);
+  panelModel.rotation.copy(panelConfig.rotation);
+  panelModel.scale.copy(panelConfig.scale);
+  panelModel.updateMatrixWorld(true);
+  const collisionRoot = new THREE.Group();
+  panelCollisionMeshes.forEach((source) => {
+    const mesh = new THREE.Mesh(source.geometry);
+    source.matrixWorld.decompose(mesh.position, mesh.quaternion, mesh.scale);
+    collisionRoot.add(mesh);
+  });
+  physicsSystem?.appendStaticScene(levelId, collisionRoot);
+  applyActivePanelTransform();
+}
+
+function applyLevelWorldConfig(levelId) {
+  const worldConfig = (levelId && CONFIG.levelEnvironments?.[levelId]?.world) ?? CONFIG.world;
+  scene.background.set(worldConfig.backgroundColor ?? CONFIG.world.backgroundColor);
+  if (!scene.fog) {
+    scene.fog = new THREE.Fog(
+      worldConfig.fogColor ?? CONFIG.world.fogColor,
+      worldConfig.fogNear ?? CONFIG.world.fogNear,
+      worldConfig.fogFar ?? CONFIG.world.fogFar,
+    );
+  }
+  scene.fog.color.set(worldConfig.fogColor ?? worldConfig.backgroundColor ?? CONFIG.world.fogColor);
+  scene.fog.near = worldConfig.fogNear ?? CONFIG.world.fogNear;
+  scene.fog.far = Math.max(scene.fog.near + 0.01, worldConfig.fogFar ?? CONFIG.world.fogFar);
+}
+
+function createLevelPointLight(levelId, lightKey, lightConfig) {
+  const environmentConfig = CONFIG.levelEnvironments?.[levelId];
+  if (!environmentConfig?.lighting) return null;
+  environmentConfig.lighting.pointLights ??= {};
+  environmentConfig.lighting.pointLights[lightKey] = lightConfig;
+
+  const light = new THREE.PointLight(
+    lightConfig.color,
+    lightConfig.intensity,
+    lightConfig.distance,
+    lightConfig.decay,
+  );
+  light.name = `PointLight_${levelId}_${lightKey}`;
+  light.position.copy(lightConfig.position);
+  light.userData.levelId = levelId;
+  light.userData.baseIntensity = light.intensity;
+  light.userData.lightKey = lightKey;
+  light.userData.lightConfig = lightConfig;
+  light.visible = operatorViewMode !== "menu" && activeLevelId === levelId;
+  pointLightsByKey.set(`${levelId}:${lightKey}`, light);
+  controlledLights.push(light);
+  const lights = levelLights.get(levelId) ?? [];
+  lights.push(light);
+  levelLights.set(levelId, lights);
+  applyShadowSettings(light, lightConfig);
+  scene.add(light);
+  return light;
+}
+
+function togglePositionGizmo(descriptor) {
+  if (debugTransformEdit?.id === descriptor?.id) {
+    stopPositionGizmo();
+    return false;
+  }
+  stopPositionGizmo();
+  const edit = resolvePositionGizmoTarget(descriptor);
+  if (!edit) return false;
+
+  debugTransformEdit = edit;
+  debugTransformInputLockBackup = inputLocked;
+  inputLocked = true;
+  keys.clear();
+  movementVelocity.set(0, 0, 0);
+  document.exitPointerLock?.();
+  debugTransformControls.attach(edit.object);
+  return true;
+}
+
+function stopPositionGizmo() {
+  if (!debugTransformEdit) return;
+  debugTransformControls.detach();
+  if (debugTransformEdit.temporary) scene.remove(debugTransformEdit.object);
+  debugTransformEdit = null;
+  inputLocked = debugTransformInputLockBackup;
+}
+
+function resolvePositionGizmoTarget(descriptor) {
+  if (!descriptor?.id || !descriptor.position) return null;
+  let object = null;
+
+  if (descriptor.type === "prefab") {
+    object = levelPrefabInstances.get(`${descriptor.levelId}:${descriptor.key}`)?.root ?? null;
+  } else if (descriptor.type === "prefabLightOffset") {
+    object = levelPrefabInstances.get(`${descriptor.levelId}:${descriptor.key}`)?.light ?? null;
+  } else if (descriptor.type === "levelPointLight") {
+    object = pointLightsByKey.get(`${descriptor.levelId}:${descriptor.key}`) ?? null;
+  } else if (descriptor.type === "globalPointLight") {
+    object = pointLightsByKey.get(descriptor.key) ?? null;
+  }
+
+  let temporary = false;
+  if (!object) {
+    object = new THREE.Object3D();
+    object.name = `DebugPositionGizmo_${descriptor.id}`;
+    object.position.copy(descriptor.position);
+    scene.add(object);
+    temporary = true;
+  }
+
+  const edit = {
+    ...descriptor,
+    object,
+    temporary,
+  };
+  const sync = () => {
+    descriptor.position.copy?.(object.position);
+    if (!descriptor.position.copy) {
+      descriptor.position.x = object.position.x;
+      descriptor.position.y = object.position.y;
+      descriptor.position.z = object.position.z;
+    }
+    descriptor.onChange?.();
+  };
+  edit.sync = sync;
+  return edit;
+}
+
+debugTransformControls.addEventListener("objectChange", () => {
+  debugTransformEdit?.sync?.();
+});
 
 function applyLevelAmbientConfig(levelId) {
   const lightingConfig = CONFIG.levelEnvironments?.[levelId]?.lighting;
@@ -2456,7 +2823,11 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
     runtime.startupPattern = createFluorescentStartupPattern();
     runtime.startupElapsed = 0;
   }
+  if (lightConfig.enabled === false && runtime.wasLightEnabled && lightConfig.afterglow?.enabled !== false) {
+    runtime.afterglowRemaining = lightConfig.afterglow?.durationSeconds ?? 3;
+  }
   runtime.wasLightEnabled = lightConfig.enabled !== false;
+  runtime.light.visible = lightConfig.enabled !== false || runtime.afterglowRemaining > 0;
   if (structural) applyShadowSettings(runtime.light, lightConfig);
   if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
 }
@@ -2469,6 +2840,12 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
   if (!doorMesh) return;
 
   doorMesh.userData.kind = "hingedDoor";
+  doorMesh.userData.levelId = levelId;
+  const doorMaterials = Array.isArray(doorMesh.material) ? doorMesh.material : [doorMesh.material];
+  doorMaterials.filter(Boolean).forEach((material) => {
+    material.side = THREE.DoubleSide;
+    material.needsUpdate = true;
+  });
   doorMesh.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
   doorMesh.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
   interactive.push(doorMesh);
@@ -2480,6 +2857,7 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
     collider: colliderMesh,
     interaction,
     degrees: interaction.initialDegrees ?? 0,
+    commandedOpen: false,
     releaseAngularVelocity: 0,
     colliderFromDoor: colliderMesh
       ? new THREE.Matrix4().copy(doorMesh.matrixWorld).invert().multiply(colliderMesh.matrixWorld)
@@ -2498,6 +2876,8 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
       maxDegrees: interaction.maxDegrees ?? 5,
       density: interaction.density,
       angularDamping: interaction.angularDamping,
+      maxAngularVelocity: interaction.maxAngularVelocity,
+      initialHoldSeconds: interaction.initialHoldSeconds,
       motorStiffness: interaction.motorStiffness,
       motorDamping: interaction.motorDamping,
     });
@@ -2527,37 +2907,135 @@ function setHoveredHingedDoor(doorMesh) {
   document.body.classList.toggle("door-interactive-hover", Boolean(hoveredHingedDoor));
 }
 
+function toggleHingedDoor(doorMesh) {
+  const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
+  if (!runtime?.door) {
+    console.warn("[Door] Click ignored: runtime not found", {
+      mesh: doorMesh?.name,
+      prefabKey: doorMesh?.userData.levelPrefabKey,
+    });
+    return;
+  }
+  const door = runtime.door;
+  const interaction = door.interaction;
+  const prefabKey = doorMesh.userData.levelPrefabKey;
+  const currentDegrees =
+    physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
+  door.degrees = currentDegrees;
+
+  const shouldOpen = !(door.commandedOpen || Math.abs(currentDegrees) >= 25);
+  let targetDegrees = shouldOpen ? interaction.openDegrees ?? -90 : interaction.initialDegrees ?? 0;
+  targetDegrees = THREE.MathUtils.clamp(
+    targetDegrees,
+    interaction.minDegrees ?? -105,
+    interaction.maxDegrees ?? 5,
+  );
+  door.commandedOpen = shouldOpen;
+  door.degrees = targetDegrees;
+  console.log("[Door] Click", {
+    prefabKey,
+    levelId: prefabKey?.split(":")[0],
+    prefabName: prefabKey?.split(":").slice(1).join(":"),
+    mesh: doorMesh.name,
+    action: shouldOpen ? "open" : "close",
+    currentDegrees: Number(currentDegrees.toFixed(2)),
+    targetDegrees,
+    limits: [interaction.minDegrees, interaction.maxDegrees],
+    hitDistance: Number((doorMesh.userData.lastHitDistance ?? -1).toFixed(2)),
+    physicsDoorKey: runtime.physicsDoorKey ?? null,
+    commandedOpen: door.commandedOpen,
+  });
+  if (runtime.physicsDoorKey) {
+    const accepted = physicsSystem?.setDoorDragTarget(runtime.physicsDoorKey, targetDegrees, true);
+    if (!accepted) console.warn("[Door] Physics rejected target", { prefabKey, targetDegrees });
+  } else {
+    console.warn("[Door] No physics body; applying visual rotation only", { prefabKey });
+    applyHingedDoorRotation(runtime);
+  }
+}
+
+function resetLevelDoors(levelId = null) {
+  const environmentId = levelId == null ? null : getLevelEnvironmentId(levelId);
+  const resetKeys = [];
+  levelPrefabInstances.forEach((runtime, key) => {
+    const runtimeLevelId = key.split(":")[0];
+    if (environmentId != null && runtimeLevelId !== environmentId) return;
+    if (!runtime.door) return;
+    runtime.door.degrees = runtime.door.interaction.initialDegrees ?? 0;
+    runtime.door.commandedOpen = false;
+    runtime.door.releaseAngularVelocity = 0;
+    resetKeys.push(key);
+    if (!runtime.physicsDoorKey) applyHingedDoorRotation(runtime);
+  });
+  physicsSystem?.resetDoors(environmentId);
+  console.log("[Door] Reset", {
+    requestedLevelId: levelId,
+    environmentId,
+    doors: resetKeys,
+  });
+}
+
 function beginHingedDoorDrag(doorMesh) {
   const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
   if (!runtime?.door) return;
   draggedHingedDoor = runtime;
-  runtime.door.releaseAngularVelocity = 0;
+  const door = runtime.door;
+  door.releaseAngularVelocity = 0;
+  door.grabPoint =
+    doorMesh.userData.lastHitPoint?.clone() ??
+    doorMesh.localToWorld(new THREE.Vector3(0.5, 0, 0));
+  door.grabLocalPoint = doorMesh.worldToLocal(door.grabPoint.clone());
+  door.grabStartDegrees =
+    physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
+  door.degrees = door.grabStartDegrees;
+  door.grabLastDegrees = door.degrees;
   if (runtime.physicsDoorKey) {
-    runtime.door.degrees =
-      physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? runtime.door.degrees;
-    physicsSystem?.setDoorDragTarget(runtime.physicsDoorKey, runtime.door.degrees, true);
+    physicsSystem?.setDoorDragTarget(runtime.physicsDoorKey, door.degrees, true);
     return;
   }
   runtime.collisionDisabled = true;
   updateActiveLevelEnvironment();
 }
 
-function updateHingedDoorDrag(movementX) {
+function updateHingedDoorDrag() {
   const door = draggedHingedDoor?.door;
   if (!door) return;
   const interaction = door.interaction;
-  door.degrees = THREE.MathUtils.clamp(
-    door.degrees + movementX * (interaction.dragDegreesPerPixel ?? 0.28),
+  const physicalDegrees = physicsSystem?.getDoorDegrees(draggedHingedDoor.physicsDoorKey);
+  if (physicalDegrees != null) door.degrees = physicalDegrees;
+  door.mesh.updateWorldMatrix(true, false);
+  const hinge = door.mesh.getWorldPosition(new THREE.Vector3());
+  const grabbedPoint = door.mesh.localToWorld(door.grabLocalPoint.clone());
+  const screenPoint = grabbedPoint.clone().project(camera);
+  const axis = new THREE.Vector3(0, 1, 0);
+  const sampleRadians = 0.01;
+  const sampledPoint = grabbedPoint
+    .clone()
+    .sub(hinge)
+    .applyAxisAngle(axis, sampleRadians)
+    .add(hinge)
+    .project(camera);
+  const derivativeX = (sampledPoint.x - screenPoint.x) / sampleRadians;
+  const derivativeY = (sampledPoint.y - screenPoint.y) / sampleRadians;
+  const derivativeLengthSq = derivativeX * derivativeX + derivativeY * derivativeY;
+  if (derivativeLengthSq < 0.000001) return;
+  const correctionRadians = THREE.MathUtils.clamp(
+    -(screenPoint.x * derivativeX + screenPoint.y * derivativeY) / derivativeLengthSq,
+    -0.08,
+    0.08,
+  );
+  const nextDegrees = THREE.MathUtils.clamp(
+    door.degrees + THREE.MathUtils.radToDeg(correctionRadians),
     interaction.minDegrees ?? -105,
-    interaction.maxDegrees ?? 5,
+    interaction.maxDegrees ?? 105,
   );
-  const deltaRadians = THREE.MathUtils.degToRad(
-    movementX * (interaction.dragDegreesPerPixel ?? 0.28),
-  );
+  const deltaRadians = THREE.MathUtils.degToRad(nextDegrees - door.grabLastDegrees);
+  door.degrees = nextDegrees;
+  door.grabLastDegrees = nextDegrees;
   door.releaseAngularVelocity = THREE.MathUtils.lerp(
     door.releaseAngularVelocity ?? 0,
-    THREE.MathUtils.clamp(deltaRadians * 60, -3.5, 3.5),
-    0.35,
+    THREE.MathUtils.clamp(deltaRadians * 60, -1.5, 1.5),
+    0.25,
   );
   if (draggedHingedDoor.physicsDoorKey) {
     physicsSystem?.setDoorDragTarget(draggedHingedDoor.physicsDoorKey, door.degrees, true);
@@ -2678,10 +3156,14 @@ function updatePlayerCollisionDebug() {
   playerCollisionDebug.lean.scale.setScalar(cameraCollisionRadius);
 }
 
-function registerInteriorObject(object) {
+function registerInteriorObject(object, environmentConfig = null, levelId = null) {
   if (object.userData.hitProxyFor) return;
+  if (levelId) object.userData.levelId = levelId;
 
-  const fanConfig = CONFIG.interior.fans?.[object.name];
+  const fanConfigs = environmentConfig?.behaviors?.fans ?? CONFIG.interior.fans ?? {};
+  const fanConfig = Object.entries(fanConfigs).find(
+    ([name]) => normalizeMatchName(name) === normalizeMatchName(object.name),
+  )?.[1];
   if (fanConfig?.enabled) {
     object.userData.initialRotation = object.rotation.clone();
     object.userData.fanAxis = fanConfig.axis ?? "z";
@@ -2732,6 +3214,7 @@ function registerRoomLightButton(object, buttonConfig) {
   proxy.userData.kind = "roomLightButton";
   proxy.userData.controlLabel = object.userData.controlLabel;
   proxy.userData.hitProxyFor = object.name;
+  proxy.userData.levelId = object.userData.levelId;
   object.add(proxy);
   interactive.push(proxy);
 }
@@ -2843,8 +3326,14 @@ function interiorMaterialMatches(object, config) {
   const objectNames = getInteriorObjectMatchNames(object);
   const normalizedObjectNames = objectNames.map(normalizeMatchName);
   const normalizedPrefixes = (config.namePrefixes ?? []).map(normalizeMatchName);
+  const materialNames = Array.isArray(object.material)
+    ? object.material.map((material) => material?.name).filter(Boolean)
+    : [object.material?.name].filter(Boolean);
+  const normalizedMaterialNames = materialNames.map(normalizeMatchName);
+  const configuredMaterialNames = (config.materialNames ?? []).map(normalizeMatchName);
 
-  return normalizedPrefixes.some((prefix) => normalizedObjectNames.some((name) => name.startsWith(prefix))) ||
+  return configuredMaterialNames.some((name) => normalizedMaterialNames.includes(name)) ||
+    normalizedPrefixes.some((prefix) => normalizedObjectNames.some((name) => name.startsWith(prefix))) ||
     matchNames.some((name) => {
     const normalizedName = normalizeMatchName(name);
     return objectNames.includes(name) || normalizedObjectNames.includes(normalizedName);
@@ -2908,7 +3397,10 @@ function applyPanelTransform(model) {
 function applyActivePanelTransform() {
   if (!panelModel) return;
   applyPanelTransform(panelModel);
-  const panelConfig = operatorViewMode === "menu" ? null : CONFIG.levelEnvironments?.[activeLevelId]?.panel;
+  const panelLevelId = operatorViewMode === "menu" ? "intro-shift" : activeLevelId;
+  const panelConfig = CONFIG.levelEnvironments?.[panelLevelId]?.prefabs?.find(
+    (prefab) => prefab.behavior === "operatorPanel",
+  );
   if (panelConfig?.position) panelModel.position.copy(panelConfig.position);
   if (panelConfig?.rotation) panelModel.rotation.copy(panelConfig.rotation);
   if (panelConfig?.scale) panelModel.scale.copy(panelConfig.scale);
@@ -2966,6 +3458,7 @@ function updateLevelPrefabLights(dt) {
     if (!lightConfig) return;
 
     runtime.startupElapsed += dt;
+    runtime.afterglowRemaining = Math.max(0, (runtime.afterglowRemaining ?? 0) - dt);
     const startupDelay = Math.max(0, lightConfig.startupDelaySeconds ?? 0);
     const poweredElapsed = runtime.startupElapsed - startupDelay;
     let factor = poweredElapsed < 0 ? 0 : 1;
@@ -3001,14 +3494,28 @@ function updateLevelPrefabLights(dt) {
       }
     }
 
-    const enabledFactor = lightConfig.enabled === false ? 0 : factor;
-    runtime.light.intensity = lightConfig.intensity * enabledFactor;
+    const afterglowConfig = lightConfig.afterglow ?? {};
+    const afterglowDuration = Math.max(0.001, afterglowConfig.durationSeconds ?? 3);
+    const afterglowProgress = THREE.MathUtils.clamp(runtime.afterglowRemaining / afterglowDuration, 0, 1);
+    const localAfterglowFactor =
+      afterglowConfig.enabled === false
+        ? 0
+        : (afterglowConfig.initialFactor ?? 0.2) *
+          Math.pow(afterglowProgress, afterglowConfig.exponent ?? 2.4);
+    const enabledFactor = lightConfig.enabled === false ? localAfterglowFactor : factor;
+    const roomFactor = lightConfig.roomLightControlled
+      ? Math.max(getRoomLightVisualFactor(), getRoomLightAfterglowFactor())
+      : 1;
+    const sceneFactor = getStartupLightFactor() * getTerminalLightFactor();
+    const finalFactor = enabledFactor * roomFactor * sceneFactor;
+    runtime.light.visible = lightConfig.enabled !== false || runtime.afterglowRemaining > 0;
+    runtime.light.intensity = lightConfig.intensity * finalFactor;
     runtime.emissiveMaterials.forEach((material) => {
       const baseIntensity =
         CONFIG.interior.specialMaterials?.[prefabConfig.materialKey]?.emissiveIntensity ??
         material.userData.baseEmissiveIntensity ??
         1;
-      material.emissiveIntensity = baseIntensity * enabledFactor;
+      material.emissiveIntensity = baseIntensity * finalFactor;
     });
   });
 }
@@ -3145,7 +3652,17 @@ function updateHoverTarget() {
   }
 
   raycaster.setFromCamera(pointer, camera);
-  const hit = raycaster.intersectObjects(interactive, true)[0];
+  const interactionLevelId = getLevelEnvironmentId(
+    operatorViewMode === "menu" ? "intro-shift" : activeLevelId,
+  );
+  const hit = raycaster
+    .intersectObjects(interactive, true)
+    .find((candidate) => {
+      if (candidate.object.userData.prefabCollider) return false;
+      if (!isObjectHierarchyVisible(candidate.object)) return false;
+      const root = findInteractiveRoot(candidate.object);
+      return !root?.userData.levelId || root.userData.levelId === interactionLevelId;
+    });
   hoveredInteractive = hit ? findInteractiveRoot(hit.object) : null;
   if (
     hoveredInteractive?.userData.maxInteractionDistance &&
@@ -3154,7 +3671,10 @@ function updateHoverTarget() {
     hoveredInteractive = null;
   }
   document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
-  if (hoveredInteractive && hit) hoveredInteractive.userData.lastHitDistance = hit.distance;
+  if (hoveredInteractive && hit) {
+    hoveredInteractive.userData.lastHitDistance = hit.distance;
+    hoveredInteractive.userData.lastHitPoint = hit.point.clone();
+  }
   setHoveredKnob(hoveredInteractive?.userData.kind === "controlKnob" ? hoveredInteractive : null);
   setHoveredHingedDoor(hoveredInteractive?.userData.kind === "hingedDoor" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
@@ -3258,6 +3778,16 @@ function updatePanel(dt) {
     lamp.material = getStartupLampMaterial(lamps.indexOf(lamp)) ?? getLampMaterial(lamp, panelSnapshot);
     lamp.scale.copy(lamp.userData.initialScale);
   });
+}
+
+function isObjectHierarchyVisible(object) {
+  let current = object;
+  while (current) {
+    if (current.visible === false) return false;
+    if (current === scene) return true;
+    current = current.parent;
+  }
+  return false;
 }
 
 function registerBulkheadHandle(object) {
@@ -4180,6 +4710,16 @@ function getRoomLightVisualFactor() {
   return roomLightCurrentFactor;
 }
 
+function getRoomLightAfterglowFactor() {
+  const switchConfig = CONFIG.feedback.roomLightSwitch ?? {};
+  const duration = Math.max(0.001, switchConfig.afterglowSeconds ?? 3);
+  const progress = THREE.MathUtils.clamp(roomLightAfterglowTimer / duration, 0, 1);
+  return (
+    (switchConfig.afterglowInitialFactor ?? 0.2) *
+    Math.pow(progress, switchConfig.afterglowExponent ?? 2.4)
+  );
+}
+
 function getRoomLightStarterFaultFactor() {
   return getFluorescentStarterFaultFactor({
     elapsed: roomLightStarterFaultElapsed,
@@ -4309,7 +4849,9 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
   updateControlTooltip();
 }
 
-function enterMenuView() {
+async function enterMenuView() {
+  await loadLevelEnvironment("intro-shift");
+  resetLevelDoors();
   operatorViewMode = "menu";
   updateActiveLevelEnvironment();
   document.exitPointerLock?.();
@@ -4358,16 +4900,19 @@ function resetLevelSession() {
   terminalSequenceElapsed = -1;
 }
 
-function resetForMenu() {
+async function resetForMenu() {
   resetLevelSession();
   resetShift();
-  enterMenuView();
+  await enterMenuView();
 }
 
-function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
+async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
+  stopPositionGizmo();
+  await loadLevelEnvironment(levelId);
   activeLevelId = levelId;
   activeLevelMode = mode;
   operatorViewMode = "level";
+  resetLevelDoors(activeLevelId);
   updateActiveLevelEnvironment();
   levelPrefabInstances.forEach((runtime, key) => {
     if (!key.startsWith(`${activeLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
@@ -4490,7 +5035,9 @@ function applyOperatorCameraOffsets(forward, right, dt) {
 
 function movePlayerWithCollisions(delta, dt = 1 / 60) {
   const physicsSceneKey =
-    operatorViewMode !== "menu" && CONFIG.levelEnvironments?.[activeLevelId] ? activeLevelId : "default";
+    operatorViewMode !== "menu" && CONFIG.levelEnvironments?.[activeLevelId]
+      ? getLevelEnvironmentId(activeLevelId)
+      : "default";
   if (physicsSystem?.hasCharacter() && physicsSystem.hasScene(physicsSceneKey)) {
     const nextPosition = physicsSystem.moveCharacter(delta, dt);
     if (nextPosition) {
@@ -4810,7 +5357,11 @@ document.addEventListener("mousemove", (event) => {
   if (inputLocked) return;
 
   if (draggedHingedDoor) {
-    updateHingedDoorDrag(event.movementX);
+    updateCameraLook(event.movementX, event.movementY);
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
+    camera.updateMatrixWorld(true);
+    updateHingedDoorDrag();
     return;
   }
 
@@ -4820,18 +5371,22 @@ document.addEventListener("mousemove", (event) => {
   }
 
   pointer.set(0, 0);
+  updateCameraLook(event.movementX, event.movementY);
+});
+
+function updateCameraLook(movementX, movementY) {
   const movementConfig = CONFIG.camera.operatorMovement ?? {};
   const sensitivity =
     CONFIG.camera.mouseSensitivity *
     (zoomActive ? movementConfig.zoomSensitivityMultiplier ?? 0.48 : 1);
-  yaw -= event.movementX * sensitivity;
-  pitch -= event.movementY * sensitivity;
+  yaw -= movementX * sensitivity;
+  pitch -= movementY * sensitivity;
   const pitchLimitDegrees = zoomActive
     ? CONFIG.camera.leanPitchLimitDegrees ?? CONFIG.camera.pitchLimitDegrees ?? 88
     : CONFIG.camera.pitchLimitDegrees ?? 72;
   const pitchLimit = THREE.MathUtils.degToRad(pitchLimitDegrees);
   pitch = THREE.MathUtils.clamp(pitch, -pitchLimit, pitchLimit);
-});
+}
 
 canvas.addEventListener(
   "wheel",
@@ -4858,6 +5413,7 @@ canvas.addEventListener(
 );
 
 canvas.addEventListener("mousedown", (event) => {
+  if (debugTransformEdit) return;
   if (inputLocked) {
     event.preventDefault();
     return;
@@ -4880,7 +5436,7 @@ canvas.addEventListener("mousedown", (event) => {
   } else if (hoveredInteractive?.userData.kind === "bulkheadHandle") {
     beginBulkheadHandleInteraction();
   } else if (hoveredInteractive?.userData.kind === "hingedDoor") {
-    beginHingedDoorDrag(hoveredInteractive);
+    toggleHingedDoor(hoveredInteractive);
   }
 });
 
@@ -5402,9 +5958,31 @@ window.operatorGameDebug = {
     modelLoaded: Boolean(panelModel),
     panelTransform: panelModel ? getObjectTransform(panelModel.name) : null,
     panelTextureTier: materials.panel.userData.textureTier ?? (panelTextureMaps ? "loaded" : "placeholder"),
-    interiorLoaded: Boolean(interiorModel),
+    interiorLoaded: Boolean(interiorModel || (loadedRuntimeLevelId && levelEnvironmentModels.has(loadedRuntimeLevelId))),
     interiorTransform: interiorModel ? getObjectTransform(interiorModel.name) : null,
+    loadedRuntimeLevelId,
+    cachedLevelAssets: [...levelAssetCache.keys()],
     interiorFans: interiorFans.map((fan) => fan.name),
+    doors: Object.fromEntries(
+      [...levelPrefabInstances.entries()]
+        .filter(([, runtime]) => runtime.door)
+        .map(([key, runtime]) => [
+          key,
+          {
+            currentDegrees: Number(
+              (physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? runtime.door.degrees).toFixed(2),
+            ),
+            commandedOpen: runtime.door.commandedOpen,
+            initialDegrees: runtime.door.interaction.initialDegrees,
+            openDegrees: runtime.door.interaction.openDegrees,
+            limits: [
+              runtime.door.interaction.minDegrees,
+              runtime.door.interaction.maxDegrees,
+            ],
+            physicsDoorKey: runtime.physicsDoorKey ?? null,
+          },
+        ]),
+    ),
     customInteriorMaterials: getCustomInteriorMaterialDebugState(),
     lightFixtures: Object.fromEntries(
       Object.entries(CONFIG.lighting.fixtures ?? {}).map(([name, fixture]) => [

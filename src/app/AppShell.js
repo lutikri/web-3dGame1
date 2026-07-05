@@ -1,4 +1,4 @@
-import { LEVELS } from "./LevelCatalog.js";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js";
 import { BRIEFING_UI } from "./BriefingUiConfig.js";
 import { createSubtitleQueue } from "./SubtitleQueue.js";
 
@@ -59,6 +59,7 @@ export function createAppShell({ gameApi }) {
   wireSettings();
   wireProgression();
   wireSubtitles();
+  validateLevelMenu();
   updateLevelProgressUi();
 
   function wireSubtitles() {
@@ -188,12 +189,12 @@ export function createAppShell({ gameApi }) {
     if (gameApi?.isLoadingComplete?.()) handleInitialRoute();
   }
 
-  function handleInitialRoute() {
+  async function handleInitialRoute() {
     if (initialRouteHandled) return;
     initialRouteHandled = true;
 
     if (returnToMenuAfterPreflight) {
-      gameApi.resetForMenu?.();
+      await gameApi.resetForMenu?.();
       showPanel("main-menu");
       resolveInitialRouteReady?.();
       resolveInitialRouteReady = null;
@@ -204,7 +205,7 @@ export function createAppShell({ gameApi }) {
     const fastLoadLevel = LEVELS[fastLoadLevelId];
     if (fastLoadLevelId && fastLoadLevel?.playable) {
       hideOverlay();
-      gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
+      await gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
       if (!debugConfig.skipBriefing) showLevelBriefing(fastLoadLevelId);
       resolveInitialRouteReady?.();
       resolveInitialRouteReady = null;
@@ -212,7 +213,7 @@ export function createAppShell({ gameApi }) {
     }
 
     if (progress.finishedLevels[INTRO_LEVEL_ID]) {
-      gameApi.resetForMenu?.();
+      await gameApi.resetForMenu?.();
       showPanel("main-menu");
       resolveInitialRouteReady?.();
       resolveInitialRouteReady = null;
@@ -282,8 +283,8 @@ export function createAppShell({ gameApi }) {
     if (transitionActive) return;
     transitionActive = true;
     hideOverlay();
-    window.setTimeout(() => {
-      gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
+    window.setTimeout(async () => {
+      await gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
       showLevelBriefing(INTRO_LEVEL_ID);
       transitionActive = false;
       resolveInitialRouteReady?.();
@@ -307,9 +308,9 @@ export function createAppShell({ gameApi }) {
       runRouteTransition({
         title: "MAIN MENU",
         status: "RETURNING TO OPERATOR CONSOLE",
-        action: () => {
+        action: async () => {
           gameApi.hideShiftResults?.();
-          gameApi.resetForMenu?.();
+          await gameApi.resetForMenu?.();
           showPanel("main-menu");
         },
       });
@@ -330,10 +331,10 @@ export function createAppShell({ gameApi }) {
       runRouteTransition({
         title: "RESTARTING SHIFT",
         status: "RESETTING CORE SESSION",
-        action: () => {
+        action: async () => {
           gameApi.hideShiftResults?.();
           hideOverlay();
-          gameApi.restartGame?.();
+          await gameApi.restartGame?.();
           showLevelBriefing(gameApi.getState?.().activeLevelId);
         },
       });
@@ -363,7 +364,7 @@ export function createAppShell({ gameApi }) {
     await wait(420);
     hideRouteLoadingPanel();
     await wait(100);
-    action?.();
+    await action?.();
     await wait(80);
     hideRouteCurtain();
     await wait(140);
@@ -419,10 +420,10 @@ export function createAppShell({ gameApi }) {
     runRouteTransition({
       title: level.title,
       status: "LOADING SHIFT",
-      action: () => {
+      action: async () => {
         gameApi.hideShiftResults?.();
         hideOverlay();
-        gameApi.startLevel?.({ levelId, mode: level.mode });
+        await gameApi.startLevel?.({ levelId, mode: level.mode });
         showLevelBriefing(levelId);
       },
     });
@@ -553,6 +554,26 @@ export function createAppShell({ gameApi }) {
     updateInputLock();
     panels.forEach((panel) => {
       panel.hidden = true;
+    });
+  }
+
+  function validateLevelMenu() {
+    const menuLevelIds = new Set(
+      [...document.querySelectorAll("[data-level-id]")]
+        .map((node) => node.dataset.levelId)
+        .filter(Boolean),
+    );
+
+    menuLevelIds.forEach((levelId) => {
+      if (!LEVELS[levelId]) {
+        throw new Error(`[AppShell] Menu references unknown level: ${levelId}`);
+      }
+    });
+
+    Object.values(LEVELS).forEach((level) => {
+      if (level.playable && !menuLevelIds.has(level.id)) {
+        console.warn(`[AppShell] Playable level is missing from the level menu: ${level.id}`);
+      }
     });
   }
 

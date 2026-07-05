@@ -13,16 +13,23 @@ export async function createPhysicsSystem() {
     console.warn = originalWarn;
   }
 
-  const world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
+  let world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
   const sceneColliders = new Map();
   const doors = new Map();
   let activeSceneKey = null;
   let character = null;
+  let characterSpec = null;
 
   function addStaticScene(key, root) {
     removeStaticScene(key);
+    sceneColliders.set(key, []);
+    return appendStaticScene(key, root);
+  }
+
+  function appendStaticScene(key, root) {
     root.updateMatrixWorld(true);
-    const colliders = [];
+    const colliders = sceneColliders.get(key) ?? [];
+    let addedCount = 0;
     root.traverse((object) => {
       if (!object.isMesh || !object.geometry?.attributes?.position) return;
       const geometry = object.geometry;
@@ -41,9 +48,10 @@ export async function createPhysicsSystem() {
       const collider = world.createCollider(RAPIER.ColliderDesc.trimesh(vertices, indices));
       collider.setEnabled(key === activeSceneKey);
       colliders.push(collider);
+      addedCount += 1;
     });
     sceneColliders.set(key, colliders);
-    return colliders.length;
+    return addedCount;
   }
 
   function removeStaticScene(key) {
@@ -80,6 +88,13 @@ export async function createPhysicsSystem() {
     controller.setMaxSlopeClimbAngle(THREE.MathUtils.degToRad(config.maxSlopeDegrees ?? 50));
     controller.setMinSlopeSlideAngle(THREE.MathUtils.degToRad(config.minSlideDegrees ?? 55));
     character = { collider, controller, eyeHeight, height, radius, verticalVelocity: 0, grounded: false };
+    characterSpec = {
+      eyePosition: eyePosition.clone(),
+      eyeHeight,
+      height,
+      radius,
+      config: { ...config },
+    };
     return character;
   }
 
@@ -143,6 +158,8 @@ export async function createPhysicsSystem() {
     maxDegrees,
     density = 180,
     angularDamping = 0.65,
+    maxAngularVelocity = 1.8,
+    initialHoldSeconds = 0.45,
     motorStiffness = 55,
     motorDamping = 10,
   }) {
@@ -188,7 +205,8 @@ export async function createPhysicsSystem() {
       .setTranslation(center.x, center.y, center.z)
       .setRotation(relativeQuaternion)
       .setDensity(density)
-      .setFriction(0.8);
+      .setFriction(0.8)
+      .setRestitution(0);
     world.createCollider(colliderDesc, body);
 
     const jointData = RAPIER.JointData.revolute(
@@ -201,6 +219,7 @@ export async function createPhysicsSystem() {
       THREE.MathUtils.degToRad(minDegrees - initialDegrees),
       THREE.MathUtils.degToRad(maxDegrees - initialDegrees),
     );
+    joint.configureMotorPosition(0, motorStiffness * 1.5, motorDamping * 1.5);
     body.setEnabled(sceneKey === activeSceneKey);
     const door = {
       key,
@@ -214,7 +233,18 @@ export async function createPhysicsSystem() {
       initialDegrees,
       motorStiffness,
       motorDamping,
+      maxAngularVelocity,
+      initialHoldRemaining: initialHoldSeconds,
+      initialHoldSeconds,
+      initialPosition: { x: hingePosition.x, y: hingePosition.y, z: hingePosition.z },
+      initialRotation: {
+        x: hingeQuaternion.x,
+        y: hingeQuaternion.y,
+        z: hingeQuaternion.z,
+        w: hingeQuaternion.w,
+      },
       targetDegrees: null,
+      motorRemaining: 0,
     };
     doors.set(key, door);
     return door;
@@ -223,7 +253,6 @@ export async function createPhysicsSystem() {
   function removeDoor(key) {
     const door = doors.get(key);
     if (!door) return;
-    world.removeImpulseJoint(door.joint, true);
     world.removeRigidBody(door.body);
     world.removeRigidBody(door.fixedBody);
     doors.delete(key);
@@ -235,10 +264,17 @@ export async function createPhysicsSystem() {
     door.targetDegrees = active ? THREE.MathUtils.degToRad(degrees - door.initialDegrees) : null;
     if (active) {
       door.joint.configureMotorPosition(door.targetDegrees, door.motorStiffness, door.motorDamping);
+      door.motorRemaining = 3;
       door.body.wakeUp();
     } else {
       door.joint.configureMotorPosition(0, 0, 0);
-      door.body.setAngvel({ x: 0, y: releaseAngularVelocity, z: 0 }, true);
+      const cappedVelocity = THREE.MathUtils.clamp(
+        releaseAngularVelocity,
+        -door.maxAngularVelocity,
+        door.maxAngularVelocity,
+      );
+      door.body.setAngvel({ x: 0, y: cappedVelocity, z: 0 }, true);
+      door.motorRemaining = 0;
     }
     return true;
   }
@@ -246,6 +282,10 @@ export async function createPhysicsSystem() {
   function getDoorDegrees(key) {
     const door = doors.get(key);
     if (!door) return null;
+    return getDoorDegreesFromRuntime(door);
+  }
+
+  function getDoorDegreesFromRuntime(door) {
     const fixedRotation = door.fixedBody.rotation();
     const bodyRotation = door.body.rotation();
     const relative = new THREE.Quaternion(
@@ -260,11 +300,85 @@ export async function createPhysicsSystem() {
     return door.initialDegrees + THREE.MathUtils.radToDeg(relativeY);
   }
 
+  function resetDoor(key) {
+    const door = doors.get(key);
+    if (!door) return false;
+    door.targetDegrees = null;
+    door.motorRemaining = 0;
+    door.initialHoldRemaining = door.initialHoldSeconds;
+    door.body.setTranslation(door.initialPosition, true);
+    door.body.setRotation(door.initialRotation, true);
+    door.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    door.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    door.joint.configureMotorPosition(0, door.motorStiffness * 1.5, door.motorDamping * 1.5);
+    door.body.wakeUp();
+    return true;
+  }
+
+  function resetDoors(sceneKey = null) {
+    doors.forEach((door, key) => {
+      if (sceneKey == null || door.sceneKey === sceneKey) resetDoor(key);
+    });
+  }
+
+  function unloadScene(key) {
+    removeStaticScene(key);
+    [...doors.entries()].forEach(([doorKey, door]) => {
+      if (door.sceneKey === key) removeDoor(doorKey);
+    });
+    if (activeSceneKey === key) activeSceneKey = null;
+  }
+
+  function resetWorld(eyePosition = characterSpec?.eyePosition) {
+    const nextCharacterSpec = characterSpec
+      ? {
+          ...characterSpec,
+          eyePosition: eyePosition?.clone?.() ?? characterSpec.eyePosition.clone(),
+          config: { ...characterSpec.config },
+        }
+      : null;
+    world.free();
+    world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
+    sceneColliders.clear();
+    doors.clear();
+    activeSceneKey = null;
+    character = null;
+    characterSpec = null;
+    if (nextCharacterSpec) createCharacter(nextCharacterSpec);
+  }
+
   function step(dt) {
     world.timestep = Math.min(dt, 1 / 30);
     world.step();
     doors.forEach((door) => {
       if (!door.body.isEnabled()) return;
+      if (door.targetDegrees != null) {
+        door.motorRemaining = Math.max(0, door.motorRemaining - dt);
+        const currentRelativeRadians = THREE.MathUtils.degToRad(
+          getDoorDegreesFromRuntime(door) - door.initialDegrees,
+        );
+        const closeEnough = Math.abs(currentRelativeRadians - door.targetDegrees) < 0.025;
+        if (closeEnough || door.motorRemaining <= 0) {
+          door.targetDegrees = null;
+          door.motorRemaining = 0;
+          door.joint.configureMotorPosition(0, 0, 0);
+        }
+      }
+      door.initialHoldRemaining = Math.max(0, door.initialHoldRemaining - dt);
+      if (door.initialHoldRemaining > 0 && door.targetDegrees == null) {
+        door.joint.configureMotorPosition(0, door.motorStiffness * 1.5, door.motorDamping * 1.5);
+      } else if (door.initialHoldRemaining === 0 && door.targetDegrees == null) {
+        door.joint.configureMotorPosition(0, 0, 0);
+      }
+      const angularVelocity = door.body.angvel();
+      const clampedY = THREE.MathUtils.clamp(
+        angularVelocity.y,
+        -door.maxAngularVelocity,
+        door.maxAngularVelocity,
+      );
+      if (clampedY !== angularVelocity.y) {
+        door.body.setAngvel({ x: 0, y: clampedY, z: 0 }, true);
+      }
       const position = door.body.translation();
       const rotation = door.body.rotation();
       const worldMatrix = new THREE.Matrix4().compose(
@@ -292,8 +406,11 @@ export async function createPhysicsSystem() {
   }
 
   return {
-    world,
+    get world() {
+      return world;
+    },
     addStaticScene,
+    appendStaticScene,
     setActiveScene,
     createCharacter,
     configureCharacter,
@@ -303,6 +420,10 @@ export async function createPhysicsSystem() {
     createHingedDoor,
     setDoorDragTarget,
     getDoorDegrees,
+    resetDoor,
+    resetDoors,
+    unloadScene,
+    resetWorld,
     step,
     hasCharacter: () => Boolean(character),
     hasScene: (key) => sceneColliders.has(key),

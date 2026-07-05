@@ -25,23 +25,50 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     "y": 1,
     "z": 1
   },
-  "panel": {
-    "position": {
-      "x": 3.6,
-      "y": -0.055,
-      "z": -2.44
+  "world": {
+    "backgroundColor": "#080b0d",
+    "fogColor": "#080b0d",
+    "fogNear": 1,
+    "fogFar": 18
+  },
+  "behaviors": {
+    "fans": {
+      "SM_Fan.002": {
+        "enabled": true,
+        "axis": "z",
+        "speedDegreesPerSecond": 120
+      }
     }
   },
   "prefabs": [
     {
-      "name": "DoorBulk1_A",
-      "assetPath": "assets/mesh/SM_DoorBulk1.glb",
-      "materialKey": "doorLamp2",
+      "assetPath": "assets/mesh/SM_Panel1.glb",
+      "materialKey": "panel1",
+      "behavior": "operatorPanel",
+      "prefabType": "operatorPanel",
+      "name": "Panel1",
       "position": {
         "x": 3.6,
-        "y": 0.151831,
-        "z": -0.006729
+        "y": -0.055,
+        "z": -2.44
       },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_DoorBulk1.glb",
+      "materialKey": "doorLamp2",
+      "behavior": "hingedDoor",
       "interaction": {
         "type": "hingedDoor",
         "meshName": "SM_DoorBulk1_Door",
@@ -56,49 +83,70 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "angularDamping": 0.65,
         "motorStiffness": 55,
         "motorDamping": 10
+      },
+      "prefabType": "bulkheadDoor",
+      "name": "DoorBulk1_A",
+      "position": {
+        "x": 3.6,
+        "y": 0.151831,
+        "z": -0.02457743734996512
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
       }
     },
     {
-      "name": "DoorBulk1_B",
       "assetPath": "assets/mesh/SM_DoorBulk1.glb",
       "materialKey": "doorLamp2",
+      "behavior": "hingedDoor",
+      "interaction": {
+        "type": "hingedDoor",
+        "meshName": "SM_DoorBulk1_Door",
+        "colliderName": "SM_DoorBulk1_Door_Coll",
+        "axis": "y",
+        "initialDegrees": -20,
+        "minDegrees": -105,
+        "maxDegrees": 5,
+        "dragDegreesPerPixel": 0.28,
+        "maxDistance": 2.8,
+        "density": 180,
+        "angularDamping": 0.65,
+        "motorStiffness": 55,
+        "motorDamping": 10
+      },
+      "prefabType": "bulkheadDoor",
+      "name": "DoorBulk1_B",
       "position": {
         "x": 13.1869,
         "y": 0.151831,
         "z": -0.006729
       },
-      "interaction": {
-        "type": "hingedDoor",
-        "meshName": "SM_DoorBulk1_Door",
-        "colliderName": "SM_DoorBulk1_Door_Coll",
-        "axis": "y",
-        "initialDegrees": -20,
-        "minDegrees": -105,
-        "maxDegrees": 5,
-        "dragDegreesPerPixel": 0.28,
-        "maxDistance": 2.8,
-        "density": 180,
-        "angularDamping": 0.65,
-        "motorStiffness": 55,
-        "motorDamping": 10
-      }
-    },
-    {
-      "name": "Lamp1_Corridor_1",
-      "assetPath": "assets/mesh/SM_Lamp1.glb",
-      "materialKey": "lamp1",
-      "position": {
-        "x": 1.6,
-        "y": 2.38,
-        "z": 1.23
-      },
       "rotation": {
         "isEuler": true,
         "_x": 0,
-        "_y": 1.5707963267948966,
+        "_y": 0,
         "_z": 0,
         "_order": "XYZ"
       },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp1.glb",
+      "materialKey": "lamp1",
+      "behavior": "fluorescentLamp",
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
@@ -126,14 +174,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "maxIntervalSeconds": 10,
           "retryChance": 0.39
         }
-      }
-    },
-    {
-      "name": "Lamp1_Corridor_2",
-      "assetPath": "assets/mesh/SM_Lamp1.glb",
-      "materialKey": "lamp1",
+      },
+      "prefabType": "fluorescentLamp",
+      "name": "Lamp1_Corridor_1",
       "position": {
-        "x": 5.10382,
+        "x": 1.6,
         "y": 2.38,
         "z": 1.23
       },
@@ -144,6 +189,16 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "_z": 0,
         "_order": "XYZ"
       },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp1.glb",
+      "materialKey": "lamp1",
+      "behavior": "fluorescentLamp",
       "light": {
         "enabled": true,
         "color": "#e0c2ff",
@@ -171,14 +226,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
         }
-      }
-    },
-    {
-      "name": "Lamp1_Corridor_3",
-      "assetPath": "assets/mesh/SM_Lamp1.glb",
-      "materialKey": "lamp1",
+      },
+      "prefabType": "fluorescentLamp",
+      "name": "Lamp1_Corridor_2",
       "position": {
-        "x": 8.60764,
+        "x": 5.10382,
         "y": 2.38,
         "z": 1.23
       },
@@ -189,6 +241,16 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "_z": 0,
         "_order": "XYZ"
       },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp1.glb",
+      "materialKey": "lamp1",
+      "behavior": "fluorescentLamp",
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
@@ -216,14 +278,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
         }
-      }
-    },
-    {
-      "name": "Lamp1_Corridor_4",
-      "assetPath": "assets/mesh/SM_Lamp1.glb",
-      "materialKey": "lamp1",
+      },
+      "prefabType": "fluorescentLamp",
+      "name": "Lamp1_Corridor_3",
       "position": {
-        "x": 12.11146,
+        "x": 8.60764,
         "y": 2.38,
         "z": 1.23
       },
@@ -234,6 +293,16 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "_z": 0,
         "_order": "XYZ"
       },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp1.glb",
+      "materialKey": "lamp1",
+      "behavior": "fluorescentLamp",
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
@@ -261,24 +330,31 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
         }
-      }
-    },
-    {
-      "name": "Lamp1_ControlRoom",
-      "assetPath": "assets/mesh/SM_Lamp1.glb",
-      "materialKey": "lamp1",
+      },
+      "prefabType": "fluorescentLamp",
+      "name": "Lamp1_Corridor_4",
       "position": {
-        "x": 3.60587,
-        "y": 2.3792,
-        "z": -1.811
+        "x": 12.11146,
+        "y": 2.38,
+        "z": 1.23
       },
       "rotation": {
         "isEuler": true,
         "_x": 0,
-        "_y": 0,
+        "_y": 1.5707963267948966,
         "_z": 0,
         "_order": "XYZ"
       },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp1.glb",
+      "materialKey": "lamp1",
+      "behavior": "fluorescentLamp",
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
@@ -306,13 +382,122 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
         }
+      },
+      "prefabType": "fluorescentLamp",
+      "name": "Lamp1_ControlRoom",
+      "position": {
+        "x": 3.60587,
+        "y": 2.3792,
+        "z": -1.811
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "assetPath": "assets/mesh/SM_Lamp_BulkRed.glb",
+      "materialKey": "doorLamp2",
+      "behavior": "staticLamp",
+      "light": {
+        "enabled": true,
+        "color": "#ff1b0a",
+        "intensity": 3.17,
+        "distance": 1.5,
+        "decay": 0.4,
+        "localOffset": {
+          "x": 0,
+          "y": 0,
+          "z": -0.12778707579195908
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0006,
+        "shadowNormalBias": 0.035,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 9,
+        "fluorescentStartup": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0
+        }
+      },
+      "prefabType": "redBulkLamp",
+      "name": "LampBulkRed_Exploring",
+      "position": {
+        "x": 3.02204,
+        "y": 2.0058,
+        "z": -0.030289
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
       }
     }
   ],
   "lighting": {
     "ambientSky": "#71808c",
     "ambientGround": "#08090a",
-    "ambientIntensity": 0.018
+    "ambientIntensity": 0.018,
+    "pointLights": {
+      "fill": {
+        "color": "#75bcff",
+        "intensity": 0.25,
+        "distance": 2.5,
+        "decay": 0.63,
+        "position": {
+          "x": 3.3063295628550096,
+          "y": 1.4615465941703416,
+          "z": -1.6873887166078796
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0005,
+        "shadowNormalBias": 0.03,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 7
+      },
+      "LampFan": {
+        "color": "#ff9875",
+        "intensity": 0.6,
+        "distance": 3,
+        "decay": 0.49,
+        "position": {
+          "x": 3.1715786524857754,
+          "y": 2.2591211289988005,
+          "z": -2.910675730137223
+        },
+        "castShadow": true,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0006,
+        "shadowNormalBias": 0.035,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 9
+      }
+    }
   },
   "player": {
     "spawnPosition": {
@@ -325,5 +510,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "y": 280,
       "z": 0
     }
+  },
+  "panel": {
+    "position": {}
   }
 };

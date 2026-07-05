@@ -1,0 +1,136 @@
+import * as THREE from "three";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js";
+
+function blenderPosition(x, y, z) {
+  return new THREE.Vector3(x, z, -y);
+}
+
+function applyOverrides(target, overrides) {
+  Object.entries(overrides ?? {}).forEach(([key, value]) => {
+    if (Array.isArray(value) && Array.isArray(target[key])) {
+      value.forEach((entry) => {
+        const targetEntry = entry?.name && target[key].find((candidate) => candidate?.name === entry.name);
+        if (targetEntry) {
+          const instanceOverride = { ...entry };
+          ["assetPath", "materialKey", "behavior", "interaction", "prefabType"].forEach(
+            (protectedKey) => delete instanceOverride[protectedKey],
+          );
+          applyOverrides(targetEntry, instanceOverride);
+        }
+      });
+      return;
+    }
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      if (!target[key] || typeof target[key] !== "object") target[key] = {};
+      applyOverrides(target[key], value);
+    } else {
+      target[key] = value;
+    }
+  });
+  return target;
+}
+
+const LEVEL_INTRO_SHIFT_DEFAULTS = {
+  saveKind: "introShift",
+  assetPath: "assets/mesh/SM_Interior1_1.glb",
+  collisionAssetPath: "assets/mesh/SM_Interior1_1.glb",
+  collision: {
+    meshNameIncludes: ["convcolonly"],
+  },
+  render: {
+    meshNameExcludes: ["convcolonly"],
+  },
+  position: new THREE.Vector3(),
+  rotation: new THREE.Euler(),
+  scale: new THREE.Vector3(1, 1, 1),
+  world: {
+    backgroundColor: "#080b0d",
+    fogColor: "#080b0d",
+    fogNear: 1,
+    fogFar: 10,
+  },
+  behaviors: {
+    fans: {
+      "SM_Fan.002": {
+        enabled: true,
+        axis: "z",
+        speedDegreesPerSecond: 120,
+      },
+    },
+  },
+  prefabs: [
+    createPrefabInstance("operatorPanel", {
+      name: "Panel1",
+      position: blenderPosition(3.60587, 2.49771, -0.010162),
+    }),
+    createPrefabInstance("bulkheadDoor", {
+      name: "DoorBulk1_Tutorial",
+      position: blenderPosition(3.6, 0.022979, 0.151831),
+      overrides: {
+        interaction: {
+          initialDegrees: 0,
+        },
+      },
+    }),
+    createPrefabInstance("redBulkLamp", {
+      name: "LampBulkRed_Tutorial",
+      position: blenderPosition(3.02204, 0.030289, 2.0058),
+    }),
+    createPrefabInstance("fluorescentLamp", {
+      name: "Lamp1_TutorialCabin",
+      position: blenderPosition(3.6861, 1.49811, 2.39028),
+      overrides: {
+        light: {
+          fluorescentStartup: false,
+          roomLightControlled: true,
+          castShadow: true,
+        },
+      },
+    }),
+  ],
+  lighting: {
+    ambientSky: "#9fb6c7",
+    ambientGround: "#101010",
+    ambientIntensity: 0.03,
+    pointLights: {
+      fill: {
+        color: "#87b1ff",
+        intensity: 0.2,
+        distance: 6,
+        decay: 0.4,
+        position: new THREE.Vector3(0.64, 2.03, 0.45),
+        castShadow: false,
+        shadowMapSize: 512,
+        shadowBias: -0.0005,
+        shadowNormalBias: 0.03,
+        shadowRadius: 1,
+        shadowNear: 0.1,
+        shadowFar: 7,
+      },
+      LampFan: {
+        color: "#75b1ff",
+        intensity: 0.4,
+        distance: 3,
+        decay: 1,
+        position: new THREE.Vector3(-0.45, 2.33, -0.47),
+        castShadow: true,
+        shadowMapSize: 512,
+        shadowBias: -0.0006,
+        shadowNormalBias: 0.035,
+        shadowRadius: 1,
+        shadowNear: 0.1,
+        shadowFar: 9,
+      },
+    },
+  },
+  player: {
+    spawnPosition: new THREE.Vector3(3.58, 1.63, -0.85),
+    rotationDegrees: new THREE.Vector3(0, 0, 0),
+  },
+};
+
+export const LEVEL_INTRO_SHIFT_CONFIG = applyOverrides(
+  LEVEL_INTRO_SHIFT_DEFAULTS,
+  LEVEL_INTRO_SHIFT_OVERRIDES,
+);

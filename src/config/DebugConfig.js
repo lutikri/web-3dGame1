@@ -1,5 +1,5 @@
 export const DEBUG_CONFIG = {
-  enabled: true,
+  enabled: false,
   fastLoadLevel: "exploring-around",
   skipBriefing: false,
   performanceBenchmark: {

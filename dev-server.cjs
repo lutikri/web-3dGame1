@@ -15,13 +15,17 @@ const configSaveTargets = {
     filePath: path.join(root, "src", "generated", "PostProcessingOverrides.js"),
     exportName: "POST_PROCESSING_OVERRIDES",
   },
-  reactor1Scene: {
-    filePath: path.join(root, "src", "generated", "LevelReactor1Overrides.js"),
-    exportName: "LEVEL_REACTOR_1_OVERRIDES",
+  globalScene: {
+    filePath: path.join(root, "src", "generated", "GlobalSceneOverrides.js"),
+    exportName: "GLOBAL_SCENE_OVERRIDES",
   },
   exploringAround: {
     filePath: path.join(root, "src", "generated", "LevelExploringAroundOverrides.js"),
     exportName: "LEVEL_EXPLORING_AROUND_OVERRIDES",
+  },
+  introShift: {
+    filePath: path.join(root, "src", "generated", "LevelIntroShiftOverrides.js"),
+    exportName: "LEVEL_INTRO_SHIFT_OVERRIDES",
   },
 };
 const liveReloadScript = `
