@@ -5,11 +5,16 @@ export async function runLevelRuntimeSmoke(gameApi) {
   );
   await runStep("exploring-around", () =>
     gameApi.startLevel({ levelId: "exploring-around", mode: "tutorial" }),
+    [
+      "exploring-around:fluorescentLamp_PowerHall1",
+      "exploring-around:fluorescentLamp_PowerHall2",
+      "exploring-around:redBulkLamp_PowerHall1",
+    ],
   );
   await runStep("menu-preview", () => gameApi.resetForMenu());
   return { ok: true, steps };
 
-  async function runStep(name, action) {
+  async function runStep(name, action, expectedPrefabs = []) {
     const completed = await action();
     if (completed === false) throw new Error(`[RuntimeSmoke] ${name} was superseded`);
     const state = gameApi.inspectRuntime();
@@ -18,6 +23,11 @@ export async function runLevelRuntimeSmoke(gameApi) {
     assertOwnedKeys(state.environmentRoots, expectedEnvironment, `${name}: environment roots`);
     assertOwnedKeys(state.collisionLevels, expectedEnvironment, `${name}: collision levels`);
     assertOwnedKeys(state.prefabInstances, expectedEnvironment, `${name}: prefab instances`);
+    expectedPrefabs.forEach((key) => {
+      if (!state.prefabInstances.includes(key)) {
+        throw new Error(`[RuntimeSmoke] ${name}: missing prefab marker instance "${key}"`);
+      }
+    });
     assertEqual(state.physics?.activeSceneKey, expectedEnvironment, `${name}: physics scene`);
     if (name === "menu-preview") {
       assertEqual(state.levelSession, null, `${name}: level session reset`);

@@ -1,9 +1,8 @@
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { createLevelOverrideSnapshot } from "../levels/LevelConfigSerialization.js";
-
-function clone(value) {
-  return JSON.parse(JSON.stringify(value));
-}
+import {
+  cloneSerializable,
+  createLevelOverrideSnapshot,
+} from "../levels/LevelConfigSerialization.js";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;
@@ -49,11 +48,16 @@ function createSceneSnapshot(materials, lighting, decals) {
       MATERIAL_TUNING_KEYS.forEach((property) => {
         if (property in config) tuning[property] = config[property];
       });
-      if (config.maskOverlay) tuning.maskOverlay = clone(config.maskOverlay);
+      if (config.maskOverlay) tuning.maskOverlay = cloneSerializable(config.maskOverlay);
       return [key, tuning];
     }),
   );
-  return { materials: materialTuning, lighting: clone(lighting), decals: clone(decals) };
+  const snapshot = {
+    materials: materialTuning,
+    lighting: cloneSerializable(lighting),
+  };
+  if (decals !== undefined) snapshot.decals = cloneSerializable(decals);
+  return snapshot;
 }
 
 async function saveProjectConfig(config) {
@@ -727,6 +731,9 @@ export function createSceneDebugPanels({
     getProjectConfig: () => createSceneSnapshot(materialConfigs, lightingConfig, decalConfig),
     guis: [materialsGui, lightsGui, prefabsGui, gameGui],
     isVisible: () => visible,
+    destroy() {
+      [materialsGui, lightsGui, prefabsGui, gameGui].forEach((gui) => gui.destroy());
+    },
     setVisible,
     setActiveLevel(levelId) {
       activeLevelId = levelId;

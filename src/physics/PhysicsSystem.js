@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import RAPIER from "@dimforge/rapier3d-compat";
 
 export async function createPhysicsSystem() {
+  const { default: RAPIER } = await import("@dimforge/rapier3d-compat");
   const originalWarn = console.warn;
   console.warn = (message, ...args) => {
     if (String(message).includes("using deprecated parameters for the initialization function")) return;

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { Capsule } from "three/addons/math/Capsule.js";
@@ -153,6 +154,12 @@ const textureStreaming = createTextureStreaming({
   onProgress: () => setLoadingProgress(18),
   onWarning: () => setLoadingStatus("TEXTURE MAP WARNING"),
 });
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(
+  "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/draco/",
+);
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
 const emptyMaskTexture = createSolidTexture(0, 0, 0, 255);
 
 const clock = new THREE.Clock();
@@ -246,7 +253,7 @@ const levelSceneBuilder = createLevelSceneBuilder({
   prefabInstances: levelPrefabInstances,
 });
 const levelAssetCache = new AssetCache({
-  load: (assetPath) => new GLTFLoader().loadAsync(assetPath),
+  load: (assetPath) => gltfLoader.loadAsync(assetPath),
   instantiate: (gltf) => gltf.scene.clone(true),
 });
 let loadedRuntimeLevelId = null;
@@ -1534,6 +1541,12 @@ function setupSceneDebugPanels() {
   if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
 }
 
+function rebuildSceneDebugPanels() {
+  sceneDebugPanels?.destroy?.();
+  sceneDebugPanels = null;
+  setupSceneDebugPanels();
+}
+
 function setDebugPanelsVisible(visible) {
   debugPanelsVisible = Boolean(visible);
   if (!debugPanelsVisible) stopPositionGizmo();
@@ -2023,8 +2036,7 @@ function resetBulkheadExit() {
 }
 
 function loadPanelModel() {
-  const loader = new GLTFLoader();
-  loader.load(
+  gltfLoader.load(
     CONFIG.assetPath,
     (gltf) => {
       panelModel = gltf.scene;
@@ -2081,7 +2093,11 @@ async function createLevelEnvironmentRuntime(levelId) {
   lightingRuntime.createLevel(levelId, environmentConfig.lighting);
 
   try {
+    const prefabCountBeforeBuild = environmentConfig.prefabs?.length ?? 0;
     await levelSceneBuilder.build(levelRuntime, levelId, environmentConfig);
+    if ((environmentConfig.prefabs?.length ?? 0) !== prefabCountBeforeBuild) {
+      rebuildSceneDebugPanels();
+    }
     updateActiveLevelEnvironment();
     console.log(`[LevelRuntime] Loaded only: ${levelId}`);
     return levelRuntime.activate();
@@ -2327,7 +2343,13 @@ function resolvePositionGizmoTarget(descriptor) {
   let object = null;
 
   if (descriptor.type === "prefab") {
-    object = levelPrefabInstances.get(`${descriptor.levelId}:${descriptor.key}`)?.root ?? null;
+    const prefabConfig = CONFIG.levelEnvironments?.[descriptor.levelId]?.prefabs?.find(
+      (prefab) => prefab.name === descriptor.key,
+    );
+    object =
+      prefabConfig?.behavior === "operatorPanel"
+        ? panelModel
+        : levelPrefabInstances.get(`${descriptor.levelId}:${descriptor.key}`)?.root ?? null;
   } else if (descriptor.type === "prefabLightOffset") {
     object = levelPrefabInstances.get(`${descriptor.levelId}:${descriptor.key}`)?.light ?? null;
   } else if (descriptor.type === "levelPointLight") {
@@ -2388,6 +2410,11 @@ function syncLevelPrefabMaterialClones(materialKey) {
 function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
   const environmentConfig = CONFIG.levelEnvironments?.[levelId];
   const prefabConfig = environmentConfig?.prefabs?.find((entry) => entry.name === prefabName);
+  if (prefabConfig?.behavior === "operatorPanel") {
+    applyActivePanelTransform();
+    if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
+    return;
+  }
   const runtime = levelPrefabInstances.get(`${levelId}:${prefabName}`);
   if (!prefabConfig || !runtime) return;
 

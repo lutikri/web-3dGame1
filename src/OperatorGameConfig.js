@@ -259,7 +259,7 @@ export const CONFIG = {
       },
       pipes1: {
         materialNames: ["M_Pipes1"],
-        namePrefixes: ["SM_Pipes1"],
+        namePrefixes: ["SM_Pipes1", "SM_Cable"],
         meshNames: [
           "SM_Pipes1_1",
           "SM_Pipes1_2",

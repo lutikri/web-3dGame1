@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { applyLevelOverrides } from "../src/levels/LevelConfigOverrides.js";
+import {
+  applyLevelOverrides,
+  applyPendingPrefabOverrides,
+} from "../src/levels/LevelConfigOverrides.js";
 
 test("level overrides merge prefab instances by stable name", () => {
   const target = {
@@ -33,4 +36,25 @@ test("level overrides ignore unknown fields and unknown prefab names", () => {
     prefabs: [{ name: "Missing", light: { intensity: 9 } }],
   });
   assert.deepEqual(target, { world: { fogNear: 1 }, prefabs: [] });
+});
+
+test("saved overrides apply when a prefab marker is discovered later", () => {
+  const target = { prefabs: [] };
+  applyLevelOverrides(target, {
+    prefabs: [
+      {
+        name: "fluorescentLamp_PowerHall1",
+        assetPath: "wrong.glb",
+        light: { intensity: 4, castShadow: true },
+      },
+    ],
+  });
+  const markerPrefab = {
+    name: "fluorescentLamp_PowerHall1",
+    assetPath: "registry.glb",
+    light: { intensity: 1, castShadow: false },
+  };
+  applyPendingPrefabOverrides([markerPrefab], target.prefabs);
+  assert.equal(markerPrefab.assetPath, "registry.glb");
+  assert.deepEqual(markerPrefab.light, { intensity: 4, castShadow: true });
 });

@@ -4,6 +4,35 @@ import * as THREE from "three";
 import { DoorInteractionSystem } from "../src/interactions/DoorInteractionSystem.js";
 import { LightingRuntime } from "../src/lighting/LightingRuntime.js";
 import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
+import {
+  mergeMarkerPrefabs,
+  parsePrefabMarkerName,
+  resolvePrefabMarkers,
+} from "../src/prefabs/PrefabMarkerResolver.js";
+
+test("prefab markers resolve registry instances from Empty transforms", () => {
+  const root = new THREE.Group();
+  root.position.set(10, 0, 0);
+  const marker = new THREE.Object3D();
+  marker.name = "PF_fluorescentLamp_PowerHall1";
+  marker.position.set(1, 2, 3);
+  root.add(marker);
+
+  const [prefab] = resolvePrefabMarkers(root);
+  assert.equal(prefab.prefabType, "fluorescentLamp");
+  assert.equal(prefab.name, "fluorescentLamp_PowerHall1");
+  assert.deepEqual(prefab.position.toArray(), [11, 2, 3]);
+});
+
+test("manual prefab configs override markers with the same stable name", () => {
+  const marker = { name: "PowerHall1", source: "marker" };
+  const manual = { name: "PowerHall1", source: "manual" };
+  assert.deepEqual(mergeMarkerPrefabs([manual], [marker]), [manual]);
+  assert.throws(
+    () => parsePrefabMarkerName("PF_missingType_Instance"),
+    /unknown prefab type/,
+  );
+});
 
 test("door interaction emits a level event and resets through shared physics", () => {
   const targets = [];

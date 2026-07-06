@@ -27,6 +27,18 @@
 - Неисправности должны создавать диагностическую задачу, а не случайно отнимать здоровье.
 - Интерактивные объекты и поведение повторно используются как prefabs между уровнями.
 
+### Размещение prefab-объектов
+
+Prefab можно разместить вручную в конфиге уровня или Empty-маркером внутри environment GLB:
+
+```text
+PF_fluorescentLamp_PowerHall1
+PF_redBulkLamp_PowerHall1
+PF_bulkheadDoor_C
+```
+
+Формат имени — `PF_<prefabType>_<instanceName>`, где `prefabType` зарегистрирован в `PrefabRegistry`. Transform берётся из Blender, а runtime-имя включает тип, например `fluorescentLamp_PowerHall1`. Ручной prefab с таким же стабильным именем имеет приоритет. Настройки marker-prefab, сохранённые через `SAVE LEVEL`, применяются после обнаружения marker-а при следующей загрузке.
+
 ### Текущие уровни
 
 - `intro-shift` — маленькая быстро загружаемая операторская, обучение базовой смене.

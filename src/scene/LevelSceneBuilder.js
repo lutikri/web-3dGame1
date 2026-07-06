@@ -1,4 +1,9 @@
 import * as THREE from "three";
+import {
+  mergeMarkerPrefabs,
+  resolvePrefabMarkers,
+} from "../prefabs/PrefabMarkerResolver.js";
+import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js";
 
 export function createLevelSceneBuilder({
   scene,
@@ -21,8 +26,16 @@ export function createLevelSceneBuilder({
       environmentModels.set(`${levelId}:prefabs`, prefabGroup);
       scene.add(prefabGroup);
 
+      const markerPrefabs = await buildEnvironment(levelId, environmentConfig);
+      const configuredPrefabs = environmentConfig.prefabs ?? [];
+      environmentConfig.prefabs = applyPendingPrefabOverrides(
+        mergeMarkerPrefabs(
+          configuredPrefabs,
+          markerPrefabs,
+        ),
+        configuredPrefabs,
+      );
       const tasks = [
-        buildEnvironment(levelId, environmentConfig),
         buildCollision(levelId, environmentConfig),
         ...(environmentConfig.prefabs ?? [])
           .filter((prefabConfig) => prefabConfig.behavior !== "operatorPanel")
@@ -54,6 +67,7 @@ export function createLevelSceneBuilder({
     excludedMeshes.forEach((object) => object.parent?.remove(object));
     environmentModels.set(levelId, model);
     scene.add(model);
+    return resolvePrefabMarkers(model);
   }
 
   async function buildCollision(levelId, config) {

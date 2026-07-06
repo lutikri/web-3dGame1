@@ -1,6 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createLevelOverrideSnapshot } from "../src/levels/LevelConfigSerialization.js";
+import {
+  cloneSerializable,
+  createLevelOverrideSnapshot,
+} from "../src/levels/LevelConfigSerialization.js";
+
+test("optional config sections may be undefined", () => {
+  assert.equal(cloneSerializable(undefined), undefined);
+  assert.deepEqual(cloneSerializable({ shadows: true, optional: undefined }), { shadows: true });
+});
 
 test("saved level snapshots exclude registry-owned prefab fields", () => {
   const snapshot = createLevelOverrideSnapshot({
@@ -15,7 +23,7 @@ test("saved level snapshots exclude registry-owned prefab fields", () => {
         behavior: "hingedDoor",
         interaction: { maxDistance: 2 },
         position: { x: 1, y: 2, z: 3 },
-        light: { intensity: 2 },
+        light: { intensity: 2, castShadow: true },
       },
     ],
   });
@@ -24,7 +32,7 @@ test("saved level snapshots exclude registry-owned prefab fields", () => {
     {
       name: "Door",
       position: { x: 1, y: 2, z: 3 },
-      light: { intensity: 2 },
+      light: { intensity: 2, castShadow: true },
     },
   ]);
 });

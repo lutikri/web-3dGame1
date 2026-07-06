@@ -61,6 +61,8 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - Register a level once in `src/levels/LevelRegistry.js`. The same definition supplies AppShell metadata and the runtime environment.
 - A level environment owns architecture/collision assets, player spawn, ambient lighting, panel placement, and named prefab instances.
 - Define reusable prefab defaults once in `src/prefabs/PrefabRegistry.js`. Instantiate them in a level with `createPrefabInstance(type, { name, position, rotation, overrides })`.
+- Blender environment GLBs may place prefab instances with Empty markers named `PF_<prefabType>_<instanceName>`. The type must exist in `PrefabRegistry`; the runtime instance name becomes `<prefabType>_<instanceName>`. Marker transforms come from the GLB, while manually configured prefabs remain supported and take precedence when they use the same stable name.
+- Prefab markers must be Empty objects, not render meshes. Unknown types, malformed names, and duplicate stable names are load errors rather than silently ignored content.
 - Reusable objects such as lamps, doors, pumps, and control cabinets are prefabs. Their behavior must have one shared implementation, not separate approximations per level.
 - Level configs describe prefab instances: stable name, transform, startup state, and intentional per-instance overrides. They must not duplicate assets, materials, animation, flicker, interaction, collision, or physics algorithms.
 - Every prefab instance name must be unique within its level. Registry validation should fail immediately for malformed instances; AppShell validation should report levels missing from the menu.
