@@ -2,6 +2,7 @@ import { createPreflight } from "./app/Preflight.js";
 import { applyLocalization } from "./app/Localization.js";
 import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js";
 
+const APP_BUILD_REVISION = "20260706-1";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -20,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import("./OperatorGame.js");
+await import(`./OperatorGame.js?v=${APP_BUILD_REVISION}`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -49,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import("./app/AppShell.js");
+const { createAppShell } = await import(`./app/AppShell.js?v=${APP_BUILD_REVISION}`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -59,7 +60,9 @@ if (finishPreflightAfterShell) {
 }
 
 if (runtimeSmokeMode) {
-  const { runLevelRuntimeSmoke } = await import("./runtime/RuntimeSmoke.js");
+  const { runLevelRuntimeSmoke } = await import(
+    `./runtime/RuntimeSmoke.js?v=${APP_BUILD_REVISION}`
+  );
   await window.operatorGameApp.initialRouteReady;
   try {
     window.operatorGameRuntimeSmokeResult = await runLevelRuntimeSmoke(window.operatorGameDebug);
