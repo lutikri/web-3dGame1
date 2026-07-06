@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "node dev-server.cjs",
     "check": "node scripts/check-project.mjs && node --test tests/*.test.mjs",
+    "stamp-modules": "node scripts/stamp-module-revision.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {

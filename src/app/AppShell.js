@@ -1,6 +1,6 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js";
-import { BRIEFING_UI } from "./BriefingUiConfig.js";
-import { createSubtitleQueue } from "./SubtitleQueue.js";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260706-2";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260706-2";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260706-2";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";

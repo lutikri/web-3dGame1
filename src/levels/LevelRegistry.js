@@ -1,6 +1,6 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260706-2";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260706-2";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260706-2";
 
 export const LEVEL_DEFINITIONS = {
   "intro-shift": {

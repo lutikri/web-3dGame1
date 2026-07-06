@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260706-2";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260706-2";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260706-2";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260706-2";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

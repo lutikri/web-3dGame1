@@ -15,45 +15,45 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260706-2";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js";
+} from "./game/ShiftReport.js?v=20260706-2";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260706-2";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260706-2";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js";
+} from "./config/GraphicsQualityProfiles.js?v=20260706-2";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js";
-import { createStatusScreen } from "./StatusScreen.js";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js";
+} from "./scene/TextureStreaming.js?v=20260706-2";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260706-2";
+import { createStatusScreen } from "./StatusScreen.js?v=20260706-2";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260706-2";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js";
-import { AssetCache } from "./runtime/AssetCache.js";
-import { LevelRuntime } from "./runtime/LevelRuntime.js";
-import { LevelSession } from "./levels/LevelSession.js";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js";
-import { LightingRuntime } from "./lighting/LightingRuntime.js";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js";
-import { PlayerController } from "./player/PlayerController.js";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js";
+} from "./ui/PostProcessingDebugPanel.js?v=20260706-2";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260706-2";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260706-2";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260706-2";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260706-2";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260706-2";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260706-2";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260706-2";
+import { LevelSession } from "./levels/LevelSession.js?v=20260706-2";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260706-2";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260706-2";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260706-2";
+import { PlayerController } from "./player/PlayerController.js?v=20260706-2";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260706-2";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260706-2";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
