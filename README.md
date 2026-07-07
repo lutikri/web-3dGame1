@@ -1,35 +1,116 @@
 # OperatorGame
 
-Браузерная first-person игра об операторе промышленной установки термоядерного ядра. Игрок не строит реактор и не управляет заводом: он проводит смену за физическим пультом, удерживая систему в рабочем диапазоне под растущей нагрузкой.
+Browser-based first-person operator game about running an old industrial fusion-core installation from a physical control room.
 
-## Короткий дизайн-док
+The player is not a builder, factory manager, or omniscient engineer. They are a shift operator: reading analog gauges, warning lamps, screen fragments, sound, light, and room behavior while trying to keep the core inside a working range under rising grid demand.
 
-### Фантазия игрока
+![Operator console and fusion core room](assets/repo/showcase-game1.webp)
 
-Игрок — не герой и не инженер с всеведущим интерфейсом, а сменный оператор старого тяжёлого оборудования. Информация приходит через стрелочные приборы, лампы, небольшие экраны, звук и поведение помещения. Ошибка должна сначала ощущаться как симптом, а уже затем пониматься как причина.
+## Design direction
 
-### Основной цикл
+OperatorGame is about causal, physical-feeling control.
 
-1. Получить краткий shift brief.
-2. Осмотреть панель и состояние помещения.
-3. Подготовить магнитное поле и выполнить зажигание плазмы.
-4. Балансировать `Fuel Injection`, `Magnetic Field` и `Coolant Flow`.
-5. Следовать меняющемуся `Grid Demand`, не перегревая ядро.
-6. Пережить неисправности или применить аварийный `Vent/Purge`.
-7. Получить отчёт смены и профиль поведения оператора.
+The main panel exposes a small set of powerful inputs:
 
-### Главные принципы
+- `Fuel Injection` raises heat and output, consumes fuel, and can hurt stability if the field is weak.
+- `Magnetic Field` improves containment, but costs energy and can reduce useful output when overused.
+- `Coolant Flow` removes heat, but too much cooling can quench the plasma and collapse output.
+- `Emergency Vent / Purge` is a held emergency action. It can save the shift, but it interrupts production and carries a cost.
 
-- Управление причинное, а не аркадное: игрок меняет реальные входы системы, а не нажимает кнопку «починить».
-- Высокая температура не всегда является ошибкой. Финальная нагрузка намеренно требует работы рядом с опасной зоной.
-- Состояние читается не только по цифрам: важны стрелки, свет, звук, flicker, blackout и реакция помещения.
-- Интерфейс является частью мира. Обычный HUD используется минимально.
-- Неисправности должны создавать диагностическую задачу, а не случайно отнимать здоровье.
-- Интерактивные объекты и поведение повторно используются как prefabs между уровнями.
+The player follows changing `Grid Demand` while watching `Plasma Temp`, `Containment / Stability`, `Power Output`, `Core Stress`, warning lamps, sound, flicker, blackout behavior, and post-processing feedback.
 
-### Размещение prefab-объектов
+High temperature is not automatically failure. Late burn phases are meant to push the operator near the dangerous band. The interesting play is not “keep everything low”; it is deciding how much risk the machinery can survive.
 
-Prefab можно разместить вручную в конфиге уровня или Empty-маркером внутри environment GLB:
+## Core shift loop
+
+1. Read the `Shift Brief`.
+2. Inspect the panel and room state.
+3. Bring the system toward ignition.
+4. Balance fuel, magnetic field, and coolant.
+5. Track grid demand through burn phases.
+6. Diagnose symptoms before they become failures.
+7. Use purge or recovery procedures when needed.
+8. Receive a shift report and operator profile.
+
+## Tutorial UX
+
+The intro level now separates two UI channels:
+
+- Subtitles are the operator’s thoughts and reactions. They should describe memory, symptoms, uncertainty, or stress, not give exact instructions.
+- Tutorial hints are short system prompts. They appear as non-blocking bottom flyouts with keycaps and mouse icons.
+
+The intro sequence after the shift brief is:
+
+1. `W A S D` to move.
+2. `SPACE` to “say apple” / jump, followed by a short operator reaction.
+3. `RMB` to lean toward the panel.
+4. `Mouse Wheel` to adjust a highlighted control.
+
+After leaning toward the panel, the operator gets a short memory fragment:
+
+```text
+...where am I?
+I've done this before.
+The panel says "Ignite".
+```
+
+Localization rule: subtitles live under `subtitles.*`, tutorial hints live under `hints.*`, and every new key should exist in both English and Russian.
+
+## Levels
+
+- `intro-shift` — compact, fast-loading control room and tutorial shift.
+- `exploring-around` — control room plus service corridor, used as the base for power-room and maintenance exploration.
+- `freeplay` — reuses the `intro-shift` environment with a looser session mode.
+
+Future progression from `gamdedesign-ru.md`:
+
+- Level 2: power bus, battery, breakers, interior power, and service corridor tasks.
+- Level 3: staff room, stress, fatigue, thirst, caffeine, and routine windows.
+- Level 4: pump / feed room with local diagnostics.
+- Level 5: full shift combining panel operation, power routing, maintenance, and operator condition.
+
+![Service corridor exploration](assets/repo/showcase-game2.webp)
+
+## Current architecture
+
+### Level lifecycle
+
+Levels are loaded exclusively. The runtime must not load every registered level and hide inactive ones.
+
+On a major route change, the current level owns and then disposes:
+
+- scene objects;
+- lights;
+- interactions;
+- collision;
+- Rapier bodies;
+- level-specific runtime state.
+
+Shared source GLBs and textures may remain cached through `AssetCache`, but cloned instances and physics state belong to the active level only.
+
+Relevant modules:
+
+- `src/levels/LevelRegistry.js` — level metadata and runtime environment registration.
+- `src/runtime/LevelRuntimeManager.js` — atomic level transitions; latest request wins.
+- `src/runtime/LevelRuntime.js` — idempotent disposal of level-owned resources.
+- `src/runtime/AssetCache.js` — cached source assets and isolated cloned instances.
+- `src/runtime/RuntimeSmoke.js` — automated lifecycle smoke test.
+- `src/scene/LevelSceneBuilder.js` — architecture, collision, prefab markers, and prefab instances.
+
+### Prefabs and marker placement
+
+Reusable objects such as lamps, doors, panels, pumps, and control cabinets are prefabs. Shared behavior belongs in `src/prefabs/PrefabRegistry.js`, not in individual level configs.
+
+A level may place a prefab manually in config:
+
+```js
+createPrefabInstance("fluorescentLamp", {
+  name: "Lamp1_TutorialCabin",
+  position: [3.6861, 1.49811, 2.39028],
+});
+```
+
+Or with an Empty marker inside a Blender environment GLB:
 
 ```text
 PF_fluorescentLamp_PowerHall1
@@ -37,125 +118,145 @@ PF_redBulkLamp_PowerHall1
 PF_bulkheadDoor_C
 ```
 
-Формат имени — `PF_<prefabType>_<instanceName>`, где `prefabType` зарегистрирован в `PrefabRegistry`. Transform берётся из Blender, а runtime-имя включает тип, например `fluorescentLamp_PowerHall1`. Ручной prefab с таким же стабильным именем имеет приоритет. Настройки marker-prefab, сохранённые через `SAVE LEVEL`, применяются после обнаружения marker-а при следующей загрузке.
+Marker format:
 
-### Текущие уровни
+```text
+PF_<prefabType>_<instanceName>
+```
 
-- `intro-shift` — маленькая быстро загружаемая операторская, обучение базовой смене.
-- `exploring-around` — операторская и сервисный коридор; основа для исследования оборудования и дополнительных контролов.
-- `freeplay` — использует окружение `intro-shift`, но запускает другой режим сессии.
+Rules:
 
-### Направления механик
+- `prefabType` must exist in `PrefabRegistry`.
+- The marker must be an Empty object, not a render mesh.
+- The runtime instance name becomes `<prefabType>_<instanceName>`.
+- Manual prefabs with the same stable name override marker placement.
+- Saved level overrides merge by stable prefab `name`.
+- Registry-owned fields such as asset paths, material algorithms, physics algorithms, flicker behavior, and interaction logic must not be saved into level overrides.
 
-- Сервисный коридор: насосы, электрика, охлаждение и локальные панели.
-- Неисправности приборов: показания могут расходиться с физическими симптомами.
-- Качество и подача топлива.
-- Локальное отключение питания и последовательное восстановление оборудования.
-- Физические предметы и препятствия, которые взаимодействуют с player collision.
-- Причинно связанные звук, вибрация, свет и состояние ядра.
+### Level sessions
 
-## Архитектура
+`src/levels/LevelSession.js` owns level objectives, bindings, events, and checkpoint data for the current shift.
 
-### Уровни
+Level-specific behavior should be expressed through session config and events where possible. For example:
 
-`src/levels/LevelRegistry.js` — единая точка регистрации metadata и runtime environment.
+- tutorial completion can require time survived plus opening a door;
+- a room button can target a specific prefab lamp;
+- future service-room tasks can listen for power, breaker, pump, or door events.
 
-Каждый level environment описывает:
+A level is allowed to have no `Panel1`; if no prefab with `behavior: "operatorPanel"` exists, the shared panel is hidden.
 
-- architecture и collision GLB;
-- player spawn;
-- fog и ambient lighting;
-- собственные point lights;
-- список prefab instances;
-- встроенные environment behaviors, например вентиляторы.
+### UI and tutorial modules
 
-В runtime существует только одно окружение. При переходе старый `LevelRuntime` полностью освобождает scene objects, lights, interactions и Rapier world. Исходные GLB могут оставаться в общем `AssetCache`.
+- `src/app/AppShell.js` — high-level app shell: menu, settings, route transitions, briefings, pause, and progress.
+- `src/app/BriefingUiConfig.js` — briefing zoom / inspect / vignette tuning.
+- `src/app/SubtitleQueue.js` — operator thought subtitle queue.
+- `src/app/TutorialHintQueue.js` — visual hint rendering with keycaps and mouse icons.
+- `src/app/IntroTutorialFlow.js` — intro tutorial step machine and tutorial subtitle timing.
+- `src/app/Localization.js` — English/Russian UI strings, control labels, subtitles, and hints.
 
-### Prefabs
+Briefings are level-driven through `src/levels/LevelRegistry.js`. While a briefing is visible, gameplay input is locked. After the final sheet is dismissed, tutorial hints become non-blocking.
 
-`src/prefabs/PrefabRegistry.js` хранит общие assets, materials, interaction, physics и behavior defaults.
+![Shift briefing and operator UI](assets/repo/showcase-game3.webp)
 
-Level config может задавать только instance-owned данные:
+## Runtime modules
 
-- уникальное имя;
-- position/rotation/scale;
-- startup state;
-- light tuning и явно разрешённые параметры экземпляра.
+- `src/lighting/LightingRuntime.js` — level-owned ambient and point lights.
+- `src/interactions/DoorInteractionSystem.js` — shared physical door interaction.
+- `src/player/PlayerController.js` — movement, collision, step handling, jump, and debug collision display.
+- `src/postprocessing/PostProcessingRuntime.js` — post-processing lifecycle.
+- `src/panels/OperatorPanelRuntime.js` — operator panel lifecycle and visibility.
+- `src/physics/PhysicsSystem.js` — Rapier physics, static collision, character controller, and physical doors.
+- `src/scene/TextureStreaming.js` — staged texture loading to reduce first-load stalls.
 
-Алгоритм двери, fluorescent flicker или physics нельзя копировать в level config.
+## Development
 
-### Runtime modules
-
-- `src/runtime/LevelRuntimeManager.js` — атомарные переходы, latest request wins.
-- `src/runtime/LevelRuntime.js` — единый idempotent `dispose()`.
-- `src/runtime/AssetCache.js` — кэш source assets и повторные instances.
-- `src/runtime/RuntimeSmoke.js` — автоматическая проверка переходов.
-- `src/scene/LevelSceneBuilder.js` — architecture, collision и prefab instances.
-- `src/lighting/LightingRuntime.js` — level-owned ambient и point lights.
-- `src/interactions/DoorInteractionSystem.js` — общее физическое управление дверями.
-- `src/player/PlayerController.js` — runtime-граница движения и player collision.
-- `src/postprocessing/PostProcessingRuntime.js` — lifecycle post-processing pipeline.
-- `src/panels/OperatorPanelRuntime.js` — lifecycle и видимость операторской панели.
-- `src/levels/LevelSession.js` — objectives, bindings, events и checkpoint текущей смены.
-- `src/physics/PhysicsSystem.js` — Rapier character, static collision и физические двери.
-
-`Panel1` не является обязательным: уровень без prefab с behavior `operatorPanel` загружает только своё окружение и скрывает общую панель.
-
-Level-specific логика описывается через `session.objectives` и `session.bindings`. Tutorial сейчас требует провести 180 секунд активной смены и открыть свою гермодверь; встроенная кнопка комнаты переключает конкретный prefab светильника. Уникальные будущие механики должны подписываться на события `LevelSession`, не обращаться напрямую к глобалам `OperatorGame`.
-
-### Конфиги
-
-Level configs имеют `schemaVersion`, проходят validation и migration. Generated overrides лежат в `src/generated/` и сохраняют только instance-owned prefab fields.
-
-Debug `SAVE LEVEL` сохраняет активное окружение и глобальную настройку материалов.
-
-## Разработка
-
-Установка и запуск:
+Install dependencies:
 
 ```text
 npm install
+```
+
+Run the local server:
+
+```text
 npm run dev
 ```
 
-Открыть `http://localhost:5173/`.
+Open:
 
-Быстрая проверка без браузера:
+```text
+http://localhost:5173/
+```
+
+If port `5173` is busy:
+
+```powershell
+$env:PORT=5174; npm run dev
+```
+
+Fast validation:
 
 ```text
 npm run check
 ```
 
-Автоматический runtime smoke без ручных кликов:
+Runtime lifecycle smoke test:
 
 ```text
 http://localhost:5173/?runtimeSmoke=1
 ```
 
-Ожидаемый результат в консоли: `[RuntimeSmoke] PASS`.
+Expected browser console result:
 
-Ручная проверка нужна для субъективных вещей: ощущения двери, качества flicker, света, collision comfort и presentation timing.
+```text
+[RuntimeSmoke] PASS
+```
 
-## Runtime assets
+Manual playtesting is still needed for subjective behavior: door feel, lamp flicker, lighting mood, collision comfort, tutorial pacing, and presentation timing.
 
-- `src/` — browser runtime code.
-- `styles/` — UI и HUD styling.
-- `assets/` — GLB, compressed textures, briefings и runtime images.
-- `asset-source/` и `3dGameAssetsDev/` — исходники арта и текстур.
-- `src/generated/` — настройки, сохранённые локальной debug-панелью.
+## Assets
 
-После изменения runtime texture sources запустить:
+- `assets/` contains runtime assets only: GLB, compressed textures, briefings, UI images, and lightweight README showcase WebP files.
+- `asset-source/` contains source art and original heavy files. It is gitignored.
+- `assets/repo/*.webp` are compressed showcase images for this README.
+- Original showcase PNGs live in `asset-source/repo/`.
+
+After changing runtime texture sources, run:
 
 ```text
 generate-runtime-textures.bat
 ```
 
-Preview и full KTX2 записываются в `assets/runtime-textures/`.
+Generated preview and full KTX2 textures are written to:
 
-## Ближайший технический roadmap
+```text
+assets/runtime-textures/
+```
 
-1. Вынести создание architecture/collision/prefabs из `OperatorGame.js` в `LevelSceneBuilder`.
-2. Перенести реализацию prefab behaviors в отдельный behavior registry.
-3. Выделить `LightingRuntime`, `PlayerController`, `DoorInteractionSystem` и `PostProcessingRuntime`.
-4. Добавить reference counting и ограничение памяти в `AssetCache`.
-5. Удалить оставшиеся default-environment fallback state из `OperatorGame.js`.
+## Deployment notes
+
+This project is currently a static ES-module app. GitHub Pages can cache individual modules aggressively, so after JavaScript module changes run:
+
+```text
+npm run stamp-modules -- <revision>
+```
+
+Then run:
+
+```text
+npm run check
+```
+
+The stamp step updates relative module URLs such as `?v=<revision>` to avoid mixed old/new module graphs on Pages.
+
+The Pages artifact should stay lean. Keep source PNGs, PSDs, recordings, screenshots, and deprecated content outside runtime `assets/` or under ignored source directories.
+
+## Design document
+
+The living Russian design document is:
+
+```text
+gamdedesign-ru.md
+```
+
+It contains the broader progression plan: power bus, staff room, routine windows, pump/feed diagnostics, operator state, and full-shift structure.
