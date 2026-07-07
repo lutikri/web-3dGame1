@@ -4,7 +4,7 @@ Browser-based first-person operator game about running an old industrial fusion-
 
 The player is not a builder, factory manager, or omniscient engineer. They are a shift operator: reading analog gauges, warning lamps, screen fragments, sound, light, and room behavior while trying to keep the core inside a working range under rising grid demand.
 
-![Operator console and fusion core room](assets/repo/showcase-game1.webp)
+![Shift briefing and operator UI](assets/repo/showcase-game3.webp)
 
 ## Design direction
 
@@ -55,6 +55,8 @@ The panel says "Ignite".
 ```
 
 Localization rule: subtitles live under `subtitles.*`, tutorial hints live under `hints.*`, and every new key should exist in both English and Russian.
+
+![Operator console and fusion core room](assets/repo/showcase-game1.webp)
 
 ## Levels
 
@@ -155,8 +157,6 @@ A level is allowed to have no `Panel1`; if no prefab with `behavior: "operatorPa
 - `src/app/Localization.js` — English/Russian UI strings, control labels, subtitles, and hints.
 
 Briefings are level-driven through `src/levels/LevelRegistry.js`. While a briefing is visible, gameplay input is locked. After the final sheet is dismissed, tutorial hints become non-blocking.
-
-![Shift briefing and operator UI](assets/repo/showcase-game3.webp)
 
 ## Runtime modules
 
