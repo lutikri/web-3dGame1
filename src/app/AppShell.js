@@ -1,6 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260706-2";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260706-2";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260706-2";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260707-tutorial2";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260707-tutorial2";
+import { translate } from "./Localization.js?v=20260707-tutorial2";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260707-tutorial2";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260707-tutorial2";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260707-tutorial2";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -19,6 +22,10 @@ export function createAppShell({ gameApi }) {
   const briefingSheetFrame = document.querySelector("#briefingSheetFrame");
   const briefingImage = document.querySelector("#briefingImage");
   const subtitleQueue = createSubtitleQueue({ element: document.querySelector("#operatorSubtitle") });
+  const tutorialHintQueue = createTutorialHintQueue({
+    element: document.querySelector("#tutorialHint"),
+    translate,
+  });
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
   const fovInput = document.querySelector("#settingFov");
   const fovValue = document.querySelector("#settingFovValue");
@@ -48,6 +55,19 @@ export function createAppShell({ gameApi }) {
   let briefingLevelId = null;
   let briefingInspectHeld = false;
   let briefingHideTimer = 0;
+  let activeGameplayLevelId = null;
+  const introTutorialFlow = createIntroTutorialFlow({
+    hintQueue: tutorialHintQueue,
+    isAllowed: (state) =>
+      Boolean(
+        state?.levelId === INTRO_LEVEL_ID &&
+          activeGameplayLevelId === INTRO_LEVEL_ID &&
+          !briefingActive &&
+          !transitionActive &&
+          !isOpen() &&
+          !document.querySelector("#resultsOverlay")?.classList.contains("is-visible"),
+      ),
+  });
   let resolveInitialRouteReady = null;
   const initialRouteReady = new Promise((resolve) => {
     resolveInitialRouteReady = resolve;
@@ -58,6 +78,7 @@ export function createAppShell({ gameApi }) {
   wireBriefingInspect();
   wireSettings();
   wireProgression();
+  wireTutorialHints();
   wireSubtitles();
   validateLevelMenu();
   updateLevelProgressUi();
@@ -92,10 +113,17 @@ export function createAppShell({ gameApi }) {
         dismissBriefing();
         return;
       }
+      if (briefingActive && event.key === "Enter" && !event.repeat) {
+        event.preventDefault();
+        dismissBriefing();
+        return;
+      }
       if (briefingActive) {
         event.preventDefault();
         return;
       }
+
+      introTutorialFlow.handleKey(event);
 
       if (event.code !== "KeyP" || event.repeat) return;
       if (document.querySelector("#resultsOverlay")?.classList.contains("is-visible")) return;
@@ -208,6 +236,7 @@ export function createAppShell({ gameApi }) {
     if (fastLoadLevelId && fastLoadLevel?.playable) {
       hideOverlay();
       await gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
+      activeGameplayLevelId = fastLoadLevelId;
       if (!debugConfig.skipBriefing) showLevelBriefing(fastLoadLevelId);
       resolveInitialRouteReady?.();
       resolveInitialRouteReady = null;
@@ -223,6 +252,18 @@ export function createAppShell({ gameApi }) {
     }
 
     startIntroShift();
+  }
+
+  function wireTutorialHints() {
+    window.addEventListener("operatorgame:hover-target", (event) => {
+      introTutorialFlow.handleHover(event.detail);
+    });
+    window.addEventListener("operatorgame:input-action", (event) => {
+      introTutorialFlow.handleInputAction(event.detail);
+    });
+    window.addEventListener("operatorgame:knob-adjusted", () => {
+      introTutorialFlow.handleKnobAdjusted();
+    });
   }
 
   function wireBriefingInspect() {
@@ -287,6 +328,7 @@ export function createAppShell({ gameApi }) {
     hideOverlay();
     window.setTimeout(async () => {
       await gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
+      activeGameplayLevelId = INTRO_LEVEL_ID;
       showLevelBriefing(INTRO_LEVEL_ID);
       transitionActive = false;
       resolveInitialRouteReady?.();
@@ -313,6 +355,7 @@ export function createAppShell({ gameApi }) {
         action: async () => {
           gameApi.hideShiftResults?.();
           await gameApi.resetForMenu?.();
+          activeGameplayLevelId = null;
           showPanel("main-menu");
         },
       });
@@ -337,7 +380,8 @@ export function createAppShell({ gameApi }) {
           gameApi.hideShiftResults?.();
           hideOverlay();
           await gameApi.restartGame?.();
-          showLevelBriefing(gameApi.getState?.().activeLevelId);
+          activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
+          showLevelBriefing(activeGameplayLevelId);
         },
       });
     } else if (action === "quick-level-select") {
@@ -426,6 +470,7 @@ export function createAppShell({ gameApi }) {
         gameApi.hideShiftResults?.();
         hideOverlay();
         await gameApi.startLevel?.({ levelId, mode: level.mode });
+        activeGameplayLevelId = levelId;
         showLevelBriefing(levelId);
       },
     });
@@ -465,6 +510,7 @@ export function createAppShell({ gameApi }) {
 
   function dismissBriefing() {
     if (!briefingOverlay || !briefingActive) return;
+    const completedBriefingLevelId = briefingLevelId;
     briefingInspectHeld = false;
     stopBriefingInspect();
     if (briefingQueue.length > 0) {
@@ -477,15 +523,17 @@ export function createAppShell({ gameApi }) {
     updateInputLock();
     briefingOverlay.classList.remove("is-visible");
     briefingOverlay.classList.add("is-dismissed");
-    briefingHideTimer = window.setTimeout(() => hideBriefing(true), BRIEFING_DISMISS_MS);
+    maybeStartIntroTutorial(completedBriefingLevelId, BRIEFING_DISMISS_MS + 420);
+    briefingHideTimer = window.setTimeout(() => hideBriefing(true, { keepTutorialHints: true }), BRIEFING_DISMISS_MS);
   }
 
-  function hideBriefing(immediate = false) {
+  function hideBriefing(immediate = false, { keepTutorialHints = false } = {}) {
     if (!briefingOverlay) return;
     window.clearTimeout(briefingHideTimer);
     briefingActive = false;
     briefingQueue = [];
     briefingLevelId = null;
+    if (!keepTutorialHints) introTutorialFlow.stop();
     updateInputLock();
     briefingOverlay.classList.remove("is-visible", "is-dismissed");
     resetBriefingInspectState();
@@ -538,6 +586,7 @@ export function createAppShell({ gameApi }) {
 
   function showPanel(panelName) {
     hideBriefing(true);
+    introTutorialFlow.stop();
     currentPanel = panelName;
     overlay.hidden = false;
     document.body.classList.add("app-ui-open");
@@ -557,6 +606,12 @@ export function createAppShell({ gameApi }) {
     panels.forEach((panel) => {
       panel.hidden = true;
     });
+  }
+
+  function maybeStartIntroTutorial(levelId, delayMs = 0) {
+    introTutorialFlow.stop();
+    if (levelId !== INTRO_LEVEL_ID || activeGameplayLevelId !== INTRO_LEVEL_ID) return;
+    introTutorialFlow.start({ levelId, delayMs });
   }
 
   function validateLevelMenu() {

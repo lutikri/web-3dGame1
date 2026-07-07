@@ -15,45 +15,45 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260706-2";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260707-tutorial2";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260706-2";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260706-2";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260706-2";
+} from "./game/ShiftReport.js?v=20260707-tutorial2";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260707-tutorial2";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260707-tutorial2";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260706-2";
+} from "./config/GraphicsQualityProfiles.js?v=20260707-tutorial2";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260706-2";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260706-2";
-import { createStatusScreen } from "./StatusScreen.js?v=20260706-2";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260706-2";
+} from "./scene/TextureStreaming.js?v=20260707-tutorial2";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260707-tutorial2";
+import { createStatusScreen } from "./StatusScreen.js?v=20260707-tutorial2";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260707-tutorial2";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260706-2";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260706-2";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260706-2";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260706-2";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260706-2";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260706-2";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260706-2";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260706-2";
-import { LevelSession } from "./levels/LevelSession.js?v=20260706-2";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260706-2";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260706-2";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260706-2";
-import { PlayerController } from "./player/PlayerController.js?v=20260706-2";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260706-2";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260706-2";
+} from "./ui/PostProcessingDebugPanel.js?v=20260707-tutorial2";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260707-tutorial2";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260707-tutorial2";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260707-tutorial2";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260707-tutorial2";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260707-tutorial2";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260707-tutorial2";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260707-tutorial2";
+import { LevelSession } from "./levels/LevelSession.js?v=20260707-tutorial2";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260707-tutorial2";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260707-tutorial2";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260707-tutorial2";
+import { PlayerController } from "./player/PlayerController.js?v=20260707-tutorial2";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260707-tutorial2";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260707-tutorial2";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -312,6 +312,7 @@ let hoveredInteractive = null;
 let hoveredKnob = null;
 let hoveredTooltipTarget = null;
 let hoveredHingedDoor = null;
+let lastHoverSignal = "";
 let draggedHingedDoor = null;
 let forcedHoveredTarget = null;
 let startupFeedbackTimer = 0;
@@ -3217,6 +3218,7 @@ function updateHoverTarget() {
     setHoveredKnob(forcedHoveredTarget.userData.kind === "controlKnob" ? forcedHoveredTarget : null);
     setHoveredHingedDoor(forcedHoveredTarget.userData.kind === "hingedDoor" ? forcedHoveredTarget : null);
     setHoveredTooltipTarget(forcedHoveredTarget);
+    dispatchHoverSignal(hoveredInteractive);
     return;
   }
 
@@ -3247,6 +3249,7 @@ function updateHoverTarget() {
   setHoveredKnob(hoveredInteractive?.userData.kind === "controlKnob" ? hoveredInteractive : null);
   setHoveredHingedDoor(hoveredInteractive?.userData.kind === "hingedDoor" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
+  dispatchHoverSignal(hoveredInteractive);
 }
 
 function findInteractiveRoot(object) {
@@ -3317,6 +3320,24 @@ function getTooltipText(target) {
     return `${label} ${roomLightsEnabled ? translate("controls.on") : translate("controls.off")}`;
   }
   return label;
+}
+
+function dispatchHoverSignal(target) {
+  const kind = target?.userData.kind ?? "none";
+  const name = target?.name ?? "";
+  const signal = `${activeLevelId}:${kind}:${name}`;
+  if (signal === lastHoverSignal) return;
+  lastHoverSignal = signal;
+  window.dispatchEvent(
+    new CustomEvent("operatorgame:hover-target", {
+      detail: {
+        levelId: activeLevelId,
+        kind,
+        name,
+        controlLabel: target?.userData.controlLabel ?? "",
+      },
+    }),
+  );
 }
 
 function updatePanel(dt) {
@@ -5066,6 +5087,15 @@ canvas.addEventListener(
       CONFIG.controls.wheelMaxStepPercent,
     );
     adjustControlKnob(hoveredKnob, clampedDelta);
+    window.dispatchEvent(
+      new CustomEvent("operatorgame:knob-adjusted", {
+        detail: {
+          levelId: activeLevelId,
+          name: hoveredKnob.name,
+          percent: hoveredKnob.userData.controlPercent,
+        },
+      }),
+    );
   },
   { passive: false },
 );
@@ -5080,6 +5110,11 @@ canvas.addEventListener("mousedown", (event) => {
   if (event.button === 2) {
     event.preventDefault();
     zoomActive = true;
+    window.dispatchEvent(
+      new CustomEvent("operatorgame:input-action", {
+        detail: { action: "lean", levelId: activeLevelId },
+      }),
+    );
     if (document.pointerLockElement !== canvas) requestPointerLock();
     return;
   }
