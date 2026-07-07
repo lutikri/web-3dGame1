@@ -243,6 +243,7 @@ export async function createPhysicsSystem() {
         z: hingeQuaternion.z,
         w: hingeQuaternion.w,
       },
+      locked: false,
       targetDegrees: null,
       motorRemaining: 0,
     };
@@ -261,6 +262,7 @@ export async function createPhysicsSystem() {
   function setDoorDragTarget(key, degrees, active, releaseAngularVelocity = 0) {
     const door = doors.get(key);
     if (!door) return false;
+    if (door.locked && !active) return true;
     door.targetDegrees = active ? THREE.MathUtils.degToRad(degrees - door.initialDegrees) : null;
     if (active) {
       door.joint.configureMotorPosition(door.targetDegrees, door.motorStiffness, door.motorDamping);
@@ -275,6 +277,30 @@ export async function createPhysicsSystem() {
       );
       door.body.setAngvel({ x: 0, y: cappedVelocity, z: 0 }, true);
       door.motorRemaining = 0;
+    }
+    return true;
+  }
+
+  function setDoorLocked(key, locked, degrees = null) {
+    const door = doors.get(key);
+    if (!door) return false;
+    door.locked = Boolean(locked);
+    if (door.locked) {
+      const targetDegrees = Number.isFinite(degrees) ? degrees : door.initialDegrees;
+      door.targetDegrees = THREE.MathUtils.degToRad(targetDegrees - door.initialDegrees);
+      door.motorRemaining = Number.POSITIVE_INFINITY;
+      door.joint.configureMotorPosition(
+        door.targetDegrees,
+        door.motorStiffness * 12,
+        door.motorDamping * 4,
+      );
+      door.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+      door.body.wakeUp();
+    } else {
+      door.targetDegrees = null;
+      door.motorRemaining = 0;
+      door.joint.configureMotorPosition(0, 0, 0);
+      door.body.wakeUp();
     }
     return true;
   }
@@ -305,6 +331,7 @@ export async function createPhysicsSystem() {
     if (!door) return false;
     door.targetDegrees = null;
     door.motorRemaining = 0;
+    door.locked = false;
     door.initialHoldRemaining = door.initialHoldSeconds;
     door.body.setTranslation(door.initialPosition, true);
     door.body.setRotation(door.initialRotation, true);
@@ -353,21 +380,28 @@ export async function createPhysicsSystem() {
     doors.forEach((door) => {
       if (!door.body.isEnabled()) return;
       if (door.targetDegrees != null) {
-        door.motorRemaining = Math.max(0, door.motorRemaining - dt);
+        door.motorRemaining = door.locked ? Number.POSITIVE_INFINITY : Math.max(0, door.motorRemaining - dt);
         const currentRelativeRadians = THREE.MathUtils.degToRad(
           getDoorDegreesFromRuntime(door) - door.initialDegrees,
         );
         const closeEnough = Math.abs(currentRelativeRadians - door.targetDegrees) < 0.025;
-        if (closeEnough || door.motorRemaining <= 0) {
+        if (!door.locked && (closeEnough || door.motorRemaining <= 0)) {
           door.targetDegrees = null;
           door.motorRemaining = 0;
           door.joint.configureMotorPosition(0, 0, 0);
+        } else if (door.locked) {
+          door.joint.configureMotorPosition(
+            door.targetDegrees,
+            door.motorStiffness * 12,
+            door.motorDamping * 4,
+          );
+          door.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
         }
       }
-      door.initialHoldRemaining = Math.max(0, door.initialHoldRemaining - dt);
-      if (door.initialHoldRemaining > 0 && door.targetDegrees == null) {
+      door.initialHoldRemaining = door.locked ? 0 : Math.max(0, door.initialHoldRemaining - dt);
+      if (!door.locked && door.initialHoldRemaining > 0 && door.targetDegrees == null) {
         door.joint.configureMotorPosition(0, door.motorStiffness * 1.5, door.motorDamping * 1.5);
-      } else if (door.initialHoldRemaining === 0 && door.targetDegrees == null) {
+      } else if (!door.locked && door.initialHoldRemaining === 0 && door.targetDegrees == null) {
         door.joint.configureMotorPosition(0, 0, 0);
       }
       const angularVelocity = door.body.angvel();
@@ -419,6 +453,7 @@ export async function createPhysicsSystem() {
     jump,
     createHingedDoor,
     setDoorDragTarget,
+    setDoorLocked,
     getDoorDegrees,
     resetDoor,
     resetDoors,

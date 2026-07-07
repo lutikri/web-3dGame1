@@ -143,93 +143,95 @@ export function buildShiftReport(recorder, snapshot) {
   });
 
   return {
+    profileId: profile.id,
     profile: profile.title,
     summary: profile.summary,
     stats: [
-      ["SHIFT TIME", formatDuration(snapshot.elapsed)],
-      ["AVG EFFICIENCY", `${Math.round(avgEfficiency)}%`],
-      ["AVG OUTPUT", `${Math.round(avgOutput)} MW`],
-      ["AVG DEMAND ERROR", `${Math.round(avgDemandError * 100)}%`],
-      ["MAX TEMP", `${Math.round(recorder.maxTemp)} MK`],
-      ["MAX CORE STRESS", `${Math.round(recorder.maxCoreStress)}%`],
-      ["MAX HEAT SOAK", `${Math.round(recorder.maxThermalSoak)}%`],
-      ["CRITICAL TEMP", `${Math.round(tempCriticalRatio * 100)}%`],
-      ["OUTPUT SURGE", `${Math.round(outputSurgeRatio * 100)}%`],
-      ["OVER DEMAND", `${Math.round(overRatio * 100)}%`],
-      ["UNDER DEMAND", `${Math.round(underRatio * 100)}%`],
-      ["CORE STALL", `${Math.round(quenchRatio * 100)}%`],
-      ["VENT HELD", `${Math.round((recorder.ventTime / duration) * 100)}%`],
-      ["VENT PULSES", `${recorder.ventActivations}`],
-      ["PULSE USES", `${recorder.pulseActivations}`],
-      ["AVG TEMP", `${Math.round(avgTemp)} MK`],
-      ["CONTROL MOTION", `${Math.round(movementRate)}%/s`],
+      ["results.stats.shiftTime", formatDuration(snapshot.elapsed)],
+      ["results.stats.avgEfficiency", `${Math.round(avgEfficiency)}%`],
+      ["results.stats.avgOutput", `${Math.round(avgOutput)} MW`],
+      ["results.stats.avgDemandError", `${Math.round(avgDemandError * 100)}%`],
+      ["results.stats.maxTemp", `${Math.round(recorder.maxTemp)} MK`],
+      ["results.stats.maxCoreStress", `${Math.round(recorder.maxCoreStress)}%`],
+      ["results.stats.maxHeatSoak", `${Math.round(recorder.maxThermalSoak)}%`],
+      ["results.stats.criticalTemp", `${Math.round(tempCriticalRatio * 100)}%`],
+      ["results.stats.outputSurge", `${Math.round(outputSurgeRatio * 100)}%`],
+      ["results.stats.overDemand", `${Math.round(overRatio * 100)}%`],
+      ["results.stats.underDemand", `${Math.round(underRatio * 100)}%`],
+      ["results.stats.coreStall", `${Math.round(quenchRatio * 100)}%`],
+      ["results.stats.ventHeld", `${Math.round((recorder.ventTime / duration) * 100)}%`],
+      ["results.stats.ventPulses", `${recorder.ventActivations}`],
+      ["results.stats.pulseUses", `${recorder.pulseActivations}`],
+      ["results.stats.avgTemp", `${Math.round(avgTemp)} MK`],
+      ["results.stats.controlMotion", `${Math.round(movementRate)}%/s`],
     ],
   };
 }
 
 function pickOperatorProfile(stats) {
   if (stats.snapshot.mode === "failed" && stats.maxCoreStress > 96 && stats.maxTemp > 178) {
-    return profile("CONTAINMENT POSTMORTEM", "You found the part of the operating envelope that writes reports in all caps.");
+    return profile("containmentPostmortem", "CONTAINMENT POSTMORTEM", "You found the part of the operating envelope that writes reports in all caps.");
   }
   if (stats.ventActivations >= 4 || (stats.ventRatio > 0.06 && stats.maxTemp > 155)) {
-    return profile("NERVOUS PURGE TECH", "Short purge pulses solved several problems and created several new entries in the logbook.");
+    return profile("nervousPurgeTech", "NERVOUS PURGE TECH", "Short purge pulses solved several problems and created several new entries in the logbook.");
   }
   if (stats.avgEfficiency > 82 && stats.avgDemandError < 0.12 && stats.maxCoreStress < 55 && stats.instabilityRatio < 0.08) {
-    return profile("FIELD PHYSICIST", "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.");
+    return profile("fieldPhysicist", "FIELD PHYSICIST", "Quiet hands, good coupling, acceptable grid discipline. Suspiciously competent.");
   }
   if (stats.avgOutput > 720 && stats.avgDemandError < 0.18 && stats.tempCriticalRatio > 0.04 && stats.coreStressRatio < 0.14) {
-    return profile("HIGH LOAD SPECIALIST", "You ran the burn hot on purpose and mostly convinced the machinery it was planned.");
+    return profile("highLoadSpecialist", "HIGH LOAD SPECIALIST", "You ran the burn hot on purpose and mostly convinced the machinery it was planned.");
   }
   if (stats.thermalSoakRatio > 0.12 || stats.maxThermalSoak > 75 || stats.maxTemp > 185) {
-    return profile("REDLINE PHILOSOPHER", "You treated heat soak as a philosophical disagreement between you and the panel. The panel had evidence.");
+    return profile("redlinePhilosopher", "REDLINE PHILOSOPHER", "You treated heat soak as a philosophical disagreement between you and the panel. The panel had evidence.");
   }
   if (stats.outputSurgeRatio > 0.08) {
-    return profile("BUS SURGE CONDUCTOR", "The grid received power in expressive waves. Some of them were even useful.");
+    return profile("busSurgeConductor", "BUS SURGE CONDUCTOR", "The grid received power in expressive waves. Some of them were even useful.");
   }
   if (stats.overRatio > 0.32) {
-    return profile("GRID OVERFEEDER", "Demand was a target. You interpreted it as a lower bound.");
+    return profile("gridOverfeeder", "GRID OVERFEEDER", "Demand was a target. You interpreted it as a lower bound.");
   }
   if (stats.avgFuel > 84 && stats.avgOutput < 650) {
-    return profile("FUEL INTO NOISE", "A lot of fuel became heat, alarms, and character development before it became grid power.");
+    return profile("fuelIntoNoise", "FUEL INTO NOISE", "A lot of fuel became heat, alarms, and character development before it became grid power.");
   }
   if (stats.avgField > 86 && stats.avgOutput < 820) {
-    return profile("MAGNETIC ACCOUNTANT", "Containment was extremely well filed. Net output was less impressed.");
+    return profile("magneticAccountant", "MAGNETIC ACCOUNTANT", "Containment was extremely well filed. Net output was less impressed.");
   }
   if (stats.avgCoolant < 28 && stats.maxTemp > 160 && stats.maxCoreStress < 75) {
-    return profile("HEAT SINK GAMBLER", "You trusted the thermal mass longer than the manual recommends, but the lights stayed on.");
+    return profile("heatSinkGambler", "HEAT SINK GAMBLER", "You trusted the thermal mass longer than the manual recommends, but the lights stayed on.");
   }
   if (stats.quenchRatio > 0.18 || (stats.avgCoolant > 72 && stats.avgTemp < 110)) {
-    return profile("COOLANT INTERN", "The plasma spent much of the shift wondering why it was being refrigerated instead of operated.");
+    return profile("coolantIntern", "COOLANT INTERN", "The plasma spent much of the shift wondering why it was being refrigerated instead of operated.");
   }
   if (stats.underRatio > 0.42) {
-    return profile("UNDERPOWERED OPTIMIST", "The grid kept asking for more. You maintained a tasteful distance from the request.");
+    return profile("underpoweredOptimist", "UNDERPOWERED OPTIMIST", "The grid kept asking for more. You maintained a tasteful distance from the request.");
   }
   if (stats.movementRate > 12) {
-    return profile("WHY IS THIS LAMP BLINKING", "You made many corrections and at least some of them were related to the problem at hand.");
+    return profile("whyIsThisLampBlinking", "WHY IS THIS LAMP BLINKING", "You made many corrections and at least some of them were related to the problem at hand.");
   }
   if (stats.movementRate < 1.2 && stats.avgDemandError > 0.28) {
-    return profile("CONTROL ROOM STATUE", "The panel changed phases. You respected its independence.");
+    return profile("controlRoomStatue", "CONTROL ROOM STATUE", "The panel changed phases. You respected its independence.");
   }
   if (stats.tempCriticalRatio > 0.16 && stats.maxCoreStress < 70) {
-    return profile("EDGE WALKER", "You visited the red band often enough to learn the furniture, then left before it became permanent.");
+    return profile("edgeWalker", "EDGE WALKER", "You visited the red band often enough to learn the furniture, then left before it became permanent.");
   }
   if (stats.snapshot.mode === "failed") {
-    return profile("UNSCHEDULED EXPERIMENT", "The shift ended with useful data, technically. The maintenance team may use different words.");
+    return profile("unscheduledExperiment", "UNSCHEDULED EXPERIMENT", "The shift ended with useful data, technically. The maintenance team may use different words.");
   }
   if (stats.avgDemandError < 0.18 && stats.avgEfficiency > 68) {
-    return profile("SHIFT OPERATOR", "You kept the core moving, made some compromises, and left enough machine for the next person.");
+    return profile("shiftOperator", "SHIFT OPERATOR", "You kept the core moving, made some compromises, and left enough machine for the next person.");
   }
   if (stats.maxOutput > 980 && stats.maxCoreStress < 80) {
-    return profile("PEAK OUTPUT TOURIST", "You went sightseeing near maximum output and brought back most of the equipment.");
+    return profile("peakOutputTourist", "PEAK OUTPUT TOURIST", "You went sightseeing near maximum output and brought back most of the equipment.");
   }
   if (stats.avgEfficiency < 45) {
-    return profile("REACTION POET", "The numbers formed an emotional arc. The grid requested fewer metaphors.");
+    return profile("reactionPoet", "REACTION POET", "The numbers formed an emotional arc. The grid requested fewer metaphors.");
   }
-  return profile("PANEL APPRENTICE", "You learned which lights matter and which lights merely judge.");
+  return profile("panelApprentice", "PANEL APPRENTICE", "You learned which lights matter and which lights merely judge.");
 }
 
-function profile(title, summary) {
+function profile(id, title, summary) {
   return {
+    id,
     title: `OPERATOR TYPE: ${title}`,
     summary,
   };

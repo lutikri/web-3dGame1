@@ -15,45 +15,45 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260707-tutorial2";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260707-localized-results1";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260707-tutorial2";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260707-tutorial2";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260707-tutorial2";
+} from "./game/ShiftReport.js?v=20260707-localized-results1";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260707-localized-results1";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260707-localized-results1";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260707-tutorial2";
+} from "./config/GraphicsQualityProfiles.js?v=20260707-localized-results1";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260707-tutorial2";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260707-tutorial2";
-import { createStatusScreen } from "./StatusScreen.js?v=20260707-tutorial2";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260707-tutorial2";
+} from "./scene/TextureStreaming.js?v=20260707-localized-results1";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260707-localized-results1";
+import { createStatusScreen } from "./StatusScreen.js?v=20260707-localized-results1";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260707-localized-results1";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260707-tutorial2";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260707-tutorial2";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260707-tutorial2";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260707-tutorial2";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260707-tutorial2";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260707-tutorial2";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260707-tutorial2";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260707-tutorial2";
-import { LevelSession } from "./levels/LevelSession.js?v=20260707-tutorial2";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260707-tutorial2";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260707-tutorial2";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260707-tutorial2";
-import { PlayerController } from "./player/PlayerController.js?v=20260707-tutorial2";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260707-tutorial2";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260707-tutorial2";
+} from "./ui/PostProcessingDebugPanel.js?v=20260707-localized-results1";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260707-localized-results1";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260707-localized-results1";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260707-localized-results1";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260707-localized-results1";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260707-localized-results1";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260707-localized-results1";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260707-localized-results1";
+import { LevelSession } from "./levels/LevelSession.js?v=20260707-localized-results1";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260707-localized-results1";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260707-localized-results1";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260707-localized-results1";
+import { PlayerController } from "./player/PlayerController.js?v=20260707-localized-results1";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260707-localized-results1";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260707-localized-results1";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -112,6 +112,7 @@ const loadingOverlay = createLoadingOverlay({
   status: document.querySelector("#loadingStatus"),
   shiftTitle: document.querySelector("#loadingShiftTitle"),
   barFill: document.querySelector("#loadingBarFill"),
+  finishStatusText: translate("loading.coreOnline"),
 });
 
 const scene = new THREE.Scene();
@@ -233,6 +234,7 @@ const doorInteractionSystem = new DoorInteractionSystem({
     activeLevelSession?.emit("doorOpened", {
       target: prefabKey?.split(":").slice(1).join(":"),
     });
+    if (resultsSnapshot && shouldWaitForDoorExitBeforeResults()) showShiftResults(resultsSnapshot);
   },
 });
 const levelSceneBuilder = createLevelSceneBuilder({
@@ -323,6 +325,7 @@ let observedIgnitionPulseCount = latestSnapshot.ignitionPulseCount ?? 0;
 let appliedCameraFeedbackRoll = 0;
 let zoomActive = false;
 let baseFovDegrees = CONFIG.camera.fovDegrees;
+const defaultMouseSensitivity = CONFIG.camera.mouseSensitivity;
 let shadowQuality = CONFIG.shadows.defaultQuality ?? "min";
 let gtaoQuality = CONFIG.postProcessing.gtao.defaultQuality ?? "off";
 let ssgiQuality = CONFIG.postProcessing.ssgi.defaultQuality ?? "off";
@@ -1954,6 +1957,7 @@ function updateInterior(dt) {
     applyAxisRotation(fan, fan.userData.fanAxis, fan.userData.fanAngle);
   });
   updateBulkheadHandle(dt);
+  updateDoorLatchHandles(dt);
 }
 
 function updateBulkheadHandle(dt) {
@@ -2432,7 +2436,14 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
     part.rotateZ(THREE.MathUtils.degToRad(rotation.z ?? 0));
   });
   runtime.root.updateMatrixWorld(true);
-  if (runtime.door) applyHingedDoorRotation(runtime);
+  if (runtime.door) {
+    const configLatched = Boolean(prefabConfig.state?.latched);
+    if (runtime.door.latched !== configLatched) {
+      setDoorLatched(runtime, configLatched);
+    } else {
+      applyHingedDoorRotation(runtime);
+    }
+  }
   const lightConfig = prefabConfig.light;
   if (!lightConfig || !runtime.light) {
     if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
@@ -2452,7 +2463,8 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
     runtime.afterglowRemaining = lightConfig.afterglow?.durationSeconds ?? 3;
   }
   runtime.wasLightEnabled = lightConfig.enabled !== false;
-  runtime.light.visible = lightConfig.enabled !== false || runtime.afterglowRemaining > 0;
+  runtime.light.visible = lightConfig.enabled !== false;
+  if (lightConfig.enabled === false) runtime.light.intensity = 0;
   if (structural) applyShadowSettings(runtime.light, lightConfig);
   if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
 }
@@ -2462,6 +2474,7 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
   if (interaction?.type !== "hingedDoor") return;
   const doorMesh = runtime.parts.get(interaction.meshName);
   const colliderMesh = runtime.parts.get(interaction.colliderName);
+  const latchHandle = interaction.latchHandleName ? runtime.parts.get(interaction.latchHandleName) : null;
   if (!doorMesh) return;
 
   doorMesh.userData.kind = "hingedDoor";
@@ -2480,14 +2493,27 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
   runtime.door = {
     mesh: doorMesh,
     collider: colliderMesh,
+    latchHandle,
     interaction,
+    levelId,
+    prefabName: prefabConfig.name,
     degrees: interaction.initialDegrees ?? 0,
     commandedOpen: false,
+    latched: Boolean(prefabConfig.state?.latched),
+    defaultLatched: Boolean(prefabConfig.state?.latched),
     releaseAngularVelocity: 0,
     colliderFromDoor: colliderMesh
       ? new THREE.Matrix4().copy(doorMesh.matrixWorld).invert().multiply(colliderMesh.matrixWorld)
       : null,
   };
+  if (latchHandle) {
+    latchHandle.userData.kind = "doorLatchHandle";
+    latchHandle.userData.levelId = levelId;
+    latchHandle.userData.controlLabel = "BULKHEAD LOCK";
+    latchHandle.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
+    latchHandle.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+    interactive.push(latchHandle);
+  }
   applyHingedDoorRotation(runtime);
   if (physicsSystem && colliderMesh) {
     runtime.physicsDoorKey = `${levelId}:${prefabConfig.name}`;
@@ -2506,6 +2532,13 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
       motorStiffness: interaction.motorStiffness,
       motorDamping: interaction.motorDamping,
     });
+    if (runtime.door.latched) {
+      physicsSystem.setDoorLocked(
+        runtime.physicsDoorKey,
+        true,
+        interaction.initialDegrees ?? 0,
+      );
+    }
   }
 }
 
@@ -2523,7 +2556,87 @@ function applyHingedDoorRotation(runtime) {
     const colliderLocal = new THREE.Matrix4().multiplyMatrices(parentInverse, colliderWorld);
     colliderLocal.decompose(door.collider.position, door.collider.quaternion, door.collider.scale);
   }
+  applyDoorLatchHandleRotation(runtime);
   runtime.root.updateMatrixWorld(true);
+}
+
+function applyDoorLatchHandleRotation(runtime) {
+  const door = runtime?.door;
+  const handle = door?.latchHandle;
+  if (!handle) return;
+  handle.rotation.copy(handle.userData.prefabInitialRotation);
+  const degrees = getDoorLatchHandleDegrees(door);
+  applyAxisRotation(handle, door.interaction.latchHandleAxis ?? "z", THREE.MathUtils.degToRad(degrees));
+}
+
+function smoothDoorLatchProgress(progress) {
+  return progress * progress * (3 - 2 * progress);
+}
+
+function getDoorLatchBaseDegrees(door, latched = door.latched) {
+  return latched ? door.interaction.latchHandleLatchedDegrees ?? -70 : 0;
+}
+
+function getDoorLatchRestDegrees(door) {
+  return getDoorLatchBaseDegrees(door) + (door.latchHandleSpinOffsetDegrees ?? 0);
+}
+
+function getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress, jerkScale = 1) {
+  const easedProgress = smoothDoorLatchProgress(THREE.MathUtils.clamp(progress, 0, 1));
+  const jerkEnvelope = Math.sin(progress * Math.PI);
+  const mechanicalJerk =
+    Math.sin(progress * Math.PI * (door.interaction.latchJerkFrequency ?? 8)) *
+    (door.interaction.latchJerkDegrees ?? 7) *
+    jerkEnvelope *
+    jerkScale;
+  return THREE.MathUtils.lerp(fromDegrees, toDegrees, easedProgress) + mechanicalJerk;
+}
+
+function getDoorLatchHandleDegrees(door) {
+  if (door.latchBlockedAttempt) {
+    const duration = door.interaction.latchBlockedAttemptSeconds ?? 0.55;
+    const progress = THREE.MathUtils.clamp(door.latchBlockedAttempt.elapsed / Math.max(duration, 0.001), 0, 1);
+    const fromDegrees = door.latchBlockedAttempt.fromDegrees ?? getDoorLatchRestDegrees(door);
+    const toDegrees =
+      door.latchBlockedAttempt.toDegrees ??
+      fromDegrees + (door.latchBlockedAttempt.sign ?? 1) * (door.interaction.latchBlockedStopDegrees ?? 26);
+    if (progress < 0.5) {
+      return getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress / 0.5, 0.8);
+    }
+    return getDoorLatchMotionDegrees(door, toDegrees, fromDegrees, (progress - 0.5) / 0.5, 0.8);
+  }
+  if (!door.latchOperation) return getDoorLatchRestDegrees(door);
+
+  const progress = THREE.MathUtils.clamp(door.latchOperation.progress ?? 0, 0, 1);
+  return getDoorLatchMotionDegrees(door, door.latchOperation.fromDegrees, door.latchOperation.toDegrees, progress);
+}
+
+function updateDoorLatchHandles(dt) {
+  levelPrefabInstances.forEach((runtime) => {
+    const door = runtime.door;
+    if (door?.latchBlockedAttempt) {
+      door.latchBlockedAttempt.elapsed += dt;
+      applyDoorLatchHandleRotation(runtime);
+      if (door.latchBlockedAttempt.elapsed >= (door.interaction.latchBlockedAttemptSeconds ?? 0.55)) {
+        door.latchBlockedAttempt = null;
+        applyDoorLatchHandleRotation(runtime);
+      }
+    }
+    if (!door?.latchOperation) return;
+    const interaction = door.interaction;
+    const direction = door.latchOperation.held ? 1 / (interaction.latchHoldSeconds ?? 0.5) : -1 / (interaction.latchReturnSeconds ?? 0.35);
+    door.latchOperation.progress = THREE.MathUtils.clamp(door.latchOperation.progress + direction * dt, 0, 1);
+    applyDoorLatchHandleRotation(runtime);
+    if (door.latchOperation.progress >= 1) {
+      door.latchHandleSpinOffsetDegrees = door.latchOperation.finalSpinOffsetDegrees ?? door.latchHandleSpinOffsetDegrees ?? 0;
+      const targetLatched = door.latchOperation.targetLatched;
+      door.latchOperation = null;
+      setDoorLatched(runtime, targetLatched);
+    } else if (door.latchOperation.progress <= 0 && !door.latchOperation.held) {
+      door.latchOperation = null;
+      applyDoorLatchHandleRotation(runtime);
+    }
+  });
 }
 
 function setHoveredHingedDoor(doorMesh) {
@@ -2533,16 +2646,25 @@ function setHoveredHingedDoor(doorMesh) {
 }
 
 function toggleHingedDoor(doorMesh) {
+  const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
+  if (runtime?.door?.latched) return false;
   return doorInteractionSystem.toggle(doorMesh);
 }
 
 function resetLevelDoors(levelId = null) {
-  return doorInteractionSystem.reset(levelId);
+  const result = doorInteractionSystem.reset(levelId);
+  const environmentId = levelId == null ? null : getLevelEnvironmentId(levelId);
+  levelPrefabInstances.forEach((runtime, key) => {
+    if (environmentId != null && key.split(":")[0] !== environmentId) return;
+    if (runtime.door) setDoorLatched(runtime, Boolean(runtime.door.defaultLatched), { resetHandleSpin: true });
+  });
+  return result;
 }
 
 function beginHingedDoorDrag(doorMesh) {
   const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
   if (!runtime?.door) return;
+  if (runtime.door.latched) return;
   draggedHingedDoor = runtime;
   const door = runtime.door;
   door.releaseAngularVelocity = 0;
@@ -2560,6 +2682,111 @@ function beginHingedDoorDrag(doorMesh) {
   }
   runtime.collisionDisabled = true;
   updateActiveLevelEnvironment();
+}
+
+function toggleDoorLatchHandle(handle) {
+  return beginDoorLatchHandleInteraction(handle);
+}
+
+function beginDoorLatchHandleInteraction(handle) {
+  const runtime = levelPrefabInstances.get(handle?.userData.levelPrefabKey);
+  const door = runtime?.door;
+  if (!door) return false;
+  if (!canOperateDoorLatch(runtime)) {
+    triggerDoorLatchBlockedAttempt(runtime);
+    return false;
+  }
+  const currentDegrees = physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
+  door.degrees = currentDegrees;
+  const initialDegrees = door.interaction.initialDegrees ?? 0;
+  const closedTolerance = door.interaction.latchClosedToleranceDegrees ?? 7;
+  if (!door.latched && Math.abs(currentDegrees - initialDegrees) > closedTolerance) {
+    triggerDoorLatchBlockedAttempt(runtime);
+    return false;
+  }
+  door.latchBlockedAttempt = null;
+  const targetLatched = !door.latched;
+  const turnDegrees = door.interaction.latchTurnDegrees ?? 360;
+  const sign = targetLatched ? -1 : 1;
+  const currentSpinOffsetDegrees = door.latchHandleSpinOffsetDegrees ?? 0;
+  const finalSpinOffsetDegrees = currentSpinOffsetDegrees + sign * turnDegrees;
+  door.latchOperation = {
+    held: true,
+    progress: 0,
+    targetLatched,
+    fromDegrees: getDoorLatchRestDegrees(door),
+    toDegrees: getDoorLatchBaseDegrees(door, targetLatched) + finalSpinOffsetDegrees,
+    finalSpinOffsetDegrees,
+  };
+  applyDoorLatchHandleRotation(runtime);
+  return true;
+}
+
+function triggerDoorLatchBlockedAttempt(runtime) {
+  const door = runtime?.door;
+  if (!door) return;
+  door.latchOperation = null;
+  const fromDegrees = getDoorLatchRestDegrees(door);
+  const blockedTurnDegrees = door.interaction.latchBlockedStopDegrees ?? Math.min(Math.abs(door.interaction.latchTurnDegrees ?? 360) * 0.25, 95);
+  const sign = door.latched ? 1 : -1;
+  door.latchBlockedAttempt = {
+    elapsed: 0,
+    fromDegrees,
+    toDegrees: fromDegrees + sign * blockedTurnDegrees,
+    sign,
+  };
+  applyDoorLatchHandleRotation(runtime);
+}
+
+function releaseDoorLatchHandles() {
+  levelPrefabInstances.forEach((runtime) => {
+    if (runtime.door?.latchOperation) runtime.door.latchOperation.held = false;
+  });
+}
+
+function canOperateDoorLatch(runtime) {
+  const door = runtime?.door;
+  if (
+    activeLevelId === "intro-shift" &&
+    door?.prefabName === "DoorBulk1_Tutorial" &&
+    latestSnapshot.mode !== "complete" &&
+    latestSnapshot.mode !== "failed"
+  ) {
+    emitOperatorThought("door-shift-incomplete", 2, 2.8);
+    return false;
+  }
+  return true;
+}
+
+function setDoorLatched(runtime, latched, options = {}) {
+  const door = runtime?.door;
+  if (!door) return false;
+  const wasLatched = Boolean(door.latched);
+  door.latchOperation = null;
+  door.latchBlockedAttempt = null;
+  if (options.resetHandleSpin) door.latchHandleSpinOffsetDegrees = 0;
+  door.latched = Boolean(latched);
+  const prefabConfig = CONFIG.levelEnvironments?.[door.levelId]?.prefabs?.find((prefab) => prefab.name === door.prefabName);
+  if (prefabConfig?.state) prefabConfig.state.latched = door.latched;
+  door.commandedOpen = false;
+  if (door.latched) {
+    door.degrees = door.interaction.initialDegrees ?? 0;
+    door.releaseAngularVelocity = 0;
+    if (runtime.physicsDoorKey) {
+      physicsSystem?.setDoorLocked(runtime.physicsDoorKey, true, door.degrees);
+    } else {
+      applyHingedDoorRotation(runtime);
+    }
+  } else if (runtime.physicsDoorKey) {
+    physicsSystem?.setDoorLocked(runtime.physicsDoorKey, false);
+  }
+  applyDoorLatchHandleRotation(runtime);
+  updateControlTooltip();
+  if (wasLatched && !door.latched) {
+    activeLevelSession?.emit("doorUnlocked", { target: door.prefabName });
+    if (resultsSnapshot && shouldWaitForDoorExitBeforeResults()) showShiftResults(resultsSnapshot);
+  }
+  return true;
 }
 
 function updateHingedDoorDrag() {
@@ -2764,6 +2991,7 @@ function registerRoomLightButton(object, buttonConfig, levelBindings = []) {
   object.userData.pressed = false;
   object.userData.pressProgress = 0;
   object.userData.levelBindings = levelBindings;
+  object.userData.maxInteractionDistance = buttonConfig.maxInteractionDistance ?? CONFIG.interaction?.panelMaxDistance ?? 1.45;
   roomLightButtons.push(object);
   interactive.push(object);
 
@@ -2783,6 +3011,7 @@ function registerRoomLightButton(object, buttonConfig, levelBindings = []) {
   proxy.userData.controlLabel = object.userData.controlLabel;
   proxy.userData.hitProxyFor = object.name;
   proxy.userData.levelId = object.userData.levelId;
+  proxy.userData.maxInteractionDistance = object.userData.maxInteractionDistance;
   object.add(proxy);
   interactive.push(proxy);
 }
@@ -2837,6 +3066,7 @@ function registerControlKnob(object, knobConfig) {
   object.userData.controlPercent = percent;
   object.userData.initialPercent = percent;
   object.userData.initialRotation = object.rotation.clone();
+  object.userData.maxInteractionDistance = knobConfig.maxInteractionDistance ?? CONFIG.interaction?.panelMaxDistance ?? 1.45;
 
   controlKnobs.push(object);
   interactive.push(object);
@@ -2854,6 +3084,7 @@ function registerControlButton(object, buttonConfig) {
   object.userData.pressSpeed = buttonConfig.pressSpeed ?? 16;
   object.userData.pressed = false;
   object.userData.pressProgress = 0;
+  object.userData.maxInteractionDistance = buttonConfig.maxInteractionDistance ?? CONFIG.interaction?.panelMaxDistance ?? 1.45;
 
   controlButtons.push(object);
   interactive.push(object);
@@ -3072,20 +3303,23 @@ function updateLevelPrefabLights(dt) {
         ? 0
         : (afterglowConfig.initialFactor ?? 0.2) *
           Math.pow(afterglowProgress, afterglowConfig.exponent ?? 2.4);
-    const enabledFactor = lightConfig.enabled === false ? localAfterglowFactor : factor;
-    const roomFactor = lightConfig.roomLightControlled
+    const pointLightFactor = lightConfig.enabled === false ? 0 : factor;
+    const emissiveFactor = lightConfig.enabled === false ? localAfterglowFactor : factor;
+    const roomPointFactor = lightConfig.roomLightControlled ? getRoomLightVisualFactor() : 1;
+    const roomEmissiveFactor = lightConfig.roomLightControlled
       ? Math.max(getRoomLightVisualFactor(), getRoomLightAfterglowFactor())
       : 1;
     const sceneFactor = getStartupLightFactor() * getTerminalLightFactor();
-    const finalFactor = enabledFactor * roomFactor * sceneFactor;
-    runtime.light.visible = lightConfig.enabled !== false || runtime.afterglowRemaining > 0;
-    runtime.light.intensity = lightConfig.intensity * finalFactor;
+    const pointFinalFactor = pointLightFactor * roomPointFactor * sceneFactor;
+    const emissiveFinalFactor = emissiveFactor * roomEmissiveFactor * sceneFactor;
+    runtime.light.visible = lightConfig.enabled !== false;
+    runtime.light.intensity = lightConfig.intensity * pointFinalFactor;
     runtime.emissiveMaterials.forEach((material) => {
       const baseIntensity =
         CONFIG.interior.specialMaterials?.[prefabConfig.materialKey]?.emissiveIntensity ??
         material.userData.baseEmissiveIntensity ??
         1;
-      material.emissiveIntensity = baseIntensity * finalFactor;
+      material.emissiveIntensity = baseIntensity * emissiveFinalFactor;
     });
   });
 }
@@ -3139,8 +3373,8 @@ function skipLoadingOverlay() {
 }
 
 function showRouteLoading({
-  title = "LOADING SHIFT",
-  status = "PREPARING OPERATOR CONSOLE",
+  title = translate("loading.loadingShift"),
+  status = translate("loading.preparing"),
   progress = 0,
 } = {}) {
   loadingComplete = false;
@@ -3232,15 +3466,11 @@ function updateHoverTarget() {
       if (candidate.object.userData.prefabCollider) return false;
       if (!isObjectHierarchyVisible(candidate.object)) return false;
       const root = findInteractiveRoot(candidate.object);
-      return !root?.userData.levelId || root.userData.levelId === interactionLevelId;
+      if (root?.userData.levelId && root.userData.levelId !== interactionLevelId) return false;
+      const maxDistance = getInteractionMaxDistance(root);
+      return !Number.isFinite(maxDistance) || candidate.distance <= maxDistance;
     });
   hoveredInteractive = hit ? findInteractiveRoot(hit.object) : null;
-  if (
-    hoveredInteractive?.userData.maxInteractionDistance &&
-    hit?.distance > hoveredInteractive.userData.maxInteractionDistance
-  ) {
-    hoveredInteractive = null;
-  }
   document.body.classList.toggle("interactive-hover", Boolean(hoveredInteractive));
   if (hoveredInteractive && hit) {
     hoveredInteractive.userData.lastHitDistance = hit.distance;
@@ -3250,6 +3480,19 @@ function updateHoverTarget() {
   setHoveredHingedDoor(hoveredInteractive?.userData.kind === "hingedDoor" ? hoveredInteractive : null);
   setHoveredTooltipTarget(getTooltipTarget(hoveredInteractive));
   dispatchHoverSignal(hoveredInteractive);
+}
+
+function getInteractionMaxDistance(object) {
+  if (!object) return Infinity;
+  if (Number.isFinite(object.userData.maxInteractionDistance)) return object.userData.maxInteractionDistance;
+  if (
+    object.userData.kind === "controlKnob" ||
+    object.userData.kind === "controlButton" ||
+    object.userData.kind === "roomLightButton"
+  ) {
+    return CONFIG.interaction?.panelMaxDistance ?? 1.45;
+  }
+  return CONFIG.interaction?.maxDistance ?? 1.85;
 }
 
 function findInteractiveRoot(object) {
@@ -3273,7 +3516,8 @@ function getTooltipTarget(object) {
   return object.userData.kind === "controlKnob" ||
     object.userData.kind === "controlButton" ||
     object.userData.kind === "roomLightButton" ||
-    object.userData.kind === "bulkheadHandle"
+    object.userData.kind === "bulkheadHandle" ||
+    object.userData.kind === "doorLatchHandle"
     ? object
     : null;
 }
@@ -3317,9 +3561,24 @@ function getTooltipText(target) {
     return `${label} ${Math.round(target.userData.controlPercent)}%`;
   }
   if (target.userData.kind === "roomLightButton") {
-    return `${label} ${roomLightsEnabled ? translate("controls.on") : translate("controls.off")}`;
+    return `${label} ${getRoomLightButtonState(target) ? translate("controls.on") : translate("controls.off")}`;
+  }
+  if (target.userData.kind === "doorLatchHandle") {
+    const runtime = levelPrefabInstances.get(target.userData.levelPrefabKey);
+    return `${label} ${runtime?.door?.latched ? translate("controls.on") : translate("controls.off")}`;
   }
   return label;
+}
+
+function getRoomLightButtonState(button) {
+  const bindings = button?.userData.levelBindings ?? [];
+  const prefabLightBinding = bindings.find((binding) => binding.action === "togglePrefabLight" && binding.target);
+  if (!prefabLightBinding) return roomLightsEnabled;
+  const environmentId = getLevelEnvironmentId(activeLevelId);
+  const prefabConfig = CONFIG.levelEnvironments?.[environmentId]?.prefabs?.find(
+    (prefab) => prefab.name === prefabLightBinding.target,
+  );
+  return prefabConfig?.light?.enabled !== false;
 }
 
 function dispatchHoverSignal(target) {
@@ -3386,6 +3645,7 @@ function registerBulkheadHandle(object) {
   object.userData.kind = "bulkheadHandle";
   object.userData.controlLabel = CONFIG.interior.bulkheadExit.label;
   object.userData.initialRotation = object.rotation.clone();
+  object.userData.maxInteractionDistance = CONFIG.interior.bulkheadExit.maxInteractionDistance ?? CONFIG.interaction?.maxDistance ?? 1.85;
   interactive.push(object);
 }
 
@@ -3571,11 +3831,16 @@ function updateShiftCompletion(dt, snapshot) {
     updateControlTooltip();
   }
 
+  if (shouldWaitForDoorExitBeforeResults()) return;
   if (bulkheadHandle && resultsSnapshot) return;
 
   if (resultsTimer <= 0 || resultsVisible) return;
   resultsTimer = Math.max(0, resultsTimer - dt);
   if (resultsTimer === 0 && resultsSnapshot) showShiftResults(resultsSnapshot);
+}
+
+function shouldWaitForDoorExitBeforeResults() {
+  return activeLevelId === "intro-shift" && Boolean(resultsSnapshot) && !resultsVisible;
 }
 
 function showShiftResults(snapshot) {
@@ -3584,15 +3849,21 @@ function showShiftResults(snapshot) {
   releaseAllControlButtons();
 
   const report = buildShiftReport(shiftRecorder, snapshot);
-  if (resultsOutcome) resultsOutcome.textContent = snapshot.mode === "complete" ? "COMPLETE" : "FAILED";
-  if (resultsProfile) resultsProfile.textContent = report.profile;
-  if (resultsSummary) resultsSummary.textContent = report.summary;
+  if (resultsOutcome) {
+    resultsOutcome.textContent = translate(snapshot.mode === "complete" ? "results.outcome.complete" : "results.outcome.failed");
+  }
+  if (resultsProfile) {
+    resultsProfile.textContent = translate(`results.profile.${report.profileId}.title`);
+  }
+  if (resultsSummary) {
+    resultsSummary.textContent = translate(`results.profile.${report.profileId}.summary`);
+  }
   if (resultsStats) {
     resultsStats.innerHTML = "";
-    report.stats.forEach(([label, value]) => {
+    report.stats.forEach(([labelKey, value]) => {
       const item = document.createElement("div");
       item.className = "results-stat";
-      item.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+      item.innerHTML = `<span>${translate(labelKey)}</span><strong>${value}</strong>`;
       resultsStats.appendChild(item);
     });
   }
@@ -3612,12 +3883,16 @@ function showShiftResults(snapshot) {
   );
 }
 
-function hideShiftResults() {
+function hideShiftResults({ immediate = false } = {}) {
   if (!resultsOverlay) return;
   resultsOverlay.classList.remove("is-visible");
-  window.setTimeout(() => {
+  if (immediate) {
+    resultsOverlay.hidden = true;
+  } else {
+    window.setTimeout(() => {
     if (!resultsOverlay.classList.contains("is-visible")) resultsOverlay.hidden = true;
-  }, 1200);
+    }, 1200);
+  }
   resultsVisible = false;
 }
 
@@ -3983,9 +4258,8 @@ function getStartupFeedbackAmount() {
 function getThermalEmergencyAmount() {
   const temp = THREE.MathUtils.clamp((latestSnapshot.plasmaTemp - 158) / 34, 0, 1);
   const soak = THREE.MathUtils.clamp(((latestSnapshot.thermalSoak ?? 0) - 55) / 45, 0, 1);
-  const stress = THREE.MathUtils.clamp((latestSnapshot.coreStress - 72) / 28, 0, 1);
   const surge = THREE.MathUtils.clamp(((latestSnapshot.outputSurge ?? 0) - 34) / 55, 0, 1) * 0.7;
-  const amount = Math.max(temp, soak, stress, surge);
+  const amount = Math.max(temp, soak, surge);
   if (latestSnapshot.mode === "running") return amount;
   if (terminalSequenceElapsed >= 0) {
     return (
@@ -4368,28 +4642,13 @@ function setRoomLightButtonPressed(button, pressed) {
   }
   bindings.forEach(executeLevelBinding);
   activeLevelSession?.emit("buttonPressed", { target: button.name });
+  updateControlTooltip();
 }
 
 function executeLevelBinding(binding) {
   const environmentId = getLevelEnvironmentId(activeLevelId);
   if (binding.action === "togglePrefabLight") {
-    const prefabConfig = CONFIG.levelEnvironments?.[environmentId]?.prefabs?.find(
-      (prefab) => prefab.name === binding.target,
-    );
-    const runtime = levelPrefabInstances.get(`${environmentId}:${binding.target}`);
-    if (!prefabConfig?.light || !runtime?.light) return false;
-    const wasEnabled = prefabConfig.light.enabled !== false;
-    prefabConfig.light.enabled = !wasEnabled;
-    if (wasEnabled) {
-      runtime.afterglowRemaining = prefabConfig.light.afterglow?.durationSeconds ?? 3;
-    } else {
-      runtime.startupElapsed = 0;
-      runtime.faultyStarterElapsed = 0;
-      runtime.startupPattern = prefabConfig.light.fluorescentStartup
-        ? createFluorescentStartupPattern()
-        : [];
-    }
-    return true;
+    return toggleLevelPrefabLight(environmentId, binding.target);
   }
   if (binding.action === "toggleRoomLights") {
     toggleRoomLights();
@@ -4397,6 +4656,44 @@ function executeLevelBinding(binding) {
   }
   console.warn("[LevelSession] Unknown binding action", binding);
   return false;
+}
+
+function toggleLevelPrefabLight(levelId, prefabName) {
+  const prefabConfig = CONFIG.levelEnvironments?.[levelId]?.prefabs?.find((prefab) => prefab.name === prefabName);
+  if (!prefabConfig?.light) return false;
+  return setLevelPrefabLightEnabled(levelId, prefabName, prefabConfig.light.enabled === false);
+}
+
+function setLevelPrefabLightEnabled(levelId, prefabName, enabled) {
+  const prefabConfig = CONFIG.levelEnvironments?.[levelId]?.prefabs?.find((prefab) => prefab.name === prefabName);
+  const runtime = levelPrefabInstances.get(`${levelId}:${prefabName}`);
+  const lightConfig = prefabConfig?.light;
+  if (!lightConfig || !runtime?.light) return false;
+
+  const wasEnabled = lightConfig.enabled !== false;
+  const nextEnabled = Boolean(enabled);
+  lightConfig.enabled = nextEnabled;
+
+  if (nextEnabled && !wasEnabled) {
+    runtime.startupElapsed = Math.max(0, lightConfig.startupDelaySeconds ?? 0);
+    runtime.faultyStarterElapsed = 0;
+    runtime.afterglowRemaining = 0;
+    runtime.fixtureFlicker = createFixtureFlickerState(lightConfig.flicker);
+    runtime.wasFlickerEnabled = Boolean(lightConfig.flicker?.enabled);
+    runtime.startupPattern = lightConfig.fluorescentStartup ? createFluorescentStartupPattern() : [];
+  } else if (!nextEnabled && wasEnabled) {
+    runtime.afterglowRemaining = lightConfig.afterglow?.enabled === false ? 0 : lightConfig.afterglow?.durationSeconds ?? 3;
+  }
+
+  applyLevelPrefabConfig(levelId, prefabName, false);
+  if (nextEnabled && !wasEnabled) {
+    runtime.startupElapsed = Math.max(0, lightConfig.startupDelaySeconds ?? 0);
+    runtime.faultyStarterElapsed = 0;
+  }
+  runtime.light.visible = nextEnabled;
+  if (!nextEnabled) runtime.light.intensity = 0;
+  updateControlTooltip();
+  return true;
 }
 
 function startShift() {
@@ -4416,7 +4713,6 @@ function startShift() {
   resultsSnapshot = null;
   terminalSequenceElapsed = -1;
   triggerStartupFeedback();
-  emitOperatorThought("shift-start", 1, 3.6);
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 }
@@ -4577,8 +4873,7 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
     levelId,
     config: CONFIG.levelEnvironments?.[loadedLevelId]?.session ?? {},
   });
-  const levelSessionState = activeLevelSession.start({ resume: true });
-  const runtimeCheckpoint = activeLevelSession.getCheckpoint("runtime");
+  const levelSessionState = activeLevelSession.start({ resume: false });
   previousLevelSessionStatus = levelSessionState.status;
   operatorViewMode = "level";
   resetLevelDoors(activeLevelId);
@@ -4593,15 +4888,6 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   resetLevelSession();
   resetShiftRecorder();
   fusionCore.reset();
-  if (runtimeCheckpoint?.fusionCore) fusionCore.restoreState(runtimeCheckpoint.fusionCore);
-  if (runtimeCheckpoint?.controls) {
-    controlKnobs.forEach((knob) => {
-      const savedPercent = runtimeCheckpoint.controls[knob.name];
-      if (!Number.isFinite(savedPercent)) return;
-      knob.userData.controlPercent = savedPercent;
-      applyControlKnobRotation(knob);
-    });
-  }
   previousGameMode = fusionCore.getSnapshot().mode;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
   return true;
@@ -4943,6 +5229,7 @@ function setInputLocked(locked) {
   inputLocked = Boolean(locked);
   if (inputLocked) {
     endHingedDoorDrag();
+    releaseDoorLatchHandles();
     setHoveredHingedDoor(null);
     document.exitPointerLock?.();
     keys.clear();
@@ -5128,6 +5415,8 @@ canvas.addEventListener("mousedown", (event) => {
     setRoomLightButtonPressed(hoveredInteractive, true);
   } else if (hoveredInteractive?.userData.kind === "bulkheadHandle") {
     beginBulkheadHandleInteraction();
+  } else if (hoveredInteractive?.userData.kind === "doorLatchHandle") {
+    toggleDoorLatchHandle(hoveredInteractive);
   } else if (hoveredInteractive?.userData.kind === "hingedDoor") {
     toggleHingedDoor(hoveredInteractive);
   }
@@ -5137,6 +5426,7 @@ window.addEventListener("mouseup", (event) => {
   if (event.button === 2) zoomActive = false;
   if (event.button === 0) {
     bulkheadHandleHeld = false;
+    releaseDoorLatchHandles();
     endHingedDoorDrag();
   }
   releaseAllControlButtons();
@@ -5147,6 +5437,7 @@ canvas.addEventListener("contextmenu", (event) => event.preventDefault());
 window.addEventListener("blur", () => {
   zoomActive = false;
   bulkheadHandleHeld = false;
+  releaseDoorLatchHandles();
   endHingedDoorDrag();
   releaseAllControlButtons();
 });
@@ -5517,6 +5808,11 @@ window.operatorGameDebug = {
       camera.updateProjectionMatrix();
     }
     return baseFovDegrees;
+  },
+  setMouseSensitivity: (multiplier = 1) => {
+    const value = THREE.MathUtils.clamp(Number(multiplier) || 1, 0.4, 1.8);
+    CONFIG.camera.mouseSensitivity = defaultMouseSensitivity * value;
+    return value;
   },
   setDebugVisible: (visible) => {
     return setDebugPanelsVisible(visible);

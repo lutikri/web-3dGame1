@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260707-tutorial2";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260707-tutorial2";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260707-tutorial2";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260707-tutorial2";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260707-localized-results1";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260707-localized-results1";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260707-localized-results1";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260707-localized-results1";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -27,7 +27,7 @@ export const CONFIG = {
       snapToGround: 0.35,
       controllerOffset: 0.015,
       mass: 75,
-      jumpSpeed: 3.2,
+      jumpSpeed: 2.3,
       maxSlopeDegrees: 50,
       minSlideDegrees: 55,
       floorNormalThreshold: 0.55,
@@ -42,6 +42,10 @@ export const CONFIG = {
   debug: DEBUG_CONFIG,
   app: {
     firstVisitEmulation: false,
+  },
+  interaction: {
+    maxDistance: 1.85,
+    panelMaxDistance: 1.45,
   },
   textureStreaming: {
     fullLoadDelaySeconds: 4,

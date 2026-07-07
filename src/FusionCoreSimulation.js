@@ -189,7 +189,7 @@ function updateRunningState(state, dt, controls) {
   const coolantEffect = coolant * 82 * heatSinkFactor * event.coolantEfficiency;
   const fuelHeat = fuel * 172 * (state.reactionStalled ? 0.08 : 1);
   const fieldHeat = field * 11;
-  const ventCooling = vent * 76;
+  const ventCooling = vent * 112;
   const pulseHeat = pulse * 42;
   const overDemandHeat = Math.max(0, state.powerOutput - demand * 1.05) * 0.055;
   const activeTargetTemp =
@@ -203,7 +203,7 @@ function updateRunningState(state, dt, controls) {
       ventCooling;
   const targetTemp = activeTargetTemp * (1 - state.shutdownLevel);
 
-  const coolingLambda = (0.045 + coolant * 0.08 + vent * 0.5) * (1 - (state.thermalSoak / 100) * 0.48);
+  const coolingLambda = (0.045 + coolant * 0.08 + vent * 0.85) * (1 - (state.thermalSoak / 100) * 0.48);
   const heatingLambda = 0.42 + fuel * 0.08;
   const temperatureLambda = state.shutdownLevel > 0
     ? lerp(targetTemp > state.plasmaTemp ? heatingLambda : Math.max(0.08, coolingLambda), 1.35, state.shutdownLevel)
@@ -336,18 +336,21 @@ function updateRunningState(state, dt, controls) {
   const deepRedHeat = Math.max(0, state.plasmaTemp - 155);
   const criticalHeat = Math.max(0, state.plasmaTemp - 170);
   const soakGain = Math.pow(redHeat / 24, 2.2) * 2.5 + Math.pow(deepRedHeat / 14, 2.8) * 4;
-  const soakRecovery = (coolant * 1.8 + vent * 4.5) * Math.max(0.25, 1 - criticalHeat / 20);
+  const soakRecovery = (coolant * 1.8 + vent * 7.5) * Math.max(0.25, 1 - criticalHeat / 20);
   state.thermalSoak = clamp(state.thermalSoak + (soakGain - soakRecovery) * dt, 0, 100);
 
+  const soakStressHeatFactor = clamp((state.plasmaTemp - 115) / 40, 0, 1);
   const activeStressRate =
     Math.pow(redHeat / 18, 2.15) * 0.25 +
     Math.pow(deepRedHeat / 10, 3.1) * 0.12 +
-    state.thermalSoak * 0.025 +
+    state.thermalSoak * 0.025 * soakStressHeatFactor +
     Math.max(0, 55 - state.containment) * 0.026 +
     Math.max(0, state.coreStall - 65) * 0.006 +
     Math.max(0, state.powerOutput - 1120) * 0.008 +
-    vent * 0.025;
-  const stressRate = activeStressRate * (1 - state.shutdownLevel) - state.shutdownLevel * 0.18;
+    (state.plasmaTemp > 145 ? vent * 0.018 : 0);
+  const stabilizedCore = clamp((145 - state.plasmaTemp) / 55, 0, 1) * clamp((state.containment - 55) / 35, 0, 1);
+  const stressRecovery = stabilizedCore * (0.12 + coolant * 0.12 + vent * 0.35);
+  const stressRate = activeStressRate * (1 - state.shutdownLevel) - state.shutdownLevel * 0.18 - stressRecovery;
   state.coreStress = clamp(state.coreStress + stressRate * dt, 0, 100);
   state.stallLockTimer = state.reactionStalled ? state.stallLockTimer + dt : Math.max(0, state.stallLockTimer - dt * 1.4);
 
@@ -370,7 +373,7 @@ function updateRunningState(state, dt, controls) {
     coreStallCritical: state.coreStall > 72 || state.reactionStalled,
     thermalSoak: state.thermalSoak > 45,
     outputSurge: state.outputSurge > 34,
-    coreStress: state.coreStress > 70 || state.thermalSoak > 70,
+    coreStress: state.coreStress > 70 || (state.thermalSoak > 70 && state.plasmaTemp > 145),
   };
   state.status = pickStatus(state, operatingTargets, tempLow, tempHigh, event);
 
@@ -450,7 +453,8 @@ function getOperatingTargets(elapsed) {
 }
 
 function pickStatus(state, phase, tempLow, tempHigh, event) {
-  if (state.thermalSoak > 75) return "CORE HEAT SOAK RUNAWAY";
+  if (state.thermalSoak > 75 && state.plasmaTemp > 145) return "CORE HEAT SOAK RUNAWAY";
+  if (state.thermalSoak > 60 && state.plasmaTemp < 130) return "HEAT SOAK RECOVERING";
   if (state.reactionStalled && state.ignitionHold > 0) return "IGNITION BANK CHARGING";
   if (state.reactionStalled) return "CORE STALLED - SET FUEL / REDUCE COOLANT / HOLD PULSE";
   if (state.warning.coreStall) return "BURN RATE COLLAPSING";

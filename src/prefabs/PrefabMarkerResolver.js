@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260707-tutorial2";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260707-localized-results1";
 
 const MARKER_PREFIX = "PF_";
 

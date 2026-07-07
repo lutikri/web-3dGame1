@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260707-tutorial2";
+import { translateRequired } from "./Localization.js?v=20260707-localized-results1";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -6,6 +6,7 @@ export function createIntroTutorialFlow({ hintQueue, isAllowed }) {
   let state = null;
   let hintTimer = 0;
   const subtitleTimers = [];
+  const APPLE_SUBTITLE_GUARD_MS = 2800;
 
   function start({ levelId, delayMs = 0 } = {}) {
     stop();
@@ -49,6 +50,7 @@ export function createIntroTutorialFlow({ hintQueue, isAllowed }) {
     if (state.step === "jump" && event.code === "Space") {
       completeStep("jump");
       state.step = "wait-panel";
+      state.hintsBlockedUntil = window.performance.now() + APPLE_SUBTITLE_GUARD_MS;
       emitSubtitle("tutorial-apple", 1.9);
     }
   }
@@ -56,12 +58,7 @@ export function createIntroTutorialFlow({ hintQueue, isAllowed }) {
   function handleHover(detail = {}) {
     if (!state || !isStepAllowed()) return;
     if (state.step === "wait-panel" && isPanelControlKind(detail.kind)) {
-      state.step = "lean";
-      hintQueue.show({
-        id: "lean",
-        textKey: "hints.lean",
-        tokens: { button: { type: "mouse", side: "right", label: "Right mouse button" } },
-      });
+      scheduleLeanHint();
       return;
     }
     if (state.step === "wait-knob" && detail.kind === "controlKnob") {
@@ -79,11 +76,6 @@ export function createIntroTutorialFlow({ hintQueue, isAllowed }) {
     if (state.step === "lean" && detail.action === "lean") {
       completeStep("lean");
       state.step = "wait-knob";
-      queueSubtitles([
-        ["tutorial-where", 350, 2.2],
-        ["tutorial-again", 800, 2.3],
-        ["tutorial-ignite", 1250, 2.7],
-      ]);
     }
   }
 
@@ -96,18 +88,30 @@ export function createIntroTutorialFlow({ hintQueue, isAllowed }) {
     hintQueue.hide(step);
     if (step === "wheel") {
       state = null;
-      emitSubtitle("tutorial-start-core", 2.5, { allowAfterComplete: true });
+      subtitleTimers.push(
+        window.setTimeout(() => {
+          emitSubtitle("tutorial-start-core", 2.5, { allowAfterComplete: true });
+        }, 500),
+      );
     }
+  }
+
+  function scheduleLeanHint() {
+    const remainingMs = Math.max(0, (state?.hintsBlockedUntil ?? 0) - window.performance.now());
+    window.clearTimeout(hintTimer);
+    hintTimer = window.setTimeout(() => {
+      if (!isStepAllowed("wait-panel")) return;
+      state.step = "lean";
+      hintQueue.show({
+        id: "lean",
+        textKey: "hints.lean",
+        tokens: { button: { type: "mouse", side: "right", label: "Right mouse button" } },
+      });
+    }, remainingMs);
   }
 
   function isStepAllowed(step = state?.step) {
     return Boolean(state && step === state.step && isAllowed?.(state));
-  }
-
-  function queueSubtitles(items) {
-    items.forEach(([id, delayMs, duration]) => {
-      subtitleTimers.push(window.setTimeout(() => emitSubtitle(id, duration), delayMs));
-    });
   }
 
   function emitSubtitle(id, duration = 2.4, { allowAfterComplete = false } = {}) {

@@ -17,6 +17,7 @@ export class DoorInteractionSystem {
     const runtime = this.getRuntime(doorMesh);
     if (!runtime?.door) return false;
     const door = runtime.door;
+    if (door.latched) return false;
     const interaction = door.interaction;
     const currentDegrees = this.physics?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
     door.degrees = currentDegrees;
@@ -45,8 +46,14 @@ export class DoorInteractionSystem {
       runtime.door.degrees = runtime.door.interaction.initialDegrees ?? 0;
       runtime.door.commandedOpen = false;
       runtime.door.releaseAngularVelocity = 0;
+      runtime.door.latched = Boolean(runtime.door.defaultLatched);
       if (!runtime.physicsDoorKey) this.applyVisualRotation(runtime);
     });
     this.physics?.resetDoors(environmentId);
+    this.prefabInstances.forEach((runtime, key) => {
+      if (environmentId != null && key.split(":")[0] !== environmentId) return;
+      if (!runtime.door?.latched || !runtime.physicsDoorKey) return;
+      this.physics?.setDoorLocked(runtime.physicsDoorKey, true, runtime.door.interaction.initialDegrees ?? 0);
+    });
   }
 }

@@ -7,6 +7,7 @@ export function createLoadingOverlay({
   shiftTitle,
   barFill,
   minimumVisibleMs = 2000,
+  finishStatusText = "CORE INTERFACE ONLINE",
 } = {}) {
   let progress = 0;
   let displayedProgress = 0;
@@ -44,7 +45,7 @@ export function createLoadingOverlay({
   }
 
   function finish(onComplete) {
-    setStatus("CORE INTERFACE ONLINE");
+    setStatus(finishStatusText);
     setProgress(100);
     const remainingMinimum = Math.max(0, minimumVisibleMs - (performance.now() - startedAt));
 

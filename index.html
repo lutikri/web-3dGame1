@@ -87,8 +87,7 @@
           <p id="resultsSummary" data-i18n="results.awaiting">Awaiting shift data.</p>
           <div id="resultsStats" class="results-stats"></div>
           <div class="results-actions">
-            <button id="resultsRestartButton" data-app-action="restart" type="button" data-i18n="actions.newShift">START NEW SHIFT</button>
-            <button data-app-action="level-select" type="button" data-i18n="actions.levelSelect">LEVEL SELECT</button>
+            <button id="resultsRestartButton" data-app-action="restart" type="button" data-i18n="actions.restart">RESTART</button>
             <button data-app-action="main-menu" type="button" data-i18n="actions.mainMenu">MAIN MENU</button>
           </div>
         </div>
@@ -179,6 +178,11 @@
             <strong id="settingUiScaleValue">100%</strong>
           </label>
           <label class="setting-row">
+            <span data-i18n="settings.sensitivity">CONTROL SENSITIVITY</span>
+            <input id="settingSensitivity" type="range" min="40" max="180" step="5" />
+            <strong id="settingSensitivityValue">100%</strong>
+          </label>
+          <label class="setting-row">
             <span data-i18n="settings.shadows">SHADOWS</span>
             <select id="settingShadowQuality">
               <option value="off">OFF</option>
@@ -202,6 +206,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=20260707-tutorial2"></script>
+    <script type="module" src="src/main.js?v=20260707-localized-results1"></script>
   </body>
 </html>

@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260707-tutorial2";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260707-tutorial2";
-import { translate } from "./Localization.js?v=20260707-tutorial2";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260707-tutorial2";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260707-tutorial2";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260707-tutorial2";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260707-localized-results1";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260707-localized-results1";
+import { translate } from "./Localization.js?v=20260707-localized-results1";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260707-localized-results1";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260707-localized-results1";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260707-localized-results1";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -41,6 +41,8 @@ export function createAppShell({ gameApi }) {
   const ssrQualityValue = document.querySelector("#settingSsrQualityValue");
   const screenSpaceShadowQualityInput = document.querySelector("#settingScreenSpaceShadowQuality");
   const screenSpaceShadowQualityValue = document.querySelector("#settingScreenSpaceShadowQualityValue");
+  const sensitivityInput = document.querySelector("#settingSensitivity");
+  const sensitivityValue = document.querySelector("#settingSensitivityValue");
   const settings = loadSettings();
   const debugConfig = gameApi?.config?.debug ?? {};
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
@@ -55,6 +57,7 @@ export function createAppShell({ gameApi }) {
   let briefingLevelId = null;
   let briefingInspectHeld = false;
   let briefingHideTimer = 0;
+  let briefingSheetToken = 0;
   let activeGameplayLevelId = null;
   const introTutorialFlow = createIntroTutorialFlow({
     hintQueue: tutorialHintQueue,
@@ -200,6 +203,15 @@ export function createAppShell({ gameApi }) {
         saveSettings();
       });
     }
+
+    if (sensitivityInput) {
+      sensitivityInput.value = String(settings.sensitivity);
+      sensitivityInput.addEventListener("input", () => {
+        settings.sensitivity = Number(sensitivityInput.value);
+        applySettings();
+        saveSettings();
+      });
+    }
   }
 
   function wireProgression() {
@@ -237,7 +249,10 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       await gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
       activeGameplayLevelId = fastLoadLevelId;
-      if (!debugConfig.skipBriefing) showLevelBriefing(fastLoadLevelId);
+      if (!debugConfig.skipBriefing) {
+        await preloadLevelBriefing(fastLoadLevelId);
+        showLevelBriefing(fastLoadLevelId);
+      }
       resolveInitialRouteReady?.();
       resolveInitialRouteReady = null;
       return;
@@ -329,6 +344,7 @@ export function createAppShell({ gameApi }) {
     window.setTimeout(async () => {
       await gameApi.startLevel?.({ levelId: INTRO_LEVEL_ID, mode: LEVELS[INTRO_LEVEL_ID]?.mode ?? "tutorial" });
       activeGameplayLevelId = INTRO_LEVEL_ID;
+      await preloadLevelBriefing(INTRO_LEVEL_ID);
       showLevelBriefing(INTRO_LEVEL_ID);
       transitionActive = false;
       resolveInitialRouteReady?.();
@@ -344,16 +360,17 @@ export function createAppShell({ gameApi }) {
       gameApi.requestPointerLock?.();
     } else if (action === "main-menu") {
       hideBriefing(true);
+      gameApi.hideShiftResults?.({ immediate: true });
       if (currentPanel && currentPanel !== "pause") {
         showPanel("main-menu");
         return;
       }
 
       runRouteTransition({
-        title: "MAIN MENU",
-        status: "RETURNING TO OPERATOR CONSOLE",
+        title: translate("actions.mainMenu"),
+        status: translate("loading.returning"),
         action: async () => {
-          gameApi.hideShiftResults?.();
+          gameApi.hideShiftResults?.({ immediate: true });
           await gameApi.resetForMenu?.();
           activeGameplayLevelId = null;
           showPanel("main-menu");
@@ -374,13 +391,14 @@ export function createAppShell({ gameApi }) {
       showPanel(previousPanel || "main-menu");
     } else if (action === "restart") {
       runRouteTransition({
-        title: "RESTARTING SHIFT",
-        status: "RESETTING CORE SESSION",
+        title: translate("loading.restartingShift"),
+        status: translate("loading.resettingCore"),
         action: async () => {
-          gameApi.hideShiftResults?.();
+          gameApi.hideShiftResults?.({ immediate: true });
           hideOverlay();
           await gameApi.restartGame?.();
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
+          await preloadLevelBriefing(activeGameplayLevelId);
           showLevelBriefing(activeGameplayLevelId);
         },
       });
@@ -400,7 +418,7 @@ export function createAppShell({ gameApi }) {
     }
   }
 
-  async function runRouteTransition({ title, status = "PREPARING OPERATOR CONSOLE", action }) {
+  async function runRouteTransition({ title, status = translate("loading.preparing"), action }) {
     transitionActive = true;
     updateInputLock();
     gameApi.releasePointerLock?.();
@@ -408,10 +426,10 @@ export function createAppShell({ gameApi }) {
     await wait(140);
     showRouteLoading(title, status);
     await wait(420);
-    hideRouteLoadingPanel();
-    await wait(100);
     await action?.();
     await wait(80);
+    hideRouteLoadingPanel();
+    await wait(100);
     hideRouteCurtain();
     await wait(140);
     transitionActive = false;
@@ -464,31 +482,64 @@ export function createAppShell({ gameApi }) {
     if (!level?.playable) return;
 
     runRouteTransition({
-      title: level.title,
-      status: "LOADING SHIFT",
+      title: getLevelTitle(levelId),
+      status: translate("loading.loadingShift"),
       action: async () => {
         gameApi.hideShiftResults?.();
         hideOverlay();
         await gameApi.startLevel?.({ levelId, mode: level.mode });
         activeGameplayLevelId = levelId;
+        await preloadLevelBriefing(levelId);
         showLevelBriefing(levelId);
       },
     });
   }
 
-  function showLevelBriefing(levelId) {
+  function getLevelBriefingSheets(levelId) {
     const briefingConfig = LEVELS[levelId]?.briefingImage;
     const language = document.documentElement.lang === "ru" ? "ru" : "en";
     const localizedBriefing =
       typeof briefingConfig === "string" ? briefingConfig : briefingConfig?.[language] ?? briefingConfig?.en;
-    const sheets = Array.isArray(localizedBriefing) ? localizedBriefing : localizedBriefing ? [localizedBriefing] : [];
+    return Array.isArray(localizedBriefing) ? localizedBriefing : localizedBriefing ? [localizedBriefing] : [];
+  }
+
+  async function preloadLevelBriefing(levelId) {
+    const sheets = getLevelBriefingSheets(levelId);
+    await Promise.all(sheets.map(preloadImage));
+  }
+
+  async function preloadImage(source) {
+    if (!source) return;
+    const image = new Image();
+    image.src = source;
+    try {
+      if (typeof image.decode === "function") {
+        await image.decode();
+        return;
+      }
+    } catch {
+      // Fall through to the load/error pair below; some browsers reject decode for cached images.
+    }
+    if (image.complete) return;
+    await new Promise((resolve) => {
+      image.onload = resolve;
+      image.onerror = resolve;
+    });
+  }
+
+  function showLevelBriefing(levelId) {
+    const sheets = getLevelBriefingSheets(levelId);
     if (sheets.length === 0 || !briefingOverlay || !briefingImage) return;
 
     window.clearTimeout(briefingHideTimer);
+    briefingSheetToken += 1;
     briefingLevelId = levelId;
     briefingQueue = [...sheets];
     briefingActive = true;
     updateInputLock();
+    briefingOverlay.hidden = true;
+    briefingOverlay.classList.remove("is-visible", "is-dismissed");
+    briefingImage.removeAttribute("src");
     briefingQueue.slice(1).forEach((source) => {
       const preload = new Image();
       preload.src = source;
@@ -497,15 +548,21 @@ export function createAppShell({ gameApi }) {
   }
 
   function showNextBriefingSheet() {
+    const token = ++briefingSheetToken;
     const briefing = briefingQueue.shift();
     if (!briefing || !briefingOverlay || !briefingImage) return;
-    briefingImage.src = briefing;
     briefingImage.alt = `${LEVELS[briefingLevelId]?.title ?? briefingLevelId} briefing`;
-    briefingOverlay.hidden = false;
+    briefingOverlay.hidden = true;
     briefingOverlay.classList.remove("is-visible", "is-dismissed");
     resetBriefingInspectState();
-    briefingOverlay.getBoundingClientRect();
-    briefingOverlay.classList.add("is-visible");
+    briefingImage.onload = () => {
+      if (token !== briefingSheetToken || !briefingActive) return;
+      briefingOverlay.hidden = false;
+      briefingOverlay.getBoundingClientRect();
+      briefingOverlay.classList.add("is-visible");
+    };
+    briefingImage.src = briefing;
+    if (briefingImage.complete) briefingImage.onload();
   }
 
   function dismissBriefing() {
@@ -530,6 +587,7 @@ export function createAppShell({ gameApi }) {
   function hideBriefing(immediate = false, { keepTutorialHints = false } = {}) {
     if (!briefingOverlay) return;
     window.clearTimeout(briefingHideTimer);
+    briefingSheetToken += 1;
     briefingActive = false;
     briefingQueue = [];
     briefingLevelId = null;
@@ -538,6 +596,7 @@ export function createAppShell({ gameApi }) {
     briefingOverlay.classList.remove("is-visible", "is-dismissed");
     resetBriefingInspectState();
     if (immediate) briefingOverlay.hidden = true;
+    if (immediate && briefingImage) briefingImage.removeAttribute("src");
   }
 
   function stopBriefingInspect() {
@@ -652,6 +711,7 @@ export function createAppShell({ gameApi }) {
     if (screenSpaceShadowQualityValue) {
       screenSpaceShadowQualityValue.textContent = getQualityLabel(settings.screenSpaceShadowQuality);
     }
+    if (sensitivityValue) sensitivityValue.textContent = `${settings.sensitivity}%`;
     if (fovInput && Number(fovInput.value) !== settings.fov) fovInput.value = String(settings.fov);
     if (uiScaleInput && Number(uiScaleInput.value) !== settings.uiScale) uiScaleInput.value = String(settings.uiScale);
     if (shadowQualityInput && shadowQualityInput.value !== settings.shadowQuality) {
@@ -672,6 +732,9 @@ export function createAppShell({ gameApi }) {
     ) {
       screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
     }
+    if (sensitivityInput && Number(sensitivityInput.value) !== settings.sensitivity) {
+      sensitivityInput.value = String(settings.sensitivity);
+    }
     document.body.style.setProperty("--ui-scale", String(settings.uiScale / 100));
     gameApi.setBaseFov?.(settings.fov);
     gameApi.setShadowQuality?.(settings.shadowQuality);
@@ -679,6 +742,7 @@ export function createAppShell({ gameApi }) {
     gameApi.setSsgiQuality?.(settings.ssgiQuality);
     gameApi.setSsrQuality?.(settings.ssrQuality);
     gameApi.setScreenSpaceShadowQuality?.(settings.screenSpaceShadowQuality);
+    gameApi.setMouseSensitivity?.(settings.sensitivity / 100);
   }
 
   function isOpen() {
@@ -734,6 +798,7 @@ function loadSettings() {
         ["off", "min", "med", "max"],
         "off",
       ),
+      sensitivity: clampNumber(parsed.sensitivity, 40, 180, 100),
     };
   } catch {
     return {
@@ -744,6 +809,7 @@ function loadSettings() {
       ssgiQuality: "off",
       ssrQuality: "off",
       screenSpaceShadowQuality: "off",
+      sensitivity: 100,
     };
   }
 }
@@ -759,6 +825,7 @@ function saveSettings() {
       ssgiQuality: document.querySelector("#settingSsgiQuality")?.value ?? "off",
       ssrQuality: document.querySelector("#settingSsrQuality")?.value ?? "off",
       screenSpaceShadowQuality: document.querySelector("#settingScreenSpaceShadowQuality")?.value ?? "off",
+      sensitivity: Number(document.querySelector("#settingSensitivity")?.value ?? 100),
     }),
   );
 }
@@ -773,6 +840,18 @@ function getQualityLabel(value) {
   if (value === "med") return "MED";
   if (value === "max") return "MAX";
   return String(value).toUpperCase();
+}
+
+function getLevelTitle(levelId) {
+  const key = {
+    "intro-shift": "levels.intro.title",
+    "exploring-around": "levels.exploring.title",
+    "unexpected-stuff": "levels.unexpected.title",
+    "fuel-problems": "levels.fuel.title",
+    freeplay: "levels.freeplay.title",
+    competitive: "levels.competitive.title",
+  }[levelId];
+  return key ? translate(key) : LEVELS[levelId]?.title ?? levelId;
 }
 
 function clampNumber(value, min, max, fallback) {

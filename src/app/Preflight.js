@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260707-tutorial2";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260707-localized-results1";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

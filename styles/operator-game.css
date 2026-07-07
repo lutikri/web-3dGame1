@@ -260,6 +260,8 @@ body.door-interactive-hover .crosshair {
   place-items: center;
   min-width: 39px;
   height: 38px;
+  box-sizing: border-box;
+  padding: 0 10px;
   margin: 0 2px;
   border: 1px solid rgba(237, 241, 242, 0.42);
   border-bottom-color: rgba(237, 241, 242, 0.22);
