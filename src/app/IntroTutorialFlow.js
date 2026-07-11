@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260711-obvious-selftest-training";
+import { translateRequired } from "./Localization.js?v=20260711-unexpected-door-briefing-ui";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

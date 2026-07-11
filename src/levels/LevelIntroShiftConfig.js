@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260711-obvious-selftest-training";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260711-obvious-selftest-training";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260711-obvious-selftest-training";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260711-obvious-selftest-training";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260711-unexpected-door-briefing-ui";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260711-unexpected-door-briefing-ui";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260711-unexpected-door-briefing-ui";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260711-unexpected-door-briefing-ui";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

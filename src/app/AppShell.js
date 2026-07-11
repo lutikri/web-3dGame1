@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260711-obvious-selftest-training";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260711-obvious-selftest-training";
-import { translate } from "./Localization.js?v=20260711-obvious-selftest-training";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260711-obvious-selftest-training";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260711-obvious-selftest-training";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260711-obvious-selftest-training";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260711-unexpected-door-briefing-ui";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260711-unexpected-door-briefing-ui";
+import { translate } from "./Localization.js?v=20260711-unexpected-door-briefing-ui";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260711-unexpected-door-briefing-ui";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260711-unexpected-door-briefing-ui";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260711-unexpected-door-briefing-ui";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";

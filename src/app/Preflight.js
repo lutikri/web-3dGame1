@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260711-obvious-selftest-training";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260711-unexpected-door-briefing-ui";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

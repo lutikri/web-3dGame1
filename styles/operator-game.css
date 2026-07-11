@@ -667,9 +667,14 @@ body.door-interactive-hover .crosshair {
 }
 
 .level-node.is-active {
-  grid-column: 1 / -1;
   border-color: rgba(159, 242, 181, 0.72);
   background: rgba(36, 67, 49, 0.98);
+}
+
+.level-node[data-level-id="intro-shift"],
+.level-node[data-level-id="shift-coordination"],
+.level-node[data-level-id="exploring-around"] {
+  grid-column: 1 / -1;
 }
 
 .level-node.is-complete {
@@ -740,6 +745,8 @@ body.door-interactive-hover .crosshair {
 .side-modes {
   display: grid;
   gap: 12px;
+  align-content: start;
+  grid-auto-rows: minmax(92px, max-content);
 }
 
 .dossier-card {

@@ -1,6 +1,6 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260711-obvious-selftest-training";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260711-obvious-selftest-training";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260711-obvious-selftest-training";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260711-unexpected-door-briefing-ui";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260711-unexpected-door-briefing-ui";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260711-unexpected-door-briefing-ui";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 
@@ -40,6 +40,10 @@ export const LEVEL_DEFINITIONS = {
     mode: "unexpected",
     description: "Three-minute shift with instrument and control faults.",
     playable: true,
+    briefingImage: {
+      en: ["assets/ui/briefings/Unexpected1-us.png"],
+      ru: ["assets/ui/briefings/Unexpected1-ru.png"],
+    },
     environmentId: "intro-shift",
     environment: LEVEL_UNEXPECTED_STUFF_CONFIG,
   },
@@ -113,8 +117,9 @@ function createEnvironmentLookup(definitions) {
 }
 
 function createUnexpectedStuffConfig() {
+  const baseConfig = cloneConfigValue(LEVEL_INTRO_SHIFT_CONFIG);
   return {
-    ...LEVEL_INTRO_SHIFT_CONFIG,
+    ...baseConfig,
     saveKind: "unexpectedStuff",
     session: {
       completion: "all",
@@ -317,4 +322,11 @@ function createUnexpectedStuffConfig() {
       ],
     },
   };
+}
+
+function cloneConfigValue(value) {
+  if (value == null || typeof value !== "object") return value;
+  if (typeof value.clone === "function") return value.clone();
+  if (Array.isArray(value)) return value.map((entry) => cloneConfigValue(entry));
+  return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, cloneConfigValue(entry)]));
 }

@@ -289,6 +289,8 @@ export async function createPhysicsSystem() {
       const targetDegrees = Number.isFinite(degrees) ? degrees : door.initialDegrees;
       door.targetDegrees = THREE.MathUtils.degToRad(targetDegrees - door.initialDegrees);
       door.motorRemaining = Number.POSITIVE_INFINITY;
+      door.body.setTranslation(door.initialPosition, true);
+      door.body.setRotation(door.initialRotation, true);
       door.joint.configureMotorPosition(
         door.targetDegrees,
         door.motorStiffness * 12,
@@ -390,6 +392,8 @@ export async function createPhysicsSystem() {
           door.motorRemaining = 0;
           door.joint.configureMotorPosition(0, 0, 0);
         } else if (door.locked) {
+          door.body.setTranslation(door.initialPosition, true);
+          door.body.setRotation(door.initialRotation, true);
           door.joint.configureMotorPosition(
             door.targetDegrees,
             door.motorStiffness * 12,

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260711-obvious-selftest-training";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260711-unexpected-door-briefing-ui";
 
 const MARKER_PREFIX = "PF_";
 

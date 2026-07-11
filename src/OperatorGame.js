@@ -15,46 +15,46 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260711-obvious-selftest-training";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260711-unexpected-door-briefing-ui";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260711-obvious-selftest-training";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260711-obvious-selftest-training";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260711-obvious-selftest-training";
+} from "./game/ShiftReport.js?v=20260711-unexpected-door-briefing-ui";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260711-unexpected-door-briefing-ui";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260711-unexpected-door-briefing-ui";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260711-obvious-selftest-training";
+} from "./config/GraphicsQualityProfiles.js?v=20260711-unexpected-door-briefing-ui";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260711-obvious-selftest-training";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260711-obvious-selftest-training";
-import { createStatusScreen } from "./StatusScreen.js?v=20260711-obvious-selftest-training";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260711-obvious-selftest-training";
+} from "./scene/TextureStreaming.js?v=20260711-unexpected-door-briefing-ui";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260711-unexpected-door-briefing-ui";
+import { createStatusScreen } from "./StatusScreen.js?v=20260711-unexpected-door-briefing-ui";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260711-unexpected-door-briefing-ui";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260711-obvious-selftest-training";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260711-obvious-selftest-training";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260711-obvious-selftest-training";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260711-obvious-selftest-training";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260711-obvious-selftest-training";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260711-obvious-selftest-training";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260711-obvious-selftest-training";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260711-obvious-selftest-training";
-import { LevelSession } from "./levels/LevelSession.js?v=20260711-obvious-selftest-training";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260711-obvious-selftest-training";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260711-obvious-selftest-training";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260711-obvious-selftest-training";
-import { PlayerController } from "./player/PlayerController.js?v=20260711-obvious-selftest-training";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260711-obvious-selftest-training";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260711-obvious-selftest-training";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260711-obvious-selftest-training";
+} from "./ui/PostProcessingDebugPanel.js?v=20260711-unexpected-door-briefing-ui";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260711-unexpected-door-briefing-ui";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260711-unexpected-door-briefing-ui";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260711-unexpected-door-briefing-ui";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260711-unexpected-door-briefing-ui";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260711-unexpected-door-briefing-ui";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260711-unexpected-door-briefing-ui";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260711-unexpected-door-briefing-ui";
+import { LevelSession } from "./levels/LevelSession.js?v=20260711-unexpected-door-briefing-ui";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260711-unexpected-door-briefing-ui";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260711-unexpected-door-briefing-ui";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260711-unexpected-door-briefing-ui";
+import { PlayerController } from "./player/PlayerController.js?v=20260711-unexpected-door-briefing-ui";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260711-unexpected-door-briefing-ui";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260711-unexpected-door-briefing-ui";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260711-unexpected-door-briefing-ui";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -2801,8 +2801,7 @@ function releaseDoorLatchHandles() {
 function canOperateDoorLatch(runtime) {
   const door = runtime?.door;
   if (
-    activeLevelId === "intro-shift" &&
-    door?.prefabName === "DoorBulk1_Tutorial" &&
+    isDoorUnlockObjectiveDoor(door?.prefabName) &&
     latestSnapshot.mode !== "complete" &&
     latestSnapshot.mode !== "failed"
   ) {
@@ -2810,6 +2809,17 @@ function canOperateDoorLatch(runtime) {
     return false;
   }
   return true;
+}
+
+function isDoorUnlockObjectiveDoor(prefabName) {
+  if (!prefabName) return false;
+  const objectives = activeLevelSession?.config?.objectives ?? [];
+  return objectives.some(
+    (objective) =>
+      objective.type === "event" &&
+      objective.event === "doorUnlocked" &&
+      objective.target === prefabName,
+  );
 }
 
 function setDoorLatched(runtime, latched, options = {}) {
@@ -2820,8 +2830,6 @@ function setDoorLatched(runtime, latched, options = {}) {
   door.latchBlockedAttempt = null;
   if (options.resetHandleSpin) door.latchHandleSpinOffsetDegrees = 0;
   door.latched = Boolean(latched);
-  const prefabConfig = CONFIG.levelEnvironments?.[door.levelId]?.prefabs?.find((prefab) => prefab.name === door.prefabName);
-  if (prefabConfig?.state) prefabConfig.state.latched = door.latched;
   door.commandedOpen = false;
   if (door.latched) {
     door.degrees = door.interaction.initialDegrees ?? 0;
@@ -3733,6 +3741,7 @@ function registerBulkheadHandle(object) {
 }
 
 function updateOperatorThoughts(previousSnapshot, snapshot, controls) {
+  if (activeLevelId !== "intro-shift") return;
   if (snapshot.mode !== "running") return;
   if (!previousSnapshot.warning?.fieldWeak && snapshot.warning?.fieldWeak && snapshot.elapsed > 3) {
     emitOperatorThought("field-weak");
