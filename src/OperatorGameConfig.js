@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260707-localized-results1";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260707-localized-results1";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260707-localized-results1";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260707-localized-results1";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260711-obvious-selftest-training";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260711-obvious-selftest-training";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260711-obvious-selftest-training";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260711-obvious-selftest-training";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -369,6 +369,62 @@ export const CONFIG = {
         emissive: "#ff1b0a",
         emissiveIntensity: 4,
       },
+      clock1: {
+        materialNames: ["M_Clock1"],
+        meshNames: [
+          "SM_Clock1_Base",
+          "SM_Clock1_ArrowSeconds",
+          "SM_Clock1_ArrowMinutes",
+          "SM_Clock1_ArrowHours",
+        ],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Clock1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Clock1_Normal_Secondary_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Clock1_OcclusionRoughnessMetallic_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Clock1_BaseColor_Secondary_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Clock1_Normal_Secondary_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Clock1_OcclusionRoughnessMetallic_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      clock1Glass: {
+        meshNames: ["SM_Clock1_Glass"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Clock1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Clock1_Normal_Secondary_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Clock1_OcclusionRoughnessMetallic_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Clock1_BaseColor_Secondary_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Clock1_Normal_Secondary_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Clock1_OcclusionRoughnessMetallic_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 0.62,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        transparent: true,
+        opacity: 0.42,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        castShadow: false,
+        receiveShadow: false,
+      },
     }, GLOBAL_SCENE_OVERRIDES.materials),
     lightToggleButton: {
       meshNames: ["SM_Details_LightButton1"],
@@ -598,7 +654,7 @@ export const CONFIG = {
       destroyedLightFactor: 0.32,
     },
     indicatorTest: {
-      duration: 3,
+      duration: 10,
       lampFrequency: 9,
     },
   },

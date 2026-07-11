@@ -288,16 +288,6 @@ body.door-interactive-hover .crosshair {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.24);
 }
 
-.tutorial-mouse::before,
-.tutorial-wheel::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 50%;
-  height: 18px;
-  border-left: 1px solid rgba(237, 241, 242, 0.45);
-}
-
 .tutorial-mouse span,
 .tutorial-wheel span {
   position: absolute;
@@ -309,6 +299,10 @@ body.door-interactive-hover .crosshair {
   background: #9ff2b5;
   transform: translateX(-50%);
   box-shadow: 0 0 9px rgba(159, 242, 181, 0.58);
+}
+
+.tutorial-mouse.is-right span {
+  display: none;
 }
 
 .tutorial-mouse.is-right::after {
@@ -323,7 +317,7 @@ body.door-interactive-hover .crosshair {
 }
 
 .tutorial-wheel {
-  border-color: rgba(159, 242, 181, 0.82);
+  border-color: rgba(237, 241, 242, 0.74);
 }
 
 .briefing-overlay {
@@ -708,13 +702,34 @@ body.door-interactive-hover .crosshair {
   font-weight: 950;
 }
 
-.route-split {
+.route-split,
+.route-merge,
+.route-line {
   grid-column: 1 / -1;
   height: 24px;
+  position: relative;
+}
+
+.route-split {
   border-left: 1px solid rgba(103, 215, 135, 0.45);
   border-right: 1px solid rgba(103, 215, 135, 0.45);
   border-top: 1px solid rgba(103, 215, 135, 0.45);
   margin: 0 22%;
+}
+
+.route-merge {
+  border-left: 1px solid rgba(103, 215, 135, 0.45);
+  border-right: 1px solid rgba(103, 215, 135, 0.45);
+  border-bottom: 1px solid rgba(103, 215, 135, 0.45);
+  margin: 0 22%;
+}
+
+.route-line::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  border-left: 1px solid rgba(103, 215, 135, 0.45);
 }
 
 .is-locked {

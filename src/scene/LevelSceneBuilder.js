@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   mergeMarkerPrefabs,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=20260707-localized-results1";
-import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260707-localized-results1";
+} from "../prefabs/PrefabMarkerResolver.js?v=20260711-obvious-selftest-training";
+import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260711-obvious-selftest-training";
 
 export function createLevelSceneBuilder({
   scene,

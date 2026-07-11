@@ -62,6 +62,10 @@ $jobs = @(
   @{ Source = "T_TrimConcrete1_Normal.png"; Prefix = "T_TrimConcrete1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
   @{ Source = "T_TrimConcrete1_OcclusionRoughnessMetallic.png"; Prefix = "T_TrimConcrete1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
 
+  @{ Source = "T_Clock1_BaseColor.png"; Prefix = "T_Clock1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Clock1_Normal.png"; Prefix = "T_Clock1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Clock1_OcclusionRoughnessMetallic.png"; Prefix = "T_Clock1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
+
   @{ Source = "T_Lamp1_BaseColor.png"; Prefix = "T_Lamp1_BaseColor_Critical"; Preview = 512; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_Lamp1_Normal.png"; Prefix = "T_Lamp1_Normal_Critical"; Preview = 512; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Lamp1_OcclusionRoughnessMetallic.png"; Prefix = "T_Lamp1_OcclusionRoughnessMetallic_Critical"; Preview = 512; Mode = "linear"; Quality = 190 },

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260707-localized-results1";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260707-localized-results1";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260707-localized-results1";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260707-localized-results1";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260711-obvious-selftest-training";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260711-obvious-selftest-training";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260711-obvious-selftest-training";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260711-obvious-selftest-training";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
@@ -88,6 +88,11 @@ const LEVEL_INTRO_SHIFT_DEFAULTS = {
           castShadow: true,
         },
       },
+    }),
+    createPrefabInstance("analogClock", {
+      name: "Clock1_Tutorial",
+      position: new THREE.Vector3(3.1, 2.0, -1.35),
+      rotation: new THREE.Euler(0, Math.PI, 0),
     }),
   ],
   lighting: {

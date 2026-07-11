@@ -15,45 +15,46 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260707-localized-results1";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260711-obvious-selftest-training";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260707-localized-results1";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260707-localized-results1";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260707-localized-results1";
+} from "./game/ShiftReport.js?v=20260711-obvious-selftest-training";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260711-obvious-selftest-training";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260711-obvious-selftest-training";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260707-localized-results1";
+} from "./config/GraphicsQualityProfiles.js?v=20260711-obvious-selftest-training";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260707-localized-results1";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260707-localized-results1";
-import { createStatusScreen } from "./StatusScreen.js?v=20260707-localized-results1";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260707-localized-results1";
+} from "./scene/TextureStreaming.js?v=20260711-obvious-selftest-training";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260711-obvious-selftest-training";
+import { createStatusScreen } from "./StatusScreen.js?v=20260711-obvious-selftest-training";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260711-obvious-selftest-training";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260707-localized-results1";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260707-localized-results1";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260707-localized-results1";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260707-localized-results1";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260707-localized-results1";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260707-localized-results1";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260707-localized-results1";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260707-localized-results1";
-import { LevelSession } from "./levels/LevelSession.js?v=20260707-localized-results1";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260707-localized-results1";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260707-localized-results1";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260707-localized-results1";
-import { PlayerController } from "./player/PlayerController.js?v=20260707-localized-results1";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260707-localized-results1";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260707-localized-results1";
+} from "./ui/PostProcessingDebugPanel.js?v=20260711-obvious-selftest-training";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260711-obvious-selftest-training";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260711-obvious-selftest-training";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260711-obvious-selftest-training";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260711-obvious-selftest-training";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260711-obvious-selftest-training";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260711-obvious-selftest-training";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260711-obvious-selftest-training";
+import { LevelSession } from "./levels/LevelSession.js?v=20260711-obvious-selftest-training";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260711-obvious-selftest-training";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260711-obvious-selftest-training";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260711-obvious-selftest-training";
+import { PlayerController } from "./player/PlayerController.js?v=20260711-obvious-selftest-training";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260711-obvious-selftest-training";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260711-obvious-selftest-training";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260711-obvious-selftest-training";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -212,6 +213,7 @@ const statusScreen = createStatusScreen({
   brightness: CONFIG.feedback.panelIndicators.statusScreenBrightness,
 });
 const fusionCore = createFusionCoreSimulation();
+const diagnosticRuntime = new DiagnosticRuntime();
 
 let panelModel = null;
 const panelCollisionMeshes = [];
@@ -1006,6 +1008,10 @@ function createInteriorCustomMaterial(key, config) {
     aoMapIntensity: config.aoMapIntensity ?? 1,
     emissive: config.emissive ?? "#fff2b0",
     emissiveIntensity: config.emissiveIntensity ?? 1.35,
+    transparent: Boolean(config.transparent),
+    opacity: config.opacity ?? 1,
+    depthWrite: config.depthWrite ?? true,
+    side: config.side ?? THREE.FrontSide,
   });
   material.userData.baseEmissiveIntensity = material.emissiveIntensity;
   material.userData.roomLightControlled = Boolean(config.roomLightControlled);
@@ -1023,6 +1029,10 @@ function applyTextureMapsToMaterial(material, textureMaps, config = {}) {
   material.metalnessMap = textureMaps.ormMap ?? null;
   material.emissiveMap = textureMaps.emissiveMap ?? null;
   material.userData.maskMap = textureMaps.maskMap ?? null;
+  material.transparent = Boolean(config.transparent);
+  material.opacity = config.opacity ?? 1;
+  material.depthWrite = config.depthWrite ?? true;
+  material.side = config.side ?? THREE.FrontSide;
   applyTextureRepeat(textureMaps, config.textureRepeat);
   applyMaskTextureSettings(textureMaps.maskMap);
   updateMaskOverlayUniforms(material, config);
@@ -2118,6 +2128,8 @@ async function createLevelEnvironmentRuntime(levelId) {
 
 function createPrefabRuntime(prefab, prefabConfig) {
   const emissiveMaterials = [];
+  const materialClones = [];
+  const materialCloneEntries = [];
   const collisionMeshes = [];
   const parts = new Map();
   prefab.traverse((object) => {
@@ -2138,8 +2150,17 @@ function createPrefabRuntime(prefab, prefabConfig) {
       return;
     }
     ensureSecondUvSet(object);
-    const sourceMaterial = materials.interiorCustom[prefabConfig.materialKey] ?? materials.interior;
-    object.material = prefabConfig.light ? sourceMaterial.clone() : sourceMaterial;
+    const materialKey = getPrefabPartMaterialKey(object, prefabConfig);
+    const sourceMaterial = materials.interiorCustom[materialKey] ?? materials.interior;
+    const materialConfig = CONFIG.interior.specialMaterials?.[materialKey] ?? {};
+    const shouldCloneMaterial = Boolean(prefabConfig.light) || materialKey !== prefabConfig.materialKey;
+    object.material = shouldCloneMaterial ? sourceMaterial.clone() : sourceMaterial;
+    object.castShadow = materialConfig.castShadow ?? object.castShadow;
+    object.receiveShadow = materialConfig.receiveShadow ?? object.receiveShadow;
+    if (shouldCloneMaterial) {
+      materialClones.push(object.material);
+      materialCloneEntries.push({ material: object.material, materialKey });
+    }
     if (prefabConfig.light) {
       object.material.userData.baseEmissiveIntensity = sourceMaterial.userData.baseEmissiveIntensity;
       emissiveMaterials.push(object.material);
@@ -2149,6 +2170,8 @@ function createPrefabRuntime(prefab, prefabConfig) {
     root: prefab,
     light: null,
     emissiveMaterials,
+    materialClones,
+    materialCloneEntries,
     materialKey: prefabConfig.materialKey,
     collisionMeshes,
     parts,
@@ -2162,6 +2185,9 @@ function createPrefabRuntime(prefab, prefabConfig) {
     fixtureFlicker: createFixtureFlickerState(prefabConfig.light?.flicker),
     wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
   };
+  if (prefabConfig.behavior === "analogClock" && prefabConfig.clock?.enabled !== false) {
+    runtime.clock = createAnalogClockRuntime(runtime.parts, prefabConfig.clock);
+  }
   if (prefabConfig.light) {
     const lightConfig = prefabConfig.light;
     const light = new THREE.PointLight(
@@ -2182,6 +2208,28 @@ function createPrefabRuntime(prefab, prefabConfig) {
   return runtime;
 }
 
+function getPrefabPartMaterialKey(object, prefabConfig) {
+  const overrides = prefabConfig.materialOverrides ?? {};
+  const matchName = getInteriorObjectMatchNames(object).find((name) => overrides[name]);
+  return matchName ? overrides[matchName] : prefabConfig.materialKey;
+}
+
+function createAnalogClockRuntime(parts, config = {}) {
+  const hands = {
+    seconds: parts.get(config.secondsHandName ?? "SM_Clock1_ArrowSeconds") ?? null,
+    minutes: parts.get(config.minutesHandName ?? "SM_Clock1_ArrowMinutes") ?? null,
+    hours: parts.get(config.hoursHandName ?? "SM_Clock1_ArrowHours") ?? null,
+  };
+  Object.values(hands).forEach((hand) => {
+    if (!hand) return;
+    hand.userData.initialRotation = hand.rotation.clone();
+  });
+  return {
+    ...config,
+    hands,
+  };
+}
+
 function disposeLevelEnvironmentRuntime(runtime) {
   return runtime.dispose();
 }
@@ -2200,7 +2248,7 @@ function disposeLevelOwnedObjects(levelId) {
 
   [...levelPrefabInstances.entries()].forEach(([key, runtime]) => {
     if (!key.startsWith(`${levelId}:`)) return;
-    runtime.emissiveMaterials.forEach((material) => material.dispose());
+    (runtime.materialClones ?? runtime.emissiveMaterials ?? []).forEach((material) => material.dispose());
     runtime.light?.shadow?.dispose?.();
     levelPrefabInstances.delete(key);
   });
@@ -2404,8 +2452,14 @@ function syncLevelPrefabMaterialClones(materialKey) {
   const materialConfig = CONFIG.interior.specialMaterials?.[materialKey];
   if (!textureMaps || !materialConfig) return;
   levelPrefabInstances.forEach((runtime) => {
-    if (runtime.materialKey !== materialKey) return;
-    runtime.emissiveMaterials.forEach((material) => {
+    const legacyMatches =
+      runtime.materialKey === materialKey
+        ? runtime.emissiveMaterials.map((material) => ({ material, materialKey }))
+        : [];
+    const materialEntries = runtime.materialCloneEntries?.length ? runtime.materialCloneEntries : legacyMatches;
+    materialEntries.forEach((entry) => {
+      if (entry.materialKey !== materialKey) return;
+      const material = entry.material;
       applyTextureMapsToMaterial(material, textureMaps, materialConfig);
       material.userData.baseEmissiveIntensity = materialConfig.emissiveIntensity ?? 0;
     });
@@ -3007,6 +3061,7 @@ function registerRoomLightButton(object, buttonConfig, levelBindings = []) {
     }),
   );
   proxy.name = `${object.name}_HitProxy`;
+  proxy.visible = false;
   proxy.userData.kind = "roomLightButton";
   proxy.userData.controlLabel = object.userData.controlLabel;
   proxy.userData.hitProxyFor = object.name;
@@ -3237,6 +3292,7 @@ function animate() {
   updateActiveLevelSession(dt);
   updateFeedback(dt);
   updateLevelPrefabLights(dt);
+  updateLevelPrefabClocks();
   physicsSystem?.step(dt);
   playerController.updateAfterPhysics();
   updateRuntimeTextureLoading(dt);
@@ -3309,7 +3365,7 @@ function updateLevelPrefabLights(dt) {
     const roomEmissiveFactor = lightConfig.roomLightControlled
       ? Math.max(getRoomLightVisualFactor(), getRoomLightAfterglowFactor())
       : 1;
-    const sceneFactor = getStartupLightFactor() * getTerminalLightFactor();
+    const sceneFactor = getStartupLightFactor() * getTerminalLightFactor() * diagnosticRuntime.getBlackoutFactor();
     const pointFinalFactor = pointLightFactor * roomPointFactor * sceneFactor;
     const emissiveFinalFactor = emissiveFactor * roomEmissiveFactor * sceneFactor;
     runtime.light.visible = lightConfig.enabled !== false;
@@ -3322,6 +3378,30 @@ function updateLevelPrefabLights(dt) {
       material.emissiveIntensity = baseIntensity * emissiveFinalFactor;
     });
   });
+}
+
+function updateLevelPrefabClocks() {
+  const now = new Date();
+  const milliseconds = now.getMilliseconds();
+  const seconds = now.getSeconds() + milliseconds / 1000;
+  const minutes = now.getMinutes() + seconds / 60;
+  const hours = (now.getHours() % 12) + minutes / 60;
+
+  levelPrefabInstances.forEach((runtime) => {
+    if (!runtime.clock?.hands) return;
+    const axis = runtime.clock.axis ?? "z";
+    const direction = runtime.clock.direction ?? -1;
+    const smoothSeconds = runtime.clock.smoothSeconds !== false;
+    applyClockHandRotation(runtime.clock.hands.seconds, axis, direction * ((smoothSeconds ? seconds : Math.floor(seconds)) / 60) * Math.PI * 2);
+    applyClockHandRotation(runtime.clock.hands.minutes, axis, direction * (minutes / 60) * Math.PI * 2);
+    applyClockHandRotation(runtime.clock.hands.hours, axis, direction * (hours / 12) * Math.PI * 2);
+  });
+}
+
+function applyClockHandRotation(hand, axis, angle) {
+  if (!hand) return;
+  hand.rotation.copy(hand.userData.initialRotation);
+  applyAxisRotation(hand, axis, angle);
 }
 
 function renderRealismComposer(dt) {
@@ -3609,11 +3689,14 @@ function updatePanel(dt) {
   }
   observedIgnitionPulseCount = ignitionPulseCount;
   latestSnapshot = snapshot;
-  updateOperatorThoughts(previousSnapshot, snapshot, controlInputs);
+    diagnosticRuntime.update(dt);
+    if (diagnosticRuntime.consumeLightRestartRequest()) triggerRoomLightBoot();
+    updateOperatorThoughts(previousSnapshot, snapshot, controlInputs);
   updateShiftRecorder(dt, snapshot, controlInputs);
   updateShiftCompletion(dt, snapshot);
-  const panelSnapshot = getTerminalPresentationSnapshot(snapshot);
+  const panelSnapshot = diagnosticRuntime.createSelfTestSnapshot(getTerminalPresentationSnapshot(snapshot));
   statusScreen.setSnapshot(panelSnapshot);
+  statusScreen.setPowerFactor(diagnosticRuntime.getBlackoutFactor());
   statusScreen.update(dt);
   updateControlButtons(dt);
 
@@ -3696,7 +3779,10 @@ function getLampMaterial(lamp, snapshot) {
     if (faultAge < faultConfig.greenLampSeconds + faultConfig.redLampSeconds) return materials.lampRed;
     return materials.lampOff;
   }
-  if (indicatorTestTimer > 0) return getIndicatorTestMaterial(lamps.indexOf(lamp));
+  if (indicatorTestTimer > 0) return getIndicatorTestMaterial(lamp, lamps.indexOf(lamp));
+  if (diagnosticRuntime.getBlackoutFactor() < 0.12) return materials.lampOff;
+  const runtimeOverride = diagnosticRuntime.getLampRuntimeOverride(lamp.name, testTime);
+  if (runtimeOverride) return getLampOverrideMaterial(runtimeOverride);
   if (snapshot.terminalElapsed != null) {
     if (snapshot.terminalBlackout) return materials.lampOff;
     if (snapshot.mode === "complete") {
@@ -3756,11 +3842,20 @@ function getLampMaterial(lamp, snapshot) {
   return warningKey === "coreStress" || warningKey === "tempHigh" ? materials.lampRed : materials.lampAmber;
 }
 
-function getIndicatorTestMaterial(index) {
+function getIndicatorTestMaterial(lamp, index) {
   const ratio = THREE.MathUtils.clamp(indicatorTestTimer / CONFIG.feedback.indicatorTest.duration, 0, 1);
-  if (ratio < 1 / 3) return materials.lampRed;
-  if (ratio < 2 / 3) return materials.lampGreen;
+  const colorName = ratio < 1 / 3 ? "red" : ratio < 2 / 3 ? "green" : "amber";
+  if (diagnosticRuntime.getLampSelfTestOverride(lamp.name, colorName) === "off") return materials.lampOff;
+  if (colorName === "red") return materials.lampRed;
+  if (colorName === "green") return materials.lampGreen;
   return materials.lampAmber;
+}
+
+function getLampOverrideMaterial(name) {
+  if (name === "red") return materials.lampRed;
+  if (name === "green") return materials.lampGreen;
+  if (name === "amber" || name === "yellow") return materials.lampAmber;
+  return materials.lampOff;
 }
 
 function getStartupLampMaterial(index) {
@@ -3840,7 +3935,10 @@ function updateShiftCompletion(dt, snapshot) {
 }
 
 function shouldWaitForDoorExitBeforeResults() {
-  return activeLevelId === "intro-shift" && Boolean(resultsSnapshot) && !resultsVisible;
+  const waitsForDoorUnlock = (CONFIG.levelEnvironments?.[activeLevelId]?.session?.objectives ?? []).some(
+    (objective) => objective.type === "event" && objective.event === "doorUnlocked",
+  );
+  return waitsForDoorUnlock && Boolean(resultsSnapshot) && !resultsVisible;
 }
 
 function showShiftResults(snapshot) {
@@ -3925,10 +4023,11 @@ function triggerRoomLightBoot() {
 }
 
 function updateIndicatorTest(dt) {
-  const active = controlButtons.some(
-    (button) => button.userData.controlAction === "indicatorTest" && button.userData.pressed,
-  );
-  indicatorTestTimer = active ? Math.min(indicatorTestTimer + dt, CONFIG.feedback.indicatorTest.duration) : 0;
+  if (!diagnosticRuntime.isSelfTestActive()) {
+    indicatorTestTimer = 0;
+    return;
+  }
+  indicatorTestTimer = Math.min(indicatorTestTimer + dt, CONFIG.feedback.indicatorTest.duration);
 }
 
 function updateLongTermLightFlicker(dt) {
@@ -4114,7 +4213,12 @@ function updateSceneLightFeedback() {
   const emergencyPulse = emergency ? THREE.MathUtils.lerp(0.72, 1.18, flickerWave(18, 2.7)) : 1;
   const roomLightFactor = getRoomLightVisualFactor();
   const terminalLightFactor = getTerminalLightFactor();
-  const sceneFactor = startupLightFactor * outputPulse * emergencyPulse * terminalLightFactor;
+  const sceneFactor =
+    startupLightFactor *
+    outputPulse *
+    emergencyPulse *
+    terminalLightFactor *
+    diagnosticRuntime.getBlackoutFactor();
 
   controlledLights.forEach((light) => {
     const fixtureFactor = light.userData.roomLightControlled ? getFixtureFlickerFactor(light) : 1;
@@ -4332,20 +4436,69 @@ function updateGaugeNeedle(needle, snapshot, dt) {
   if (!range) return;
 
   if (indicatorTestTimer > 0) {
-    const phase = THREE.MathUtils.smoothstep(
+    let phase = THREE.MathUtils.smoothstep(
       indicatorTestTimer,
       CONFIG.feedback.indicatorTest.duration * 0.18,
       CONFIG.feedback.indicatorTest.duration,
     );
+    const modifier = diagnosticRuntime.getGaugeSelfTestModifier(key);
+    if (modifier?.reverse) phase = 1 - phase;
+    if (Number.isFinite(modifier?.offsetRatio)) {
+      phase += modifier.offsetRatio;
+    }
+    if (Number.isFinite(modifier?.maxRatio)) phase = Math.min(phase, THREE.MathUtils.clamp(modifier.maxRatio, 0, 1));
+    if (Number.isFinite(modifier?.minRatio)) phase = Math.max(phase, THREE.MathUtils.clamp(modifier.minRatio, 0, 1));
+    phase = THREE.MathUtils.clamp(phase, 0, 1);
+    if (Number.isFinite(modifier?.delaySeconds) && modifier.delaySeconds > 0) {
+      const lagLambda = 1 / Math.max(0.001, modifier.delaySeconds);
+      needle.userData.diagnosticSelfTestLagRatio = THREE.MathUtils.damp(
+        needle.userData.diagnosticSelfTestLagRatio ?? phase,
+        phase,
+        lagLambda,
+        dt,
+      );
+      phase = needle.userData.diagnosticSelfTestLagRatio;
+    } else {
+      needle.userData.diagnosticSelfTestLagRatio = phase;
+    }
     const testAngle = THREE.MathUtils.degToRad(
       THREE.MathUtils.lerp(CONFIG.needleAnimation.inactiveDegrees, CONFIG.needleAnimation.activeDegrees, phase),
     );
-    needle.userData.needleAngle = THREE.MathUtils.damp(needle.userData.needleAngle ?? testAngle, testAngle, 10, dt);
+    const noise =
+      Number.isFinite(modifier?.noiseDegrees) && modifier.noiseDegrees > 0
+        ? THREE.MathUtils.degToRad(modifier.noiseDegrees) *
+          Math.sin(testTime * (19 + needle.userData.needleNoiseSeed * 0.3))
+        : 0;
+    needle.userData.needleAngle = THREE.MathUtils.damp(needle.userData.needleAngle ?? testAngle, testAngle + noise, 10, dt);
     return;
   }
 
   const value = snapshot[key] ?? 0;
   let ratio = THREE.MathUtils.clamp((value - range[0]) / (range[1] - range[0]), 0, 1);
+  const diagnosticModifier = diagnosticRuntime.getGaugeRuntimeModifier(key);
+  if (diagnosticModifier?.reverse) ratio = 1 - ratio;
+  if (Number.isFinite(diagnosticModifier?.offsetRatio)) {
+    ratio += diagnosticModifier.offsetRatio;
+  }
+  if (Number.isFinite(diagnosticModifier?.maxRatio)) {
+    ratio = Math.min(ratio, THREE.MathUtils.clamp(diagnosticModifier.maxRatio, 0, 1));
+  }
+  if (Number.isFinite(diagnosticModifier?.minRatio)) {
+    ratio = Math.max(ratio, THREE.MathUtils.clamp(diagnosticModifier.minRatio, 0, 1));
+  }
+  ratio = THREE.MathUtils.clamp(ratio, 0, 1);
+  if (Number.isFinite(diagnosticModifier?.delaySeconds) && diagnosticModifier.delaySeconds > 0) {
+    const lagLambda = 1 / Math.max(0.001, diagnosticModifier.delaySeconds);
+    needle.userData.diagnosticLagRatio = THREE.MathUtils.damp(
+      needle.userData.diagnosticLagRatio ?? ratio,
+      ratio,
+      lagLambda,
+      dt,
+    );
+    ratio = needle.userData.diagnosticLagRatio;
+  } else {
+    needle.userData.diagnosticLagRatio = ratio;
+  }
   if (snapshot.mode === "startupFault" && CONFIG.feedback.startupFault.sweepGaugeKeys.includes(key)) {
     ratio = getStartupFaultNeedleRatio(snapshot, ratio);
   }
@@ -4359,9 +4512,15 @@ function updateGaugeNeedle(needle, snapshot, dt) {
     getStartupFeedbackAmount() *
     THREE.MathUtils.degToRad(CONFIG.feedback.startup.needleJitterDegrees) *
     Math.sin(testTime * (18 + needle.userData.needleNoiseSeed));
+  const diagnosticJitter =
+    Number.isFinite(diagnosticModifier?.noiseDegrees) && diagnosticModifier.noiseDegrees > 0
+      ? THREE.MathUtils.degToRad(diagnosticModifier.noiseDegrees) *
+        (Math.sin(testTime * (17 + needle.userData.needleNoiseSeed)) * 0.6 +
+          Math.sin(testTime * (43 + needle.userData.needleNoiseSeed * 0.5)) * 0.4)
+      : 0;
   needle.userData.needleAngle = THREE.MathUtils.damp(
     currentAngle,
-    targetAngle + operationalJitter + dangerJitter + startupJitter,
+    targetAngle + operationalJitter + dangerJitter + startupJitter + diagnosticJitter,
     8,
     dt,
   );
@@ -4453,10 +4612,13 @@ function applyNeedleAxisRotation(needle, axis, angle) {
 
 function adjustControlKnob(knob, deltaPercent) {
   const current = knob.userData.controlPercent ?? 0;
-  const next = THREE.MathUtils.clamp(current + deltaPercent, 0, 100);
+  const sensitivity = diagnosticRuntime.getKnobSensitivity(knob.name);
+  const effectiveDelta = deltaPercent * sensitivity;
+  const next = THREE.MathUtils.clamp(current + effectiveDelta, 0, 100);
   if (next === current) return;
 
   knob.userData.controlPercent = next;
+  diagnosticRuntime.registerKnobMovement(knob.name, deltaPercent);
   applyControlKnobRotation(knob);
   updateControlTooltip();
 }
@@ -4610,7 +4772,8 @@ function updateRoomLightMaterials() {
   const visualFactor =
     Math.max(getRoomLightVisualFactor(), afterglowFactor) *
     startupEmissiveFactor *
-    getTerminalLightFactor();
+    getTerminalLightFactor() *
+    diagnosticRuntime.getBlackoutFactor();
   Object.values(materials.interiorCustom).forEach((material) => {
     if (!material.userData.roomLightControlled) return;
     const fixtureFactor = getFixtureFlickerFactor(material);
@@ -4626,7 +4789,6 @@ function setControlButtonPressed(button, pressed) {
   if (button.userData.pressed === pressed) return;
   button.userData.pressed = pressed;
   if (pressed) runControlButtonAction(button);
-  if (!pressed && button.userData.controlAction === "indicatorTest") indicatorTestTimer = 0;
   console.log(`[OperatorGame] ${button.userData.controlLabel} ${pressed ? "PRESSED" : "RELEASED"}`);
 }
 
@@ -4714,6 +4876,8 @@ function startShift() {
   terminalSequenceElapsed = -1;
   triggerStartupFeedback();
   indicatorTestTimer = 0;
+  diagnosticRuntime.stopSelfTest();
+  diagnosticRuntime.startTimeline();
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 }
 
@@ -4729,6 +4893,8 @@ function resetShift() {
   terminalSequenceElapsed = -1;
   startupFeedbackTimer = 0;
   indicatorTestTimer = 0;
+  diagnosticRuntime.stopSelfTest();
+  diagnosticRuntime.stopTimeline();
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
 }
 
@@ -4814,6 +4980,7 @@ function resetPanelControls() {
   forcedHoveredTarget = null;
   hoveredInteractive = null;
   indicatorTestTimer = 0;
+  diagnosticRuntime.stopSelfTest();
 }
 
 function resetLevelSession() {
@@ -4866,12 +5033,13 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   stopPositionGizmo();
   const loadedLevelId = await loadLevelEnvironment(levelId);
   if (loadedLevelId !== getLevelEnvironmentId(levelId)) return false;
+  const requestedLevelConfig = CONFIG.levelEnvironments?.[levelId] ?? CONFIG.levelEnvironments?.[loadedLevelId] ?? {};
   activeLevelId = levelId;
   activeLevelMode = mode;
   activeLevelSession?.reset({ clearSaved: true });
   activeLevelSession = new LevelSession({
     levelId,
-    config: CONFIG.levelEnvironments?.[loadedLevelId]?.session ?? {},
+    config: requestedLevelConfig.session ?? {},
   });
   const levelSessionState = activeLevelSession.start({ resume: false });
   previousLevelSessionStatus = levelSessionState.status;
@@ -4879,12 +5047,13 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   resetLevelDoors(activeLevelId);
   updateActiveLevelEnvironment();
   levelPrefabInstances.forEach((runtime, key) => {
-    if (!key.startsWith(`${activeLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
+    if (!key.startsWith(`${loadedLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
     runtime.startupPattern = createFluorescentStartupPattern();
     runtime.startupElapsed = 0;
     runtime.faultyStarterElapsed = 0;
   });
   setRoomLightsEnabled(true, { instant: false });
+  diagnosticRuntime.reset({ levelId, config: requestedLevelConfig });
   resetLevelSession();
   resetShiftRecorder();
   fusionCore.reset();
@@ -4903,9 +5072,20 @@ function runControlButtonAction(button) {
   } else if (button.userData.controlAction === "pulse") {
     console.log("[OperatorGame] Ignition pulse armed");
   } else if (button.userData.controlAction === "indicatorTest") {
-    indicatorTestTimer = 0;
-    console.log("[OperatorGame] Indicator test started");
+    startDiagnosticSelfTest();
   }
+}
+
+function startDiagnosticSelfTest() {
+  if (latestSnapshot.mode !== "standby") {
+    console.log("[OperatorGame] Self-test unavailable after ignition");
+    return false;
+  }
+  diagnosticRuntime.startSelfTest({ duration: CONFIG.feedback.indicatorTest.duration });
+  indicatorTestTimer = 0;
+  statusScreen.setSnapshot(diagnosticRuntime.createSelfTestSnapshot(fusionCore.getSnapshot()), true);
+  console.log("[OperatorGame] Self-test started");
+  return true;
 }
 
 function releaseAllControlButtons() {
@@ -5839,9 +6019,12 @@ window.operatorGameDebug = {
   resetPostProcessingPreset: () => postProcessingDebugPanel?.reset(),
   copyPostProcessingConfig: () => postProcessingDebugPanel?.copyConfig(),
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
-  startIndicatorTest: () => {
-    indicatorTestTimer = CONFIG.feedback.indicatorTest.duration;
-  },
+  startIndicatorTest: startDiagnosticSelfTest,
+  startSelfTest: startDiagnosticSelfTest,
+  addDiagnosticLampFault: (fault) => diagnosticRuntime.addLampFault(fault),
+  addDiagnosticGaugeFault: (fault) => diagnosticRuntime.addGaugeFault(fault),
+  addDiagnosticKnobFault: (fault) => diagnosticRuntime.addKnobFault(fault),
+  getDiagnostics: () => diagnosticRuntime.getDebugState(),
   setInteriorMaskDebug,
   triggerFixtureFlicker,
   setNoclip: (enabled) => {
@@ -5955,6 +6138,7 @@ window.operatorGameDebug = {
     movementSpeed: Number(movementVelocity.length().toFixed(2)),
     leanAmount: Number(leanAmount.toFixed(2)),
     indicatorTestActive: indicatorTestTimer > 0,
+    diagnostics: diagnosticRuntime.getDebugState(),
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
     activeLevelId,

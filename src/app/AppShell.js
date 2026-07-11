@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260707-localized-results1";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260707-localized-results1";
-import { translate } from "./Localization.js?v=20260707-localized-results1";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260707-localized-results1";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260707-localized-results1";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260707-localized-results1";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260711-obvious-selftest-training";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260711-obvious-selftest-training";
+import { translate } from "./Localization.js?v=20260711-obvious-selftest-training";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260711-obvious-selftest-training";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260711-obvious-selftest-training";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260711-obvious-selftest-training";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -218,11 +218,11 @@ export function createAppShell({ gameApi }) {
     window.addEventListener("operatorgame:loading-complete", handleInitialRoute, { once: true });
     window.addEventListener("operatorgame:shift-results", (event) => {
       const { levelId, snapshot, levelSession } = event.detail ?? {};
-      if (levelId !== INTRO_LEVEL_ID || !["complete", "failed"].includes(snapshot?.mode)) return;
+      if (!LEVELS[levelId]?.playable || !["complete", "failed"].includes(snapshot?.mode)) return;
 
-      progress.finishedLevels[INTRO_LEVEL_ID] = true;
+      progress.finishedLevels[levelId] = true;
       if (snapshot.mode === "complete" && levelSession?.status === "complete") {
-        progress.completedLevels[INTRO_LEVEL_ID] = true;
+        progress.completedLevels[levelId] = true;
       }
       if (!firstVisitEmulation) saveProgress(progress);
       updateLevelProgressUi();
@@ -846,6 +846,7 @@ function getLevelTitle(levelId) {
   const key = {
     "intro-shift": "levels.intro.title",
     "exploring-around": "levels.exploring.title",
+    "shift-coordination": "levels.coordination.title",
     "unexpected-stuff": "levels.unexpected.title",
     "fuel-problems": "levels.fuel.title",
     freeplay: "levels.freeplay.title",

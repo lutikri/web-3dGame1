@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../levels/LevelConfigSerialization.js?v=20260707-localized-results1";
+} from "../levels/LevelConfigSerialization.js?v=20260711-obvious-selftest-training";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

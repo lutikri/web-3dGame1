@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260707-localized-results1";
+import { translateRequired } from "./Localization.js?v=20260711-obvious-selftest-training";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

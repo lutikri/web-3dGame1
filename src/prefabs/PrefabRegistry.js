@@ -109,11 +109,29 @@ const PREFAB_DEFINITIONS = {
       },
     },
   },
+  analogClock: {
+    assetPath: "assets/mesh/SM_Clock1.glb",
+    materialKey: "clock1",
+    behavior: "analogClock",
+    materialOverrides: {
+      SM_Clock1_Glass: "clock1Glass",
+    },
+    clock: {
+      enabled: true,
+      axis: "x",
+      direction: 1,
+      secondsHandName: "SM_Clock1_ArrowSeconds",
+      minutesHandName: "SM_Clock1_ArrowMinutes",
+      hoursHandName: "SM_Clock1_ArrowHours",
+      smoothSeconds: true,
+    },
+  },
 };
 
 const REGISTRY_OWNED_KEYS = new Set([
   "assetPath",
   "materialKey",
+  "materialOverrides",
   "behavior",
   "interaction",
   "prefabType",

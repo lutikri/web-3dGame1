@@ -1,7 +1,9 @@
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",
   "materialKey",
+  "materialOverrides",
   "behavior",
+  "clock",
   "interaction",
   "prefabType",
 ]);

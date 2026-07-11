@@ -109,6 +109,24 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "aoMapIntensity": 1,
       "emissive": "#ff1b0a",
       "emissiveIntensity": 1.35
+    },
+    "clock1": {
+      "color": "#ffffff",
+      "roughness": 1,
+      "metalness": 1,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
+    "clock1Glass": {
+      "color": "#ffffff",
+      "roughness": 0.62,
+      "metalness": 0,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
     }
   },
   "lighting": {
@@ -117,6 +135,5 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "ambientIntensity": 0,
     "pointLights": {},
     "fixtures": {}
-  },
-  "decals": null
+  }
 };

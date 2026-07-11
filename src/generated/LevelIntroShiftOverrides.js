@@ -68,6 +68,9 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": true
+      },
       "name": "DoorBulk1_Tutorial",
       "position": {
         "x": 3.6,
@@ -181,6 +184,26 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
         "isEuler": true,
         "_x": 0,
         "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "name": "Clock1_Tutorial",
+      "position": {
+        "x": 2.7334644191980715,
+        "y": 1.8849752077075566,
+        "z": -2.2104473781824976
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 3.141592653589793,
         "_z": 0,
         "_order": "XYZ"
       },

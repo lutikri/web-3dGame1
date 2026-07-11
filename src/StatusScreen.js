@@ -44,6 +44,11 @@ export function createStatusScreen({ brightness = 1 } = {}) {
       if (force) state.elapsed = UPDATE_INTERVAL;
     },
 
+    setPowerFactor(factor = 1) {
+      const safeFactor = THREE.MathUtils.clamp(Number(factor ?? 1), 0, 1);
+      material.color.setRGB(brightness * safeFactor, brightness * safeFactor, brightness * safeFactor);
+    },
+
     update(dt) {
       state.elapsed += dt;
       if (state.elapsed < UPDATE_INTERVAL) return;
@@ -79,6 +84,10 @@ function drawStandby(ctx) {
 }
 
 function drawStatus(ctx, data) {
+  if (data.mode === "selfTest") {
+    drawSelfTest(ctx, data);
+    return;
+  }
   if (data.mode === "startupFault") {
     drawStartupFault(ctx, data);
     return;
@@ -120,6 +129,40 @@ function drawStatus(ctx, data) {
   ctx.font = "700 28px Consolas, monospace";
   ctx.fillText(`STATUS: ${data.status}`, 48, 492);
 
+  ctx.shadowBlur = 0;
+}
+
+function drawSelfTest(ctx, data) {
+  drawBackground(ctx);
+  const progress = Math.max(0, Math.min(1, data.selfTestProgress ?? 0));
+  const remaining = Math.max(0, Math.ceil((data.selfTestDuration ?? 0) - (data.selfTestElapsed ?? 0)));
+  const sweep = Math.floor(progress * 24);
+
+  ctx.fillStyle = "#45ff92";
+  ctx.shadowColor = "#1cff79";
+  ctx.shadowBlur = 18;
+  ctx.font = "900 58px Consolas, monospace";
+  ctx.fillText("SELF-TEST", 48, 96);
+
+  ctx.shadowBlur = 8;
+  ctx.font = "700 30px Consolas, monospace";
+  ctx.fillText("INDICATOR BUS CHECK", 48, 158);
+  ctx.fillText(`TIME: ${remaining} SEC`, 704, 158);
+
+  ctx.strokeStyle = "rgba(69, 255, 146, 0.52)";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(48, 210, SCREEN_W - 96, 46);
+  ctx.fillStyle = "rgba(69, 255, 146, 0.28)";
+  ctx.fillRect(56, 218, (SCREEN_W - 112) * progress, 30);
+
+  ctx.font = "700 26px Consolas, monospace";
+  drawRow(ctx, "LAMPS", `${progress < 0.34 ? "COLOR CYCLE" : "HOLD"}`, 318, false);
+  drawRow(ctx, "GAUGES", `${progress < 0.78 ? "SWEEP " + String(sweep).padStart(2, "0") : "RETURN"}`, 370, false);
+  drawRow(ctx, "CONTROLS", "LOCAL RESPONSE", 422, false);
+
+  ctx.fillStyle = "#ffcf5a";
+  ctx.font = "700 25px Consolas, monospace";
+  ctx.fillText("WATCH PANEL RESPONSE", 48, 492);
   ctx.shadowBlur = 0;
 }
 
@@ -187,12 +230,17 @@ function drawTerminalStatus(ctx, data) {
 
 function drawEmergencyBanner(ctx, data) {
   const stall = data.warning.coreStallCritical || data.coreStall > 82;
+  const activeHeatSoak = data.thermalSoak > 82 && data.plasmaTemp > 145;
+  const activeCoreStress = data.coreStress > 88 && data.plasmaTemp > 135;
   const meltdown =
     data.mode === "failed" ||
-    data.coreStress > 88 ||
-    data.thermalSoak > 82 ||
+    activeCoreStress ||
+    activeHeatSoak ||
     (data.warning.tempCritical && data.warning.outputSurge);
-  const runaway = data.plasmaTemp > 165 || data.warning.thermalSoak || data.warning.coreStress;
+  const runaway =
+    data.plasmaTemp > 165 ||
+    (data.warning.thermalSoak && data.plasmaTemp > 140) ||
+    (data.warning.coreStress && data.plasmaTemp > 135);
   if (!meltdown && !runaway && !stall) return;
 
   const blink = Math.floor(performance.now() / 160) % 2 === 0;
