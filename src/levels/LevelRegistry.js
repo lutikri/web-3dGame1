@@ -1,8 +1,9 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260711-unexpected-door-briefing-ui";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260713-fuel-quality-material";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260713-fuel-quality-material";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260713-fuel-quality-material";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
+const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
 
 export const LEVEL_DEFINITIONS = {
   "intro-shift": {
@@ -49,9 +50,57 @@ export const LEVEL_DEFINITIONS = {
   },
   "fuel-problems": {
     id: "fuel-problems",
-    title: "FUEL PROBLEMS",
+    title: "COST OF RUNNING",
     mode: "story",
-    description: "Fuel quality route placeholder.",
+    description: "Three-minute fuel blend economy trial.",
+    playable: true,
+    briefingImage: {
+      en: ["assets/ui/briefings/CostOfRunning1-us.svg"],
+      ru: ["assets/ui/briefings/CostOfRunning1-ru.svg"],
+    },
+    environmentId: "intro-shift",
+    environment: LEVEL_COST_OF_RUNNING_CONFIG,
+  },
+  "power-bus-training": {
+    id: "power-bus-training",
+    title: "POWER BUS TRAINING",
+    mode: "facility",
+    description: "Switchgear and routing placeholder.",
+    playable: false,
+  },
+  "longer-shifts": {
+    id: "longer-shifts",
+    title: "LONGER SHIFTS",
+    mode: "facility",
+    description: "Longer shift route placeholder.",
+    playable: false,
+  },
+  "broken-lamp": {
+    id: "broken-lamp",
+    title: "BROKEN LAMP",
+    mode: "test",
+    description: "Unreliable warning indicator placeholder.",
+    playable: false,
+  },
+  "low-fuel": {
+    id: "low-fuel",
+    title: "LOW FUEL",
+    mode: "test",
+    description: "Low reserve economy test placeholder.",
+    playable: false,
+  },
+  "low-heat-sink": {
+    id: "low-heat-sink",
+    title: "LOW HEAT SINK",
+    mode: "test",
+    description: "Reduced thermal margin placeholder.",
+    playable: false,
+  },
+  "maximum-load": {
+    id: "maximum-load",
+    title: "MAX LOAD",
+    mode: "test",
+    description: "Maximum load route placeholder.",
     playable: false,
   },
   freeplay: {
@@ -317,6 +366,194 @@ function createUnexpectedStuffConfig() {
               offsetRatio: 0.1,
               noiseDegrees: 0.8,
             },
+          ],
+        },
+      ],
+    },
+  };
+}
+
+function createCostOfRunningConfig() {
+  const baseConfig = cloneConfigValue(LEVEL_INTRO_SHIFT_CONFIG);
+  return {
+    ...baseConfig,
+    saveKind: "costOfRunning",
+    session: {
+      completion: "all",
+      objectives: [
+        { id: "operate-core", type: "survive", seconds: 180 },
+        {
+          id: "unlock-bulkhead",
+          type: "event",
+          event: "doorUnlocked",
+          target: "DoorBulk1_Tutorial",
+        },
+      ],
+      bindings: LEVEL_INTRO_SHIFT_CONFIG.session?.bindings ?? [],
+    },
+    diagnostics: {
+      selfTest: {
+        durationSeconds: 10,
+      },
+      initialFaults: {
+        lamps: [],
+        gauges: [],
+        knobs: [],
+      },
+      initialRandomFaults: [],
+      timeline: [],
+      randomTimeline: [],
+    },
+    shiftProfile: {
+      defaultEvents: false,
+      transitionSeconds: 5,
+      demandWander: {
+        enabled: false,
+      },
+      phases: [
+        {
+          name: "BASELINE COST RUN",
+          start: 0,
+          end: 60,
+          temp: [95, 135],
+          powerTemp: [112, 150],
+          output: [500, 700],
+          containmentMin: 70,
+          demand: 600,
+        },
+        {
+          name: "ECONOMY MIX LOAD",
+          start: 60,
+          end: 120,
+          temp: [112, 148],
+          powerTemp: [132, 160],
+          output: [650, 860],
+          containmentMin: 64,
+          demand: 760,
+        },
+        {
+          name: "HIGH COST-SAVING LOAD",
+          start: 120,
+          end: 180,
+          temp: [128, 162],
+          powerTemp: [150, 172],
+          output: [800, 1040],
+          containmentMin: 58,
+          demand: 920,
+        },
+      ],
+    },
+    fuelBlend: {
+      enabled: true,
+      segments: [
+        {
+          start: 0,
+          end: 20,
+          state: "green",
+          label: "STANDARD BLEND",
+          fuelReserveCostFactor: 1.08,
+        },
+        {
+          start: 20,
+          end: 74,
+          state: "yellow",
+          label: "ECONOMY BLEND / HEAT DRIFT",
+          heatPerFuelFactor: 1.32,
+          outputFactor: 0.92,
+          efficiencyPenalty: 0.12,
+          fuelReserveCostFactor: 0.78,
+          waves: [
+            { property: "heatPerFuelFactor", amplitude: 0.28, frequency: 0.13, seed: 1.7 },
+            { property: "temperatureBias", amplitude: 16, frequency: 0.08, seed: 0.2 },
+            { property: "outputFactor", amplitude: 0.08, frequency: 0.17, seed: 2.4 },
+          ],
+          pulses: [
+            {
+              at: 38,
+              duration: 3.8,
+              temperatureBias: -42,
+              outputFactor: -0.28,
+              stallPressureBonus: 0.38,
+              label: "LEAN POCKET / COLD DIP",
+            },
+            {
+              at: 63,
+              duration: 4.4,
+              temperatureBias: 38,
+              heatPerFuelFactor: 0.22,
+              outputFactor: -0.12,
+              label: "HOT POCKET / DIRTY BURN",
+            },
+          ],
+        },
+        {
+          start: 74,
+          end: 79,
+          state: "off",
+          label: "NO USABLE FEED",
+          fuelFeedFactor: 0,
+          heatPerFuelFactor: 0.42,
+          outputFactor: 0.05,
+          efficiencyPenalty: 0.58,
+          stallPressureBonus: 0.95,
+          fuelReserveCostFactor: 0.35,
+        },
+        {
+          start: 79,
+          end: 118,
+          state: "yellow",
+          label: "ECONOMY BLEND / SLUGS",
+          heatPerFuelFactor: 1.14,
+          outputFactor: 0.9,
+          containmentPenalty: 4,
+          efficiencyPenalty: 0.14,
+          fuelReserveCostFactor: 0.8,
+          waves: [
+            { property: "heatPerFuelFactor", amplitude: 0.34, frequency: 0.21, seed: 5.2 },
+            { property: "temperatureBias", amplitude: 24, frequency: 0.13, seed: 1.1 },
+          ],
+          pulses: [
+            {
+              at: 101,
+              duration: 3.2,
+              temperatureBias: 42,
+              containmentPenalty: 10,
+              efficiencyPenalty: 0.12,
+              label: "RICH SLUG / HEAT SPIKE",
+            },
+          ],
+        },
+        {
+          start: 118,
+          end: 145,
+          state: "red",
+          label: "UNSTABLE LOW-COST BLEND",
+          heatPerFuelFactor: 1.26,
+          outputFactor: 0.84,
+          containmentPenalty: 12,
+          efficiencyPenalty: 0.24,
+          stallPressureBonus: 0.28,
+          fuelReserveCostFactor: 0.72,
+          waves: [
+            { property: "heatPerFuelFactor", amplitude: 0.55, frequency: 0.36, seed: 3.1 },
+            { property: "outputFactor", amplitude: 0.22, frequency: 0.31, seed: 6.2 },
+            { property: "temperatureBias", amplitude: 32, frequency: 0.27, seed: 4.8 },
+            { property: "containmentPenalty", amplitude: 7, frequency: 0.22, seed: 2.7 },
+          ],
+        },
+        {
+          start: 145,
+          end: 180,
+          state: "yellow",
+          label: "ECONOMY BLEND / FINAL WINDOW",
+          heatPerFuelFactor: 1.18,
+          outputFactor: 0.95,
+          containmentPenalty: 3,
+          efficiencyPenalty: 0.08,
+          fuelReserveCostFactor: 0.78,
+          waves: [
+            { property: "heatPerFuelFactor", amplitude: 0.2, frequency: 0.16, seed: 7.3 },
+            { property: "temperatureBias", amplitude: 14, frequency: 0.19, seed: 2.9 },
           ],
         },
       ],

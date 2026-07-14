@@ -200,6 +200,41 @@ Fast validation:
 npm run check
 ```
 
+### Dev console commands
+
+The app installs a small browser-console helper for route/progress testing:
+
+```js
+og("complete intro-shift")
+og("complete unexpected-stuff")
+og("complete fuel-problems")
+og("goto intro-shift")
+og("goto fuel-problems")
+og("reset progress")
+og("progress")
+og("levels")
+```
+
+Equivalent method form:
+
+```js
+og.complete("intro-shift")
+og.goto("unexpected-stuff")
+og.resetProgress()
+```
+
+Direct aliases are also available:
+
+```js
+completeLevel("intro-shift")
+attemptLevel("shift-coordination")
+clearLevelProgress("fuel-problems")
+gotoLevel("exploring-around")
+resetProgress()
+```
+
+`goto` / `gotoLevel` bypass route unlocks, but still require the target level to be playable.
+
 Runtime lifecycle smoke test:
 
 ```text

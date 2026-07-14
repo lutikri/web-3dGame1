@@ -109,40 +109,82 @@
             <span data-i18n="levels.route">LEVEL ROUTE</span>
             <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
           </div>
-          <div class="level-map">
-            <button class="level-node is-active" data-level-id="intro-shift" type="button">
-              <strong data-i18n="levels.intro.title">INTRO SHIFT</strong>
-              <span data-i18n="levels.intro.description">First supervised fusion operation</span>
-            </button>
-            <div class="route-split" aria-hidden="true"></div>
-            <button class="level-node is-active" data-level-id="unexpected-stuff" type="button">
-              <strong data-i18n="levels.unexpected.title">UNEXPECTED STUFF</strong>
-              <span data-i18n="levels.unexpected.description">Instrument faults route</span>
-            </button>
-            <button class="level-node is-locked" data-level-id="fuel-problems" type="button" disabled>
-              <strong data-i18n="levels.fuel.title">FUEL PROBLEMS</strong>
-              <span data-i18n="levels.fuel.description">Fuel quality route</span>
-            </button>
-            <div class="route-merge" aria-hidden="true"></div>
-            <button class="level-node is-active" data-level-id="shift-coordination" type="button">
-              <strong data-i18n="levels.coordination.title">SHIFT COORDINATION</strong>
-              <span data-i18n="levels.coordination.description">Same console, clock-start shift</span>
-            </button>
-            <div class="route-line" aria-hidden="true"></div>
-            <button class="level-node is-active" data-level-id="exploring-around" type="button">
-              <strong data-i18n="levels.exploring.title">EXPLORING AROUND</strong>
-              <span data-i18n="levels.exploring.description">The tutorial shift in the service corridor</span>
-            </button>
-          </div>
-          <div class="side-modes">
-            <button class="mode-card" data-level-id="freeplay" type="button">
-              <strong data-i18n="levels.freeplay.title">FREEPLAY</strong>
-              <span data-i18n="levels.freeplay.description">Same console, loose targets</span>
-            </button>
-            <button class="mode-card is-locked" data-level-id="competitive" type="button" disabled>
-              <strong data-i18n="levels.competitive.title">COMPETITIVE</strong>
-              <span data-i18n="levels.competitive.description">Score route placeholder</span>
-            </button>
+          <div class="level-route-scroll">
+            <div class="level-route-canvas">
+              <svg class="route-links-svg" aria-hidden="true"></svg>
+              <section class="route-section route-section-qualification" data-route-section="qualification">
+                <h2 data-i18n="levelGroups.operatorQualification">OPERATOR QUALIFICATION</h2>
+                <div class="route-node-grid route-node-grid-qualification">
+                  <button class="level-node is-active route-node-wide" data-level-id="intro-shift" type="button">
+                    <strong data-i18n="levels.intro.title">INTRO SHIFT</strong>
+                    <span data-i18n="levels.intro.description">First supervised fusion operation</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="unexpected-stuff" type="button" disabled>
+                    <strong data-i18n="levels.unexpected.title">UNEXPECTED STUFF</strong>
+                    <span data-i18n="levels.unexpected.description">Instrument faults route</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="fuel-problems" type="button" disabled>
+                    <strong data-i18n="levels.fuel.title">COST OF RUNNING</strong>
+                    <span data-i18n="levels.fuel.description">Fuel mix economy route</span>
+                  </button>
+                  <button class="level-node is-locked route-node-wide" data-level-id="shift-coordination" type="button" disabled>
+                    <strong data-i18n="levels.coordination.title">SHIFT COORDINATION</strong>
+                    <span data-i18n="levels.coordination.description">Same console, clock-start shift</span>
+                  </button>
+                </div>
+              </section>
+              <section class="route-section route-section-modes" data-route-section="modes">
+                <h2 data-i18n="levelGroups.additionalModes">ADDITIONAL MODES</h2>
+                <div class="route-node-grid">
+                  <button class="level-node is-active" data-level-id="freeplay" type="button">
+                    <strong data-i18n="levels.freeplay.title">FREEPLAY</strong>
+                    <span data-i18n="levels.freeplay.description">Same console, loose targets</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="competitive" type="button" disabled>
+                    <strong data-i18n="levels.competitive.title">COMPETITIVE</strong>
+                    <span data-i18n="levels.competitive.description">Score route placeholder</span>
+                  </button>
+                </div>
+              </section>
+              <section class="route-section route-section-tests" data-route-section="tests">
+                <h2 data-i18n="levelGroups.additionalTests">ADDITIONAL TESTS</h2>
+                <div class="route-node-grid">
+                  <button class="level-node is-locked" data-level-id="broken-lamp" type="button" disabled>
+                    <strong data-i18n="levels.brokenLamp.title">BROKEN LAMP</strong>
+                    <span data-i18n="levels.brokenLamp.description">Unreliable warning indicator</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="low-fuel" type="button" disabled>
+                    <strong data-i18n="levels.lowFuel.title">LOW FUEL</strong>
+                    <span data-i18n="levels.lowFuel.description">Low reserve economy test</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="low-heat-sink" type="button" disabled>
+                    <strong data-i18n="levels.lowHeatSink.title">LOW HEAT SINK</strong>
+                    <span data-i18n="levels.lowHeatSink.description">Reduced thermal margin</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="maximum-load" type="button" disabled>
+                    <strong data-i18n="levels.maximumLoad.title">MAX LOAD</strong>
+                    <span data-i18n="levels.maximumLoad.description">Work near the red zone</span>
+                  </button>
+                </div>
+              </section>
+              <section class="route-section route-section-facility" data-route-section="facility">
+                <h2 data-i18n="levelGroups.facilityAccess">FACILITY ACCESS</h2>
+                <div class="route-node-grid">
+                  <button class="level-node is-locked" data-level-id="exploring-around" type="button" disabled>
+                    <strong data-i18n="levels.exploring.title">EXPLORING AROUND</strong>
+                    <span data-i18n="levels.exploring.description">The tutorial shift in the service corridor</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="power-bus-training" type="button" disabled>
+                    <strong data-i18n="levels.powerBus.title">POWER BUS TRAINING</strong>
+                    <span data-i18n="levels.powerBus.description">Switchgear and routing</span>
+                  </button>
+                  <button class="level-node is-locked" data-level-id="longer-shifts" type="button" disabled>
+                    <strong data-i18n="levels.longerShifts.title">LONGER SHIFTS</strong>
+                    <span data-i18n="levels.longerShifts.description">Ten minutes and operator effects</span>
+                  </button>
+                </div>
+              </section>
+            </div>
           </div>
         </section>
         <section id="profilePanel" class="app-panel dossier-panel" data-app-panel="profile" hidden>
@@ -212,6 +254,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=20260711-unexpected-door-briefing-ui"></script>
+    <script type="module" src="src/main.js?v=20260713-fuel-quality-material"></script>
   </body>
 </html>

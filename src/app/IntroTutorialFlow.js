@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260711-unexpected-door-briefing-ui";
+import { translateRequired } from "./Localization.js?v=20260713-fuel-quality-material";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

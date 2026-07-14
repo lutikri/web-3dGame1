@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=20260711-unexpected-door-briefing-ui";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260711-unexpected-door-briefing-ui";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260711-unexpected-door-briefing-ui";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260711-unexpected-door-briefing-ui";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=20260713-fuel-quality-material";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260713-fuel-quality-material";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260713-fuel-quality-material";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260713-fuel-quality-material";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {

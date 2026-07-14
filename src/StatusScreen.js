@@ -112,6 +112,12 @@ function drawStatus(ctx, data) {
   ctx.fillText(`PHASE: ${data.phase.name}`, 48, 126);
   ctx.fillText(`TIME: ${formatTime(data.remaining)}`, 704, 126);
 
+  if (data.fuelBlend?.label && data.fuelBlend.state !== "green") {
+    ctx.fillStyle = data.fuelBlend.state === "red" ? "#ff5d55" : data.fuelBlend.state === "off" ? "#5f7769" : "#ffcf5a";
+    ctx.font = "700 24px Consolas, monospace";
+    ctx.fillText(`FUEL MIX: ${data.fuelBlend.label}`, 48, 164);
+  }
+
   ctx.font = "700 28px Consolas, monospace";
   drawRow(ctx, "TEMP", `${Math.round(data.plasmaTemp)} MK`, 190, data.warning.tempHigh);
   drawRow(ctx, "CONTAIN", `${Math.round(data.containment)}%`, 242, data.warning.fieldWeak);

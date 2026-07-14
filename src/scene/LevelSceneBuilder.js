@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   mergeMarkerPrefabs,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=20260711-unexpected-door-briefing-ui";
-import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260711-unexpected-door-briefing-ui";
+} from "../prefabs/PrefabMarkerResolver.js?v=20260713-fuel-quality-material";
+import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260713-fuel-quality-material";
 
 export function createLevelSceneBuilder({
   scene,

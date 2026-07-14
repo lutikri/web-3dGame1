@@ -6,6 +6,7 @@ const { resolveConfigSaveTarget } = require("./scripts/config-save-target.cjs");
 
 const root = __dirname;
 const port = Number(process.env.PORT ?? 5173);
+const host = process.env.HOST ?? "0.0.0.0";
 const clients = new Set();
 const watchedDirs = ["src", "styles", "assets"];
 const watchedFiles = ["index.html", "README.md", "AGENTS.md"];
@@ -212,7 +213,8 @@ for (const relativePath of [...watchedDirs, ...watchedFiles]) {
   watchPath(relativePath);
 }
 
-server.listen(port, "127.0.0.1", () => {
+server.listen(port, host, () => {
   console.log(`[dev-server] http://localhost:${port}/`);
+  if (host === "0.0.0.0") console.log(`[dev-server] network: http://<your-lan-ip>:${port}/`);
   console.log("[dev-server] live reload watching src/, styles/, assets/, index.html, README.md, AGENTS.md");
 });

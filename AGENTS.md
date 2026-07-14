@@ -146,3 +146,6 @@ Shift result/operator profile behavior:
   - `window.operatorGameDebug.getState()`
   - `window.operatorGameDebug.startGame()`
   - `window.operatorGameDebug.resetGame()`
+  - `og("complete intro-shift")`
+  - `og("goto fuel-problems")`
+  - `og("reset progress")`

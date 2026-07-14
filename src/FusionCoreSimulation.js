@@ -135,6 +135,7 @@ function createInitialState() {
     resetPending: 0,
     status: "AWAITING START COMMAND",
     warning: {},
+    fuelBlend: normalizeFuelBlend(null),
     averageEfficiency: 0,
     efficiencySamples: 0,
   };
@@ -155,19 +156,22 @@ function updateStartupFaultState(state, dt) {
 }
 
 function updateRunningState(state, dt, controls) {
-  const phase = getPhase(state.elapsed);
-  const operatingTargets = getOperatingTargets(state.elapsed);
+  const shiftProfile = normalizeShiftProfile(controls.shiftProfile);
+  const phase = getPhase(state.elapsed, shiftProfile);
+  const operatingTargets = getOperatingTargets(state.elapsed, shiftProfile);
   const fuel = controls.fuelInjection / 100;
   const field = controls.magneticField / 100;
   const coolant = controls.coolantFlow / 100;
+  const fuelBlend = normalizeFuelBlend(controls.fuelBlend);
+  const effectiveFuel = clamp(fuel * fuelBlend.fuelFeedFactor, 0, 1.3);
   const vent = controls.ventActive ? 1 : 0;
   const pulseHeld = Boolean(controls.pulseActive);
   const canChargeIgnition = pulseHeld && !state.pulseLatched && state.pulseCooldown <= 0 && state.pulseCharge >= 18;
   state.ignitionHold = canChargeIgnition ? Math.min(0.5, state.ignitionHold + dt) : 0;
   const pulse = canChargeIgnition && state.ignitionHold >= 0.5 ? 1 : 0;
   if (!pulseHeld) state.pulseLatched = false;
-  const event = getShiftEvent(state.elapsed);
-  const demand = getLiveDemand(operatingTargets, state.elapsed, event);
+  const event = getShiftEvent(state.elapsed, shiftProfile);
+  const demand = getLiveDemand(operatingTargets, state.elapsed, event, shiftProfile);
   const quenchPressure =
     coolant > 0.68 && fuel < 0.24
       ? 0.25 + clamp((coolant - 0.68) / 0.32, 0, 1) * clamp((0.24 - fuel) / 0.14, 0, 1) * 1.35
@@ -186,8 +190,8 @@ function updateRunningState(state, dt, controls) {
 
   const heatSinkFactor = Math.max(0.25, state.heatSinkCapacity / 100);
   const heatSoakCoolingPenalty = 1 - (state.thermalSoak / 100) * 0.42;
-  const coolantEffect = coolant * 82 * heatSinkFactor * event.coolantEfficiency;
-  const fuelHeat = fuel * 172 * (state.reactionStalled ? 0.08 : 1);
+  const coolantEffect = coolant * 82 * heatSinkFactor * event.coolantEfficiency * fuelBlend.coolantEfficiencyFactor;
+  const fuelHeat = effectiveFuel * 172 * fuelBlend.heatPerFuelFactor * (state.reactionStalled ? 0.08 : 1);
   const fieldHeat = field * 11;
   const ventCooling = vent * 112;
   const pulseHeat = pulse * 42;
@@ -198,7 +202,8 @@ function updateRunningState(state, dt, controls) {
       fieldHeat +
       pulseHeat +
       overDemandHeat +
-      state.thermalSoak * 0.16 -
+      state.thermalSoak * 0.16 +
+      fuelBlend.temperatureBias -
       coolantEffect * heatSoakCoolingPenalty -
       ventCooling;
   const targetTemp = activeTargetTemp * (1 - state.shutdownLevel);
@@ -221,12 +226,16 @@ function updateRunningState(state, dt, controls) {
   const physicalTempHigh = Math.max(0, state.plasmaTemp - 155);
   const coldFade = Math.max(0, 75 - state.plasmaTemp) / 75;
   const coolantFlood = Math.max(0, coolant - 0.72) * 1.55;
-  const overFielded = Math.max(0, field - fuel - 0.24) * 1.4;
-  const fuelStarved = fuel < 0.16 && state.elapsed > 12 ? (0.16 - fuel) * 2.2 : 0;
-  const stallPressure = clamp(coldFade + coolantFlood + overFielded + fuelStarved + vent * 0.22 - pulse * 1.15, 0, 2.4);
+  const overFielded = Math.max(0, field - effectiveFuel - 0.24) * 1.4;
+  const fuelStarved = effectiveFuel < 0.16 && state.elapsed > 12 ? (0.16 - effectiveFuel) * 2.2 : 0;
+  const stallPressure = clamp(
+    coldFade + coolantFlood + overFielded + fuelStarved + fuelBlend.stallPressureBonus + vent * 0.22 - pulse * 1.15,
+    0,
+    2.4,
+  );
   state.coreStall = clamp(
     state.coreStall +
-      (stallPressure * 8.5 - (state.reactionStalled ? 0 : fuel * 8) - Math.max(0, state.plasmaTemp - 92) * 0.07) * dt,
+      (stallPressure * 8.5 - (state.reactionStalled ? 0 : effectiveFuel * 8) - Math.max(0, state.plasmaTemp - 92) * 0.07) * dt,
     0,
     100,
   );
@@ -262,13 +271,14 @@ function updateRunningState(state, dt, controls) {
   const stabilityTarget =
     92 +
     field * 40 -
-    fuel * 31 -
+    effectiveFuel * 31 -
     clamp((demand - 400) / 600, 0, 1) * 8 -
     physicalTempHigh * 0.45 -
     physicalTempLow * 0.28 -
     stallSeverity * 18 -
     vent * 10 -
-    event.fieldPenalty;
+    event.fieldPenalty -
+    fuelBlend.containmentPenalty;
   state.containment = clamp(
     damp(state.containment, stabilityTarget * (1 - state.shutdownLevel), lerp(0.85, 1.8, state.shutdownLevel), dt),
     0,
@@ -294,7 +304,7 @@ function updateRunningState(state, dt, controls) {
   );
   const surgeMultiplier = clamp(1 + surgeWave * surgeAmount * 0.22, 0.62, 1.2);
   const rawOutput =
-    fuel *
+    effectiveFuel *
       1260 *
       state.burnRate *
       powerTempQuality *
@@ -303,6 +313,7 @@ function updateRunningState(state, dt, controls) {
       stallPenalty *
       ventPenalty *
       surgeMultiplier *
+      fuelBlend.outputFactor *
       (1 - state.shutdownLevel);
   state.powerOutput = damp(state.powerOutput, rawOutput, lerp(0.75, 3.2, state.shutdownLevel), dt);
 
@@ -314,9 +325,10 @@ function updateRunningState(state, dt, controls) {
         0,
         100,
       );
+  const fuelBlendEfficiency = 1 - fuelBlend.efficiencyPenalty;
   state.reactionEfficiency = damp(
     state.reactionEfficiency,
-    activeEfficiency * (1 - state.shutdownLevel),
+    activeEfficiency * fuelBlendEfficiency * (1 - state.shutdownLevel),
     lerp(1.8, 4, state.shutdownLevel),
     dt,
   );
@@ -325,7 +337,7 @@ function updateRunningState(state, dt, controls) {
     (state.efficiencySamples + dt);
   state.efficiencySamples += dt;
 
-  state.fuelReserve = clamp(state.fuelReserve - fuel * dt * 0.072 - pulse * 0.18, 0, 100);
+  state.fuelReserve = clamp(state.fuelReserve - fuel * fuelBlend.fuelReserveCostFactor * dt * 0.072 - pulse * 0.18, 0, 100);
   state.heatSinkCapacity = clamp(
     state.heatSinkCapacity - coolant * dt * 0.09 - Math.max(0, state.plasmaTemp - 135) * dt * 0.012 + (1 - coolant) * dt * 0.025,
     0,
@@ -374,7 +386,10 @@ function updateRunningState(state, dt, controls) {
     thermalSoak: state.thermalSoak > 45,
     outputSurge: state.outputSurge > 34,
     coreStress: state.coreStress > 70 || (state.thermalSoak > 70 && state.plasmaTemp > 145),
+    fuelBlendUnstable: fuelBlend.state === "red",
+    fuelFeedInterrupted: fuelBlend.state === "off",
   };
+  state.fuelBlend = fuelBlend;
   state.status = pickStatus(state, operatingTargets, tempLow, tempHigh, event);
 
   if (state.coreStress >= 100 || state.fuelReserve <= 0 || (!state.reactionStalled && state.containment <= 5)) {
@@ -421,21 +436,24 @@ function getSnapshot(state) {
     averageEfficiency: state.averageEfficiency,
     status: state.status,
     warning: { ...state.warning },
+    fuelBlend: state.fuelBlend ? { ...state.fuelBlend } : normalizeFuelBlend(null),
   };
 }
 
-function getPhase(elapsed) {
-  return PHASES.find((phase) => elapsed >= phase.start && elapsed < phase.end) ?? PHASES[PHASES.length - 1];
+function getPhase(elapsed, shiftProfile = null) {
+  const phases = shiftProfile?.phases?.length ? shiftProfile.phases : PHASES;
+  return phases.find((phase) => elapsed >= phase.start && elapsed < phase.end) ?? phases[phases.length - 1];
 }
 
-function getOperatingTargets(elapsed) {
-  const foundPhaseIndex = PHASES.findIndex((phase) => elapsed >= phase.start && elapsed < phase.end);
-  const phaseIndex = foundPhaseIndex >= 0 ? foundPhaseIndex : PHASES.length - 1;
-  const current = PHASES[phaseIndex] ?? PHASES[PHASES.length - 1];
+function getOperatingTargets(elapsed, shiftProfile = null) {
+  const phases = shiftProfile?.phases?.length ? shiftProfile.phases : PHASES;
+  const foundPhaseIndex = phases.findIndex((phase) => elapsed >= phase.start && elapsed < phase.end);
+  const phaseIndex = foundPhaseIndex >= 0 ? foundPhaseIndex : phases.length - 1;
+  const current = phases[phaseIndex] ?? phases[phases.length - 1];
   if (phaseIndex === 0) return current;
 
-  const previous = PHASES[phaseIndex - 1];
-  const transition = smoothstep01((elapsed - current.start) / 9);
+  const previous = phases[phaseIndex - 1];
+  const transition = smoothstep01((elapsed - current.start) / Math.max(0.001, shiftProfile?.transitionSeconds ?? 9));
   return {
     ...current,
     temp: [lerp(previous.temp[0], current.temp[0], transition), lerp(previous.temp[1], current.temp[1], transition)],
@@ -453,6 +471,9 @@ function getOperatingTargets(elapsed) {
 }
 
 function pickStatus(state, phase, tempLow, tempHigh, event) {
+  if (state.fuelBlend?.state === "off") return "FUEL FEED INTERRUPTED";
+  if (state.fuelBlend?.state === "red") return "FUEL MIX UNSTABLE";
+  if (state.fuelBlend?.state === "yellow" || state.fuelBlend?.state === "amber") return "ECONOMY MIX DRIFTING";
   if (state.thermalSoak > 75 && state.plasmaTemp > 145) return "CORE HEAT SOAK RUNAWAY";
   if (state.thermalSoak > 60 && state.plasmaTemp < 130) return "HEAT SOAK RECOVERING";
   if (state.reactionStalled && state.ignitionHold > 0) return "IGNITION BANK CHARGING";
@@ -476,12 +497,15 @@ function pickStatus(state, phase, tempLow, tempHigh, event) {
   return "PARAMETERS DRIFTING";
 }
 
-function getLiveDemand(phase, elapsed, event) {
-  const gridWander = Math.sin(elapsed * 0.19) * 18 + Math.sin(elapsed * 0.071 + 1.2) * 12;
+function getLiveDemand(phase, elapsed, event, shiftProfile = null) {
+  const wander = shiftProfile?.demandWander ?? { enabled: true, amount: 1 };
+  const wanderAmount = wander.enabled === false ? 0 : Number(wander.amount ?? 1);
+  const gridWander = (Math.sin(elapsed * 0.19) * 18 + Math.sin(elapsed * 0.071 + 1.2) * 12) * wanderAmount;
   return Math.max(0, Math.round(phase.demand + gridWander + event.demandOffset));
 }
 
-function getShiftEvent(elapsed) {
+function getShiftEvent(elapsed, shiftProfile = null) {
+  if (shiftProfile?.defaultEvents === false) return { demandOffset: 0, coolantEfficiency: 1, fieldPenalty: 0, status: "" };
   if (elapsed >= 62 && elapsed < 76) {
     return { demandOffset: 35, coolantEfficiency: 0.62, fieldPenalty: 0, status: "HEAT SINK FLOW DEGRADED" };
   }
@@ -524,4 +548,50 @@ function lerp(a, b, amount) {
 function smoothstep01(value) {
   const amount = clamp(value, 0, 1);
   return amount * amount * (3 - 2 * amount);
+}
+
+function normalizeShiftProfile(input) {
+  if (!input || typeof input !== "object") return null;
+  const phases = Array.isArray(input.phases)
+    ? input.phases
+        .map((phase) => ({
+          ...phase,
+          start: Number(phase.start ?? 0),
+          end: Number(phase.end ?? TOTAL_TIME),
+          temp: normalizeRange(phase.temp, [100, 155]),
+          powerTemp: normalizeRange(phase.powerTemp, [118, 170]),
+          output: normalizeRange(phase.output, [500, 950]),
+          containmentMin: Number(phase.containmentMin ?? 60),
+          demand: Number(phase.demand ?? 650),
+        }))
+        .filter((phase) => phase.end > phase.start)
+    : [];
+  return {
+    defaultEvents: input.defaultEvents !== false,
+    transitionSeconds: Number(input.transitionSeconds ?? 9),
+    demandWander: input.demandWander ?? { enabled: true, amount: 1 },
+    phases,
+  };
+}
+
+function normalizeRange(value, fallback) {
+  if (!Array.isArray(value) || value.length < 2) return fallback;
+  return [Number(value[0]), Number(value[1])];
+}
+
+function normalizeFuelBlend(input) {
+  return {
+    state: input?.state ?? "green",
+    material: input?.material ?? "green",
+    label: input?.label ?? "STANDARD BLEND",
+    fuelFeedFactor: clamp(Number(input?.fuelFeedFactor ?? 1), 0, 1.3),
+    heatPerFuelFactor: clamp(Number(input?.heatPerFuelFactor ?? 1), 0.35, 2.2),
+    outputFactor: clamp(Number(input?.outputFactor ?? 1), 0, 1.35),
+    coolantEfficiencyFactor: clamp(Number(input?.coolantEfficiencyFactor ?? 1), 0.4, 1.4),
+    containmentPenalty: clamp(Number(input?.containmentPenalty ?? 0), 0, 45),
+    efficiencyPenalty: clamp(Number(input?.efficiencyPenalty ?? 0), 0, 0.85),
+    temperatureBias: clamp(Number(input?.temperatureBias ?? 0), -70, 70),
+    stallPressureBonus: clamp(Number(input?.stallPressureBonus ?? 0), 0, 2.2),
+    fuelReserveCostFactor: clamp(Number(input?.fuelReserveCostFactor ?? 1), 0.35, 1.8),
+  };
 }

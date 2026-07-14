@@ -15,46 +15,47 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260711-unexpected-door-briefing-ui";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260713-fuel-quality-material";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260711-unexpected-door-briefing-ui";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260711-unexpected-door-briefing-ui";
+} from "./game/ShiftReport.js?v=20260713-fuel-quality-material";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260713-fuel-quality-material";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260713-fuel-quality-material";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260711-unexpected-door-briefing-ui";
+} from "./config/GraphicsQualityProfiles.js?v=20260713-fuel-quality-material";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260711-unexpected-door-briefing-ui";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260711-unexpected-door-briefing-ui";
-import { createStatusScreen } from "./StatusScreen.js?v=20260711-unexpected-door-briefing-ui";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260711-unexpected-door-briefing-ui";
+} from "./scene/TextureStreaming.js?v=20260713-fuel-quality-material";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260713-fuel-quality-material";
+import { createStatusScreen } from "./StatusScreen.js?v=20260713-fuel-quality-material";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260713-fuel-quality-material";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260711-unexpected-door-briefing-ui";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260711-unexpected-door-briefing-ui";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260711-unexpected-door-briefing-ui";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260711-unexpected-door-briefing-ui";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260711-unexpected-door-briefing-ui";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260711-unexpected-door-briefing-ui";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260711-unexpected-door-briefing-ui";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260711-unexpected-door-briefing-ui";
-import { LevelSession } from "./levels/LevelSession.js?v=20260711-unexpected-door-briefing-ui";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260711-unexpected-door-briefing-ui";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260711-unexpected-door-briefing-ui";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260711-unexpected-door-briefing-ui";
-import { PlayerController } from "./player/PlayerController.js?v=20260711-unexpected-door-briefing-ui";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260711-unexpected-door-briefing-ui";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260711-unexpected-door-briefing-ui";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260711-unexpected-door-briefing-ui";
+} from "./ui/PostProcessingDebugPanel.js?v=20260713-fuel-quality-material";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260713-fuel-quality-material";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260713-fuel-quality-material";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260713-fuel-quality-material";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260713-fuel-quality-material";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260713-fuel-quality-material";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260713-fuel-quality-material";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260713-fuel-quality-material";
+import { LevelSession } from "./levels/LevelSession.js?v=20260713-fuel-quality-material";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260713-fuel-quality-material";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260713-fuel-quality-material";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260713-fuel-quality-material";
+import { PlayerController } from "./player/PlayerController.js?v=20260713-fuel-quality-material";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260713-fuel-quality-material";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260713-fuel-quality-material";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260713-fuel-quality-material";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260713-fuel-quality-material";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -214,6 +215,8 @@ const statusScreen = createStatusScreen({
 });
 const fusionCore = createFusionCoreSimulation();
 const diagnosticRuntime = new DiagnosticRuntime();
+const fuelBlendRuntime = new FuelBlendRuntime();
+let activeShiftProfile = null;
 
 let panelModel = null;
 const panelCollisionMeshes = [];
@@ -3688,7 +3691,11 @@ function dispatchHoverSignal(target) {
 }
 
 function updatePanel(dt) {
-  const controlInputs = getControlInputs();
+  const fuelBlend = fuelBlendRuntime.update(dt, {
+    shiftMode: latestSnapshot.mode,
+    shiftElapsed: latestSnapshot.elapsed,
+  });
+  const controlInputs = getControlInputs(fuelBlend);
   const previousSnapshot = latestSnapshot;
   const snapshot = fusionCore.update(dt, controlInputs);
   const ignitionPulseCount = snapshot.ignitionPulseCount ?? 0;
@@ -3830,7 +3837,8 @@ function getLampMaterial(lamp, snapshot) {
   }
 
   if (lamp.name === "LightCase1_Light_FuelQuality") {
-    return snapshot.mode === "standby" ? materials.lampOff : materials.lampGreen;
+    if (snapshot.mode === "standby") return materials.lampOff;
+    return getLampOverrideMaterial(snapshot.fuelBlend?.material ?? "green");
   }
 
   const warningKey = LAMP_WARNING_KEYS[lamp.name];
@@ -4421,13 +4429,15 @@ function flickerWave(frequency, seed = 0) {
   return Math.pow(a * 0.65 + b * 0.35, 1.8);
 }
 
-function getControlInputs() {
+function getControlInputs(fuelBlend = null) {
   return {
     fuelInjection: getControlPercent("Control_Knob_FuelInjection"),
     magneticField: getControlPercent("Control_Knob_MagneticField"),
     coolantFlow: getControlPercent("Control_Knob_CoolantFlow"),
     ventActive: isControlButtonPressed("Control_Btn_Vent"),
     pulseActive: isControlButtonPressed("Control_Btn_Reset") || isControlButtonPressed("Buttun_Reset"),
+    fuelBlend,
+    shiftProfile: activeShiftProfile,
   };
 }
 
@@ -4879,6 +4889,7 @@ function startShift() {
   resetBulkheadExit();
   resetOperatorThoughts();
   fusionCore.start();
+  fuelBlendRuntime.start();
   previousGameMode = "running";
   resultsTimer = 0;
   resultsSnapshot = null;
@@ -4896,6 +4907,7 @@ function resetShift() {
   resetBulkheadExit();
   resetOperatorThoughts();
   fusionCore.reset();
+  fuelBlendRuntime.stop();
   previousGameMode = "standby";
   resultsTimer = 0;
   resultsSnapshot = null;
@@ -4990,6 +5002,7 @@ function resetPanelControls() {
   hoveredInteractive = null;
   indicatorTestTimer = 0;
   diagnosticRuntime.stopSelfTest();
+  fuelBlendRuntime.stop();
 }
 
 function resetLevelSession() {
@@ -5032,6 +5045,7 @@ function updateActiveLevelSession(dt) {
 async function resetForMenu() {
   activeLevelSession?.reset({ clearSaved: true });
   activeLevelSession = null;
+  activeShiftProfile = null;
   previousLevelSessionStatus = "idle";
   resetLevelSession();
   resetShift();
@@ -5063,9 +5077,12 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   });
   setRoomLightsEnabled(true, { instant: false });
   diagnosticRuntime.reset({ levelId, config: requestedLevelConfig });
+  fuelBlendRuntime.reset({ config: requestedLevelConfig });
+  activeShiftProfile = requestedLevelConfig.shiftProfile ?? null;
   resetLevelSession();
   resetShiftRecorder();
   fusionCore.reset();
+  fuelBlendRuntime.stop();
   previousGameMode = fusionCore.getSnapshot().mode;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
   return true;
@@ -5090,7 +5107,7 @@ function startDiagnosticSelfTest() {
     console.log("[OperatorGame] Self-test unavailable after ignition");
     return false;
   }
-  diagnosticRuntime.startSelfTest({ duration: CONFIG.feedback.indicatorTest.duration });
+  diagnosticRuntime.startSelfTest();
   indicatorTestTimer = 0;
   statusScreen.setSnapshot(diagnosticRuntime.createSelfTestSnapshot(fusionCore.getSnapshot()), true);
   console.log("[OperatorGame] Self-test started");
@@ -6148,6 +6165,8 @@ window.operatorGameDebug = {
     leanAmount: Number(leanAmount.toFixed(2)),
     indicatorTestActive: indicatorTestTimer > 0,
     diagnostics: diagnosticRuntime.getDebugState(),
+    fuelBlend: fuelBlendRuntime.snapshot(),
+    shiftProfile: activeShiftProfile,
     resultsVisible,
     resultsTimer: Number(resultsTimer.toFixed(2)),
     activeLevelId,

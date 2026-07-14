@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260711-unexpected-door-briefing-ui";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260713-fuel-quality-material";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

@@ -1,15 +1,34 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260711-unexpected-door-briefing-ui";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { translate } from "./Localization.js?v=20260711-unexpected-door-briefing-ui";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260711-unexpected-door-briefing-ui";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260711-unexpected-door-briefing-ui";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260711-unexpected-door-briefing-ui";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260713-fuel-quality-material";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260713-fuel-quality-material";
+import { translate } from "./Localization.js?v=20260713-fuel-quality-material";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260713-fuel-quality-material";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260713-fuel-quality-material";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260713-fuel-quality-material";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const INTRO_LEVEL_ID = "intro-shift";
 const BRIEFING_DISMISS_MS = 300;
+const LEVEL_ROUTE_LINKS = [
+  { from: "qualification", to: "facility", fromSide: "bottom", toSide: "top" },
+  { from: "qualification", to: "tests", fromSide: "bottom", toSide: "top" },
+];
+const LEVEL_UNLOCKS = {
+  "intro-shift": [],
+  "unexpected-stuff": ["intro-shift"],
+  "fuel-problems": ["intro-shift"],
+  "shift-coordination": ["unexpected-stuff", "fuel-problems"],
+  "exploring-around": ["shift-coordination"],
+  "power-bus-training": ["shift-coordination"],
+  "longer-shifts": ["shift-coordination"],
+  "broken-lamp": ["shift-coordination"],
+  "low-fuel": ["shift-coordination"],
+  "low-heat-sink": ["shift-coordination"],
+  "maximum-load": ["shift-coordination"],
+  freeplay: [],
+  competitive: ["shift-coordination"],
+};
 
 export function createAppShell({ gameApi }) {
   const overlay = document.querySelector("#appOverlay");
@@ -27,6 +46,9 @@ export function createAppShell({ gameApi }) {
     translate,
   });
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
+  const levelRouteScroll = document.querySelector(".level-route-scroll");
+  const levelRouteCanvas = document.querySelector(".level-route-canvas");
+  const levelRouteLinksSvg = document.querySelector(".route-links-svg");
   const fovInput = document.querySelector("#settingFov");
   const fovValue = document.querySelector("#settingFovValue");
   const uiScaleInput = document.querySelector("#settingUiScale");
@@ -78,6 +100,7 @@ export function createAppShell({ gameApi }) {
 
   applySettings();
   wireActions();
+  wireLevelRouteDrag();
   wireBriefingInspect();
   wireSettings();
   wireProgression();
@@ -85,6 +108,7 @@ export function createAppShell({ gameApi }) {
   wireSubtitles();
   validateLevelMenu();
   updateLevelProgressUi();
+  installDevConsoleCommands();
 
   function wireSubtitles() {
     window.addEventListener("operatorgame:subtitle", (event) => subtitleQueue.enqueue(event.detail));
@@ -138,6 +162,113 @@ export function createAppShell({ gameApi }) {
         showPanel("pause");
       }
     });
+  }
+
+  function wireLevelRouteDrag() {
+    if (!levelRouteScroll) return;
+    let drag = null;
+    let suppressClick = false;
+    const dragThreshold = 4;
+
+    levelRouteScroll.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      drag = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        scrollLeft: levelRouteScroll.scrollLeft,
+        scrollTop: levelRouteScroll.scrollTop,
+        active: false,
+      };
+    });
+
+    levelRouteScroll.addEventListener("pointermove", (event) => {
+      if (!drag) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      if (!drag.active && Math.hypot(dx, dy) < dragThreshold) return;
+      if (!drag.active && !levelRouteScroll.hasPointerCapture(drag.pointerId)) {
+        levelRouteScroll.setPointerCapture(drag.pointerId);
+      }
+      drag.active = true;
+      suppressClick = true;
+      levelRouteScroll.classList.add("is-dragging");
+      levelRouteScroll.scrollLeft = drag.scrollLeft - dx;
+      levelRouteScroll.scrollTop = drag.scrollTop - dy;
+      event.preventDefault();
+    });
+
+    const endDrag = (event) => {
+      if (!drag) return;
+      drag = null;
+      levelRouteScroll.classList.remove("is-dragging");
+      if (levelRouteScroll.hasPointerCapture(event.pointerId)) levelRouteScroll.releasePointerCapture(event.pointerId);
+    };
+
+    levelRouteScroll.addEventListener(
+      "click",
+      (event) => {
+        if (!suppressClick) return;
+        suppressClick = false;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      true,
+    );
+    levelRouteScroll.addEventListener("pointerup", endDrag);
+    levelRouteScroll.addEventListener("pointercancel", endDrag);
+    levelRouteScroll.addEventListener("lostpointercapture", endDrag);
+    window.addEventListener("blur", () => {
+      drag = null;
+      suppressClick = false;
+      levelRouteScroll.classList.remove("is-dragging");
+    });
+    window.addEventListener("resize", updateLevelRouteLinks);
+  }
+
+  function updateLevelRouteLinks() {
+    if (!levelRouteCanvas || !levelRouteLinksSvg) return;
+    const canvasRect = levelRouteCanvas.getBoundingClientRect();
+    const width = levelRouteCanvas.offsetWidth;
+    const height = levelRouteCanvas.offsetHeight;
+    levelRouteLinksSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    levelRouteLinksSvg.innerHTML = LEVEL_ROUTE_LINKS.map((link) => {
+      const from = getRouteAnchor(link.from, link.fromSide, canvasRect);
+      const to = getRouteAnchor(link.to, link.toSide, canvasRect);
+      if (!from || !to) return "";
+      return `<path d="${createRoutePath(from, to, link)}" />`;
+    }).join("");
+  }
+
+  function getRouteAnchor(sectionId, side, canvasRect) {
+    const section = levelRouteCanvas?.querySelector(`[data-route-section="${sectionId}"]`);
+    if (!section) return null;
+    const rect = section.getBoundingClientRect();
+    const x = rect.left - canvasRect.left;
+    const y = rect.top - canvasRect.top;
+    const anchors = {
+      top: { x: x + rect.width / 2, y },
+      right: { x: x + rect.width, y: y + rect.height / 2 },
+      bottom: { x: x + rect.width / 2, y: y + rect.height },
+      left: { x, y: y + rect.height / 2 },
+    };
+    return anchors[side] ?? anchors.bottom;
+  }
+
+  function createRoutePath(from, to, link) {
+    if (link.fromSide === "bottom" && link.toSide === "top") {
+      const midY = Math.round((from.y + to.y) / 2);
+      return `M ${round(from.x)} ${round(from.y)} L ${round(from.x)} ${midY} L ${round(to.x)} ${midY} L ${round(to.x)} ${round(to.y)}`;
+    }
+    if (link.fromSide === "left" && link.toSide === "right") {
+      const midX = Math.round((from.x + to.x) / 2);
+      return `M ${round(from.x)} ${round(from.y)} L ${midX} ${round(from.y)} L ${midX} ${round(to.y)} L ${round(to.x)} ${round(to.y)}`;
+    }
+    return `M ${round(from.x)} ${round(from.y)} L ${round(to.x)} ${round(to.y)}`;
+  }
+
+  function round(value) {
+    return Math.round(value * 10) / 10;
   }
 
   function wireSettings() {
@@ -476,12 +607,12 @@ export function createAppShell({ gameApi }) {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 
-  function startLevel(levelId) {
-    if (transitionActive) return;
+  function startLevel(levelId, { force = false } = {}) {
+    if (transitionActive) return false;
     const level = LEVELS[levelId];
-    if (!level?.playable) return;
+    if (!level?.playable || (!force && !isLevelUnlocked(levelId))) return false;
 
-    runRouteTransition({
+    const transition = runRouteTransition({
       title: getLevelTitle(levelId),
       status: translate("loading.loadingShift"),
       action: async () => {
@@ -493,6 +624,146 @@ export function createAppShell({ gameApi }) {
         showLevelBriefing(levelId);
       },
     });
+    return transition;
+  }
+
+  function completeLevel(levelId, { finished = true } = {}) {
+    const level = LEVELS[levelId];
+    if (!level) {
+      console.warn(`[OperatorGame] Unknown level: ${levelId}`);
+      return false;
+    }
+    progress.completedLevels[levelId] = true;
+    if (finished) progress.finishedLevels[levelId] = true;
+    if (!firstVisitEmulation) saveProgress(progress);
+    updateLevelProgressUi();
+    console.log(`[OperatorGame] Marked complete: ${levelId}`);
+    return true;
+  }
+
+  function attemptLevel(levelId) {
+    const level = LEVELS[levelId];
+    if (!level) {
+      console.warn(`[OperatorGame] Unknown level: ${levelId}`);
+      return false;
+    }
+    progress.finishedLevels[levelId] = true;
+    delete progress.completedLevels[levelId];
+    if (!firstVisitEmulation) saveProgress(progress);
+    updateLevelProgressUi();
+    console.log(`[OperatorGame] Marked attempted: ${levelId}`);
+    return true;
+  }
+
+  function clearLevelProgress(levelId) {
+    if (!LEVELS[levelId]) {
+      console.warn(`[OperatorGame] Unknown level: ${levelId}`);
+      return false;
+    }
+    delete progress.finishedLevels[levelId];
+    delete progress.completedLevels[levelId];
+    if (!firstVisitEmulation) saveProgress(progress);
+    updateLevelProgressUi();
+    console.log(`[OperatorGame] Cleared progress: ${levelId}`);
+    return true;
+  }
+
+  function resetProgress() {
+    Object.keys(progress.finishedLevels).forEach((levelId) => delete progress.finishedLevels[levelId]);
+    Object.keys(progress.completedLevels).forEach((levelId) => delete progress.completedLevels[levelId]);
+    localStorage.removeItem(PROGRESS_STORAGE_KEY);
+    Object.keys(sessionStorage)
+      .filter((key) => key.startsWith("operatorGame.levelSession."))
+      .forEach((key) => sessionStorage.removeItem(key));
+    updateLevelProgressUi();
+    console.log("[OperatorGame] Progress reset");
+    return true;
+  }
+
+  function getProgressSnapshot() {
+    return {
+      finishedLevels: { ...progress.finishedLevels },
+      completedLevels: { ...progress.completedLevels },
+      unlockedLevels: Object.fromEntries(Object.keys(LEVELS).map((levelId) => [levelId, isLevelUnlocked(levelId)])),
+    };
+  }
+
+  function listConsoleLevels() {
+    return Object.fromEntries(
+      Object.entries(LEVELS).map(([levelId, level]) => [
+        levelId,
+        {
+          title: level.title,
+          playable: level.playable,
+          unlocked: isLevelUnlocked(levelId),
+          finished: Boolean(progress.finishedLevels[levelId]),
+          complete: Boolean(progress.completedLevels[levelId]),
+        },
+      ]),
+    );
+  }
+
+  function runConsoleCommand(commandLine = "") {
+    const [command, ...args] = String(commandLine).trim().split(/\s+/).filter(Boolean);
+    const levelId = args[0];
+    if (!command || command === "help") return getConsoleHelp();
+    if (command === "complete") return completeLevel(levelId);
+    if (command === "attempt") return attemptLevel(levelId);
+    if (command === "clear") return clearLevelProgress(levelId);
+    if (command === "goto" || command === "go") return startLevel(levelId, { force: true });
+    if (command === "reset" && levelId === "progress") return resetProgress();
+    if (command === "progress") return getProgressSnapshot();
+    if (command === "levels" || command === "list") return listConsoleLevels();
+    console.warn(`[OperatorGame] Unknown dev command: ${commandLine}`);
+    return getConsoleHelp();
+  }
+
+  function getConsoleHelp() {
+    return [
+      "og('complete intro-shift')",
+      "og('attempt unexpected-stuff')",
+      "og('clear fuel-problems')",
+      "og('goto intro-shift')",
+      "og('reset progress')",
+      "og('progress')",
+      "og('levels')",
+      "og.complete('intro-shift')",
+      "og.goto('fuel-problems')",
+      "og.resetProgress()",
+    ];
+  }
+
+  function installDevConsoleCommands() {
+    const og = (commandLine) => runConsoleCommand(commandLine);
+    Object.assign(og, {
+      help: getConsoleHelp,
+      complete: completeLevel,
+      attempt: attemptLevel,
+      clear: clearLevelProgress,
+      goto: (levelId) => startLevel(levelId, { force: true }),
+      resetProgress,
+      progress: getProgressSnapshot,
+      levels: listConsoleLevels,
+    });
+    window.og = og;
+    window.operatorGameConsole = og;
+    window.completeLevel = completeLevel;
+    window.attemptLevel = attemptLevel;
+    window.clearLevelProgress = clearLevelProgress;
+    window.gotoLevel = (levelId) => startLevel(levelId, { force: true });
+    window.resetProgress = resetProgress;
+    window.operatorGameDebug = {
+      ...(window.operatorGameDebug ?? {}),
+      completeLevel,
+      attemptLevel,
+      clearLevelProgress,
+      gotoLevel: (levelId) => startLevel(levelId, { force: true }),
+      resetProgress,
+      getProgress: getProgressSnapshot,
+      listLevels: listConsoleLevels,
+      runCommand: runConsoleCommand,
+    };
+    console.info("[OperatorGame] Dev console commands ready. Try og('help').");
   }
 
   function getLevelBriefingSheets(levelId) {
@@ -631,16 +902,29 @@ export function createAppShell({ gameApi }) {
   function updateLevelProgressUi() {
     document.querySelectorAll("[data-level-id]").forEach((node) => {
       const levelId = node.dataset.levelId;
+      const level = LEVELS[levelId];
       const completed = Boolean(progress.completedLevels[levelId]);
       const finished = Boolean(progress.finishedLevels[levelId]);
+      const unlocked = isLevelUnlocked(levelId);
+      const available = Boolean(level?.playable && unlocked);
       node.classList.toggle("is-complete", completed);
       node.classList.toggle("is-finished", finished && !completed);
+      node.classList.toggle("is-active", available);
+      node.classList.toggle("is-locked", !available);
       node.dataset.completion = completed ? "complete" : finished ? "attempted" : "";
+      if ("disabled" in node) node.disabled = !available;
       node.setAttribute(
         "aria-label",
         `${LEVELS[levelId]?.title ?? levelId}${completed ? " complete" : finished ? " attempted" : ""}`,
       );
     });
+  }
+
+  function isLevelUnlocked(levelId) {
+    const requirements = LEVEL_UNLOCKS[levelId];
+    if (!requirements) return Boolean(LEVELS[levelId]?.playable);
+    if (requirements.length === 0) return true;
+    return requirements.some((requiredLevelId) => progress.completedLevels[requiredLevelId]);
   }
 
   function showPanel(panelName) {
@@ -655,6 +939,12 @@ export function createAppShell({ gameApi }) {
     panels.forEach((panel, name) => {
       panel.hidden = name !== panelName;
     });
+    if (panelName === "level-select" && levelRouteScroll) {
+      requestAnimationFrame(() => {
+        updateLevelRouteLinks();
+        levelRouteScroll.scrollTo({ left: 2810, top: 30 });
+      });
+    }
   }
 
   function hideOverlay() {

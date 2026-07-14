@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260711-unexpected-door-briefing-ui";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260711-unexpected-door-briefing-ui";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260711-unexpected-door-briefing-ui";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260713-fuel-quality-material";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260713-fuel-quality-material";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260713-fuel-quality-material";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260713-fuel-quality-material";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
