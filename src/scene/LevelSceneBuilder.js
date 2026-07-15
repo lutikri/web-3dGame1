@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   mergeMarkerPrefabs,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=20260713-fuel-quality-material";
-import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260713-fuel-quality-material";
+} from "../prefabs/PrefabMarkerResolver.js?v=20260714-service-door-latch-closer";
+import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260714-service-door-latch-closer";
 
 export function createLevelSceneBuilder({
   scene,
@@ -75,20 +75,31 @@ export function createLevelSceneBuilder({
     model.name = `${levelId}_Collision`;
     applyTransform(model, config);
     const requiredNameParts = config.collision?.meshNameIncludes ?? [];
+    const excludedNameParts = config.collision?.meshNameExcludes ?? [];
     const excludedMeshes = [];
+    const includedMeshes = [];
+    const excludedMeshSet = new Set();
     model.traverse((object) => {
       if (!object.isMesh) return;
+      const excluded = excludedNameParts.some((part) =>
+        object.name.toLowerCase().includes(String(part).toLowerCase()),
+      );
       const included =
         requiredNameParts.length === 0 ||
         requiredNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()));
-      if (!included) {
+      if (!included || excluded) {
         excludedMeshes.push(object);
+        excludedMeshSet.add(object);
         return;
       }
+      includedMeshes.push(object);
       object.castShadow = false;
       object.receiveShadow = false;
       object.material = collisionDebugMaterial;
       object.renderOrder = 1000;
+    });
+    includedMeshes.forEach((object) => {
+      if (hasExcludedMeshAncestor(object, excludedMeshSet, model)) model.attach(object);
     });
     excludedMeshes.forEach((object) => object.parent?.remove(object));
     model.visible = isCollisionVisible();
@@ -117,4 +128,13 @@ function applyTransform(model, config) {
   model.rotation.copy(config.rotation ?? new THREE.Euler());
   model.scale.copy(config.scale ?? new THREE.Vector3(1, 1, 1));
   model.updateMatrixWorld(true);
+}
+
+function hasExcludedMeshAncestor(object, excludedMeshSet, stopAt) {
+  let current = object.parent;
+  while (current && current !== stopAt) {
+    if (excludedMeshSet.has(current)) return true;
+    current = current.parent;
+  }
+  return false;
 }

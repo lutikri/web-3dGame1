@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260713-fuel-quality-material";
+import { translateRequired } from "./Localization.js?v=20260714-service-door-latch-closer";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

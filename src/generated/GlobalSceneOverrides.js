@@ -101,6 +101,33 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "emissive": "#000000",
       "emissiveIntensity": 0
     },
+    "trimTiles1": {
+      "color": "#ffffff",
+      "roughness": 1,
+      "metalness": 1,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
+    "door2": {
+      "color": "#ffffff",
+      "roughness": 1.33,
+      "metalness": 1,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
+    "door2Glass": {
+      "color": "#ffffff",
+      "roughness": 0.48,
+      "metalness": 0,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
     "doorLamp2": {
       "color": "#ffffff",
       "roughness": 1,

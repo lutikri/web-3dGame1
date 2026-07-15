@@ -15,47 +15,47 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260713-fuel-quality-material";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260714-service-door-latch-closer";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260713-fuel-quality-material";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260713-fuel-quality-material";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260713-fuel-quality-material";
+} from "./game/ShiftReport.js?v=20260714-service-door-latch-closer";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260714-service-door-latch-closer";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260714-service-door-latch-closer";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260713-fuel-quality-material";
+} from "./config/GraphicsQualityProfiles.js?v=20260714-service-door-latch-closer";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260713-fuel-quality-material";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260713-fuel-quality-material";
-import { createStatusScreen } from "./StatusScreen.js?v=20260713-fuel-quality-material";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260713-fuel-quality-material";
+} from "./scene/TextureStreaming.js?v=20260714-service-door-latch-closer";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260714-service-door-latch-closer";
+import { createStatusScreen } from "./StatusScreen.js?v=20260714-service-door-latch-closer";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260714-service-door-latch-closer";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260713-fuel-quality-material";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260713-fuel-quality-material";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260713-fuel-quality-material";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260713-fuel-quality-material";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260713-fuel-quality-material";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260713-fuel-quality-material";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260713-fuel-quality-material";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260713-fuel-quality-material";
-import { LevelSession } from "./levels/LevelSession.js?v=20260713-fuel-quality-material";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260713-fuel-quality-material";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260713-fuel-quality-material";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260713-fuel-quality-material";
-import { PlayerController } from "./player/PlayerController.js?v=20260713-fuel-quality-material";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260713-fuel-quality-material";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260713-fuel-quality-material";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260713-fuel-quality-material";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260713-fuel-quality-material";
+} from "./ui/PostProcessingDebugPanel.js?v=20260714-service-door-latch-closer";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260714-service-door-latch-closer";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260714-service-door-latch-closer";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260714-service-door-latch-closer";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260714-service-door-latch-closer";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260714-service-door-latch-closer";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260714-service-door-latch-closer";
+import { LevelSession } from "./levels/LevelSession.js?v=20260714-service-door-latch-closer";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260714-service-door-latch-closer";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260714-service-door-latch-closer";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260714-service-door-latch-closer";
+import { PlayerController } from "./player/PlayerController.js?v=20260714-service-door-latch-closer";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260714-service-door-latch-closer";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260714-service-door-latch-closer";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260714-service-door-latch-closer";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260714-service-door-latch-closer";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -315,6 +315,8 @@ let fpsFrameCount = 0;
 let fpsElapsed = 0;
 let currentFps = 0;
 let frameTimeMs = 0;
+let debugMemorySnapshot = null;
+let debugMemorySnapshotAt = 0;
 let hoveredInteractive = null;
 let hoveredKnob = null;
 let hoveredTooltipTarget = null;
@@ -345,6 +347,7 @@ let shiftRecorder = createShiftRecorder();
 let previousGameMode = latestSnapshot.mode;
 let resultsTimer = 0;
 let resultsSnapshot = null;
+const activeRuntimeTextureSets = new Map();
 const playerController = new PlayerController({
   updateMovement,
   updateZoom: updateCameraZoom,
@@ -771,8 +774,9 @@ const materials = {
 
 Promise.all(interiorCustomTextureMapPromises)
   .then((entries) => {
-    entries.forEach(([key, textureMaps, deferredPaths]) => {
+    entries.forEach(([key, textureMaps, deferredPaths, initialPaths]) => {
       interiorCustomTextureMaps[key] = textureMaps;
+      registerRuntimeTextureSet(`material:${key}`, textureMaps, initialPaths, deferredPaths ? "preview" : "full");
       applyTextureMapsToMaterial(materials.interiorCustom[key], textureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = deferredPaths ? "preview" : "full";
       syncLevelPrefabMaterialClones(key);
@@ -793,6 +797,7 @@ Promise.all(interiorCustomTextureMapPromises)
 panelTextureMapPromise
   .then((textureMaps) => {
     panelTextureMaps = textureMaps;
+    registerRuntimeTextureSet("panel:Panel1_PBR", textureMaps, getInitialTexturePaths(CONFIG.panel.maps), getDeferredTexturePaths(CONFIG.panel.maps) ? "preview" : "full");
     applyPanelTextureMapsToMaterial(materials.panel, textureMaps);
     materials.panel.userData.textureTier = getDeferredTexturePaths(CONFIG.panel.maps) ? "preview" : "full";
     console.log("[OperatorGame] Loaded Panel1 PBR texture maps");
@@ -818,7 +823,30 @@ function loadInteriorCustomMaterialTextures() {
     key,
     await loadInteriorTextureMaps(getInitialTexturePaths(config.maps)),
     getDeferredTexturePaths(config.maps),
+    getInitialTexturePaths(config.maps),
   ]);
+}
+
+function registerRuntimeTextureSet(label, textureMaps, paths, tier) {
+  if (!textureMaps) return;
+  const pathByMapName = {
+    map: paths?.baseColor ?? null,
+    normalMap: paths?.normal ?? null,
+    ormMap: paths?.orm ?? null,
+    emissiveMap: paths?.emissive ?? null,
+    maskMap: paths?.mask ?? null,
+  };
+  activeRuntimeTextureSets.set(label, {
+    label,
+    tier,
+    textures: Object.entries(textureMaps)
+      .filter(([, texture]) => Boolean(texture))
+      .map(([mapName, texture]) => ({
+        mapName,
+        texture,
+        path: pathByMapName[mapName] ?? texture?.source?.data?.src ?? "",
+      })),
+  });
 }
 
 function queueDeferredTextureLoad(key, paths) {
@@ -827,6 +855,7 @@ function queueDeferredTextureLoad(key, paths) {
       const fullTextureMaps = await loadInteriorTextureMaps(paths, { trackRuntimeTextures: true });
       const previousTextureMaps = interiorCustomTextureMaps[key];
       interiorCustomTextureMaps[key] = fullTextureMaps;
+      registerRuntimeTextureSet(`material:${key}`, fullTextureMaps, paths, "full");
       applyTextureMapsToMaterial(materials.interiorCustom[key], fullTextureMaps, CONFIG.interior.specialMaterials?.[key]);
       materials.interiorCustom[key].userData.textureTier = "full";
       syncLevelPrefabMaterialClones(key);
@@ -861,6 +890,7 @@ function queueDeferredPanelTextureLoad(paths) {
       const fullTextureMaps = await loadInteriorTextureMaps(paths, { trackRuntimeTextures: true });
       const previousTextureMaps = panelTextureMaps;
       panelTextureMaps = fullTextureMaps;
+      registerRuntimeTextureSet("panel:Panel1_PBR", fullTextureMaps, paths, "full");
       applyPanelTextureMapsToMaterial(materials.panel, fullTextureMaps);
       materials.panel.userData.textureTier = "full";
       textureStreaming.disposeTextureMaps(previousTextureMaps);
@@ -2141,7 +2171,7 @@ function createPrefabRuntime(prefab, prefabConfig) {
       parts.set(object.name, object);
     }
     if (!object.isMesh) return;
-    const isCollider = /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(object.name);
+    const isCollider = isCollisionHelperMesh(object.name);
     object.userData.prefabCollider = isCollider;
     object.visible = isCollider ? Boolean(CONFIG.player?.collision?.show) : true;
     object.castShadow = !isCollider;
@@ -2531,7 +2561,14 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
   if (interaction?.type !== "hingedDoor") return;
   const doorMesh = runtime.parts.get(interaction.meshName);
   const colliderMesh = runtime.parts.get(interaction.colliderName);
-  const latchHandle = interaction.latchHandleName ? runtime.parts.get(interaction.latchHandleName) : null;
+  const latchHandleNames = [
+    ...(interaction.latchHandleName ? [interaction.latchHandleName] : []),
+    ...(interaction.latchHandleNames ?? []),
+  ];
+  const latchHandles = latchHandleNames
+    .map((name) => runtime.parts.get(name))
+    .filter(Boolean);
+  const latchHandle = latchHandles[0] ?? null;
   if (!doorMesh) return;
 
   doorMesh.userData.kind = "hingedDoor";
@@ -2543,7 +2580,7 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
   });
   doorMesh.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
   doorMesh.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
-  interactive.push(doorMesh);
+  if (interaction.doorClickAction !== "none") interactive.push(doorMesh);
   runtime.root.updateMatrixWorld(true);
   doorMesh.updateWorldMatrix(true, false);
   colliderMesh?.updateWorldMatrix(true, false);
@@ -2551,6 +2588,7 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
     mesh: doorMesh,
     collider: colliderMesh,
     latchHandle,
+    latchHandles,
     interaction,
     levelId,
     prefabName: prefabConfig.name,
@@ -2563,14 +2601,14 @@ function registerPrefabInteraction(levelId, prefabConfig, runtime) {
       ? new THREE.Matrix4().copy(doorMesh.matrixWorld).invert().multiply(colliderMesh.matrixWorld)
       : null,
   };
-  if (latchHandle) {
-    latchHandle.userData.kind = "doorLatchHandle";
-    latchHandle.userData.levelId = levelId;
-    latchHandle.userData.controlLabel = "BULKHEAD LOCK";
-    latchHandle.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
-    latchHandle.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
-    interactive.push(latchHandle);
-  }
+  latchHandles.forEach((handle) => {
+    handle.userData.kind = "doorLatchHandle";
+    handle.userData.levelId = levelId;
+    handle.userData.controlLabel = interaction.latchControlLabel ?? "DOOR HANDLE";
+    handle.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
+    handle.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+    interactive.push(handle);
+  });
   applyHingedDoorRotation(runtime);
   if (physicsSystem && colliderMesh) {
     runtime.physicsDoorKey = `${levelId}:${prefabConfig.name}`;
@@ -2619,23 +2657,37 @@ function applyHingedDoorRotation(runtime) {
 
 function applyDoorLatchHandleRotation(runtime) {
   const door = runtime?.door;
-  const handle = door?.latchHandle;
-  if (!handle) return;
-  handle.rotation.copy(handle.userData.prefabInitialRotation);
-  const degrees = getDoorLatchHandleDegrees(door);
-  applyAxisRotation(handle, door.interaction.latchHandleAxis ?? "z", THREE.MathUtils.degToRad(degrees));
+  const handles = door?.latchHandles?.length ? door.latchHandles : door?.latchHandle ? [door.latchHandle] : [];
+  if (!handles.length) return;
+  handles.forEach((handle) => {
+    handle.rotation.copy(handle.userData.prefabInitialRotation);
+    const degrees = getDoorLatchHandleDegrees(door, handle);
+    applyAxisRotation(handle, door.interaction.latchHandleAxis ?? "z", THREE.MathUtils.degToRad(degrees));
+  });
 }
 
 function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);
 }
 
-function getDoorLatchBaseDegrees(door, latched = door.latched) {
-  return latched ? door.interaction.latchHandleLatchedDegrees ?? -70 : 0;
+function getDoorLatchBaseDegrees(door, latched = door.latched, handle = door.activeLatchHandle ?? door.latchHandle) {
+  if (door.interaction.latchAction === "holdOpen") return 0;
+  const explicitByName = door.interaction.latchHandleDegreesByName?.[handle?.name];
+  const explicitLatchedDegrees = Number.isFinite(explicitByName)
+    ? explicitByName
+    : door.interaction.latchHandleLatchedDegrees;
+  return latched ? explicitLatchedDegrees ?? -70 : 0;
 }
 
-function getDoorLatchRestDegrees(door) {
-  return getDoorLatchBaseDegrees(door) + (door.latchHandleSpinOffsetDegrees ?? 0);
+function getDoorLatchRestDegrees(door, handle = door.activeLatchHandle ?? door.latchHandle) {
+  if (
+    door.activeLatchHandle &&
+    handle !== door.activeLatchHandle &&
+    (door.interaction.latchAction === "toggleDoor" || door.interaction.latchAction === "holdOpen")
+  ) {
+    return 0;
+  }
+  return getDoorLatchBaseDegrees(door, door.latched, handle) + (door.latchHandleSpinOffsetDegrees ?? 0);
 }
 
 function getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress, jerkScale = 1) {
@@ -2649,11 +2701,18 @@ function getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress, jerkS
   return THREE.MathUtils.lerp(fromDegrees, toDegrees, easedProgress) + mechanicalJerk;
 }
 
-function getDoorLatchHandleDegrees(door) {
+function getDoorLatchHandleDegrees(door, handle = door.activeLatchHandle ?? door.latchHandle) {
+  if (
+    door.activeLatchHandle &&
+    handle !== door.activeLatchHandle &&
+    (door.interaction.latchAction === "toggleDoor" || door.interaction.latchAction === "holdOpen")
+  ) {
+    return 0;
+  }
   if (door.latchBlockedAttempt) {
     const duration = door.interaction.latchBlockedAttemptSeconds ?? 0.55;
     const progress = THREE.MathUtils.clamp(door.latchBlockedAttempt.elapsed / Math.max(duration, 0.001), 0, 1);
-    const fromDegrees = door.latchBlockedAttempt.fromDegrees ?? getDoorLatchRestDegrees(door);
+    const fromDegrees = door.latchBlockedAttempt.fromDegrees ?? getDoorLatchRestDegrees(door, handle);
     const toDegrees =
       door.latchBlockedAttempt.toDegrees ??
       fromDegrees + (door.latchBlockedAttempt.sign ?? 1) * (door.interaction.latchBlockedStopDegrees ?? 26);
@@ -2662,7 +2721,7 @@ function getDoorLatchHandleDegrees(door) {
     }
     return getDoorLatchMotionDegrees(door, toDegrees, fromDegrees, (progress - 0.5) / 0.5, 0.8);
   }
-  if (!door.latchOperation) return getDoorLatchRestDegrees(door);
+  if (!door.latchOperation) return getDoorLatchRestDegrees(door, handle);
 
   const progress = THREE.MathUtils.clamp(door.latchOperation.progress ?? 0, 0, 1);
   return getDoorLatchMotionDegrees(door, door.latchOperation.fromDegrees, door.latchOperation.toDegrees, progress);
@@ -2684,16 +2743,57 @@ function updateDoorLatchHandles(dt) {
     const direction = door.latchOperation.held ? 1 / (interaction.latchHoldSeconds ?? 0.5) : -1 / (interaction.latchReturnSeconds ?? 0.35);
     door.latchOperation.progress = THREE.MathUtils.clamp(door.latchOperation.progress + direction * dt, 0, 1);
     applyDoorLatchHandleRotation(runtime);
+    if (door.latchOperation.action === "holdOpen") {
+      updateHoldOpenDoorLatch(runtime, dt);
+      return;
+    }
     if (door.latchOperation.progress >= 1) {
+      if (door.latchOperation.action === "toggleDoor") {
+        if (!door.latchOperation.completed) {
+          door.latchOperation.completed = true;
+          door.latchOperation.held = false;
+          toggleHingedDoor(door.mesh);
+        }
+        return;
+      }
       door.latchHandleSpinOffsetDegrees = door.latchOperation.finalSpinOffsetDegrees ?? door.latchHandleSpinOffsetDegrees ?? 0;
       const targetLatched = door.latchOperation.targetLatched;
       door.latchOperation = null;
       setDoorLatched(runtime, targetLatched);
     } else if (door.latchOperation.progress <= 0 && !door.latchOperation.held) {
       door.latchOperation = null;
+      door.activeLatchHandle = null;
       applyDoorLatchHandleRotation(runtime);
     }
   });
+}
+
+function updateHoldOpenDoorLatch(runtime, dt) {
+  const door = runtime?.door;
+  const operation = door?.latchOperation;
+  if (!door || operation?.action !== "holdOpen") return;
+  if (operation.held) {
+    physicsSystem?.setDoorDragTarget(
+      runtime.physicsDoorKey,
+      door.interaction.openDegrees ?? 80,
+      true,
+    );
+    return;
+  }
+
+  const closeDegrees = door.interaction.closeDegrees ?? door.interaction.initialDegrees ?? 0;
+  const currentDegrees = physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
+  door.degrees = currentDegrees;
+  physicsSystem?.setDoorDragTarget(runtime.physicsDoorKey, closeDegrees, true);
+  const closeTolerance = door.interaction.closeToleranceDegrees ?? 3;
+  if (Math.abs(currentDegrees - closeDegrees) <= closeTolerance) {
+    door.latchOperation = null;
+    door.activeLatchHandle = null;
+    door.latched = true;
+    door.commandedOpen = false;
+    physicsSystem?.setDoorLocked(runtime.physicsDoorKey, true, closeDegrees);
+    applyDoorLatchHandleRotation(runtime);
+  }
 }
 
 function setHoveredHingedDoor(doorMesh) {
@@ -2749,9 +2849,49 @@ function beginDoorLatchHandleInteraction(handle) {
   const runtime = levelPrefabInstances.get(handle?.userData.levelPrefabKey);
   const door = runtime?.door;
   if (!door) return false;
+  door.activeLatchHandle = handle ?? door.latchHandle ?? door.latchHandles?.[0] ?? null;
   if (!canOperateDoorLatch(runtime)) {
     triggerDoorLatchBlockedAttempt(runtime);
     return false;
+  }
+  if (door.interaction.latchAction === "toggleDoor") {
+    door.latchBlockedAttempt = null;
+    const turnDegrees =
+      door.interaction.latchHandleDegreesByName?.[door.activeLatchHandle?.name] ??
+      door.interaction.latchTurnDegrees ??
+      28;
+    door.latchOperation = {
+      action: "toggleDoor",
+      held: true,
+      progress: 0,
+      fromDegrees: 0,
+      toDegrees: turnDegrees,
+    };
+    applyDoorLatchHandleRotation(runtime);
+    return true;
+  }
+  if (door.interaction.latchAction === "holdOpen") {
+    door.latchBlockedAttempt = null;
+    door.latched = false;
+    if (runtime.physicsDoorKey) physicsSystem?.setDoorLocked(runtime.physicsDoorKey, false);
+    const turnDegrees =
+      door.interaction.latchHandleDegreesByName?.[door.activeLatchHandle?.name] ??
+      door.interaction.latchTurnDegrees ??
+      28;
+    door.latchOperation = {
+      action: "holdOpen",
+      held: true,
+      progress: 0,
+      fromDegrees: 0,
+      toDegrees: turnDegrees,
+    };
+    physicsSystem?.setDoorDragTarget(
+      runtime.physicsDoorKey,
+      door.interaction.openDegrees ?? 80,
+      true,
+    );
+    applyDoorLatchHandleRotation(runtime);
+    return true;
   }
   const currentDegrees = physicsSystem?.getDoorDegrees(runtime.physicsDoorKey) ?? door.degrees;
   door.degrees = currentDegrees;
@@ -3504,8 +3644,88 @@ function updateFpsMeter(dt) {
   }
 }
 
+function formatMemoryMiB(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return "n/a";
+  return `${(bytes / 1048576).toFixed(bytes >= 104857600 ? 0 : 1)} MiB`;
+}
+
+function getTextureDimension(texture, axis) {
+  const image = texture?.image ?? texture?.source?.data;
+  const mip = texture?.mipmaps?.[0];
+  return Number(image?.[axis] ?? mip?.[axis] ?? 0);
+}
+
+function estimateTextureGpuBytes(texture) {
+  if (!texture) return 0;
+  const mipBytes = texture.mipmaps?.reduce((total, mip) => total + Number(mip?.data?.byteLength ?? 0), 0) ?? 0;
+  if (mipBytes > 0) return mipBytes;
+
+  const width = getTextureDimension(texture, "width");
+  const height = getTextureDimension(texture, "height");
+  if (!width || !height) return 0;
+
+  const mipMultiplier = texture.generateMipmaps === false ? 1 : 4 / 3;
+  const bytesPerPixel = texture.isCompressedTexture ? 0.5 : 4;
+  return width * height * bytesPerPixel * mipMultiplier;
+}
+
+function getRuntimeTextureMemorySnapshot() {
+  const textures = [];
+  const sets = [];
+  activeRuntimeTextureSets.forEach((set) => {
+    let setBytes = 0;
+    set.textures.forEach((entry) => {
+      const bytes = estimateTextureGpuBytes(entry.texture);
+      setBytes += bytes;
+      textures.push({
+        label: set.label,
+        tier: set.tier,
+        mapName: entry.mapName,
+        path: entry.path,
+        bytes,
+        width: getTextureDimension(entry.texture, "width"),
+        height: getTextureDimension(entry.texture, "height"),
+      });
+    });
+    sets.push({ label: set.label, tier: set.tier, bytes: setBytes });
+  });
+
+  textures.sort((a, b) => b.bytes - a.bytes);
+  sets.sort((a, b) => b.bytes - a.bytes);
+  const heap = performance?.memory ?? null;
+  const deviceMemoryGb = Number(navigator.deviceMemory ?? 0);
+
+  return {
+    runtimeTextureBytes: textures.reduce((total, texture) => total + texture.bytes, 0),
+    largestTexture: textures[0] ?? null,
+    largestSet: sets[0] ?? null,
+    textureObjectCount: renderer.info.memory.textures,
+    geometryObjectCount: renderer.info.memory.geometries,
+    heapUsedBytes: heap?.usedJSHeapSize ?? 0,
+    heapLimitBytes: heap?.jsHeapSizeLimit ?? 0,
+    deviceMemoryGb,
+  };
+}
+
+function getDebugMemorySnapshot() {
+  const now = performance.now();
+  if (!debugMemorySnapshot || now - debugMemorySnapshotAt > 1000) {
+    debugMemorySnapshot = getRuntimeTextureMemorySnapshot();
+    debugMemorySnapshotAt = now;
+  }
+  return debugMemorySnapshot;
+}
+
+function formatDebugTextureLabel(texture) {
+  if (!texture) return "n/a";
+  const name = texture.path ? texture.path.split("/").pop() : `${texture.label}:${texture.mapName}`;
+  const dimensions = texture.width && texture.height ? `${texture.width}x${texture.height}` : "?x?";
+  return `${formatMemoryMiB(texture.bytes)} ${dimensions} ${name}`;
+}
+
 function updateDebugOverlay() {
   if (!debugOverlay) return;
+  const memory = getDebugMemorySnapshot();
   const eulerDegrees = {
     x: THREE.MathUtils.radToDeg(camera.rotation.x),
     y: THREE.MathUtils.radToDeg(camera.rotation.y),
@@ -3528,6 +3748,14 @@ function updateDebugOverlay() {
     `ssgi: ${realismSsgiEffect ? ssgiQuality : "off"}`,
     `ssr: ${ssrPass ? ssrQuality : "off"}`,
     `contact shadows: ${realismScreenSpaceShadowEffect ? screenSpaceShadowQuality : "off"}`,
+    "",
+    "MEMORY",
+    `js heap: ${formatMemoryMiB(memory.heapUsedBytes)} / ${formatMemoryMiB(memory.heapLimitBytes)}`,
+    `system ram hint: ${memory.deviceMemoryGb ? `${memory.deviceMemoryGb} GB` : "n/a"}`,
+    `webgl objs: ${memory.textureObjectCount} tex / ${memory.geometryObjectCount} geo`,
+    `gpu tex est: ${formatMemoryMiB(memory.runtimeTextureBytes)}`,
+    `largest tex: ${formatDebugTextureLabel(memory.largestTexture)}`,
+    `largest set: ${memory.largestSet ? `${formatMemoryMiB(memory.largestSet.bytes)} ${memory.largestSet.label} ${memory.largestSet.tier}` : "n/a"}`,
     "",
     `noclip: ${noclipEnabled ? "on" : "off"}`,
     `noclip speed: ${noclipSpeed.toFixed(2)}`,
@@ -3656,6 +3884,7 @@ function getTooltipText(target) {
   }
   if (target.userData.kind === "doorLatchHandle") {
     const runtime = levelPrefabInstances.get(target.userData.levelPrefabKey);
+    if (runtime?.door?.interaction?.latchAction === "toggleDoor") return label;
     return `${label} ${runtime?.door?.latched ? translate("controls.on") : translate("controls.off")}`;
   }
   return label;
@@ -4439,6 +4668,10 @@ function getControlInputs(fuelBlend = null) {
     fuelBlend,
     shiftProfile: activeShiftProfile,
   };
+}
+
+function isCollisionHelperMesh(name = "") {
+  return /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(name) || /^UBX_/i.test(name);
 }
 
 function getControlPercent(name) {

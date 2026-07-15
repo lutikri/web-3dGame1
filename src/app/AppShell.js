@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260713-fuel-quality-material";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260713-fuel-quality-material";
-import { translate } from "./Localization.js?v=20260713-fuel-quality-material";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260713-fuel-quality-material";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260713-fuel-quality-material";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260713-fuel-quality-material";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260714-service-door-latch-closer";
+import { translate } from "./Localization.js?v=20260714-service-door-latch-closer";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260714-service-door-latch-closer";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260714-service-door-latch-closer";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260714-service-door-latch-closer";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";

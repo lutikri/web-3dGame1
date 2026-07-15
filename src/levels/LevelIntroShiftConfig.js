@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260713-fuel-quality-material";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260713-fuel-quality-material";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260713-fuel-quality-material";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260713-fuel-quality-material";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260714-service-door-latch-closer";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260714-service-door-latch-closer";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260714-service-door-latch-closer";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260714-service-door-latch-closer";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

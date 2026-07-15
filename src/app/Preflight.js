@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260713-fuel-quality-material";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260714-service-door-latch-closer";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

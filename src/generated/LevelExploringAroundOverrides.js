@@ -3,10 +3,21 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
   "schemaVersion": 1,
   "saveKind": "exploringAround",
   "assetPath": "assets/mesh/SM_Interior2.glb",
-  "collisionAssetPath": "assets/mesh/SM_Interior2_Collision.glb",
+  "collisionAssetPath": "assets/mesh/SM_Interior2.glb",
   "collision": {
     "meshNameIncludes": [
-      "convcolonly"
+      "convcolonly",
+      "UBX_"
+    ],
+    "meshNameExcludes": [
+      "SM_Door2"
+    ]
+  },
+  "render": {
+    "meshNameExcludes": [
+      "convcolonly",
+      "UBX_",
+      "SM_Door2"
     ]
   },
   "position": {
@@ -63,6 +74,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": false
+      },
       "name": "DoorBulk1_A",
       "position": {
         "x": 3.6,
@@ -83,6 +97,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": false
+      },
       "name": "DoorBulk1_B",
       "position": {
         "x": 13.1869,
@@ -103,12 +120,35 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": false
+      },
+      "name": "Door2_ServiceA",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
         "intensity": 1.35,
-        "distance": 5,
-        "decay": 1,
+        "distance": 4.1,
+        "decay": 1.06,
         "localOffset": {
           "x": 0.060629,
           "y": -0.41959,
@@ -426,6 +466,26 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "name": "Clock1_Exploring",
+      "position": {
+        "x": 3.1,
+        "y": 2,
+        "z": -1.35
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 3.141592653589793,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
@@ -582,12 +642,223 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "y": 1,
         "z": 1.0000001343588654
       }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.35,
+        "distance": 5.9,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Exit1",
+      "position": {
+        "x": -1.5000039063991593,
+        "y": 2.8764517307281494,
+        "z": 10.660134037586614
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": -3.141592653589793,
+        "_y": -3.2584136988588153e-7,
+        "_z": -3.141592653589793,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.000000000000053,
+        "y": 1,
+        "z": 1.000000000000053
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "serviceDoor_Exit1",
+      "position": {
+        "x": -2.260499954223633,
+        "y": 0.0473066121339798,
+        "z": 4.820115566253662
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": -1.570796193514859,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000001343588654,
+        "y": 1,
+        "z": 1.0000001343588654
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "serviceDoor_Exit2",
+      "position": {
+        "x": -2.2149112224578857,
+        "y": 0.0473066121339798,
+        "z": 13.029474258422852
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": -1.570796193514859,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000001343588654,
+        "y": 1,
+        "z": 1.0000001343588654
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 4.65,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Exit2",
+      "position": {
+        "x": -1.497743623356574,
+        "y": 2.8764517307281494,
+        "z": 7.103977542200093
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": -3.141592653589793,
+        "_y": 0.017453344943547184,
+        "_z": -3.141592653589793,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 0.9999999591815606,
+        "y": 1,
+        "z": 0.9999999591815606
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1,
+        "distance": 2.6,
+        "decay": 0.98,
+        "localOffset": {
+          "x": 0.060628999999999995,
+          "y": -0.4874294873870887,
+          "z": -8.307941108438657e-18
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Exit3",
+      "position": {
+        "x": -1.7648813724517822,
+        "y": 2.404163560663462,
+        "z": 3.425883790796975
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": -3.141592653589793,
+        "_y": -3.2584136988588153e-7,
+        "_z": -3.141592653589793,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.000000000000053,
+        "y": 1,
+        "z": 1.000000000000053
+      }
     }
   ],
   "lighting": {
     "ambientSky": "#71808c",
     "ambientGround": "#08090a",
-    "ambientIntensity": 0.018,
+    "ambientIntensity": 1,
     "pointLights": {
       "fill": {
         "color": "#75bcff",

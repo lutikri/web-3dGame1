@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=20260713-fuel-quality-material";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260713-fuel-quality-material";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260713-fuel-quality-material";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260713-fuel-quality-material";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=20260714-service-door-latch-closer";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260714-service-door-latch-closer";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260714-service-door-latch-closer";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260714-service-door-latch-closer";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -15,9 +15,13 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
   saveKind: "exploringAround",
   assetPath: "assets/mesh/SM_Interior2.glb",
-  collisionAssetPath: "assets/mesh/SM_Interior2_Collision.glb",
+  collisionAssetPath: "assets/mesh/SM_Interior2.glb",
   collision: {
-    meshNameIncludes: ["convcolonly"],
+    meshNameIncludes: ["convcolonly", "UBX_"],
+    meshNameExcludes: ["SM_Door2"],
+  },
+  render: {
+    meshNameExcludes: ["convcolonly", "UBX_", "SM_Door2"],
   },
   position: new THREE.Vector3(0, 0, 0),
   rotation: new THREE.Euler(0, 0, 0),
@@ -60,6 +64,10 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     createPrefabInstance("bulkheadDoor", {
       name: "DoorBulk1_B",
       position: blenderPosition(13.1869, 0.006729, 0.151831),
+    }),
+    createPrefabInstance("serviceDoor", {
+      name: "Door2_ServiceA",
+      position: new THREE.Vector3(0, 0, 0),
     }),
     ...corridorLampXs.map((x, index) =>
       createPrefabInstance("fluorescentLamp", {

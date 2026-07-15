@@ -1,5 +1,49 @@
 import * as THREE from "three";
 
+const SERVICE_DOOR_DEFINITION = {
+  assetPath: "assets/mesh/SM_Door2_1.glb",
+  materialKey: "door2",
+  behavior: "hingedDoor",
+  materialOverrides: {
+    SM_Door2_Glass: "door2Glass",
+  },
+  interaction: {
+    type: "hingedDoor",
+    meshName: "SM_Door2_Door",
+    colliderName: "UBX_SM_Door2_Door_01",
+    latchHandleNames: ["SM_Door2_Handle1", "SM_Door2_Handle2"],
+    latchHandleAxis: "z",
+    latchHandleDegreesByName: {
+      SM_Door2_Handle1: 28,
+      SM_Door2_Handle2: -28,
+    },
+    latchAction: "holdOpen",
+    latchHoldSeconds: 0.4,
+    latchReturnSeconds: 0.35,
+    latchTurnDegrees: 28,
+    latchJerkDegrees: 0,
+    doorClickAction: "none",
+    axis: "y",
+    initialDegrees: 0,
+    minDegrees: 0,
+    maxDegrees: 80,
+    openDegrees: 80,
+    closeDegrees: 0,
+    closeToleranceDegrees: 0.35,
+    dragDegreesPerPixel: 0.24,
+    maxDistance: 1.8,
+    density: 120,
+    angularDamping: 1.1,
+    maxAngularVelocity: 1.6,
+    initialHoldSeconds: 0.35,
+    motorStiffness: 85,
+    motorDamping: 18,
+  },
+  state: {
+    latched: true,
+  },
+};
+
 const PREFAB_DEFINITIONS = {
   operatorPanel: {
     assetPath: "assets/mesh/SM_Panel1.glb",
@@ -80,6 +124,8 @@ const PREFAB_DEFINITIONS = {
       latched: false,
     },
   },
+  serviceDoor: SERVICE_DOOR_DEFINITION,
+  door2: SERVICE_DOOR_DEFINITION,
   redBulkLamp: {
     assetPath: "assets/mesh/SM_Lamp_BulkRed.glb",
     materialKey: "doorLamp2",

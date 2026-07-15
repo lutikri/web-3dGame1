@@ -58,9 +58,17 @@ $jobs = @(
   @{ Source = "T_DoorLamp2_OcclusionRoughnessMetallic.png"; Prefix = "T_DoorLamp2_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
   @{ Source = "T_DoorLamp2_Emissive.png"; Prefix = "T_DoorLamp2_Emissive_Interactive"; Preview = 512; Mode = "srgb"; Quality = 170 },
 
+  @{ Source = "T_Door2_BaseColor.png"; Prefix = "T_Door2_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
+  @{ Source = "T_Door2_Normal.png"; Prefix = "T_Door2_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Door2_OcclusionRoughnessMetallic.png"; Prefix = "T_Door2_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+
   @{ Source = "T_TrimConcrete1_BaseColor.png"; Prefix = "T_TrimConcrete1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
   @{ Source = "T_TrimConcrete1_Normal.png"; Prefix = "T_TrimConcrete1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
   @{ Source = "T_TrimConcrete1_OcclusionRoughnessMetallic.png"; Prefix = "T_TrimConcrete1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
+
+  @{ Source = "T_Trim2Tiles1_BaseColor.png"; Prefix = "T_Trim2Tiles1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
+  @{ Source = "T_Trim2Tiles1_Normal.png"; Prefix = "T_Trim2Tiles1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
+  @{ Source = "T_Trim2Tiles1_OcclusionRoughnessMetallic.png"; Prefix = "T_Trim2Tiles1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
 
   @{ Source = "T_Clock1_BaseColor.png"; Prefix = "T_Clock1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
   @{ Source = "T_Clock1_Normal.png"; Prefix = "T_Clock1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },

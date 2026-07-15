@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260713-fuel-quality-material";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260713-fuel-quality-material";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260713-fuel-quality-material";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260713-fuel-quality-material";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260714-service-door-latch-closer";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260714-service-door-latch-closer";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260714-service-door-latch-closer";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -344,6 +344,80 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#000000",
         emissiveIntensity: 0,
+      },
+      trimTiles1: {
+        materialNames: ["M_TrimTiles1"],
+        namePrefixes: ["SM_TrimTiles1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Trim2Tiles1_BaseColor_Background_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Trim2Tiles1_Normal_Background_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Trim2Tiles1_OcclusionRoughnessMetallic_Background_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Trim2Tiles1_BaseColor_Background_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Trim2Tiles1_Normal_Background_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Trim2Tiles1_OcclusionRoughnessMetallic_Background_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      door2: {
+        materialNames: ["M_Door2", "M_Door2.001"],
+        namePrefixes: ["SM_Door2"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Door2_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Door2_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Door2_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Door2_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Door2_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Door2_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      door2Glass: {
+        meshNames: ["SM_Door2_Glass"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Door2_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Door2_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Door2_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Door2_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Door2_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Door2_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 0.48,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        transparent: true,
+        opacity: 0.32,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        castShadow: false,
+        receiveShadow: false,
       },
       doorLamp2: {
         materialNames: ["M_DoorLamp2"],
