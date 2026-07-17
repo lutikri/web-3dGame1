@@ -15,47 +15,49 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260714-service-door-latch-closer";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260717-radio-tight-fade-bright-lamp";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260714-service-door-latch-closer";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260714-service-door-latch-closer";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260714-service-door-latch-closer";
+} from "./game/ShiftReport.js?v=20260717-radio-tight-fade-bright-lamp";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260717-radio-tight-fade-bright-lamp";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260714-service-door-latch-closer";
+} from "./config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260714-service-door-latch-closer";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260714-service-door-latch-closer";
-import { createStatusScreen } from "./StatusScreen.js?v=20260714-service-door-latch-closer";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260714-service-door-latch-closer";
+} from "./scene/TextureStreaming.js?v=20260717-radio-tight-fade-bright-lamp";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createStatusScreen } from "./StatusScreen.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260717-radio-tight-fade-bright-lamp";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260714-service-door-latch-closer";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260714-service-door-latch-closer";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260714-service-door-latch-closer";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260714-service-door-latch-closer";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260714-service-door-latch-closer";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260714-service-door-latch-closer";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260714-service-door-latch-closer";
-import { LevelSession } from "./levels/LevelSession.js?v=20260714-service-door-latch-closer";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260714-service-door-latch-closer";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260714-service-door-latch-closer";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260714-service-door-latch-closer";
-import { PlayerController } from "./player/PlayerController.js?v=20260714-service-door-latch-closer";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260714-service-door-latch-closer";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260714-service-door-latch-closer";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260714-service-door-latch-closer";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260714-service-door-latch-closer";
+} from "./ui/PostProcessingDebugPanel.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260717-radio-tight-fade-bright-lamp";
+import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260717-radio-tight-fade-bright-lamp";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260717-radio-tight-fade-bright-lamp";
+import { AssetCache } from "./runtime/AssetCache.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LevelSession } from "./levels/LevelSession.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260717-radio-tight-fade-bright-lamp";
+import { PlayerController } from "./player/PlayerController.js?v=20260717-radio-tight-fade-bright-lamp";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
+import { SOUND_GROUPS, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -216,6 +218,11 @@ const statusScreen = createStatusScreen({
 const fusionCore = createFusionCoreSimulation();
 const diagnosticRuntime = new DiagnosticRuntime();
 const fuelBlendRuntime = new FuelBlendRuntime();
+const audioRuntime = new AudioRuntime({
+  sounds: SOUND_REGISTRY,
+  groups: SOUND_GROUPS,
+  masterVolume: 1,
+});
 let activeShiftProfile = null;
 
 let panelModel = null;
@@ -397,6 +404,10 @@ let roomLightStarterFaultElapsed = 0;
 let roomLightToggleTimes = [];
 let roomLightBootTimer = 0;
 let roomLightStartupPattern = [];
+let previousAudioLightFactor = 1;
+let reactorAudioPitch = 0.88;
+const narratorTimers = [];
+let welcomeNarrationPlayedForLevel = null;
 let reactorStartupPattern = [];
 let terminalStartupPattern = [];
 let hemisphereLight = null;
@@ -2060,10 +2071,12 @@ function beginBulkheadHandleInteraction() {
   if (!bulkheadHandle || bulkheadExitComplete) return;
   if ((bulkheadHandle.userData.lastHitDistance ?? Infinity) > CONFIG.interior.bulkheadExit.maxInteractionDistance) return;
   if (bulkheadExitPending) {
+    playSoundAtObject(bulkheadHandle, "DoorBulk1_LatchCrank1", { maxDistance: 4.5 });
     bulkheadHandleHeld = true;
     return;
   }
 
+  playSoundAtObject(bulkheadHandle, "DoorBulk1_LatchCrank1", { volume: 0.45, maxDistance: 4.5 });
   bulkheadLockedAttemptTime = 0;
   if (latestSnapshot.mode === "running") {
     emitOperatorThought("door-live-core", 1, 3.2);
@@ -2221,6 +2234,9 @@ function createPrefabRuntime(prefab, prefabConfig) {
   if (prefabConfig.behavior === "analogClock" && prefabConfig.clock?.enabled !== false) {
     runtime.clock = createAnalogClockRuntime(runtime.parts, prefabConfig.clock);
   }
+  if (prefabConfig.behavior === "narratorRadio") {
+    runtime.radio = createNarratorRadioRuntime(runtime.parts, prefabConfig.radio);
+  }
   if (prefabConfig.light) {
     const lightConfig = prefabConfig.light;
     const light = new THREE.PointLight(
@@ -2239,6 +2255,25 @@ function createPrefabRuntime(prefab, prefabConfig) {
     runtime.light = light;
   }
   return runtime;
+}
+
+function createNarratorRadioRuntime(parts, config = {}) {
+  const lamp = parts.get(config.lampName ?? "SM_Radio1_Lamp") ?? null;
+  const lampMaterials = lamp
+    ? (Array.isArray(lamp.material) ? lamp.material : [lamp.material]).filter(Boolean)
+    : [];
+  lampMaterials.forEach((material) => {
+    material.userData.baseEmissiveIntensity = material.emissiveIntensity ?? 0;
+    material.emissiveIntensity = 0;
+    material.needsUpdate = true;
+  });
+  return {
+    ...config,
+    lamp,
+    lampMaterials,
+    talkingRemaining: 0,
+    talkingElapsed: 0,
+  };
 }
 
 function getPrefabPartMaterialKey(object, prefabConfig) {
@@ -2269,6 +2304,7 @@ function disposeLevelEnvironmentRuntime(runtime) {
 
 function disposeLevelOwnedObjects(levelId) {
   stopPositionGizmo();
+  clearNarratorTimers();
   physicsSystem?.resetWorld(playerPosition);
   [levelId, `${levelId}:prefabs`].forEach((key) => {
     const model = levelEnvironmentModels.get(key);
@@ -2295,6 +2331,7 @@ function disposeLevelOwnedObjects(levelId) {
     if (interiorFans[index]?.userData.levelId === levelId) interiorFans.splice(index, 1);
   }
   lightingRuntime.disposeLevel(levelId);
+  audioRuntime.disposeLevel(levelId);
   loadedRuntimeLevelId = null;
   collisionOctree = new Octree();
   collisionReady = false;
@@ -2324,6 +2361,7 @@ function updateActiveLevelEnvironment() {
     light.visible = lightLevelId === displayedLevelId;
   });
   operatorPanelRuntime.applyLevel(displayedLevelId, operatorViewMode);
+  audioRuntime.setActiveLevel(displayedLevelId);
   sceneDebugPanels?.setActiveLevel?.(displayedLevelId);
 
   const activeCollision = displayedLevelId && levelCollisionModels.get(displayedLevelId);
@@ -2792,6 +2830,7 @@ function updateHoldOpenDoorLatch(runtime, dt) {
     door.latched = true;
     door.commandedOpen = false;
     physicsSystem?.setDoorLocked(runtime.physicsDoorKey, true, closeDegrees);
+    playSoundAtObject(door.mesh, "DoorPushbar_Close1", { maxDistance: 4 });
     applyDoorLatchHandleRotation(runtime);
   }
 }
@@ -2805,7 +2844,18 @@ function setHoveredHingedDoor(doorMesh) {
 function toggleHingedDoor(doorMesh) {
   const runtime = levelPrefabInstances.get(doorMesh?.userData.levelPrefabKey);
   if (runtime?.door?.latched) return false;
-  return doorInteractionSystem.toggle(doorMesh);
+  const result = doorInteractionSystem.toggle(doorMesh);
+  if (result && runtime?.door) {
+    const isBulkhead = runtime.door.prefabName?.startsWith("DoorBulk") || runtime.door.mesh?.name?.includes("DoorBulk");
+    if (isBulkhead) {
+      playSoundAtObject(
+        runtime.door.mesh,
+        runtime.door.commandedOpen ? "DoorBulk1_Open1" : "DoorBulk1_Close1",
+        { maxDistance: 5 },
+      );
+    }
+  }
+  return result;
 }
 
 function resetLevelDoors(levelId = null) {
@@ -2850,6 +2900,9 @@ function beginDoorLatchHandleInteraction(handle) {
   const door = runtime?.door;
   if (!door) return false;
   door.activeLatchHandle = handle ?? door.latchHandle ?? door.latchHandles?.[0] ?? null;
+  if (door.interaction.latchAction !== "holdOpen") {
+    playSoundAtObject(door.activeLatchHandle ?? door.mesh, "DoorBulk1_LatchCrank1", { maxDistance: 4.5 });
+  }
   if (!canOperateDoorLatch(runtime)) {
     triggerDoorLatchBlockedAttempt(runtime);
     return false;
@@ -2871,6 +2924,7 @@ function beginDoorLatchHandleInteraction(handle) {
     return true;
   }
   if (door.interaction.latchAction === "holdOpen") {
+    playSoundAtObject(door.activeLatchHandle ?? door.mesh, "DoorPushbar_Open1", { maxDistance: 4 });
     door.latchBlockedAttempt = null;
     door.latched = false;
     if (runtime.physicsDoorKey) physicsSystem?.setDoorLocked(runtime.physicsDoorKey, false);
@@ -3152,6 +3206,11 @@ function updatePlayerCollisionDebug() {
 function registerInteriorObject(object, environmentConfig = null, levelId = null) {
   if (object.userData.hitProxyFor) return;
   if (levelId) object.userData.levelId = levelId;
+  if (String(object.name).startsWith("SNDVOL_")) {
+    audioRuntime.registerAmbienceVolume(levelId ?? "default", object);
+    object.visible = false;
+    return;
+  }
 
   const fanConfigs = environmentConfig?.behaviors?.fans ?? CONFIG.interior.fans ?? {};
   const fanConfig = Object.entries(fanConfigs).find(
@@ -3444,6 +3503,8 @@ function animate() {
   updateFeedback(dt);
   updateLevelPrefabLights(dt);
   updateLevelPrefabClocks();
+  updateAudioState(dt);
+  updateNarratorRadios(dt);
   physicsSystem?.step(dt);
   playerController.updateAfterPhysics();
   updateRuntimeTextureLoading(dt);
@@ -3547,6 +3608,247 @@ function updateLevelPrefabClocks() {
     applyClockHandRotation(runtime.clock.hands.minutes, axis, direction * (minutes / 60) * Math.PI * 2);
     applyClockHandRotation(runtime.clock.hands.hours, axis, direction * (hours / 12) * Math.PI * 2);
   });
+}
+
+function updateAudioState(dt) {
+  const displayedLevelId = operatorViewMode === "menu" ? "intro-shift" : getLevelEnvironmentId(activeLevelId);
+  audioRuntime.update(dt, camera.position, displayedLevelId);
+  const globalLightAudioFactor = getStartupLightFactor() * getTerminalLightFactor() * diagnosticRuntime.getBlackoutFactor();
+  if (
+    operatorViewMode === "level" &&
+    previousAudioLightFactor < 0.18 &&
+    globalLightAudioFactor > 0.42
+  ) {
+    playSoundAtObject(panelModel, "LampTurnOn1", { maxDistance: 12 });
+  }
+  previousAudioLightFactor = globalLightAudioFactor;
+
+  const hasPanel = Boolean(getLevelPanelConfig(displayedLevelId));
+  audioRuntime.setAttachedLoop("panel:Panel1", panelModel, "Panel1_SfxLoop1", hasPanel, {
+    levelId: displayedLevelId,
+    volume: operatorViewMode === "menu" ? 0.08 : 0.18,
+    refDistance: 0.8,
+    maxDistance: 4.5,
+    fadeSeconds: 0.8,
+  });
+
+  const horizontalSpeed = Math.hypot(movementVelocity.x, movementVelocity.z);
+  const movementKeyHeld = keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD");
+  const walking = operatorViewMode === "level" && !noclipEnabled && (horizontalSpeed > 0.08 || movementKeyHeld);
+  audioRuntime.setLoop("Footsteps1_Walk1", walking, {
+    volume: Math.max(0.18, THREE.MathUtils.clamp(horizontalSpeed / Math.max(CONFIG.camera.walkSpeed, 0.001), 0, 1) * 0.44),
+    fadeSeconds: 0.12,
+    playbackRate: THREE.MathUtils.clamp(0.82 + horizontalSpeed / Math.max(CONFIG.camera.runSpeed, 0.001) * 0.35, 0.82, 1.18),
+  });
+
+  levelPrefabInstances.forEach((runtime, key) => {
+    const [levelId, prefabName] = key.split(":");
+    if (!runtime.light) return;
+    const prefabConfig = CONFIG.levelEnvironments?.[levelId]?.prefabs?.find((entry) => entry.name === prefabName);
+    const lightConfig = prefabConfig?.light;
+    if (!lightConfig?.fluorescentStartup && !lightConfig?.faultyStarterLoop) return;
+    const lightAudioFactor = globalLightAudioFactor;
+    const active = levelId === displayedLevelId && lightConfig.enabled !== false && lightAudioFactor > 0.02;
+    const soundKey = lightConfig.faultyStarterLoop
+      ? "LampConstantBuzzBroken1"
+      : prefabName.length % 2 === 0
+        ? "LampConstantBuzz1"
+        : "LampConstantBuzz2";
+    audioRuntime.setAttachedLoop(`lamp:${key}`, runtime.root, soundKey, active, {
+      levelId,
+      volume: (lightConfig.faultyStarterLoop ? 0.13 : 0.1) * lightAudioFactor,
+      refDistance: lightConfig.faultyStarterLoop ? 0.15 : 0.45,
+      maxDistance: lightConfig.faultyStarterLoop ? 0.7 : 3.2,
+      fadeSeconds: 0.45,
+    });
+  });
+
+  const runningCore = latestSnapshot.mode === "running";
+  const destroyedTerminal = latestSnapshot.failureType === "coreDestroyed" && terminalSequenceElapsed >= 0;
+  const completedTerminal = latestSnapshot.mode === "complete" && terminalSequenceElapsed >= 0;
+  const coreAudible = runningCore || destroyedTerminal || completedTerminal;
+  const tempPitch = THREE.MathUtils.clamp((latestSnapshot.plasmaTemp - 55) / 120, 0, 1);
+  const stressPitch = THREE.MathUtils.clamp((latestSnapshot.coreStress ?? 0) / 100, 0, 1);
+  const stallDrop = THREE.MathUtils.clamp((latestSnapshot.coreStall ?? 0) / 90, 0, 1);
+  const terminalAge = Math.max(0, terminalSequenceElapsed);
+  const destroyedFade = destroyedTerminal ? Math.max(0, 1 - terminalAge / 5.5) : 1;
+  const completeFade = completedTerminal ? Math.max(0, 1 - terminalAge / 2.4) : 1;
+  const coreVolume =
+    (0.3 + tempPitch * 0.17) *
+    (1 - stallDrop * 0.72) *
+    destroyedFade *
+    completeFade;
+  const destroyedWobble = destroyedTerminal ? Math.sin(testTime * 5.7) * 0.08 * destroyedFade : 0;
+  const targetReactorPitch = Math.max(
+    0.35,
+    0.88 + tempPitch * 0.18 + stressPitch * 0.08 - stallDrop * 0.42 + destroyedWobble,
+  );
+  reactorAudioPitch = THREE.MathUtils.damp(
+    reactorAudioPitch,
+    targetReactorPitch,
+    destroyedTerminal ? 4.5 : 2.2,
+    dt,
+  );
+  audioRuntime.setAttachedLoop("core:FusionCore_Working1", panelModel, "FusionCore_Working1", coreAudible && coreVolume > 0.01, {
+    levelId: displayedLevelId,
+    volume: coreVolume,
+    refDistance: 1.2,
+    maxDistance: 20,
+    fadeSeconds: destroyedTerminal ? 0.35 : 1.1,
+    playbackRate: reactorAudioPitch,
+  });
+}
+
+function playSoundAtObject(object, soundKey, options = {}) {
+  return audioRuntime.playAttached(object, soundKey, camera.position, options);
+}
+
+function updateNarratorRadios(dt) {
+  levelPrefabInstances.forEach((runtime) => {
+    if (!runtime.radio) return;
+    const radio = runtime.radio;
+    radio.talkingRemaining = Math.max(0, (radio.talkingRemaining ?? 0) - dt);
+    if (radio.talkingRemaining > 0) radio.talkingElapsed = (radio.talkingElapsed ?? 0) + dt;
+    const blinkFrequency = radio.lampBlinkFrequency ?? 1.1;
+    const blink = radio.talkingRemaining > 0
+      ? 0.15 + 0.85 * Math.pow((Math.sin(radio.talkingElapsed * Math.PI * 2 * blinkFrequency) + 1) * 0.5, 1.8)
+      : 0;
+    radio.lampMaterials.forEach((material) => {
+      material.emissiveIntensity = blink * 8.8;
+      material.needsUpdate = true;
+    });
+  });
+}
+
+function clearNarratorTimers() {
+  while (narratorTimers.length) {
+    window.clearTimeout(narratorTimers.pop());
+  }
+  welcomeNarrationPlayedForLevel = null;
+  levelPrefabInstances.forEach((runtime) => {
+    if (!runtime.radio) return;
+    runtime.radio.talkingRemaining = 0;
+    runtime.radio.talkingElapsed = 0;
+    runtime.radio.lampMaterials.forEach((material) => {
+      material.emissiveIntensity = 0;
+      material.needsUpdate = true;
+    });
+  });
+}
+
+function getLevelNarratorRadioRuntime(levelId = activeLevelId) {
+  const environmentId = getLevelEnvironmentId(levelId);
+  for (const [key, runtime] of levelPrefabInstances.entries()) {
+    if (!runtime.radio) continue;
+    if (key.startsWith(`${environmentId}:`)) return runtime;
+  }
+  return null;
+}
+
+function getNarratorWelcomeLine(language = document.documentElement.lang) {
+  if (language === "ru") {
+    return {
+      soundKey: "MessageRU_Welcome1",
+      duration: 14,
+      subtitles: [
+        {
+          at: 0.1,
+          duration: 7.2,
+          text:
+            "Добро пожаловать в Terragen Systems — место, где энергией завтрашнего дня управляет сегодняшний… персонал, успешно прошедший минимально необходимую проверку.",
+        },
+        {
+          at: 7.4,
+          duration: 3.0,
+          text: "Ваша квалификационная смена начинается сейчас.",
+        },
+        {
+          at: 10.4,
+          duration: 3.4,
+          text: "Проследуйте в операторскую. Незамедлительно.",
+        },
+      ],
+    };
+  }
+  return {
+    soundKey: "MessageEN_Welcome1",
+    duration: 14,
+    subtitles: [
+      {
+        at: 0.1,
+        duration: 2.5,
+        text: "Welcome to Terragen Systems!",
+      },
+      {
+        at: 2.7,
+        duration: 6.2,
+        text: "Congratulations. You’ve been approved to operate equipment considerably more expensive than you are.",
+      },
+      {
+        at: 9.1,
+        duration: 4.2,
+        text: "Now—before somebody corrects that mistake—proceed to the Control Booth.",
+      },
+    ],
+  };
+}
+
+function scheduleNarratorTimeout(callback, seconds) {
+  const timer = window.setTimeout(() => {
+    const index = narratorTimers.indexOf(timer);
+    if (index >= 0) narratorTimers.splice(index, 1);
+    callback();
+  }, Math.max(0, seconds) * 1000);
+  narratorTimers.push(timer);
+  return timer;
+}
+
+function scheduleWelcomeNarration(levelId = activeLevelId) {
+  if (welcomeNarrationPlayedForLevel === levelId) return;
+  const runtime = getLevelNarratorRadioRuntime(levelId);
+  if (!runtime?.radio) return;
+  welcomeNarrationPlayedForLevel = levelId;
+  const delay = runtime.radio.welcomeDelaySeconds ?? 0.7;
+  scheduleNarratorTimeout(() => playWelcomeNarrationWhenReady(levelId), delay);
+}
+
+function playWelcomeNarrationWhenReady(levelId) {
+  if (activeLevelId !== levelId || operatorViewMode !== "level") return;
+  if (inputLocked || document.body.classList.contains("app-ui-open")) {
+    scheduleNarratorTimeout(() => playWelcomeNarrationWhenReady(levelId), 0.25);
+    return;
+  }
+  playWelcomeNarration(levelId);
+}
+
+function playWelcomeNarration(levelId = activeLevelId) {
+  const runtime = getLevelNarratorRadioRuntime(levelId);
+  if (!runtime?.radio) return false;
+  const line = getNarratorWelcomeLine(document.documentElement.lang);
+  runtime.radio.talkingRemaining = line.duration;
+  runtime.radio.talkingElapsed = 0;
+  playSoundAtObject(runtime.root, line.soundKey, {
+    levelId,
+    refDistance: runtime.radio.refDistance ?? 1,
+    maxDistance: runtime.radio.maxDistance ?? 16,
+  });
+  const subtitleIdBase = `narrator-welcome-${levelId}-${Date.now()}`;
+  line.subtitles.forEach((subtitle, index) => {
+    scheduleNarratorTimeout(() => {
+      if (activeLevelId !== levelId || operatorViewMode !== "level") return;
+      window.dispatchEvent(
+        new CustomEvent("operatorgame:subtitle", {
+          detail: {
+            id: `${subtitleIdBase}-${index}`,
+            text: subtitle.text,
+            duration: subtitle.duration,
+            priority: 3,
+          },
+        }),
+      );
+    }, subtitle.at);
+  });
+  return true;
 }
 
 function applyClockHandRotation(hand, axis, angle) {
@@ -3930,6 +4232,7 @@ function updatePanel(dt) {
   const ignitionPulseCount = snapshot.ignitionPulseCount ?? 0;
   if (ignitionPulseCount > observedIgnitionPulseCount) {
     ignitionPulseFeedbackTimer = CONFIG.feedback.ignitionPulse.duration;
+    playSoundAtObject(panelModel, "FusionCore_Pulse1", { maxDistance: 20 });
   }
   observedIgnitionPulseCount = ignitionPulseCount;
   latestSnapshot = snapshot;
@@ -4142,6 +4445,7 @@ function updateShiftCompletion(dt, snapshot) {
   previousGameMode = snapshot.mode;
 
   if (finishedNow) {
+    audioRuntime.setAttachedLoop("core:FusionCore_Working1", panelModel, "FusionCore_Working1", false);
     terminalStartupPattern =
       snapshot.failureType === "coreDestroyed" ? createFluorescentStartupPattern() : [];
     resultsTimer = getTerminalResultsDelay(snapshot);
@@ -4258,6 +4562,7 @@ function triggerStartupFeedback() {
 
 function triggerRoomLightBoot() {
   const wasEnabled = roomLightsEnabled;
+  playSoundAtObject(panelModel, "LampTurnOn1", { maxDistance: 12 });
   roomLightStartupPattern = createFluorescentStartupPattern();
   roomLightsEnabled = true;
   roomLightCurrentFactor = 0;
@@ -5040,6 +5345,7 @@ function setControlButtonPressed(button, pressed) {
   if (!button || button.userData.kind !== "controlButton") return;
   if (button.userData.pressed === pressed) return;
   button.userData.pressed = pressed;
+  if (pressed) audioRuntime.playRandom("panelButtonLight");
   if (pressed) runControlButtonAction(button);
   console.log(`[OperatorGame] ${button.userData.controlLabel} ${pressed ? "PRESSED" : "RELEASED"}`);
 }
@@ -5049,6 +5355,7 @@ function setRoomLightButtonPressed(button, pressed) {
   if (button.userData.pressed === pressed) return;
   button.userData.pressed = pressed;
   if (!pressed) return;
+  audioRuntime.playRandom("mechanicalButton");
   const bindings = button.userData.levelBindings ?? [];
   if (bindings.length === 0) {
     toggleRoomLights();
@@ -5089,6 +5396,7 @@ function setLevelPrefabLightEnabled(levelId, prefabName, enabled) {
   lightConfig.enabled = nextEnabled;
 
   if (nextEnabled && !wasEnabled) {
+    playSoundAtObject(runtime.root, "LampTurnOn1", { maxDistance: 5 });
     runtime.startupElapsed = Math.max(0, lightConfig.startupDelaySeconds ?? 0);
     runtime.faultyStarterElapsed = 0;
     runtime.afterglowRemaining = 0;
@@ -5123,6 +5431,7 @@ function startShift() {
   resetOperatorThoughts();
   fusionCore.start();
   fuelBlendRuntime.start();
+  playSoundAtObject(panelModel, "FusionCore_Ignite1", { maxDistance: 20 });
   previousGameMode = "running";
   resultsTimer = 0;
   resultsSnapshot = null;
@@ -5141,6 +5450,7 @@ function resetShift() {
   resetOperatorThoughts();
   fusionCore.reset();
   fuelBlendRuntime.stop();
+  audioRuntime.setAttachedLoop("core:FusionCore_Working1", panelModel, "FusionCore_Working1", false);
   previousGameMode = "standby";
   resultsTimer = 0;
   resultsSnapshot = null;
@@ -5194,6 +5504,7 @@ function setRoomLightsEnabled(enabled, { instant = false } = {}) {
   roomLightAfterglowTimer =
     !instant && wasEnabled && !roomLightsEnabled ? CONFIG.feedback.roomLightSwitch?.afterglowSeconds ?? 3 : 0;
   if (instant) roomLightCurrentFactor = roomLightsEnabled ? 1 : 0;
+  if (!instant && !wasEnabled && roomLightsEnabled) playSoundAtObject(panelModel, "LampTurnOn1", { maxDistance: 12 });
   updateControlTooltip();
 }
 
@@ -5318,6 +5629,7 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
   fuelBlendRuntime.stop();
   previousGameMode = fusionCore.getSnapshot().mode;
   statusScreen.setSnapshot(fusionCore.getSnapshot(), true);
+  scheduleWelcomeNarration(activeLevelId);
   return true;
 }
 
@@ -5712,6 +6024,7 @@ function resizeRendererTargets() {
 window.addEventListener("resize", resizeRendererTargets);
 
 document.addEventListener("keydown", (event) => {
+  audioRuntime.unlock();
   const toggleSequence = String(CONFIG.sceneDebug?.toggleSequence ?? "debug3").toLowerCase();
   const target = event.target;
   const isEditing =
@@ -5727,8 +6040,10 @@ document.addEventListener("keydown", (event) => {
   event.preventDefault();
   toggleDebugPanels();
 });
+document.addEventListener("pointerdown", () => audioRuntime.unlock());
 
 document.addEventListener("keydown", (event) => {
+  audioRuntime.unlock();
   if (inputLocked) {
     if (
       ["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight", "Space", "ControlLeft", "ControlRight"].includes(
@@ -5827,6 +6142,7 @@ canvas.addEventListener(
 );
 
 canvas.addEventListener("mousedown", (event) => {
+  audioRuntime.unlock();
   if (debugTransformEdit) return;
   if (inputLocked) {
     event.preventDefault();
@@ -5888,6 +6204,7 @@ function updatePointerFromEvent(event) {
 }
 
 canvas.addEventListener("click", () => {
+  audioRuntime.unlock();
   if (inputLocked) return;
   if (document.body.classList.contains("app-ui-open")) return;
   if (document.pointerLockElement !== canvas) {

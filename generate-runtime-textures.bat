@@ -27,9 +27,6 @@ $jobs = @(
   @{ Source = "T_Panel1_Normal.png"; Prefix = "T_Panel1_Normal_Critical"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Panel1_OcclusionRoughnessMetallic.png"; Prefix = "T_Panel1_OcclusionRoughnessMetallic_Critical"; Preview = 1024; Mode = "linear"; Quality = 190 },
 
-  @{ Source = "T_Interior1_BaseColor.png"; Prefix = "T_Interior1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 170 },
-  @{ Source = "T_Interior1_Normal.png"; Prefix = "T_Interior1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 190 },
-  @{ Source = "T_Interior1_OcclusionRoughnessMetallic.png"; Prefix = "T_Interior1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 170 },
   @{ Source = "T_Interior1_Mask_Mask.png"; Prefix = "T_Interior1_Mask_Background"; Preview = 1024; Mode = "linear"; Quality = 190; KeepPreviewPng = $true },
 
   @{ Source = "T_Bricks1Old_BaseColor.png"; Prefix = "T_Bricks1Old_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
@@ -73,6 +70,10 @@ $jobs = @(
   @{ Source = "T_Clock1_BaseColor.png"; Prefix = "T_Clock1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
   @{ Source = "T_Clock1_Normal.png"; Prefix = "T_Clock1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Clock1_OcclusionRoughnessMetallic.png"; Prefix = "T_Clock1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
+
+  @{ Source = "T_Radio1_BaseColor.png"; Prefix = "T_Radio1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Radio1_Normal.png"; Prefix = "T_Radio1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Radio1_OcclusionRoughnessMetallic.png"; Prefix = "T_Radio1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
 
   @{ Source = "T_Lamp1_BaseColor.png"; Prefix = "T_Lamp1_BaseColor_Critical"; Preview = 512; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_Lamp1_Normal.png"; Prefix = "T_Lamp1_Normal_Critical"; Preview = 512; Mode = "normal"; Quality = 200 },

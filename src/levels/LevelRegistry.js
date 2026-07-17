@@ -1,6 +1,6 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260714-service-door-latch-closer";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260714-service-door-latch-closer";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260714-service-door-latch-closer";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();

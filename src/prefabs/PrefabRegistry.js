@@ -50,6 +50,36 @@ const PREFAB_DEFINITIONS = {
     materialKey: "panel1",
     behavior: "operatorPanel",
   },
+  radio: {
+    assetPath: "assets/mesh/SM_Radio1.glb",
+    materialKey: "radio1",
+    behavior: "narratorRadio",
+    materialOverrides: {
+      SM_Radio1_Lamp: "radioLamp",
+    },
+    radio: {
+      lampName: "SM_Radio1_Lamp",
+      welcomeDelaySeconds: 0.7,
+      maxDistance: 3.8,
+      refDistance: 0.7,
+      lampBlinkFrequency: 1.1,
+    },
+  },
+  radio1: {
+    assetPath: "assets/mesh/SM_Radio1.glb",
+    materialKey: "radio1",
+    behavior: "narratorRadio",
+    materialOverrides: {
+      SM_Radio1_Lamp: "radioLamp",
+    },
+    radio: {
+      lampName: "SM_Radio1_Lamp",
+      welcomeDelaySeconds: 0.7,
+      maxDistance: 3.8,
+      refDistance: 0.7,
+      lampBlinkFrequency: 1.1,
+    },
+  },
   fluorescentLamp: {
     assetPath: "assets/mesh/SM_Lamp1.glb",
     materialKey: "lamp1",
@@ -180,6 +210,7 @@ const REGISTRY_OWNED_KEYS = new Set([
   "materialOverrides",
   "behavior",
   "interaction",
+  "radio",
   "prefabType",
 ]);
 

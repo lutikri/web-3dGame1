@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260714-service-door-latch-closer";
+import { translateRequired } from "./Localization.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   mergeMarkerPrefabs,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=20260714-service-door-latch-closer";
-import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260714-service-door-latch-closer";
+} from "../prefabs/PrefabMarkerResolver.js?v=20260717-radio-tight-fade-bright-lamp";
+import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
 
 export function createLevelSceneBuilder({
   scene,

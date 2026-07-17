@@ -624,23 +624,23 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "retryChance": 0
         }
       },
-      "name": "redBulkLamp_PowerHall1",
+      "name": "redBulkLamp_Exit1",
       "position": {
-        "x": 11.852434158325195,
-        "y": 2.4000000953674316,
-        "z": -1.0342196226119995
+        "x": 1.0201932191848755,
+        "y": 2.5138936042785645,
+        "z": 9.726974487304688
       },
       "rotation": {
         "isEuler": true,
         "_x": 0,
-        "_y": 1.570796193514859,
+        "_y": 1.5707960232351643,
         "_z": 0,
         "_order": "XYZ"
       },
       "scale": {
-        "x": 1.0000001343588654,
-        "y": 1,
-        "z": 1.0000001343588654
+        "x": 1.200000006609485,
+        "y": 1.2000000476837158,
+        "z": 1.200000006609485
       }
     },
     {
@@ -700,18 +700,18 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
-      "name": "serviceDoor_Exit1",
+      "name": "serviceDoor_Exit3",
       "position": {
-        "x": -2.260499954223633,
+        "x": -1.2738633155822754,
         "y": 0.0473066121339798,
-        "z": 4.820115566253662
+        "z": 4.946382999420166
       },
       "rotation": {
         "isEuler": true,
         "_x": 0,
-        "_y": -1.570796193514859,
+        "_y": 1.570796193514859,
         "_z": 0,
         "_order": "XYZ"
       },
@@ -853,6 +853,53 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "y": 1,
         "z": 1.000000000000053
       }
+    },
+    {
+      "name": "analogClock_Exit",
+      "position": {
+        "x": -4.113340377807617,
+        "y": 2.0997984409332275,
+        "z": 9.24624252319336
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": -3.141592653589793,
+        "_y": -3.2584136988588153e-7,
+        "_z": -3.141592653589793,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.000000000000053,
+        "y": 1,
+        "z": 1.000000000000053
+      }
+    },
+    {
+      "radio": {
+        "lampName": "SM_Radio1_Lamp",
+        "welcomeDelaySeconds": 0.7,
+        "maxDistance": 3.8,
+        "refDistance": 0.7,
+        "lampBlinkFrequency": 1.1
+      },
+      "name": "radio_CorridorEntry1",
+      "position": {
+        "x": 1.0201904773712158,
+        "y": 1.422849416732788,
+        "z": 10.638052940368652
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
     }
   ],
   "lighting": {
@@ -900,9 +947,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
   },
   "player": {
     "spawnPosition": {
-      "x": 0.45,
-      "y": 1.52,
-      "z": 1.56
+      "x": -1.59,
+      "y": 1.51,
+      "z": 12
     },
     "rotationDegrees": {
       "x": 1.1,

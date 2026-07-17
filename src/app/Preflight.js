@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260714-service-door-latch-closer";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260714-service-door-latch-closer";
-import { translate } from "./Localization.js?v=20260714-service-door-latch-closer";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260714-service-door-latch-closer";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260714-service-door-latch-closer";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260714-service-door-latch-closer";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { translate } from "./Localization.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";

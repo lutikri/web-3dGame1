@@ -5,6 +5,7 @@ const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "behavior",
   "clock",
   "interaction",
+  "radio",
   "prefabType",
 ]);
 const PENDING_PREFAB_OVERRIDES = Symbol("pendingPrefabOverrides");

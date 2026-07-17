@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260714-service-door-latch-closer";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
 
 const MARKER_PREFIX = "PF_";
 

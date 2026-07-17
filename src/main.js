@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=20260714-service-door-latch-closer";
-import { applyLocalization } from "./app/Localization.js?v=20260714-service-door-latch-closer";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=20260714-service-door-latch-closer";
+import { createPreflight } from "./app/Preflight.js?v=20260717-radio-tight-fade-bright-lamp";
+import { applyLocalization } from "./app/Localization.js?v=20260717-radio-tight-fade-bright-lamp";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
 
-const APP_BUILD_REVISION = "20260714-service-door-latch-closer";
+const APP_BUILD_REVISION = "20260717-radio-tight-fade-bright-lamp";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=20260714-service-door-latch-closer`);
+await import(`./OperatorGame.js?v=20260717-radio-tight-fade-bright-lamp`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=20260714-service-door-latch-closer`);
+const { createAppShell } = await import(`./app/AppShell.js?v=20260717-radio-tight-fade-bright-lamp`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=20260714-service-door-latch-closer`
+    `./runtime/RuntimeSmoke.js?v=20260717-radio-tight-fade-bright-lamp`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

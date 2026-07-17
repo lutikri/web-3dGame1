@@ -56,15 +56,6 @@ export const GLOBAL_SCENE_OVERRIDES = {
         }
       }
     },
-    "Interior1": {
-      "color": "#ffffff",
-      "roughness": 1,
-      "metalness": 1,
-      "normalScale": 1,
-      "aoMapIntensity": 1,
-      "emissive": "#000000",
-      "emissiveIntensity": 0
-    },
     "details1": {
       "color": "#ffffff",
       "roughness": 1.2,
@@ -99,6 +90,24 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "normalScale": 1,
       "aoMapIntensity": 1,
       "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
+    "radio1": {
+      "color": "#ffffff",
+      "roughness": 1,
+      "metalness": 1,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
+    "radioLamp": {
+      "color": "#3a0503",
+      "roughness": 0.55,
+      "metalness": 0,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#ff1408",
       "emissiveIntensity": 0
     },
     "trimTiles1": {

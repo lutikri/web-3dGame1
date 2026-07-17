@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260714-service-door-latch-closer";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260714-service-door-latch-closer";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260714-service-door-latch-closer";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260714-service-door-latch-closer";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260717-radio-tight-fade-bright-lamp";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -196,34 +196,6 @@ export const CONFIG = {
           blue: { color: "#1a1a1a", opacity: 0.8, intensity: 1, threshold: 0, softness: 1, blend: "multiply" },
         },
       },
-      Interior1: {
-        meshNames: [
-          "SM_Piping1",
-          "SM_Piping2",
-          "SM_TubeBig1",
-          "SM_TubeBig1_Attachment1",
-          "SM_TubeBig1_Attachment2",
-        ],
-        maps: {
-          preview: {
-            baseColor: "assets/runtime-textures/T_Interior1_BaseColor_Background_Preview_1024_ETC1S.ktx2",
-            normal: "assets/runtime-textures/T_Interior1_Normal_Background_Preview_1024_ETC1S.ktx2",
-            orm: "assets/runtime-textures/T_Interior1_OcclusionRoughnessMetallic_Background_Preview_1024_ETC1S.ktx2",
-          },
-          full: {
-            baseColor: "assets/runtime-textures/T_Interior1_BaseColor_Background_Full_ETC1S.ktx2",
-            normal: "assets/runtime-textures/T_Interior1_Normal_Background_Full_ETC1S.ktx2",
-            orm: "assets/runtime-textures/T_Interior1_OcclusionRoughnessMetallic_Background_Full_ETC1S.ktx2",
-          },
-        },
-        color: "#ffffff",
-        roughness: 1,
-        metalness: 1,
-        normalScale: 1,
-        aoMapIntensity: 1,
-        emissive: "#000000",
-        emissiveIntensity: 0,
-      },
       details1: {
         materialNames: ["M_Details1"],
         namePrefixes: ["SM_Details1", "SM_Details_", "SM_Fan"],
@@ -344,6 +316,41 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#000000",
         emissiveIntensity: 0,
+      },
+      radio1: {
+        materialNames: ["M_Radio1"],
+        namePrefixes: ["SM_Radio1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Radio1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Radio1_Normal_Secondary_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Radio1_OcclusionRoughnessMetallic_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Radio1_BaseColor_Secondary_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Radio1_Normal_Secondary_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Radio1_OcclusionRoughnessMetallic_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      radioLamp: {
+        meshNames: ["SM_Radio1_Lamp"],
+        color: "#3a0503",
+        roughness: 0.55,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#ff1408",
+        emissiveIntensity: 0,
+        castShadow: false,
+        receiveShadow: false,
       },
       trimTiles1: {
         materialNames: ["M_TrimTiles1"],
