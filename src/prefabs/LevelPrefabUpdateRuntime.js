@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=architecture-split-82";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=architecture-split-82";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=architecture-split-82";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=architecture-split-82";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prototype-flow-1";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prototype-flow-1";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prototype-flow-1";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prototype-flow-1";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

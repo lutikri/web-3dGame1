@@ -1,8 +1,12 @@
 # OperatorGame — Game Architecture
 
-> Status: older high-level design draft for a possible Unreal/future version. It is not the current browser project code map. For current code ownership use `../project-structure.md`; for current design priority use `README.md` in this directory.
+> Archived future reference.
 >
-> Current lore direction: the first run is `Elevator Arrival -> Facility Entrance -> Control Booth Tutorial -> Shift Report -> assigned shifts`. Shift 1/2/3/4 notes below are still useful mechanically, but should be interpreted as assigned facility shifts rather than disconnected prototype levels.
+> The current browser product does not include a playable elevator arrival,
+> persistent full-facility map, Power Bus gameplay, Staff Room systems,
+> or long-shift operator-condition simulation.
+>
+> Current product decisions are defined by `game-design-ru.md`.
 
 Working architecture draft for the Unreal version of **OperatorGame / Fusion Core Operator**.
 

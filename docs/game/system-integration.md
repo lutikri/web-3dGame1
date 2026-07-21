@@ -22,13 +22,24 @@ Shift scenario / objectives
 - `LevelSession` can coordinate objectives while incidents remain independent runtime services.
 - The current browser runtime now has explicit services for level ownership, prefab updates, panel presentation, scene feedback, scene audio, narration, terminal completion, player movement/collision/input, loading, and debug snapshots. Future systems should connect through those services rather than adding another parallel frame loop in `OperatorGame.js`.
 
+## Current flow ownership
+
+- Setup Wizard is application state, not level state. Setup/persistence services own completion, language, graphics, and gamma.
+- Assigned Shifts is menu/application state. It does not own scene objects or level runtime state.
+- The implied personnel-elevator transfer is part of loading presentation and does not load an environment.
+- Entrance Corridor, Entrance Area, service corridor, and Control Booth may belong to one exclusively active environment.
+- Shift Brief state belongs to the selected `LevelSession`; briefing presentation remains an app panel concern.
+- Qualification unlocks are persistent progression state. Failed qualification does not unlock later assignments and returns the player to the same qualification assignment.
+- Exit-door interaction requests terminal completion and the following route transition; it does not directly construct the report.
+- Shift Report reads recorded metrics only after the runtime has entered a safe terminal state.
+
 ## Current conflicts
 
 ### Persistent facility vs exclusive browser environments
 
 The older Unreal draft assumes one persistent facility map. The browser architecture requires exclusive active environment ownership. These ideas are compatible only at the product level, not literally in memory.
 
-Recommended resolution: represent the facility as several exclusively loaded environment sectors connected by opaque route transitions. Keep progress, shift state, and shared source-asset caches persistent; unload cloned scenes, physics, lights, audio, and interactions.
+Recommended resolution: use one exclusively active environment for connected spaces that must be traversed physically, such as Entrance Corridor, Entrance Area, service corridor, and Control Booth. Split larger sectors behind opaque route transitions when memory or lifecycle isolation requires it. Keep progress, shift state, and shared source-asset caches persistent; unload cloned scenes, physics, lights, audio, and interactions.
 
 ### Level definitions vs shift scenarios
 

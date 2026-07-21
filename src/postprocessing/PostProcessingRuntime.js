@@ -8,7 +8,7 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=architecture-split-82";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=prototype-flow-1";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -16,7 +16,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=architecture-split-82";
+} from "./PostProcessingShaders.js?v=prototype-flow-1";
 
 export class PostProcessingRuntime {
   composer = null;

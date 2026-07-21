@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=architecture-split-82";
+import { LevelSession } from "./LevelSession.js?v=prototype-flow-1";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {} } = {}) {

@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=architecture-split-82";
+import { LevelRuntime } from "./LevelRuntime.js?v=prototype-flow-1";
 
 export class LevelEnvironmentLifecycle {
   constructor({

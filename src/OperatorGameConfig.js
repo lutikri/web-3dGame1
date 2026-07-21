@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=architecture-split-82";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=architecture-split-82";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=architecture-split-82";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=architecture-split-82";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=prototype-flow-1";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=prototype-flow-1";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=prototype-flow-1";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=prototype-flow-1";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

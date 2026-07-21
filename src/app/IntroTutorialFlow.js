@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=architecture-split-82";
+import { translateRequired } from "./Localization.js?v=prototype-flow-1";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

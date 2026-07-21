@@ -52,3 +52,27 @@ Classification should use current mechanics: demand error, efficiency, output, t
 Normal late hot operation does not by itself earn `REDLINE PHILOSOPHER`; require real soak, very high temperatures, or repeated redline behavior. `NERVOUS PURGE TECH` must be reachable through repeated short vent pulses.
 
 Canonical profile names remain defined by the shift report implementation; new profiles must be derived from recorded behavior rather than one isolated threshold.
+
+## Primary player-facing report metrics
+
+The main Shift Report presents only three metrics:
+
+1. `GRID COMPLIANCE`
+   - percentage of scored shift time inside the accepted demand band;
+   - primary measure of whether the operator delivered the assigned power.
+
+2. `OPERATING EFFICIENCY`
+   - average reaction efficiency across the active burn;
+   - summarizes fuel, field, temperature, containment, and useful output quality.
+
+3. `PEAK CORE STRESS`
+   - maximum Core Stress reached during the shift;
+   - reports the worst mechanical condition and identifies a safety trip.
+
+The report also displays one terminal result:
+
+- `QUALIFICATION PASSED`;
+- `RETRY REQUIRED`;
+- or an equivalent shift-specific completion result.
+
+Detailed recorder values remain available for internal classification and debugging but are not presented as a large player-facing table.

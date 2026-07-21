@@ -15,26 +15,36 @@ Keep ownership explicit:
 
 ## Current player flow
 
-The current design direction treats the game as assigned shifts inside one Terragen Systems facility.
-
-First new-game flow:
+The current browser flow is:
 
 ```text
-Elevator Arrival
-  -> Facility Entrance
-  -> Control Booth Tutorial / first qualification shift
-  -> Shift Report + Operator Profile
-  -> assigned shift route
+First site visit:
+Setup Wizard
+  -> Main Menu
+  -> Assigned Shifts
+  -> selected shift loading
+  -> Entrance Corridor
+  -> Entrance Area
+  -> Control Booth
+  -> physical return to the entrance
+  -> Shift Report
+  -> Assigned Shifts
 ```
 
-Repeat shifts should start from the Facility Entrance or the selected shift start context, not replay the elevator every time.
+Repeat visits skip Setup Wizard unless settings are reset.
 
-Keep this as app/session flow:
+The personnel elevator is an implied off-screen transition and does not own an active environment. If `intro-elevator` remains registered temporarily, it is deprecated/non-playable and is not part of the canonical route.
 
-- `AppShell` owns high-level routing, first-visit state, menus, route curtains, and briefings.
-- `LevelRegistry` owns shift metadata, briefing sheets, playable state, and environment definitions.
-- `LevelSession` owns objectives and shift outcome state.
-- Level scripts/configs may describe local bindings and objectives, but should not become a one-off story monolith.
+Responsibilities:
+
+- `AppShell` composes the application flow and input locking.
+- Setup/persistence modules own first-run setup completion, language, graphics, and gamma.
+- `AppRouter` owns Main Menu, Assigned Shifts, loading, gameplay, and Shift Report transitions.
+- `LevelRegistry` owns shift metadata, assignment state, briefing assets, playability, and environment selection.
+- `LevelSession` owns shift objectives and terminal outcome state.
+- The active environment owns Entrance Corridor, Entrance Area, Control Booth, interactions, lights, audio, physics, and disposal.
+- Successful qualification unlocks the two following assigned shifts.
+- Failed qualification returns to the same assigned qualification shift.
 
 ## Source layout
 

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=architecture-split-82";
+import { applyAxisRotation } from "./TransformUtils.js?v=prototype-flow-1";
 
 export class InteriorObjectRegistry {
   constructor(options) {

@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=architecture-split-82";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=prototype-flow-1";
 
 const DISMISS_MS = 300;
 

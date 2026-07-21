@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=architecture-split-82";
+} from "./FluorescentBehavior.js?v=prototype-flow-1";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

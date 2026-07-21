@@ -1,8 +1,8 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=architecture-split-82";
-import { translate } from "./Localization.js?v=architecture-split-82";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=architecture-split-82";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=architecture-split-82";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=architecture-split-82";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=prototype-flow-1";
+import { translate } from "./Localization.js?v=prototype-flow-1";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=prototype-flow-1";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=prototype-flow-1";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=prototype-flow-1";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -12,12 +12,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=architecture-split-82";
-import { createAppPanelController } from "./AppPanelController.js?v=architecture-split-82";
-import { createAppRouter } from "./AppRouter.js?v=architecture-split-82";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=architecture-split-82";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=architecture-split-82";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=architecture-split-82";
+} from "./AppPersistence.js?v=prototype-flow-1";
+import { createAppPanelController } from "./AppPanelController.js?v=prototype-flow-1";
+import { createAppRouter } from "./AppRouter.js?v=prototype-flow-1";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=prototype-flow-1";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=prototype-flow-1";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=prototype-flow-1";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

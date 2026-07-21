@@ -21,3 +21,9 @@ test("environment aliases resolve without duplicating environment objects", () =
     LEVEL_DEFINITIONS["intro-shift"].environment,
   );
 });
+
+test("deprecated elevator prototype is not a playable assignment", () => {
+  assert.equal(LEVEL_DEFINITIONS["intro-elevator"].deprecated, true);
+  assert.equal(LEVEL_DEFINITIONS["intro-elevator"].playable, false);
+  assert.equal(getPlayableLevels().some((level) => level.id === "intro-elevator"), false);
+});

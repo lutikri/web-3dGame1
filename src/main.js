@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=architecture-split-82";
-import { applyLocalization } from "./app/Localization.js?v=architecture-split-82";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=architecture-split-82";
+import { createPreflight } from "./app/Preflight.js?v=prototype-flow-1";
+import { applyLocalization } from "./app/Localization.js?v=prototype-flow-1";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=prototype-flow-1";
 
-const APP_BUILD_REVISION = "architecture-split-82";
+const APP_BUILD_REVISION = "prototype-flow-1";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=architecture-split-82`);
+await import(`./OperatorGame.js?v=prototype-flow-1`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=architecture-split-82`);
+const { createAppShell } = await import(`./app/AppShell.js?v=prototype-flow-1`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=architecture-split-82`
+    `./runtime/RuntimeSmoke.js?v=prototype-flow-1`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=architecture-split-82";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=architecture-split-82";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=architecture-split-82";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=architecture-split-82";
+import { createDebugHub } from "./DebugHub.js?v=prototype-flow-1";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=prototype-flow-1";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=prototype-flow-1";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=prototype-flow-1";
 
 export class DebugToolsRuntime {
   constructor(options) {

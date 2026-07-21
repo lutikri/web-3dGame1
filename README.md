@@ -23,128 +23,27 @@ The player follows changing `Grid Demand` while watching `Plasma Temp`, `Contain
 
 High temperature is not automatically failure. Late burn phases are meant to push the operator near the dangerous band. The interesting play is not “keep everything low”; it is deciding how much risk the machinery can survive.
 
-## First Qualification flow
+## Current player flow
 
-The first playthrough is no longer just a menu into a tutorial room. It is the player's first arrival at the Terragen Systems facility.
+The current game begins with a first-run setup wizard for language, graphics, and gamma.
 
-### 0. Elevator Arrival
+After setup, the player enters the main menu and opens the Assigned Shifts screen. The first available assignment is the First Operator Qualification Shift.
 
-The first press of `PLAY` loads a separate old freight-elevator scene.
+The playable route is:
 
-The elevator is already moving downward. The player can look around and learn basic movement, but cannot stop the descent. Outside the elevator, passing technical floors, cable runs, emergency lamps, bare rock, and sealed service platforms should sell the scale of the underground complex.
+```text
+Setup Wizard -> Main Menu -> Assigned Shifts
+-> Entrance Corridor -> Entrance Area -> Control Booth
+-> Shift -> Return to Entrance -> Shift Report
+```
 
-During the descent, the General Announcement System introduces Terragen Systems, implies that the player is a live-in operator candidate, and hints that automation and staffing have failed badly enough for this job to exist.
+The personnel elevator is implied during loading and is not a playable scene.
 
-Tutorial beats:
+After successful qualification, Instrument Reliability Check and Cost of Running Trial become available.
 
-1. `W A S D` — move.
-2. `SPACE` — “say apple”.
-3. After the elevator stops: `LMB` on the door handle.
-
-After the handle interaction, the screen fades to black and the main facility loads behind the fade.
-
-### 1. Facility Entrance
-
-Repeat shifts start here; the elevator arrival is only for the first new game.
-
-The player appears in a small entrance room in front of the closed elevator. The room contains a desk, the first qualification `Shift Brief`, a General Announcement System radio with a red signal lamp, Control Booth wayfinding, locked doors to restricted sectors, and a clearance sign.
-
-The narrator asks the player to:
-
-1. read the brief;
-2. proceed to the Control Booth;
-3. avoid areas outside the current qualification.
-
-The brief and environment should point the player toward the Control Booth without a floating quest marker.
-
-### 2. Control Booth Tutorial
-
-The player enters the Control Booth and sees the FCU-16 operator panel.
-
-Tutorial sequence:
-
-1. Hover the panel.
-2. Hold `RMB` to lean toward it.
-3. Hover a control.
-4. Use the mouse wheel to adjust it.
-5. After the first adjustment, the operator thinks: “I think I need to start it.”
-6. The player finds and presses `IGNITE` on their own.
-
-The narrator explains the facility and the assignment, not exact reactor solutions.
-
-The operator's thoughts describe observed symptoms:
-
-- temperature too high;
-- output too low;
-- plasma extinguished;
-- reaction recovered;
-- shift complete;
-- time to leave the booth.
-
-### 3. Shift Outcomes
-
-Success:
-
-- the reactor enters a safe mode;
-- the narrator confirms qualification;
-- the exit door unlocks;
-- the player turns the door handle;
-- fade to `Shift Report`.
-
-Emergency shutdown:
-
-- total reactor destruction becomes an automatic safety trip;
-- power output stops, the installation remains repairable;
-- the narrator marks the qualification as failed, but allows a retry because there are not enough candidates;
-- the player still exits through the same door.
-
-Insufficient output:
-
-- if the installation survives but the player consistently misses `Grid Demand`, the shift technically ends but qualification is not granted;
-- the narrator says the equipment survived, but the required power was not produced.
-
-### 4. Exit and Shift Menu
-
-After the exit door interaction, the game shows:
-
-1. `Shift Report`;
-2. `Operator Profile`;
-3. assigned shifts.
-
-At first the shift list contains one available qualification shift and several empty slots. Later shifts begin from the Facility Entrance, not the elevator.
-
-## Tutorial UX channels
-
-- Subtitles are the operator’s thoughts and reactions. They should describe memory, symptoms, uncertainty, or stress, not give exact instructions.
-- Tutorial hints are short system prompts. They appear as non-blocking bottom flyouts with keycaps and mouse icons.
-
-The first qualification uses this split across elevator, entrance, and Control Booth:
-
-1. `W A S D` to move.
-2. `SPACE` to “say apple” / jump, followed by a short operator reaction.
-3. `LMB` for handles / brief interaction.
-4. `RMB` to lean toward the panel.
-5. `Mouse Wheel` to adjust a highlighted control.
-6. One short operator thought after the control lesson: “I think I need to start it.”
-
-Localization rule: subtitles live under `subtitles.*`, tutorial hints live under `hints.*`, and every new key should exist in both English and Russian.
+Detailed progression and game rules live in [`docs/game/`](docs/game/README.md).
 
 ![Operator console and fusion core room](assets/repo/showcase-game1.webp)
-
-## Shift route
-
-The project should read as assigned shifts inside one facility, not disconnected arcade levels.
-
-- `first-qualification` / `intro-shift` — first qualification run: arrival, entrance, brief, Control Booth tutorial, first shift.
-- `unexpected-stuff` — instrument failure route: same panel, unreliable readings and symptoms.
-- `cost-of-running` — fuel economy route: different blend behavior, efficiency/cost tradeoffs, unstable fuel delivery.
-- `shift-coordination` — same console, clock-start shift and qualification as a panel operator.
-- `exploring-around` — facility access opens: entrance, Control Booth, service corridor, staff room/locked sectors as walkaround content.
-- Additional tests — optional panel-focused challenge shifts: broken lamp, low fuel, low heat sink, max load, emergency light, etc.
-- Power Bus training — future switchgear / routing shift.
-- Longer shifts — future 8–10 minute shifts with operator-condition effects.
-
-After `shift-coordination`, the player is fictionally qualified as a panel operator. From there the game can either continue in the web prototype with facility rooms and effects, or keep the route as a design skeleton for a later Unreal version.
 
 ![Service corridor exploration](assets/repo/showcase-game2.webp)
 

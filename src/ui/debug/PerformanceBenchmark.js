@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=architecture-split-82";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=prototype-flow-1";
 
 const EFFECT_KEYS = [
   "bloom",

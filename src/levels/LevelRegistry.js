@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=architecture-split-82";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=architecture-split-82";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=architecture-split-82";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=architecture-split-82";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=prototype-flow-1";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=prototype-flow-1";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=prototype-flow-1";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=prototype-flow-1";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
@@ -11,8 +11,9 @@ export const LEVEL_DEFINITIONS = {
     id: "intro-elevator",
     title: "ELEVATOR ARRIVAL",
     mode: "arrival",
-    description: "One-time freight elevator descent into Terragen Systems.",
-    playable: true,
+    description: "Deprecated prototype scene; the current product uses an implied off-screen transfer.",
+    playable: false,
+    deprecated: true,
     environment: LEVEL_INTRO_ELEVATOR_CONFIG,
   },
   "intro-shift": {

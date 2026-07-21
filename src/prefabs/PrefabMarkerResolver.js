@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=architecture-split-82";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=prototype-flow-1";
 
 const MARKER_PREFIX = "PF_";
 

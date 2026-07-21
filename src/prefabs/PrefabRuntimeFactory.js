@@ -1,10 +1,10 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=architecture-split-82";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=architecture-split-82";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=architecture-split-82";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=architecture-split-82";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=architecture-split-82";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prototype-flow-1";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prototype-flow-1";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prototype-flow-1";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prototype-flow-1";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=prototype-flow-1";
 
 export function createPrefabRuntimeFactory({
   config,
