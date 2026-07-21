@@ -1,10 +1,6 @@
 import * as THREE from "three";
 
-function applyAxisRotation(object, axis, angle) {
-  if (axis === "x") object.rotateX(angle);
-  else if (axis === "y") object.rotateY(angle);
-  else object.rotateZ(angle);
-}
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=architecture-split-82";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

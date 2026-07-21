@@ -2,6 +2,8 @@
 
 This document describes the current browser/Three.js project structure. Older design notes may still be useful for game direction, but this file is the current code-architecture map.
 
+Game design documents are centralized under `docs/game/`. Their source priority is defined in `docs/game/README.md`.
+
 ## Core rule
 
 Keep ownership explicit:
@@ -38,27 +40,52 @@ Keep this as app/session flow:
 
 ```text
 src/
-  app/                  App shell, menus, routing, briefings, localization, tutorial UI flow
-  audio/                WebAudio runtime, sound registry, sound marker handling
+  app/                  App composition, routing, persistence, panel modules, briefings, localization, tutorial UI flow
+  audio/                WebAudio, scene mix policy, narration, level sound catalog, registry and marker handling
   config/               Global config modules that are not level definitions
-  game/                 Shift report / game-session support
+  game/                 Shift start/reset lifecycle, report, completion flow and operator-thought policy
   incidents/            Runtime fault/fuel systems
-  interactions/         Reusable interaction systems such as physics doors
-  levels/               Level registry, level configs, save/override schema
+  interactions/         Hover/raycast targeting, door state plus latch/drag handling, and bulkhead exit flow
+  levels/               Level registry/configs, active session ownership, objectives and save/override schema
   lighting/             Shared lighting math and lighting runtime
-  panels/               Operator panel binding/runtime code
+  materials/            Material construction, runtime clone synchronization, texture ownership and mask overlays
+  panels/               Operator panel asset lifecycle, binding, simulation and presentation runtime code
   physics/              Rapier/character collision integration
-  player/               Player controller
-  postprocessing/       Post FX runtime wrapper
+  player/               Movement, input, view transitions, collision resolution and collision-debug presentation
+  postprocessing/       Post FX runtimes, quality ownership, live uniform policy and presets
   prefabs/
     PrefabRegistry.js   Shared prefab definitions
+    LevelPrefabConfigRuntime.js Applies editable instance transforms, state, physics and light config
+    LevelPrefabUpdateRuntime.js  Per-frame light/clock/elevator/placed-behavior updates
     behaviors/          Shared prefab behavior modules
-  runtime/              Level lifecycle, asset cache, smoke checks
-  scene/                Scene builder, texture streaming, material/collision helpers
+  runtime/              Level lifecycle/route coordination, static-physics composition, animation scheduling, public API and smoke checks
+  scene/                Scene builder, texture streaming, material/collision helpers and GLB object-role registration
   ui/
-    debug/              Debug hub and debug panels
-    LoadingOverlay.js   Loading UI
+    debug/              Debug-tools composition, hub, panels, snapshots, performance/memory/overlay presentation
+    LoadingOverlay.js   Loading DOM presentation
+    LoadingCoordinator.js Boot/route loading state and completion events
 ```
+
+Debug-only performance sampling, runtime memory estimates, scene inspection, and transform-gizmo lifecycle live under `src/ui/debug/`; the game composition root only exposes adapters to them through `window.operatorGameDebug`.
+
+## Composition root boundary
+
+`src/OperatorGame.js` is the browser runtime composition root. It may:
+
+- create Three.js primitives and long-lived runtime services;
+- pass collections, state getters, commands, and event callbacks between services;
+- declare the ordered frame phases consumed by `AnimationLoop`;
+- install the validated public API and start the application.
+
+It must not own reusable update algorithms, UI state machines, gameplay classification, prefab behavior, audio mixing policy, loading lifecycle, or debug formatting. Those belong to their target modules. Small adapters that translate one runtime contract into another are expected in the root.
+
+`AppShell` follows the same rule at the application layer:
+
+- `AppRouter` owns major route transitions and the opaque route curtain;
+- `AppPersistence` owns settings/progress storage and normalization;
+- `AppPanelController` owns panel visibility and internal menu navigation;
+- modules under `src/app/panels/` own panel-specific rendering and actions;
+- `AppShell` composes these pieces and coordinates gameplay input locking.
 
 ## Prefab behavior modules
 

@@ -1,34 +1,25 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=pointer-capture-rigid-debug";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=pointer-capture-rigid-debug";
-import { translate } from "./Localization.js?v=pointer-capture-rigid-debug";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=pointer-capture-rigid-debug";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=pointer-capture-rigid-debug";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=pointer-capture-rigid-debug";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=architecture-split-82";
+import { translate } from "./Localization.js?v=architecture-split-82";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=architecture-split-82";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=architecture-split-82";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=architecture-split-82";
+import {
+  clearPreflightStorage,
+  clearProgressStorage,
+  createEmptyProgress,
+  loadProgress,
+  loadSettings,
+  requestReturnToMenuAfterPreflight,
+  saveProgress,
+  saveSettings as persistSettings,
+} from "./AppPersistence.js?v=architecture-split-82";
+import { createAppPanelController } from "./AppPanelController.js?v=architecture-split-82";
+import { createAppRouter } from "./AppRouter.js?v=architecture-split-82";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=architecture-split-82";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=architecture-split-82";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=architecture-split-82";
 
-const STORAGE_KEY = "operatorGame.settings.v1";
-const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
-const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const INTRO_LEVEL_ID = "intro-shift";
-const BRIEFING_DISMISS_MS = 300;
-const LEVEL_ROUTE_LINKS = [
-  { from: "qualification", to: "facility", fromSide: "bottom", toSide: "top" },
-  { from: "qualification", to: "tests", fromSide: "bottom", toSide: "top" },
-];
-const LEVEL_UNLOCKS = {
-  "intro-shift": [],
-  "unexpected-stuff": ["intro-shift"],
-  "fuel-problems": ["intro-shift"],
-  "shift-coordination": ["unexpected-stuff", "fuel-problems"],
-  "exploring-around": ["shift-coordination"],
-  "power-bus-training": ["shift-coordination"],
-  "longer-shifts": ["shift-coordination"],
-  "broken-lamp": ["shift-coordination"],
-  "low-fuel": ["shift-coordination"],
-  "low-heat-sink": ["shift-coordination"],
-  "maximum-load": ["shift-coordination"],
-  freeplay: [],
-  competitive: ["shift-coordination"],
-};
 
 export function createAppShell({ gameApi }) {
   const overlay = document.querySelector("#appOverlay");
@@ -37,77 +28,88 @@ export function createAppShell({ gameApi }) {
   const routeLoadingTitle = document.querySelector("#routeLoadingTitle");
   const routeLoadingStatus = document.querySelector("#routeLoadingStatus");
   const routeLoadingBarFill = document.querySelector("#routeLoadingBarFill");
-  const briefingOverlay = document.querySelector("#briefingOverlay");
-  const briefingSheetFrame = document.querySelector("#briefingSheetFrame");
-  const briefingImage = document.querySelector("#briefingImage");
   const subtitleQueue = createSubtitleQueue({ element: document.querySelector("#operatorSubtitle") });
   const tutorialHintQueue = createTutorialHintQueue({
     element: document.querySelector("#tutorialHint"),
     translate,
   });
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
-  const levelRouteScroll = document.querySelector(".level-route-scroll");
-  const levelRouteCanvas = document.querySelector(".level-route-canvas");
-  const levelRouteLinksSvg = document.querySelector(".route-links-svg");
-  const fovInput = document.querySelector("#settingFov");
-  const fovValue = document.querySelector("#settingFovValue");
-  const uiScaleInput = document.querySelector("#settingUiScale");
-  const uiScaleValue = document.querySelector("#settingUiScaleValue");
-  const shadowQualityInput = document.querySelector("#settingShadowQuality");
-  const shadowQualityValue = document.querySelector("#settingShadowQualityValue");
-  const gtaoQualityInput = document.querySelector("#settingGtaoQuality");
-  const gtaoQualityValue = document.querySelector("#settingGtaoQualityValue");
-  const ssgiQualityInput = document.querySelector("#settingSsgiQuality");
-  const ssgiQualityValue = document.querySelector("#settingSsgiQualityValue");
-  const ssrQualityInput = document.querySelector("#settingSsrQuality");
-  const ssrQualityValue = document.querySelector("#settingSsrQualityValue");
-  const screenSpaceShadowQualityInput = document.querySelector("#settingScreenSpaceShadowQuality");
-  const screenSpaceShadowQualityValue = document.querySelector("#settingScreenSpaceShadowQualityValue");
-  const sensitivityInput = document.querySelector("#settingSensitivity");
-  const sensitivityValue = document.querySelector("#settingSensitivityValue");
   const settings = loadSettings();
+  const settingsPanel = createSettingsPanel({ settings, gameApi, save: persistSettings });
   const debugConfig = gameApi?.config?.debug ?? {};
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
   const returnToMenuAfterPreflight = Boolean(window.operatorGameBootOptions?.returnToMenuAfterPreflight);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
+  const levelSelectPanel = createLevelSelectPanel({ levels: LEVELS, progress });
+  const updateLevelProgressUi = levelSelectPanel.refresh;
+  const isLevelUnlocked = levelSelectPanel.isUnlocked;
   let currentPanel = null;
   let previousPanel = "main-menu";
   let transitionActive = false;
   let initialRouteHandled = false;
-  let briefingActive = false;
-  let briefingQueue = [];
-  let briefingLevelId = null;
-  let briefingInspectHeld = false;
-  let briefingHideTimer = 0;
-  let briefingSheetToken = 0;
   let activeGameplayLevelId = null;
+  let briefingPanel = null;
+  const panelController = createAppPanelController({
+    overlay,
+    panels,
+    onBeforeShow: () => {
+      hideBriefing(true);
+      introTutorialFlow.stop();
+      gameApi.releasePointerLock?.();
+    },
+    onVisibilityChange: ({ open, panelName }) => {
+      currentPanel = panelName;
+      updateInputLock();
+      if (open && panelName === "level-select") levelSelectPanel.show();
+    },
+  });
+  const router = createAppRouter({
+    overlay: routeLoadingOverlay,
+    percent: routeLoadingPercent,
+    title: routeLoadingTitle,
+    status: routeLoadingStatus,
+    barFill: routeLoadingBarFill,
+    releaseInput: () => gameApi.releasePointerLock?.(),
+    onStateChange: (active) => {
+      transitionActive = active;
+      updateInputLock();
+    },
+  });
   const introTutorialFlow = createIntroTutorialFlow({
     hintQueue: tutorialHintQueue,
     isAllowed: (state) =>
       Boolean(
         state?.levelId === INTRO_LEVEL_ID &&
           activeGameplayLevelId === INTRO_LEVEL_ID &&
-          !briefingActive &&
+          !briefingPanel?.isActive() &&
           !transitionActive &&
           !isOpen() &&
           !document.querySelector("#resultsOverlay")?.classList.contains("is-visible"),
       ),
   });
+  briefingPanel = createBriefingPanel({
+    levels: LEVELS,
+    onActiveChange: updateInputLock,
+    onDismissed: (levelId, delayMs) => maybeStartIntroTutorial(levelId, delayMs),
+  });
+  const preloadLevelBriefing = briefingPanel.preload;
+  const showLevelBriefing = briefingPanel.show;
+  const dismissBriefing = briefingPanel.dismiss;
   let resolveInitialRouteReady = null;
   const initialRouteReady = new Promise((resolve) => {
     resolveInitialRouteReady = resolve;
   });
 
-  applySettings();
+  settingsPanel.apply();
   wireActions();
-  wireLevelRouteDrag();
-  wireBriefingInspect();
-  wireSettings();
+  levelSelectPanel.wire();
+  briefingPanel.wire();
+  settingsPanel.wire();
   wireProgression();
   wireTutorialHints();
   wireSubtitles();
-  validateLevelMenu();
-  updateLevelProgressUi();
+  levelSelectPanel.validate();
+  levelSelectPanel.refresh();
   installDevConsoleCommands();
 
   function wireSubtitles() {
@@ -135,17 +137,17 @@ export function createAppShell({ gameApi }) {
     });
 
     document.addEventListener("keydown", (event) => {
-      if (briefingActive && event.code === "Enter" && !event.repeat) {
+      if (briefingPanel.isActive() && event.code === "Enter" && !event.repeat) {
         event.preventDefault();
         dismissBriefing();
         return;
       }
-      if (briefingActive && event.key === "Enter" && !event.repeat) {
+      if (briefingPanel.isActive() && event.key === "Enter" && !event.repeat) {
         event.preventDefault();
         dismissBriefing();
         return;
       }
-      if (briefingActive) {
+      if (briefingPanel.isActive()) {
         event.preventDefault();
         return;
       }
@@ -162,187 +164,6 @@ export function createAppShell({ gameApi }) {
         showPanel("pause");
       }
     });
-  }
-
-  function wireLevelRouteDrag() {
-    if (!levelRouteScroll) return;
-    let drag = null;
-    let suppressClick = false;
-    const dragThreshold = 4;
-
-    levelRouteScroll.addEventListener("pointerdown", (event) => {
-      if (event.button !== 0) return;
-      drag = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-        scrollLeft: levelRouteScroll.scrollLeft,
-        scrollTop: levelRouteScroll.scrollTop,
-        active: false,
-      };
-    });
-
-    levelRouteScroll.addEventListener("pointermove", (event) => {
-      if (!drag) return;
-      const dx = event.clientX - drag.x;
-      const dy = event.clientY - drag.y;
-      if (!drag.active && Math.hypot(dx, dy) < dragThreshold) return;
-      if (!drag.active && !levelRouteScroll.hasPointerCapture(drag.pointerId)) {
-        levelRouteScroll.setPointerCapture(drag.pointerId);
-      }
-      drag.active = true;
-      suppressClick = true;
-      levelRouteScroll.classList.add("is-dragging");
-      levelRouteScroll.scrollLeft = drag.scrollLeft - dx;
-      levelRouteScroll.scrollTop = drag.scrollTop - dy;
-      event.preventDefault();
-    });
-
-    const endDrag = (event) => {
-      if (!drag) return;
-      drag = null;
-      levelRouteScroll.classList.remove("is-dragging");
-      if (levelRouteScroll.hasPointerCapture(event.pointerId)) levelRouteScroll.releasePointerCapture(event.pointerId);
-    };
-
-    levelRouteScroll.addEventListener(
-      "click",
-      (event) => {
-        if (!suppressClick) return;
-        suppressClick = false;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      },
-      true,
-    );
-    levelRouteScroll.addEventListener("pointerup", endDrag);
-    levelRouteScroll.addEventListener("pointercancel", endDrag);
-    levelRouteScroll.addEventListener("lostpointercapture", endDrag);
-    window.addEventListener("blur", () => {
-      drag = null;
-      suppressClick = false;
-      levelRouteScroll.classList.remove("is-dragging");
-    });
-    window.addEventListener("resize", updateLevelRouteLinks);
-  }
-
-  function updateLevelRouteLinks() {
-    if (!levelRouteCanvas || !levelRouteLinksSvg) return;
-    const canvasRect = levelRouteCanvas.getBoundingClientRect();
-    const width = levelRouteCanvas.offsetWidth;
-    const height = levelRouteCanvas.offsetHeight;
-    levelRouteLinksSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    levelRouteLinksSvg.innerHTML = LEVEL_ROUTE_LINKS.map((link) => {
-      const from = getRouteAnchor(link.from, link.fromSide, canvasRect);
-      const to = getRouteAnchor(link.to, link.toSide, canvasRect);
-      if (!from || !to) return "";
-      return `<path d="${createRoutePath(from, to, link)}" />`;
-    }).join("");
-  }
-
-  function getRouteAnchor(sectionId, side, canvasRect) {
-    const section = levelRouteCanvas?.querySelector(`[data-route-section="${sectionId}"]`);
-    if (!section) return null;
-    const rect = section.getBoundingClientRect();
-    const x = rect.left - canvasRect.left;
-    const y = rect.top - canvasRect.top;
-    const anchors = {
-      top: { x: x + rect.width / 2, y },
-      right: { x: x + rect.width, y: y + rect.height / 2 },
-      bottom: { x: x + rect.width / 2, y: y + rect.height },
-      left: { x, y: y + rect.height / 2 },
-    };
-    return anchors[side] ?? anchors.bottom;
-  }
-
-  function createRoutePath(from, to, link) {
-    if (link.fromSide === "bottom" && link.toSide === "top") {
-      const midY = Math.round((from.y + to.y) / 2);
-      return `M ${round(from.x)} ${round(from.y)} L ${round(from.x)} ${midY} L ${round(to.x)} ${midY} L ${round(to.x)} ${round(to.y)}`;
-    }
-    if (link.fromSide === "left" && link.toSide === "right") {
-      const midX = Math.round((from.x + to.x) / 2);
-      return `M ${round(from.x)} ${round(from.y)} L ${midX} ${round(from.y)} L ${midX} ${round(to.y)} L ${round(to.x)} ${round(to.y)}`;
-    }
-    return `M ${round(from.x)} ${round(from.y)} L ${round(to.x)} ${round(to.y)}`;
-  }
-
-  function round(value) {
-    return Math.round(value * 10) / 10;
-  }
-
-  function wireSettings() {
-    if (fovInput) {
-      fovInput.value = String(settings.fov);
-      fovInput.addEventListener("input", () => {
-        settings.fov = Number(fovInput.value);
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (uiScaleInput) {
-      uiScaleInput.value = String(settings.uiScale);
-      uiScaleInput.addEventListener("input", () => {
-        settings.uiScale = Number(uiScaleInput.value);
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (shadowQualityInput) {
-      shadowQualityInput.value = settings.shadowQuality;
-      shadowQualityInput.addEventListener("change", () => {
-        settings.shadowQuality = shadowQualityInput.value;
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (gtaoQualityInput) {
-      gtaoQualityInput.value = settings.gtaoQuality;
-      gtaoQualityInput.addEventListener("change", () => {
-        settings.gtaoQuality = gtaoQualityInput.value;
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (ssgiQualityInput) {
-      ssgiQualityInput.value = settings.ssgiQuality;
-      ssgiQualityInput.addEventListener("change", () => {
-        settings.ssgiQuality = ssgiQualityInput.value;
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (ssrQualityInput) {
-      ssrQualityInput.value = settings.ssrQuality;
-      ssrQualityInput.addEventListener("change", () => {
-        settings.ssrQuality = ssrQualityInput.value;
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (screenSpaceShadowQualityInput) {
-      screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
-      screenSpaceShadowQualityInput.addEventListener("change", () => {
-        settings.screenSpaceShadowQuality = screenSpaceShadowQualityInput.value;
-        applySettings();
-        saveSettings();
-      });
-    }
-
-    if (sensitivityInput) {
-      sensitivityInput.value = String(settings.sensitivity);
-      sensitivityInput.addEventListener("input", () => {
-        settings.sensitivity = Number(sensitivityInput.value);
-        applySettings();
-        saveSettings();
-      });
-    }
   }
 
   function wireProgression() {
@@ -410,62 +231,6 @@ export function createAppShell({ gameApi }) {
     window.addEventListener("operatorgame:knob-adjusted", () => {
       introTutorialFlow.handleKnobAdjusted();
     });
-  }
-
-  function wireBriefingInspect() {
-    if (!briefingOverlay || !briefingSheetFrame || !briefingImage) return;
-
-    briefingOverlay.addEventListener("mousemove", (event) => {
-      if (!briefingActive) return;
-      const rect = briefingSheetFrame.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-      const insideImage = isPointInsideRect(event.clientX, event.clientY, rect);
-      briefingOverlay.classList.toggle("is-inspectable", insideImage);
-      if (!insideImage || !briefingInspectHeld) {
-        stopBriefingInspect();
-        return;
-      }
-      updateBriefingInspectPosition(event, rect);
-    });
-
-    briefingOverlay.addEventListener("mousedown", (event) => {
-      if (!briefingActive || event.button !== 0) return;
-      const rect = briefingSheetFrame.getBoundingClientRect();
-      if (!isPointInsideRect(event.clientX, event.clientY, rect)) return;
-      event.preventDefault();
-      briefingInspectHeld = true;
-      briefingOverlay.classList.add("is-inspecting");
-      updateBriefingInspectPosition(event, rect);
-    });
-
-    window.addEventListener("mouseup", (event) => {
-      if (event.button !== 0 || !briefingInspectHeld) return;
-      briefingInspectHeld = false;
-      stopBriefingInspect();
-    });
-
-    briefingOverlay.addEventListener("mouseleave", () => {
-      briefingInspectHeld = false;
-      briefingOverlay.classList.remove("is-inspectable");
-      stopBriefingInspect();
-    });
-  }
-
-  function updateBriefingInspectPosition(event, rect) {
-      const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-      const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
-      briefingOverlay.style.setProperty("--briefing-origin-x", `${(x * 100).toFixed(1)}%`);
-      briefingOverlay.style.setProperty("--briefing-origin-y", `${(y * 100).toFixed(1)}%`);
-      briefingOverlay.style.setProperty("--briefing-pan-x", `${((0.5 - x) * BRIEFING_UI.inspect.panX).toFixed(1)}px`);
-      briefingOverlay.style.setProperty("--briefing-pan-y", `${((0.5 - y) * BRIEFING_UI.inspect.panY).toFixed(1)}px`);
-      briefingOverlay.style.setProperty("--briefing-cursor-x", `${event.clientX.toFixed(1)}px`);
-      briefingOverlay.style.setProperty("--briefing-cursor-y", `${event.clientY.toFixed(1)}px`);
-      briefingOverlay.style.setProperty("--briefing-focus-radius", `${getBriefingFocusRadius(rect).toFixed(1)}px`);
-      briefingOverlay.classList.add("is-inspecting");
-  }
-
-  function isPointInsideRect(x, y, rect) {
-    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
   }
 
   function startIntroShift() {
@@ -540,9 +305,9 @@ export function createAppShell({ gameApi }) {
     } else if (action === "redetect-graphics") {
       transitionActive = true;
       gameApi.releasePointerLock?.();
-      showRouteCurtain();
-      sessionStorage.setItem("operatorGame.preflight.returnToMenu", "1");
-      localStorage.removeItem(PREFLIGHT_STORAGE_KEY);
+      router.showCurtain();
+      requestReturnToMenuAfterPreflight();
+      clearPreflightStorage();
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => window.location.reload());
       });
@@ -550,61 +315,7 @@ export function createAppShell({ gameApi }) {
   }
 
   async function runRouteTransition({ title, status = translate("loading.preparing"), action }) {
-    transitionActive = true;
-    updateInputLock();
-    gameApi.releasePointerLock?.();
-    showRouteCurtain();
-    await wait(140);
-    showRouteLoading(title, status);
-    await wait(420);
-    await action?.();
-    await wait(80);
-    hideRouteLoadingPanel();
-    await wait(100);
-    hideRouteCurtain();
-    await wait(140);
-    transitionActive = false;
-    updateInputLock();
-  }
-
-  function showRouteCurtain() {
-    if (!routeLoadingOverlay) return;
-    routeLoadingOverlay.classList.remove("is-loading");
-    routeLoadingTitle?.classList.remove("is-visible");
-    routeLoadingOverlay.hidden = false;
-    routeLoadingOverlay.getBoundingClientRect();
-    routeLoadingOverlay.classList.add("is-visible");
-  }
-
-  function showRouteLoading(title, status) {
-    if (!routeLoadingOverlay) return;
-    if (routeLoadingTitle) routeLoadingTitle.textContent = title;
-    if (routeLoadingStatus) routeLoadingStatus.textContent = status;
-    if (routeLoadingPercent) routeLoadingPercent.textContent = "00%";
-    if (routeLoadingBarFill) routeLoadingBarFill.style.width = "0%";
-    routeLoadingOverlay.classList.add("is-loading");
-    routeLoadingTitle?.classList.add("is-visible");
-    window.requestAnimationFrame(() => {
-      if (routeLoadingPercent) routeLoadingPercent.textContent = "100%";
-      if (routeLoadingBarFill) routeLoadingBarFill.style.width = "100%";
-    });
-  }
-
-  function hideRouteLoadingPanel() {
-    routeLoadingOverlay?.classList.remove("is-loading");
-  }
-
-  function hideRouteCurtain() {
-    if (!routeLoadingOverlay) return;
-    routeLoadingOverlay.classList.remove("is-visible", "is-loading");
-    routeLoadingTitle?.classList.remove("is-visible");
-    window.setTimeout(() => {
-      if (!routeLoadingOverlay.classList.contains("is-visible")) routeLoadingOverlay.hidden = true;
-    }, 140);
-  }
-
-  function wait(ms) {
-    return new Promise((resolve) => window.setTimeout(resolve, ms));
+    return router.transition({ title, status, action });
   }
 
   function startLevel(levelId, { force = false } = {}) {
@@ -671,10 +382,7 @@ export function createAppShell({ gameApi }) {
   function resetProgress() {
     Object.keys(progress.finishedLevels).forEach((levelId) => delete progress.finishedLevels[levelId]);
     Object.keys(progress.completedLevels).forEach((levelId) => delete progress.completedLevels[levelId]);
-    localStorage.removeItem(PROGRESS_STORAGE_KEY);
-    Object.keys(sessionStorage)
-      .filter((key) => key.startsWith("operatorGame.levelSession."))
-      .forEach((key) => sessionStorage.removeItem(key));
+    clearProgressStorage();
     updateLevelProgressUi();
     console.log("[OperatorGame] Progress reset");
     return true;
@@ -767,195 +475,17 @@ export function createAppShell({ gameApi }) {
     console.info("[OperatorGame] Dev console commands ready. Try og('help').");
   }
 
-  function getLevelBriefingSheets(levelId) {
-    const briefingConfig = LEVELS[levelId]?.briefingImage;
-    const language = document.documentElement.lang === "ru" ? "ru" : "en";
-    const localizedBriefing =
-      typeof briefingConfig === "string" ? briefingConfig : briefingConfig?.[language] ?? briefingConfig?.en;
-    return Array.isArray(localizedBriefing) ? localizedBriefing : localizedBriefing ? [localizedBriefing] : [];
-  }
-
-  async function preloadLevelBriefing(levelId) {
-    const sheets = getLevelBriefingSheets(levelId);
-    await Promise.all(sheets.map(preloadImage));
-  }
-
-  async function preloadImage(source) {
-    if (!source) return;
-    const image = new Image();
-    image.src = source;
-    try {
-      if (typeof image.decode === "function") {
-        await image.decode();
-        return;
-      }
-    } catch {
-      // Fall through to the load/error pair below; some browsers reject decode for cached images.
-    }
-    if (image.complete) return;
-    await new Promise((resolve) => {
-      image.onload = resolve;
-      image.onerror = resolve;
-    });
-  }
-
-  function showLevelBriefing(levelId) {
-    const sheets = getLevelBriefingSheets(levelId);
-    if (sheets.length === 0 || !briefingOverlay || !briefingImage) return;
-
-    window.clearTimeout(briefingHideTimer);
-    briefingSheetToken += 1;
-    briefingLevelId = levelId;
-    briefingQueue = [...sheets];
-    briefingActive = true;
-    updateInputLock();
-    briefingOverlay.hidden = true;
-    briefingOverlay.classList.remove("is-visible", "is-dismissed");
-    briefingImage.removeAttribute("src");
-    briefingQueue.slice(1).forEach((source) => {
-      const preload = new Image();
-      preload.src = source;
-    });
-    showNextBriefingSheet();
-  }
-
-  function showNextBriefingSheet() {
-    const token = ++briefingSheetToken;
-    const briefing = briefingQueue.shift();
-    if (!briefing || !briefingOverlay || !briefingImage) return;
-    briefingImage.alt = `${LEVELS[briefingLevelId]?.title ?? briefingLevelId} briefing`;
-    briefingOverlay.hidden = true;
-    briefingOverlay.classList.remove("is-visible", "is-dismissed");
-    resetBriefingInspectState();
-    briefingImage.onload = () => {
-      if (token !== briefingSheetToken || !briefingActive) return;
-      briefingOverlay.hidden = false;
-      briefingOverlay.getBoundingClientRect();
-      briefingOverlay.classList.add("is-visible");
-    };
-    briefingImage.src = briefing;
-    if (briefingImage.complete) briefingImage.onload();
-  }
-
-  function dismissBriefing() {
-    if (!briefingOverlay || !briefingActive) return;
-    const completedBriefingLevelId = briefingLevelId;
-    briefingInspectHeld = false;
-    stopBriefingInspect();
-    if (briefingQueue.length > 0) {
-      briefingOverlay.classList.remove("is-visible");
-      briefingOverlay.classList.add("is-dismissed");
-      briefingHideTimer = window.setTimeout(showNextBriefingSheet, BRIEFING_DISMISS_MS);
-      return;
-    }
-    briefingActive = false;
-    updateInputLock();
-    briefingOverlay.classList.remove("is-visible");
-    briefingOverlay.classList.add("is-dismissed");
-    maybeStartIntroTutorial(completedBriefingLevelId, BRIEFING_DISMISS_MS + 420);
-    briefingHideTimer = window.setTimeout(() => hideBriefing(true, { keepTutorialHints: true }), BRIEFING_DISMISS_MS);
-  }
-
   function hideBriefing(immediate = false, { keepTutorialHints = false } = {}) {
-    if (!briefingOverlay) return;
-    window.clearTimeout(briefingHideTimer);
-    briefingSheetToken += 1;
-    briefingActive = false;
-    briefingQueue = [];
-    briefingLevelId = null;
     if (!keepTutorialHints) introTutorialFlow.stop();
-    updateInputLock();
-    briefingOverlay.classList.remove("is-visible", "is-dismissed");
-    resetBriefingInspectState();
-    if (immediate) briefingOverlay.hidden = true;
-    if (immediate && briefingImage) briefingImage.removeAttribute("src");
-  }
-
-  function stopBriefingInspect() {
-    briefingOverlay?.classList.remove("is-inspecting");
-  }
-
-  function resetBriefingInspectState() {
-    if (!briefingOverlay) return;
-    briefingInspectHeld = false;
-    briefingOverlay.classList.remove("is-inspecting", "is-inspectable");
-    briefingOverlay.style.setProperty("--briefing-base-scale", String(BRIEFING_UI.inspect.baseScale));
-    briefingOverlay.style.setProperty("--briefing-zoom-scale", String(BRIEFING_UI.inspect.zoomScale));
-    briefingOverlay.style.setProperty("--briefing-vignette-clear", `${BRIEFING_UI.vignette.clearStop}%`);
-    briefingOverlay.style.setProperty("--briefing-vignette-fade", `${BRIEFING_UI.vignette.fadeStop}%`);
-    briefingOverlay.style.setProperty("--briefing-vignette-edge", `${BRIEFING_UI.vignette.edgeStop}%`);
-    briefingOverlay.style.setProperty("--briefing-vignette-mid-opacity", String(BRIEFING_UI.vignette.midOpacity));
-    briefingOverlay.style.setProperty("--briefing-vignette-edge-opacity", String(BRIEFING_UI.vignette.edgeOpacity));
-    briefingOverlay.style.setProperty("--briefing-origin-x", "50%");
-    briefingOverlay.style.setProperty("--briefing-origin-y", "50%");
-    briefingOverlay.style.setProperty("--briefing-pan-x", "0px");
-    briefingOverlay.style.setProperty("--briefing-pan-y", "0px");
-    briefingOverlay.style.setProperty("--briefing-cursor-x", "50vw");
-    briefingOverlay.style.setProperty("--briefing-cursor-y", "50vh");
-    briefingOverlay.style.setProperty("--briefing-focus-radius", `${BRIEFING_UI.vignette.minRadius}px`);
-  }
-
-  function getBriefingFocusRadius(rect) {
-    const rawRadius = Math.max(rect.width, rect.height) * BRIEFING_UI.vignette.radiusRatio;
-    return Math.min(BRIEFING_UI.vignette.maxRadius, Math.max(BRIEFING_UI.vignette.minRadius, rawRadius));
-  }
-
-  function updateLevelProgressUi() {
-    document.querySelectorAll("[data-level-id]").forEach((node) => {
-      const levelId = node.dataset.levelId;
-      const level = LEVELS[levelId];
-      const completed = Boolean(progress.completedLevels[levelId]);
-      const finished = Boolean(progress.finishedLevels[levelId]);
-      const unlocked = isLevelUnlocked(levelId);
-      const available = Boolean(level?.playable && unlocked);
-      node.classList.toggle("is-complete", completed);
-      node.classList.toggle("is-finished", finished && !completed);
-      node.classList.toggle("is-active", available);
-      node.classList.toggle("is-locked", !available);
-      node.dataset.completion = completed ? "complete" : finished ? "attempted" : "";
-      if ("disabled" in node) node.disabled = !available;
-      node.setAttribute(
-        "aria-label",
-        `${LEVELS[levelId]?.title ?? levelId}${completed ? " complete" : finished ? " attempted" : ""}`,
-      );
-    });
-  }
-
-  function isLevelUnlocked(levelId) {
-    const requirements = LEVEL_UNLOCKS[levelId];
-    if (!requirements) return Boolean(LEVELS[levelId]?.playable);
-    if (requirements.length === 0) return true;
-    return requirements.some((requiredLevelId) => progress.completedLevels[requiredLevelId]);
+    briefingPanel.hide(immediate);
   }
 
   function showPanel(panelName) {
-    hideBriefing(true);
-    introTutorialFlow.stop();
-    currentPanel = panelName;
-    overlay.hidden = false;
-    document.body.classList.add("app-ui-open");
-    gameApi.releasePointerLock?.();
-    updateInputLock();
-
-    panels.forEach((panel, name) => {
-      panel.hidden = name !== panelName;
-    });
-    if (panelName === "level-select" && levelRouteScroll) {
-      requestAnimationFrame(() => {
-        updateLevelRouteLinks();
-        levelRouteScroll.scrollTo({ left: 2810, top: 30 });
-      });
-    }
+    panelController.show(panelName);
   }
 
   function hideOverlay() {
-    currentPanel = null;
-    overlay.hidden = true;
-    document.body.classList.remove("app-ui-open");
-    updateInputLock();
-    panels.forEach((panel) => {
-      panel.hidden = true;
-    });
+    panelController.hide();
   }
 
   function maybeStartIntroTutorial(levelId, delayMs = 0) {
@@ -964,80 +494,16 @@ export function createAppShell({ gameApi }) {
     introTutorialFlow.start({ levelId, delayMs });
   }
 
-  function validateLevelMenu() {
-    const menuLevelIds = new Set(
-      [...document.querySelectorAll("[data-level-id]")]
-        .map((node) => node.dataset.levelId)
-        .filter(Boolean),
-    );
-
-    menuLevelIds.forEach((levelId) => {
-      if (!LEVELS[levelId]) {
-        throw new Error(`[AppShell] Menu references unknown level: ${levelId}`);
-      }
-    });
-
-    Object.values(LEVELS).forEach((level) => {
-      if (level.playable && !menuLevelIds.has(level.id)) {
-        console.warn(`[AppShell] Playable level is missing from the level menu: ${level.id}`);
-      }
-    });
-  }
-
   function updateInputLock() {
-    const uiBlocked = Boolean(transitionActive || briefingActive || isOpen());
+    const uiBlocked = Boolean(transitionActive || briefingPanel.isActive() || isOpen());
     gameApi.setInputLocked?.(uiBlocked);
     subtitleQueue.setBlocked(
       uiBlocked || Boolean(document.querySelector("#resultsOverlay")?.classList.contains("is-visible")),
     );
   }
 
-  function applySettings() {
-    if (fovValue) fovValue.textContent = String(settings.fov);
-    if (uiScaleValue) uiScaleValue.textContent = `${settings.uiScale}%`;
-    if (shadowQualityValue) shadowQualityValue.textContent = getQualityLabel(settings.shadowQuality);
-    if (gtaoQualityValue) gtaoQualityValue.textContent = getQualityLabel(settings.gtaoQuality);
-    if (ssgiQualityValue) ssgiQualityValue.textContent = getQualityLabel(settings.ssgiQuality);
-    if (ssrQualityValue) ssrQualityValue.textContent = getQualityLabel(settings.ssrQuality);
-    if (screenSpaceShadowQualityValue) {
-      screenSpaceShadowQualityValue.textContent = getQualityLabel(settings.screenSpaceShadowQuality);
-    }
-    if (sensitivityValue) sensitivityValue.textContent = `${settings.sensitivity}%`;
-    if (fovInput && Number(fovInput.value) !== settings.fov) fovInput.value = String(settings.fov);
-    if (uiScaleInput && Number(uiScaleInput.value) !== settings.uiScale) uiScaleInput.value = String(settings.uiScale);
-    if (shadowQualityInput && shadowQualityInput.value !== settings.shadowQuality) {
-      shadowQualityInput.value = settings.shadowQuality;
-    }
-    if (gtaoQualityInput && gtaoQualityInput.value !== settings.gtaoQuality) {
-      gtaoQualityInput.value = settings.gtaoQuality;
-    }
-    if (ssgiQualityInput && ssgiQualityInput.value !== settings.ssgiQuality) {
-      ssgiQualityInput.value = settings.ssgiQuality;
-    }
-    if (ssrQualityInput && ssrQualityInput.value !== settings.ssrQuality) {
-      ssrQualityInput.value = settings.ssrQuality;
-    }
-    if (
-      screenSpaceShadowQualityInput &&
-      screenSpaceShadowQualityInput.value !== settings.screenSpaceShadowQuality
-    ) {
-      screenSpaceShadowQualityInput.value = settings.screenSpaceShadowQuality;
-    }
-    if (sensitivityInput && Number(sensitivityInput.value) !== settings.sensitivity) {
-      sensitivityInput.value = String(settings.sensitivity);
-    }
-    document.body.style.setProperty("--ui-scale", String(settings.uiScale / 100));
-    gameApi.setBaseFov?.(settings.fov);
-    gameApi.setShadowQuality?.(settings.shadowQuality);
-    gameApi.setGtaoQuality?.(settings.gtaoQuality);
-    gameApi.setSsgiQuality?.(settings.ssgiQuality);
-    gameApi.setSsrQuality?.(settings.ssrQuality);
-    gameApi.setScreenSpaceShadowQuality?.(settings.screenSpaceShadowQuality);
-    gameApi.setMouseSensitivity?.(settings.sensitivity / 100);
-  }
-
   function isOpen() {
-    return Boolean(!overlay.hidden && currentPanel);
+    return panelController.isOpen();
   }
 
   return {
@@ -1048,89 +514,6 @@ export function createAppShell({ gameApi }) {
     showPause: () => showPanel("pause"),
     showSettings: () => showPanel("settings"),
   };
-}
-
-function createEmptyProgress() {
-  return {
-    finishedLevels: {},
-    completedLevels: {},
-  };
-}
-
-function loadProgress() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(PROGRESS_STORAGE_KEY) ?? "{}");
-    return {
-      finishedLevels: parsed.finishedLevels && typeof parsed.finishedLevels === "object" ? parsed.finishedLevels : {},
-      completedLevels:
-        parsed.completedLevels && typeof parsed.completedLevels === "object" ? parsed.completedLevels : {},
-    };
-  } catch {
-    return createEmptyProgress();
-  }
-}
-
-function saveProgress(progress) {
-  localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
-}
-
-function loadSettings() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-    return {
-      fov: clampNumber(parsed.fov, 55, 95, 72),
-      uiScale: clampNumber(parsed.uiScale, 80, 130, 100),
-      shadowQuality: normalizeQuality(parsed.shadowQuality, ["off", "min", "med", "max"], "min"),
-      gtaoQuality: normalizeQuality(parsed.gtaoQuality, ["off", "min", "med", "max"], "off"),
-      ssgiQuality: normalizeQuality(parsed.ssgiQuality, ["off", "min", "med", "max"], "off"),
-      ssrQuality: normalizeQuality(parsed.ssrQuality, ["off", "min", "med", "max"], "off"),
-      screenSpaceShadowQuality: normalizeQuality(
-        parsed.screenSpaceShadowQuality,
-        ["off", "min", "med", "max"],
-        "off",
-      ),
-      sensitivity: clampNumber(parsed.sensitivity, 40, 180, 100),
-    };
-  } catch {
-    return {
-      fov: 72,
-      uiScale: 100,
-      shadowQuality: "min",
-      gtaoQuality: "off",
-      ssgiQuality: "off",
-      ssrQuality: "off",
-      screenSpaceShadowQuality: "off",
-      sensitivity: 100,
-    };
-  }
-}
-
-function saveSettings() {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      fov: Number(document.querySelector("#settingFov")?.value ?? 72),
-      uiScale: Number(document.querySelector("#settingUiScale")?.value ?? 100),
-      shadowQuality: document.querySelector("#settingShadowQuality")?.value ?? "min",
-      gtaoQuality: document.querySelector("#settingGtaoQuality")?.value ?? "off",
-      ssgiQuality: document.querySelector("#settingSsgiQuality")?.value ?? "off",
-      ssrQuality: document.querySelector("#settingSsrQuality")?.value ?? "off",
-      screenSpaceShadowQuality: document.querySelector("#settingScreenSpaceShadowQuality")?.value ?? "off",
-      sensitivity: Number(document.querySelector("#settingSensitivity")?.value ?? 100),
-    }),
-  );
-}
-
-function normalizeQuality(value, allowed, fallback) {
-  return allowed.includes(value) ? value : fallback;
-}
-
-function getQualityLabel(value) {
-  if (value === "off") return "OFF";
-  if (value === "min") return "MIN";
-  if (value === "med") return "MED";
-  if (value === "max") return "MAX";
-  return String(value).toUpperCase();
 }
 
 function getLevelTitle(levelId) {
@@ -1146,8 +529,3 @@ function getLevelTitle(levelId) {
   return key ? translate(key) : LEVELS[levelId]?.title ?? levelId;
 }
 
-function clampNumber(value, min, max, fallback) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return fallback;
-  return Math.min(max, Math.max(min, number));
-}

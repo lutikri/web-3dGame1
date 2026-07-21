@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=pointer-capture-rigid-debug";
-import { applyLocalization } from "./app/Localization.js?v=pointer-capture-rigid-debug";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=pointer-capture-rigid-debug";
+import { createPreflight } from "./app/Preflight.js?v=architecture-split-82";
+import { applyLocalization } from "./app/Localization.js?v=architecture-split-82";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=architecture-split-82";
 
-const APP_BUILD_REVISION = "pointer-capture-rigid-debug";
+const APP_BUILD_REVISION = "architecture-split-82";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=pointer-capture-rigid-debug`);
+await import(`./OperatorGame.js?v=architecture-split-82`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=pointer-capture-rigid-debug`);
+const { createAppShell } = await import(`./app/AppShell.js?v=architecture-split-82`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=pointer-capture-rigid-debug`
+    `./runtime/RuntimeSmoke.js?v=architecture-split-82`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

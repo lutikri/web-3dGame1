@@ -1,4 +1,4 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=pointer-capture-rigid-debug";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=architecture-split-82";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const SHADOW_MAP_SIZES = [128, 256, 512, 1024, 2048, 4096];

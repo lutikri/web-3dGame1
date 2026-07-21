@@ -1,6 +1,6 @@
 # OperatorGame — Game Architecture
 
-> Status: older high-level design draft for a possible Unreal/future version. It is not the current browser project code map. For current code ownership and folders, use `docs/project-structure.md`.
+> Status: older high-level design draft for a possible Unreal/future version. It is not the current browser project code map. For current code ownership use `../project-structure.md`; for current design priority use `README.md` in this directory.
 >
 > Current lore direction: the first run is `Elevator Arrival -> Facility Entrance -> Control Booth Tutorial -> Shift Report -> assigned shifts`. Shift 1/2/3/4 notes below are still useful mechanically, but should be interpreted as assigned facility shifts rather than disconnected prototype levels.
 

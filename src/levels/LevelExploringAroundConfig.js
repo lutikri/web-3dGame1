@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=pointer-capture-rigid-debug";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=pointer-capture-rigid-debug";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=pointer-capture-rigid-debug";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=pointer-capture-rigid-debug";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=architecture-split-82";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=architecture-split-82";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=architecture-split-82";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=architecture-split-82";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {

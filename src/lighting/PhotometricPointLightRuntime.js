@@ -6,6 +6,10 @@ export function createPhotometricPointLightRuntime({
   emptyTexture,
   maxLights = 8,
 } = {}) {
+  if (!emptyTexture) {
+    emptyTexture = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat);
+    emptyTexture.needsUpdate = true;
+  }
   const textureLoader = new THREE.TextureLoader();
   const rgbeLoader = new RGBELoader();
   const entries = [];

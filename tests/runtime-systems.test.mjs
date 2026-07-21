@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import * as THREE from "three";
 import { DoorInteractionSystem } from "../src/interactions/DoorInteractionSystem.js";
-import { LightingRuntime } from "../src/lighting/LightingRuntime.js";
+import { LightingRuntime, applyLightShadowSettings } from "../src/lighting/LightingRuntime.js";
 import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
 import { applyLevelOverrides } from "../src/levels/LevelConfigOverrides.js";
 import {
@@ -125,6 +125,103 @@ test("door interaction emits a level event and resets through shared physics", (
   assert.deepEqual(resets, ["level"]);
 });
 
+test("door interaction system registers hinged door meshes and latch handles", () => {
+  const interactive = [];
+  const physicsCalls = [];
+  const root = new THREE.Group();
+  const doorMesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
+  const handle = new THREE.Object3D();
+  root.add(doorMesh, collider, handle);
+  root.updateMatrixWorld(true);
+  const runtime = {
+    root,
+    parts: new Map([["Door", doorMesh], ["Collider", collider], ["Handle", handle]]),
+  };
+  const system = new DoorInteractionSystem({
+    prefabInstances: new Map(),
+    interactive,
+    physics: {
+      createHingedDoor: (config) => physicsCalls.push(config),
+      setDoorLocked: (...args) => physicsCalls.push(args),
+    },
+    resolveEnvironmentId: (id) => id,
+    applyVisualRotation: () => {},
+  });
+  assert.equal(system.register("level", {
+    name: "Door1",
+    state: { latched: true },
+    interaction: {
+      type: "hingedDoor", meshName: "Door", colliderName: "Collider",
+      latchHandleName: "Handle", initialDegrees: 0,
+    },
+  }, runtime), true);
+  assert.equal(runtime.physicsDoorKey, "level:Door1");
+  assert.equal(runtime.door.latched, true);
+  assert.deepEqual(interactive, [doorMesh, handle]);
+  assert.equal(physicsCalls[0].sceneKey, "level");
+});
+
+test("door interaction system advances latch operations", () => {
+  const latched = [];
+  const runtime = {
+    door: {
+      interaction: { latchHoldSeconds: 0.5 },
+      latchOperation: { held: true, progress: 0, targetLatched: true, finalSpinOffsetDegrees: 360 },
+    },
+  };
+  const system = new DoorInteractionSystem({
+    prefabInstances: new Map([["level:Door", runtime]]),
+    interactive: [],
+    physics: null,
+    resolveEnvironmentId: (id) => id,
+    applyVisualRotation: () => {},
+    applyLatchRotation: () => {},
+    setLatched: (_runtime, value) => latched.push(value),
+    toggleDoor: () => {},
+    playSound: () => {},
+  });
+  system.update(0.5);
+  assert.deepEqual(latched, [true]);
+  assert.equal(runtime.door.latchOperation, null);
+  assert.equal(runtime.door.latchHandleSpinOffsetDegrees, 360);
+});
+
+test("door interaction system owns physical drag lifecycle", () => {
+  const calls = [];
+  const mesh = new THREE.Object3D();
+  mesh.userData.levelPrefabKey = "level:Door";
+  mesh.userData.lastHitPoint = new THREE.Vector3(1, 0, 0);
+  const runtime = {
+    physicsDoorKey: "level:Door",
+    door: {
+      mesh,
+      latched: false,
+      degrees: 12,
+      interaction: {},
+    },
+  };
+  const system = new DoorInteractionSystem({
+    prefabInstances: new Map([["level:Door", runtime]]),
+    interactive: [],
+    physics: {
+      getDoorDegrees: () => 12,
+      setDoorDragTarget: (...args) => calls.push(args),
+    },
+    resolveEnvironmentId: (id) => id,
+    applyVisualRotation: () => {},
+  });
+  assert.equal(system.beginDrag(mesh), true);
+  assert.equal(system.getDraggedRuntime(), runtime);
+  runtime.door.releaseAngularVelocity = 0.4;
+  assert.equal(system.endDrag(), true);
+  assert.equal(system.getDraggedRuntime(), null);
+  assert.deepEqual(calls, [
+    ["level:Door", 12, true],
+    ["level:Door", 12, false, 0.4],
+  ]);
+});
+
 test("lighting runtime owns and disposes level lights", () => {
   const scene = new THREE.Scene();
   const controlled = [];
@@ -156,6 +253,27 @@ test("lighting runtime owns and disposes level lights", () => {
   runtime.disposeLevel("level");
   assert.equal(controlled.length, 0);
   assert.equal(points.size, 0);
+});
+
+test("lighting runtime owns default lights and shared fixture state", () => {
+  const scene = new THREE.Scene();
+  const controlled = [];
+  const points = new Map();
+  const runtime = new LightingRuntime({ scene, controlledLights: controlled, pointLightsByKey: points, levelLights: new Map(), applyShadowSettings: () => {} });
+  const material = new THREE.MeshStandardMaterial();
+  const ambient = runtime.createDefault({ ambientSky: "#fff", ambientGround: "#000", ambientIntensity: 0.2, pointLights: { Main: { color: "#fff", intensity: 1, distance: 4, decay: 2, position: new THREE.Vector3(), roomLightControlled: true } } }, () => ({ pulse: 1 }));
+  runtime.configureFixtures({ Ceiling: { lightNames: ["Main"], materialKeys: ["lens"] } }, { lens: material }, () => ({ shared: true }));
+  assert.equal(ambient.isHemisphereLight, true);
+  assert.equal(controlled.length, 2);
+  assert.equal(points.get("Main").userData.fixtureFlicker, material.userData.fixtureFlicker);
+});
+
+test("light shadow settings apply the selected quality preset", () => {
+  const light = new THREE.PointLight();
+  assert.equal(applyLightShadowSettings(light, { castShadow: true, distance: 8 }, { enabled: true, mapSize: 256 }), true);
+  assert.equal(light.castShadow, true);
+  assert.equal(light.shadow.mapSize.width, 256);
+  assert.equal(light.shadow.camera.far, 8);
 });
 
 test("scene builder waits for all branches before reporting a load failure", async () => {

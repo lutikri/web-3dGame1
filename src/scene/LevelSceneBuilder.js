@@ -3,11 +3,11 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=pointer-capture-rigid-debug";
+} from "../prefabs/PrefabMarkerResolver.js?v=architecture-split-82";
 import {
   applyPrefabOverrideEntries,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=pointer-capture-rigid-debug";
+} from "../levels/LevelConfigOverrides.js?v=architecture-split-82";
 
 export function createLevelSceneBuilder({
   scene,

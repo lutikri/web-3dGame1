@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=pointer-capture-rigid-debug";
+} from "../../../levels/LevelConfigSerialization.js?v=architecture-split-82";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

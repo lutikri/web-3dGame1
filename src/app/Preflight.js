@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=pointer-capture-rigid-debug";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=architecture-split-82";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

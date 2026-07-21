@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=pointer-capture-rigid-debug";
+import { translateRequired } from "./Localization.js?v=architecture-split-82";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

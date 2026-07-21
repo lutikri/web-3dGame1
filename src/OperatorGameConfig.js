@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=pointer-capture-rigid-debug";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=pointer-capture-rigid-debug";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=pointer-capture-rigid-debug";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=pointer-capture-rigid-debug";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=architecture-split-82";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=architecture-split-82";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=architecture-split-82";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=architecture-split-82";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

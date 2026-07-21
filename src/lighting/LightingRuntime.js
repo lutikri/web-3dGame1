@@ -15,6 +15,50 @@ export class LightingRuntime {
     this.applyShadowSettings = applyShadowSettings;
   }
 
+  createDefault(lightingConfig, createFixtureFlickerState = () => null) {
+    const ambient = new THREE.HemisphereLight(
+      lightingConfig.ambientSky,
+      lightingConfig.ambientGround,
+      lightingConfig.ambientIntensity,
+    );
+    ambient.userData.levelId = "default";
+    ambient.userData.baseIntensity = ambient.intensity;
+    this.controlledLights.push(ambient);
+    this.scene.add(ambient);
+
+    Object.entries(lightingConfig.pointLights ?? {}).forEach(([key, config]) => {
+      const light = new THREE.PointLight(config.color, config.intensity, config.distance, config.decay);
+      light.name = `PointLight_${key}`;
+      light.userData.levelId = "default";
+      light.position.copy(config.position);
+      light.userData.baseIntensity = light.intensity;
+      light.userData.lightKey = key;
+      light.userData.lightConfig = config;
+      light.userData.roomLightControlled = Boolean(config.roomLightControlled);
+      if (light.userData.roomLightControlled) light.userData.fixtureFlicker = createFixtureFlickerState();
+      this.pointLightsByKey.set(key, light);
+      this.controlledLights.push(light);
+      this.applyShadowSettings(light, config);
+      this.scene.add(light);
+    });
+    return ambient;
+  }
+
+  configureFixtures(fixtures = {}, materialsByKey = {}, createFixtureFlickerState = () => null) {
+    Object.entries(fixtures).forEach(([fixtureName, fixtureConfig]) => {
+      const fixtureState = createFixtureFlickerState();
+      const targets = [
+        ...(fixtureConfig.lightNames ?? []).map((key) => this.pointLightsByKey.get(key)),
+        ...(fixtureConfig.materialKeys ?? []).map((key) => materialsByKey[key]),
+      ].filter(Boolean);
+      targets.forEach((target) => {
+        target.userData.fixtureName = fixtureName;
+        target.userData.fixtureFlicker = fixtureState;
+        target.userData.roomLightControlled = true;
+      });
+    });
+  }
+
   createLevel(levelId, lightingConfig) {
     if (!lightingConfig) return [];
     const lights = [];
@@ -82,4 +126,18 @@ export class LightingRuntime {
     lights.push(light);
     this.scene.add(light);
   }
+}
+
+export function applyLightShadowSettings(light, lightConfig, shadowPreset) {
+  light.castShadow = Boolean(shadowPreset.enabled && lightConfig.castShadow);
+  if (!light.castShadow) return false;
+  const mapSize = shadowPreset.mapSize ?? lightConfig.shadowMapSize ?? 512;
+  light.shadow.mapSize.set(mapSize, mapSize);
+  light.shadow.bias = lightConfig.shadowBias ?? -0.0005;
+  light.shadow.normalBias = lightConfig.shadowNormalBias ?? 0.03;
+  light.shadow.radius = lightConfig.shadowRadius ?? 1;
+  light.shadow.camera.near = lightConfig.shadowNear ?? 0.1;
+  light.shadow.camera.far = lightConfig.shadowFar ?? lightConfig.distance ?? 10;
+  light.shadow.camera.updateProjectionMatrix();
+  return true;
 }

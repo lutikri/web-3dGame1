@@ -8,6 +8,8 @@ The player is not a builder, factory manager, or omniscient engineer. They are a
 
 ## Design direction
 
+Canonical game documents now live in [`docs/game/`](docs/game/README.md). This README is an onboarding and development overview; it is not a second design authority.
+
 OperatorGame is about causal, physical-feeling control.
 
 The main panel exposes a small set of powerful inputs:
@@ -370,10 +372,6 @@ The Pages artifact should stay lean. Keep source PNGs, PSDs, recordings, screens
 
 ## Design document
 
-The living Russian design document is:
+See [`docs/game/README.md`](docs/game/README.md) for the current design index, canonical fusion-core rules, future-system integration audit, and the archived Unreal-oriented architecture draft.
 
-```text
-gamdedesign-ru.md
-```
-
-It contains the broader progression plan: power bus, staff room, routine windows, pump/feed diagnostics, operator state, and full-shift structure.
+The living Russian design document is [`docs/game/game-design-ru.md`](docs/game/game-design-ru.md).
