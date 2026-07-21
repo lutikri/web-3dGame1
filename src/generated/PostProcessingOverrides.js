@@ -51,7 +51,7 @@ export const POST_PROCESSING_OVERRIDES = {
     }
   },
   "ssgi": {
-    "defaultQuality": "off",
+    "defaultQuality": "max",
     "presets": {
       "off": {
         "enabled": false
@@ -248,7 +248,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
-    "gamma": 0.93,
+    "gamma": 1.17,
     "temperature": -0.13,
     "tint": -0.05,
     "emergencyTint": "#c2c2c2",

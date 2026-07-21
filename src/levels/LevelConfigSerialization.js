@@ -4,7 +4,9 @@ const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "materialOverrides",
   "behavior",
   "clock",
+  "elevator",
   "interaction",
+  "radio",
   "prefabType",
 ]);
 

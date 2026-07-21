@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import {
   mergeMarkerPrefabs,
+  resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=20260717-radio-tight-fade-bright-lamp";
-import { applyPendingPrefabOverrides } from "../levels/LevelConfigOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
+} from "../prefabs/PrefabMarkerResolver.js?v=pointer-capture-rigid-debug";
+import {
+  applyPrefabOverrideEntries,
+  getPendingPrefabOverrides,
+} from "../levels/LevelConfigOverrides.js?v=pointer-capture-rigid-debug";
 
 export function createLevelSceneBuilder({
   scene,
@@ -28,18 +32,21 @@ export function createLevelSceneBuilder({
 
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
-      environmentConfig.prefabs = applyPendingPrefabOverrides(
+      const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);
+      environmentConfig.prefabs = applyPrefabOverrideEntries(
         mergeMarkerPrefabs(
           configuredPrefabs,
           markerPrefabs,
         ),
-        configuredPrefabs,
+        pendingPrefabOverrides,
       );
       const tasks = [
         buildCollision(levelId, environmentConfig),
         ...(environmentConfig.prefabs ?? [])
           .filter((prefabConfig) => prefabConfig.behavior !== "operatorPanel")
-          .map((prefabConfig) => buildPrefab(levelId, prefabConfig, prefabGroup)),
+          .map((prefabConfig) =>
+            buildPrefab(levelId, environmentConfig, prefabConfig, prefabGroup, prefabGroup, pendingPrefabOverrides),
+          ),
       ];
       const results = await Promise.allSettled(tasks);
       const failure = results.find((result) => result.status === "rejected");
@@ -108,8 +115,16 @@ export function createLevelSceneBuilder({
     appendPanelPhysics(levelId, model);
   }
 
-  async function buildPrefab(levelId, prefabConfig, prefabGroup) {
+  async function buildPrefab(
+    levelId,
+    environmentConfig,
+    prefabConfig,
+    prefabGroup,
+    parentObject = prefabGroup,
+    pendingPrefabOverrides = [],
+  ) {
     const prefab = await loadSceneAsset(prefabConfig.assetPath);
+    isolatePrefabRoot(prefab, prefabConfig.rootName);
     prefab.name = prefabConfig.name;
     prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
     prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
@@ -118,9 +133,38 @@ export function createLevelSceneBuilder({
     const runtime = createPrefabRuntime(prefab, prefabConfig);
     prefabInstances.set(`${levelId}:${prefabConfig.name}`, runtime);
     registerPrefabInteraction(levelId, prefabConfig, runtime);
-    prefabGroup.add(prefab);
+    parentObject.add(prefab);
     applyPrefabConfig(levelId, prefabConfig.name, true);
+
+    const nestedPrefabs = resolveNestedPrefabMarkers(prefab, { parentName: prefabConfig.name });
+    if (!nestedPrefabs.length) return;
+    environmentConfig.prefabs = applyPrefabOverrideEntries(
+      mergeMarkerPrefabs(environmentConfig.prefabs ?? [], nestedPrefabs),
+      pendingPrefabOverrides,
+    );
+    const nestedTasks = nestedPrefabs
+      .filter((nestedPrefabConfig) => nestedPrefabConfig.behavior !== "operatorPanel")
+      .map((nestedPrefabConfig) =>
+        buildPrefab(levelId, environmentConfig, nestedPrefabConfig, prefabGroup, prefab, pendingPrefabOverrides),
+      );
+    const results = await Promise.allSettled(nestedTasks);
+    const failure = results.find((result) => result.status === "rejected");
+    if (failure) throw failure.reason;
   }
+}
+
+function isolatePrefabRoot(prefab, rootName) {
+  if (!rootName) return;
+  const rootObject = prefab.getObjectByName(rootName);
+  if (!rootObject || rootObject === prefab) {
+    if (!rootObject) console.warn(`[LevelSceneBuilder] Prefab root "${rootName}" was not found in ${prefab.name}`);
+    return;
+  }
+  prefab.updateWorldMatrix(true, true);
+  prefab.attach(rootObject);
+  [...prefab.children].forEach((child) => {
+    if (child !== rootObject) prefab.remove(child);
+  });
 }
 
 function applyTransform(model, config) {

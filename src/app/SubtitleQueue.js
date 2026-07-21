@@ -6,10 +6,10 @@ export function createSubtitleQueue({ element }) {
   let holdTimer = 0;
   let hideTimer = 0;
 
-  function enqueue({ id, text, duration = 3.4, priority = 0 } = {}) {
+  function enqueue({ id, text, duration = 3.4, priority = 0, mode = "thought" } = {}) {
     if (!element || !text || (id && seen.has(id))) return;
     if (id) seen.add(id);
-    queue.push({ id, text, duration, priority });
+    queue.push({ id, text, duration, priority, mode });
     queue.sort((a, b) => b.priority - a.priority);
     pump();
   }
@@ -17,8 +17,10 @@ export function createSubtitleQueue({ element }) {
   function pump() {
     if (!element || blocked || active || queue.length === 0) return;
     active = queue.shift();
-    const fadeSeconds = 0.7 + Math.random() * 0.5;
+    const filmMode = active.mode === "film";
+    const fadeSeconds = filmMode ? 0 : 0.7 + Math.random() * 0.5;
     element.style.setProperty("--subtitle-fade-seconds", `${fadeSeconds.toFixed(2)}s`);
+    element.dataset.mode = active.mode;
     element.textContent = active.text;
     element.hidden = false;
     element.getBoundingClientRect();
@@ -29,6 +31,7 @@ export function createSubtitleQueue({ element }) {
       hideTimer = window.setTimeout(() => {
         element.hidden = true;
         element.textContent = "";
+        element.dataset.mode = "";
         active = null;
         pump();
       }, fadeSeconds * 1000);
@@ -43,6 +46,7 @@ export function createSubtitleQueue({ element }) {
     if (resetSeen) seen.clear();
     if (!element) return;
     element.classList.remove("is-visible");
+    element.dataset.mode = "";
     element.hidden = true;
     element.textContent = "";
   }

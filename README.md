@@ -21,59 +21,134 @@ The player follows changing `Grid Demand` while watching `Plasma Temp`, `Contain
 
 High temperature is not automatically failure. Late burn phases are meant to push the operator near the dangerous band. The interesting play is not “keep everything low”; it is deciding how much risk the machinery can survive.
 
-## Core shift loop
+## First Qualification flow
 
-1. Read the `Shift Brief`.
-2. Inspect the panel and room state.
-3. Bring the system toward ignition.
-4. Balance fuel, magnetic field, and coolant.
-5. Track grid demand through burn phases.
-6. Diagnose symptoms before they become failures.
-7. Use purge or recovery procedures when needed.
-8. Receive a shift report and operator profile.
+The first playthrough is no longer just a menu into a tutorial room. It is the player's first arrival at the Terragen Systems facility.
 
-## Tutorial UX
+### 0. Elevator Arrival
 
-The intro level now separates two UI channels:
+The first press of `PLAY` loads a separate old freight-elevator scene.
+
+The elevator is already moving downward. The player can look around and learn basic movement, but cannot stop the descent. Outside the elevator, passing technical floors, cable runs, emergency lamps, bare rock, and sealed service platforms should sell the scale of the underground complex.
+
+During the descent, the General Announcement System introduces Terragen Systems, implies that the player is a live-in operator candidate, and hints that automation and staffing have failed badly enough for this job to exist.
+
+Tutorial beats:
+
+1. `W A S D` — move.
+2. `SPACE` — “say apple”.
+3. After the elevator stops: `LMB` on the door handle.
+
+After the handle interaction, the screen fades to black and the main facility loads behind the fade.
+
+### 1. Facility Entrance
+
+Repeat shifts start here; the elevator arrival is only for the first new game.
+
+The player appears in a small entrance room in front of the closed elevator. The room contains a desk, the first qualification `Shift Brief`, a General Announcement System radio with a red signal lamp, Control Booth wayfinding, locked doors to restricted sectors, and a clearance sign.
+
+The narrator asks the player to:
+
+1. read the brief;
+2. proceed to the Control Booth;
+3. avoid areas outside the current qualification.
+
+The brief and environment should point the player toward the Control Booth without a floating quest marker.
+
+### 2. Control Booth Tutorial
+
+The player enters the Control Booth and sees the FCU-16 operator panel.
+
+Tutorial sequence:
+
+1. Hover the panel.
+2. Hold `RMB` to lean toward it.
+3. Hover a control.
+4. Use the mouse wheel to adjust it.
+5. After the first adjustment, the operator thinks: “I think I need to start it.”
+6. The player finds and presses `IGNITE` on their own.
+
+The narrator explains the facility and the assignment, not exact reactor solutions.
+
+The operator's thoughts describe observed symptoms:
+
+- temperature too high;
+- output too low;
+- plasma extinguished;
+- reaction recovered;
+- shift complete;
+- time to leave the booth.
+
+### 3. Shift Outcomes
+
+Success:
+
+- the reactor enters a safe mode;
+- the narrator confirms qualification;
+- the exit door unlocks;
+- the player turns the door handle;
+- fade to `Shift Report`.
+
+Emergency shutdown:
+
+- total reactor destruction becomes an automatic safety trip;
+- power output stops, the installation remains repairable;
+- the narrator marks the qualification as failed, but allows a retry because there are not enough candidates;
+- the player still exits through the same door.
+
+Insufficient output:
+
+- if the installation survives but the player consistently misses `Grid Demand`, the shift technically ends but qualification is not granted;
+- the narrator says the equipment survived, but the required power was not produced.
+
+### 4. Exit and Shift Menu
+
+After the exit door interaction, the game shows:
+
+1. `Shift Report`;
+2. `Operator Profile`;
+3. assigned shifts.
+
+At first the shift list contains one available qualification shift and several empty slots. Later shifts begin from the Facility Entrance, not the elevator.
+
+## Tutorial UX channels
 
 - Subtitles are the operator’s thoughts and reactions. They should describe memory, symptoms, uncertainty, or stress, not give exact instructions.
 - Tutorial hints are short system prompts. They appear as non-blocking bottom flyouts with keycaps and mouse icons.
 
-The intro sequence after the shift brief is:
+The first qualification uses this split across elevator, entrance, and Control Booth:
 
 1. `W A S D` to move.
 2. `SPACE` to “say apple” / jump, followed by a short operator reaction.
-3. `RMB` to lean toward the panel.
-4. `Mouse Wheel` to adjust a highlighted control.
-
-After leaning toward the panel, the operator gets a short memory fragment:
-
-```text
-...where am I?
-I've done this before.
-The panel says "Ignite".
-```
+3. `LMB` for handles / brief interaction.
+4. `RMB` to lean toward the panel.
+5. `Mouse Wheel` to adjust a highlighted control.
+6. One short operator thought after the control lesson: “I think I need to start it.”
 
 Localization rule: subtitles live under `subtitles.*`, tutorial hints live under `hints.*`, and every new key should exist in both English and Russian.
 
 ![Operator console and fusion core room](assets/repo/showcase-game1.webp)
 
-## Levels
+## Shift route
 
-- `intro-shift` — compact, fast-loading control room and tutorial shift.
-- `exploring-around` — control room plus service corridor, used as the base for power-room and maintenance exploration.
-- `freeplay` — reuses the `intro-shift` environment with a looser session mode.
+The project should read as assigned shifts inside one facility, not disconnected arcade levels.
 
-Future progression from `gamdedesign-ru.md`:
+- `first-qualification` / `intro-shift` — first qualification run: arrival, entrance, brief, Control Booth tutorial, first shift.
+- `unexpected-stuff` — instrument failure route: same panel, unreliable readings and symptoms.
+- `cost-of-running` — fuel economy route: different blend behavior, efficiency/cost tradeoffs, unstable fuel delivery.
+- `shift-coordination` — same console, clock-start shift and qualification as a panel operator.
+- `exploring-around` — facility access opens: entrance, Control Booth, service corridor, staff room/locked sectors as walkaround content.
+- Additional tests — optional panel-focused challenge shifts: broken lamp, low fuel, low heat sink, max load, emergency light, etc.
+- Power Bus training — future switchgear / routing shift.
+- Longer shifts — future 8–10 minute shifts with operator-condition effects.
 
-- Level 2: power bus, battery, breakers, interior power, and service corridor tasks.
-- Level 3: staff room, stress, fatigue, thirst, caffeine, and routine windows.
-- Level 4: pump / feed room with local diagnostics.
-- Level 5: full shift combining panel operation, power routing, maintenance, and operator condition.
+After `shift-coordination`, the player is fictionally qualified as a panel operator. From there the game can either continue in the web prototype with facility rooms and effects, or keep the route as a design skeleton for a later Unreal version.
 
 ![Service corridor exploration](assets/repo/showcase-game2.webp)
 
 ## Current architecture
+
+Current code structure is tracked in [docs/project-structure.md](docs/project-structure.md). Older design documents are treated as direction notes, not as exact implementation architecture.
 
 ### Level lifecycle
 
@@ -87,6 +162,13 @@ On a major route change, the current level owns and then disposes:
 - collision;
 - Rapier bodies;
 - level-specific runtime state.
+
+### Runtime ownership
+
+- `PrefabRegistry` owns reusable defaults.
+- Level configs own instance placement and per-instance tuning.
+- Runtime systems own cloned objects, physics bodies, audio nodes, timers, and temporary state.
+- Debug UI goes through `src/ui/debug/DebugHub.js`; new debug tools should not be bolted directly onto gameplay code.
 
 Shared source GLBs and textures may remain cached through `AssetCache`, but cloned instances and physics state belong to the active level only.
 
@@ -252,9 +334,9 @@ Manual playtesting is still needed for subjective behavior: door feel, lamp flic
 ## Assets
 
 - `assets/` contains runtime assets only: GLB, compressed textures, briefings, UI images, and lightweight README showcase WebP files.
-- `asset-source/` contains source art and original heavy files. It is gitignored.
+- `source-assets/` contains source art, editable production files, and original heavy files. It is gitignored except for its README.
 - `assets/repo/*.webp` are compressed showcase images for this README.
-- Original showcase PNGs live in `asset-source/repo/`.
+- Original showcase PNGs live in `source-assets/reference/showcase/`.
 
 After changing runtime texture sources, run:
 

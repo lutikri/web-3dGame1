@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=20260717-radio-tight-fade-bright-lamp";
-import { applyLocalization } from "./app/Localization.js?v=20260717-radio-tight-fade-bright-lamp";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createPreflight } from "./app/Preflight.js?v=pointer-capture-rigid-debug";
+import { applyLocalization } from "./app/Localization.js?v=pointer-capture-rigid-debug";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=pointer-capture-rigid-debug";
 
-const APP_BUILD_REVISION = "20260717-radio-tight-fade-bright-lamp";
+const APP_BUILD_REVISION = "pointer-capture-rigid-debug";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=20260717-radio-tight-fade-bright-lamp`);
+await import(`./OperatorGame.js?v=pointer-capture-rigid-debug`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=20260717-radio-tight-fade-bright-lamp`);
+const { createAppShell } = await import(`./app/AppShell.js?v=pointer-capture-rigid-debug`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=20260717-radio-tight-fade-bright-lamp`
+    `./runtime/RuntimeSmoke.js?v=pointer-capture-rigid-debug`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

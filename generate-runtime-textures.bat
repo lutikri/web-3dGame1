@@ -10,7 +10,7 @@ Add-Type -AssemblyName System.Drawing
 
 $root = $env:TEXTURE_TOOL_ROOT.TrimEnd("\")
 $assets = Join-Path $root "assets"
-$sourceDir = Join-Path $root "asset-source\textures"
+$sourceDir = Join-Path $root "source-assets\textures"
 $outDir = Join-Path $assets "runtime-textures"
 $tmpDir = Join-Path $outDir "_tmp"
 $basisu = Join-Path $root "node_modules\basisu\bin\win\x64_sse\basisu.exe"
@@ -58,6 +58,18 @@ $jobs = @(
   @{ Source = "T_Door2_BaseColor.png"; Prefix = "T_Door2_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_Door2_Normal.png"; Prefix = "T_Door2_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Door2_OcclusionRoughnessMetallic.png"; Prefix = "T_Door2_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+
+  @{ Source = "T_Barrier1_BaseColor.png"; Prefix = "T_Barrier1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Barrier1_Normal.png"; Prefix = "T_Barrier1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Barrier1_OcclusionRoughnessMetallic.png"; Prefix = "T_Barrier1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 185 },
+
+  @{ Source = "T_ControlPost1_BaseColor.png"; Prefix = "T_ControlPost1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_ControlPost1_Normal.png"; Prefix = "T_ControlPost1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_ControlPost1_OcclusionRoughnessMetallic.png"; Prefix = "T_ControlPost1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 185 },
+
+  @{ Source = "T_Desk1_BaseColor.png"; Prefix = "T_Desk1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Desk1_Normal.png"; Prefix = "T_Desk1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Desk1_OcclusionRoughnessMetallic.png"; Prefix = "T_Desk1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 185 },
 
   @{ Source = "T_TrimConcrete1_BaseColor.png"; Prefix = "T_TrimConcrete1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
   @{ Source = "T_TrimConcrete1_Normal.png"; Prefix = "T_TrimConcrete1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },

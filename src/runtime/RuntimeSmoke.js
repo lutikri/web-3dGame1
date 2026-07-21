@@ -8,7 +8,7 @@ export async function runLevelRuntimeSmoke(gameApi) {
     [
       "exploring-around:fluorescentLamp_PowerHall1",
       "exploring-around:fluorescentLamp_PowerHall2",
-      "exploring-around:redBulkLamp_PowerHall1",
+      "exploring-around:redBulkLamp_Exit1",
     ],
   );
   await runStep("menu-preview", () => gameApi.resetForMenu());

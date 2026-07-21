@@ -1,5 +1,5 @@
-3dGameAssetsDev/
-asset-source/
+source-assets/*
+!source-assets/README.md
 logs/
 server-*.log
 server-*.err.log
@@ -10,6 +10,6 @@ screenshots/
 recordings/
 deprecated/
 
-# Original/source texture PNGs live in asset-source/textures/.
+# Original/source texture PNGs live in source-assets/textures/.
 assets/T_*.png
 assets/luts/Green2.cube

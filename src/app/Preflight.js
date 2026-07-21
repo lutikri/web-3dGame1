@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=pointer-capture-rigid-debug";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
@@ -453,10 +453,10 @@ function escapeHtml(value) {
 
 function preloadFirstRunAssets() {
   const criticalAssets = [
-    "assets/mesh/SM_Panel1.glb",
-    "assets/mesh/SM_Interior1_1.glb",
-    "assets/mesh/SM_DoorBulk1.glb",
-    "assets/mesh/SM_Lamp_BulkRed.glb",
+    "assets/mesh/panel/SM_Panel1.glb",
+    "assets/mesh/environment/SM_Interior1_1.glb",
+    "assets/mesh/prefabs/SM_DoorBulk1.glb",
+    "assets/mesh/prefabs/SM_Lamp_BulkRed.glb",
     "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",

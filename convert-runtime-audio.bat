@@ -8,7 +8,7 @@ exit /b %ERRORLEVEL%
 $ErrorActionPreference = "Stop"
 
 $root = $env:AUDIO_TOOL_ROOT.TrimEnd("\")
-$sourceDir = Join-Path $root "asset-source\audio"
+$sourceDir = Join-Path $root "source-assets\audio"
 $outDir = Join-Path $root "assets\sounds"
 $ffmpegCommand = Get-Command ffmpeg -ErrorAction SilentlyContinue
 
@@ -21,6 +21,16 @@ if (!(Test-Path -LiteralPath $sourceDir)) {
 }
 
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+
+function Get-AudioCategory($name) {
+  if ($name -like "Ambience_*") { return "ambience" }
+  if ($name -like "UI_*") { return "ui" }
+  if ($name -like "Message*" -or $name -like "Radio*") { return "narration" }
+  if ($name -like "FusionCore_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "ControlPostBuzz*") { return "machinery" }
+  if ($name -like "Footsteps*") { return "player" }
+  if ($name -like "Button*" -or $name -like "Door*" -or $name -like "Motor*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*") { return "interaction" }
+  return "misc"
+}
 
 $quality = 4
 $sources = Get-ChildItem -LiteralPath $sourceDir -File -Filter "*.wav" | Sort-Object Name
@@ -38,9 +48,12 @@ Write-Host "  Codec:  Ogg Vorbis q=$quality"
 $index = 0
 foreach ($source in $sources) {
   $index++
+  $category = Get-AudioCategory $source.Name
+  $categoryOutDir = Join-Path $outDir $category
+  New-Item -ItemType Directory -Force -Path $categoryOutDir | Out-Null
   $targetName = [System.IO.Path]::ChangeExtension($source.Name, ".ogg")
-  $targetPath = Join-Path $outDir $targetName
-  Write-Host "[$index/$($sources.Count)] $($source.Name) -> $targetName"
+  $targetPath = Join-Path $categoryOutDir $targetName
+  Write-Host "[$index/$($sources.Count)] $($source.Name) -> $category/$targetName"
   & $ffmpegCommand.Source -y -hide_banner -loglevel error -i $source.FullName -c:a libvorbis -q:a $quality $targetPath
   if ($LASTEXITCODE -ne 0) {
     throw "ffmpeg failed for $($source.FullName)"

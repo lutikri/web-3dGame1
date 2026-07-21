@@ -2,25 +2,25 @@
 
 This is a static Three.js browser project. The main entry point is `index.html`, which imports `src/OperatorGame.js` as an ES module through the import map.
 
-## Local Server
-
-- Use `npm run dev` from the repo root for local development.
-- The dev server is `dev-server.cjs`; it serves static files on `http://localhost:5173/` and live-reloads browsers when files in `src/`, `styles/`, `assets/`, `index.html`, `README.md`, or `AGENTS.md` change.
-- If port `5173` is busy, run with another port: `PORT=5174 npm run dev` on macOS/Linux or `$env:PORT=5174; npm run dev` in PowerShell.
-
 ## Project Layout
 
-- `src/OperatorGame.js`: Three.js scene setup, panel loading, interaction, animation, post-processing, debug API.
+- `docs/project-structure.md`: current code-architecture map. Prefer this over older broad design drafts when deciding where code belongs.
+- `src/OperatorGame.js`: Three.js runtime orchestration, scene setup glue, animation loop, debug API. Keep moving reusable systems out of this file.
 - `src/OperatorGameConfig.js`: primary tuning surface for panel placement, lights, shadows, needle animation, and post-processing effects.
 - `src/FusionCoreSimulation.js`: core gameplay loop, phases, warning flags, and derived gauge values.
 - `src/StatusScreen.js`: canvas-driven material for the small status display.
 - `src/app/AppShell.js`: app/menu shell, route transitions, settings, progress routing, and level briefing overlay behavior.
+- `src/audio/AudioRuntime.js` and `src/audio/SoundRegistry.js`: WebAudio runtime and runtime sound registry. Runtime audio is `.ogg` under `assets/sounds/<category>/`.
 - `src/levels/LevelRegistry.js`: single registration point for level metadata, briefing sheets, playability, and runtime environment.
 - `src/prefabs/PrefabRegistry.js`: shared prefab asset, material, interaction, physics, light, and behavior defaults.
+- `src/prefabs/behaviors/`: shared prefab behavior modules. Add reusable object behavior here before adding local level/game code.
 - `src/levels/LevelExploringAroundConfig.js`: instance layout and intentional per-level overrides for the Exploring Around environment.
 - `src/levels/LevelIntroShiftConfig.js`: tutorial environment layout, collision filtering, fog, lights, fan behavior, and prefab instances.
 - `src/app/BriefingUiConfig.js`: small UI-only tuning surface for level briefing sheet zoom, pan, and vignette behavior.
+- `src/ui/debug/DebugHub.js`: single entry point for debug panels. Do not add new always-visible debug GUI directly from gameplay code.
+- `src/ui/debug/panels/`: existing lil-gui debug panels, gradually moving toward workspace-style tools.
 - `assets/`: runtime GLB and baked PBR textures.
+- `source-assets/`: ignored editable source assets and tool exports. Runtime code must not load from this directory.
 - `styles/operator-game.css`: HUD/canvas styling.
 - `legacy/`, `recordings/`, and `screenshots/` are supporting/generated material; avoid changing them unless the task calls for it.
 
@@ -31,7 +31,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - Internal menu navigation, such as settings/back/profile/level-select, should switch panels directly without route loading.
 - Use route loading only for major context changes, such as menu to level, pause/results to main menu, or restart. Route transitions should hide UI changes behind a black/loading sequence so loading panels and target menus are not visible at the same time.
 - The main menu uses `gameApi.resetForMenu()` and the menu camera view configured in `CONFIG.camera.menuView`; level sessions use `gameApi.startLevel()` / `restartGame()`.
-- First-time players enter `intro-shift`; returning players go to the main menu based on saved progress. `CONFIG.app.firstVisitEmulation` should usually stay `false` except for testing.
+- First-time players should eventually enter the one-time `Elevator Arrival` scene, then `Facility Entrance`, then the first qualification shift. Returning players start from the main menu / Facility Entrance route depending on progress. Until the elevator scene exists in code, `intro-shift` remains the practical first qualification route. `CONFIG.app.firstVisitEmulation` should usually stay `false` except for testing.
 
 ## Level Briefings
 
@@ -45,7 +45,8 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 ## Scene Rules
 
 - Keep general knobs in `src/OperatorGameConfig.js` rather than hardcoding tunable values in `OperatorGame.js`.
-- `assets/mesh/SM_Panel1.glb` uses baked texture maps:
+- Keep reusable behavior in the appropriate runtime module instead of expanding `OperatorGame.js`: prefab behavior in `src/prefabs/behaviors/`, audio in `src/audio/`, lighting math in `src/lighting/`, debug UI in `src/ui/debug/`.
+- `assets/mesh/panel/SM_Panel1.glb` uses baked texture maps:
   - `T_Panel1_BaseColor.png`
   - `T_Panel1_Normal.png`
   - `T_Panel1_OcclusionRoughnessMetallic.png`
@@ -70,6 +71,7 @@ This is a static Three.js browser project. The main entry point is `index.html`,
 - Embedded environment behaviors such as fans belong under `environment.behaviors`; shared placed objects such as panels, doors, and lamps belong in `PrefabRegistry`.
 - When a new level needs behavior already present elsewhere, extract or reuse the existing behavior before adding level-specific code. A similarly looking second implementation is not acceptable.
 - Fluorescent startup, normal fixture flicker, and faulty-starter behavior are shared lighting behaviors. Prefab options select those behaviors; they do not reimplement them.
+- Narrator radios use the shared `radio` prefab and `NarratorRadioBehavior`. Blender Empty markers should be named like `PF_radio_ControlBooth1`.
 - Fluorescent prefab lights must also participate in global startup/terminal blackout factors and own their configurable phosphor afterglow; migrating a lamp to a prefab must not bypass scene feedback.
 - Prefer adding reusable prefab capabilities first, then expose instance parameters in the level config and `LEVEL PREFABS` debug panel.
 - Saved level overrides must merge prefab arrays by stable prefab `name`, preserving newly added default fields and allowing old saved configs to migrate safely.
@@ -138,6 +140,7 @@ Shift result/operator profile behavior:
 ## Verification
 
 - Run `npm run check` first. It performs syntax validation and fast unit/contract tests without opening a browser.
+- After JavaScript/module path changes, run `npm run stamp-modules -- <short-revision-name>` and then `npm run check` again so browser/GitHub Pages cache does not serve stale modules.
 - For level lifecycle changes, open `http://localhost:5173/?runtimeSmoke=1`. The page automatically runs `intro-shift -> exploring-around -> menu preview` and logs `[RuntimeSmoke] PASS` or a precise ownership failure; do not manually click through menus for this check.
 - Reserve manual playtesting for visual and subjective behavior such as door feel, lamp flicker quality, lighting, collision comfort, and presentation timing.
 - After scene changes, reload `http://localhost:5173/` and check the browser console.

@@ -15,49 +15,88 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=20260717-radio-tight-fade-bright-lamp";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=pointer-capture-rigid-debug";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=20260717-radio-tight-fade-bright-lamp";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=20260717-radio-tight-fade-bright-lamp";
+} from "./game/ShiftReport.js?v=pointer-capture-rigid-debug";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=pointer-capture-rigid-debug";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=pointer-capture-rigid-debug";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=20260717-radio-tight-fade-bright-lamp";
+} from "./config/GraphicsQualityProfiles.js?v=pointer-capture-rigid-debug";
 import {
   createTextureStreaming,
   getDeferredTexturePaths,
   getInitialTexturePaths,
-} from "./scene/TextureStreaming.js?v=20260717-radio-tight-fade-bright-lamp";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createStatusScreen } from "./StatusScreen.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=20260717-radio-tight-fade-bright-lamp";
+} from "./scene/TextureStreaming.js?v=pointer-capture-rigid-debug";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=pointer-capture-rigid-debug";
+import { createStatusScreen } from "./StatusScreen.js?v=pointer-capture-rigid-debug";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=pointer-capture-rigid-debug";
 import {
   createPostProcessingDebugPanel,
   restoreSavedPostProcessingConfig,
-} from "./ui/PostProcessingDebugPanel.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/SceneDebugPanels.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=20260717-radio-tight-fade-bright-lamp";
-import { getFluorescentStarterFaultFactor } from "./lighting/FluorescentBehavior.js?v=20260717-radio-tight-fade-bright-lamp";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=20260717-radio-tight-fade-bright-lamp";
-import { AssetCache } from "./runtime/AssetCache.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LevelRuntime } from "./runtime/LevelRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LevelSession } from "./levels/LevelSession.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LightingRuntime } from "./lighting/LightingRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=20260717-radio-tight-fade-bright-lamp";
-import { PlayerController } from "./player/PlayerController.js?v=20260717-radio-tight-fade-bright-lamp";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=20260717-radio-tight-fade-bright-lamp";
-import { SOUND_GROUPS, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
+} from "./ui/debug/panels/PostProcessingDebugPanel.js?v=pointer-capture-rigid-debug";
+import { createSceneDebugPanels, restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=pointer-capture-rigid-debug";
+import { createDebugHub } from "./ui/debug/DebugHub.js?v=pointer-capture-rigid-debug";
+import { createDebugWorkspace } from "./ui/debug/workspace/DebugWorkspace.js?v=pointer-capture-rigid-debug";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=pointer-capture-rigid-debug";
+import {
+  createFixtureFlickerState as createFixtureFlickerStateFromConfig,
+  createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
+  getFixtureFlickerFactor as getFixtureFlickerFactorFromState,
+  getFluorescentStarterFaultFactor,
+  getFluorescentStartupDuration,
+  getFluorescentStartupFactor,
+  triggerFixtureFlickerState,
+  updateFixtureFlickerState as updateFixtureFlickerStateFromConfig,
+} from "./lighting/FluorescentBehavior.js?v=pointer-capture-rigid-debug";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=pointer-capture-rigid-debug";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=pointer-capture-rigid-debug";
+import { AssetCache } from "./runtime/AssetCache.js?v=pointer-capture-rigid-debug";
+import { LevelRuntime } from "./runtime/LevelRuntime.js?v=pointer-capture-rigid-debug";
+import { LevelSession } from "./levels/LevelSession.js?v=pointer-capture-rigid-debug";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=pointer-capture-rigid-debug";
+import { LightingRuntime } from "./lighting/LightingRuntime.js?v=pointer-capture-rigid-debug";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=pointer-capture-rigid-debug";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=pointer-capture-rigid-debug";
+import { PlayerController } from "./player/PlayerController.js?v=pointer-capture-rigid-debug";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=pointer-capture-rigid-debug";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=pointer-capture-rigid-debug";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=pointer-capture-rigid-debug";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=pointer-capture-rigid-debug";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=pointer-capture-rigid-debug";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=pointer-capture-rigid-debug";
+import { createAnalogClockRuntime, updateAnalogClockRuntime } from "./prefabs/behaviors/AnalogClockBehavior.js?v=pointer-capture-rigid-debug";
+import {
+  createNarratorRadioRuntime,
+  resetNarratorRadioRuntime,
+  startNarratorRadioSpeech,
+  updateNarratorRadioRuntime,
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=pointer-capture-rigid-debug";
+import {
+  applyDoorLatchHandleRotation,
+  getDoorLatchBaseDegrees,
+  getDoorLatchRestDegrees,
+} from "./prefabs/behaviors/DoorLatchBehavior.js?v=pointer-capture-rigid-debug";
+import {
+  createElevatorRuntime,
+  resetElevatorRuntime,
+  updateElevatorRuntime,
+} from "./prefabs/behaviors/ElevatorBehavior.js?v=pointer-capture-rigid-debug";
+import {
+  createBarrierGateRuntime,
+  resetBarrierGateRuntime,
+  updateBarrierGateRuntime,
+} from "./prefabs/behaviors/BarrierGateBehavior.js?v=pointer-capture-rigid-debug";
+import {
+  createControlPostRuntime,
+  resetControlPostRuntime,
+  updateControlPostRuntime,
+} from "./prefabs/behaviors/ControlPostBehavior.js?v=pointer-capture-rigid-debug";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -76,6 +115,30 @@ function configureQualityProfile(profile) {
 
 function getQualityProfilePixelRatio(profile) {
   return getGraphicsQualityProfile(profile).pixelRatio;
+}
+
+function guardPointerCapture(element) {
+  const setPointerCapture = element?.setPointerCapture?.bind(element);
+  if (setPointerCapture) {
+    element.setPointerCapture = (pointerId) => {
+      try {
+        setPointerCapture(pointerId);
+      } catch (error) {
+        if (error?.name !== "InvalidStateError") throw error;
+      }
+    };
+  }
+
+  const releasePointerCapture = element?.releasePointerCapture?.bind(element);
+  if (releasePointerCapture) {
+    element.releasePointerCapture = (pointerId) => {
+      try {
+        releasePointerCapture(pointerId);
+      } catch (error) {
+        if (error?.name !== "InvalidStateError" && error?.name !== "NotFoundError") throw error;
+      }
+    };
+  }
 }
 
 const defaultSceneDebugConfig = JSON.parse(
@@ -148,6 +211,7 @@ renderer.setPixelRatio(getQualityProfilePixelRatio(bootOptions.qualityProfile ??
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.type = CONFIG.shadows.type;
+guardPointerCapture(renderer.domElement);
 const debugTransformControls = new TransformControls(camera, renderer.domElement);
 debugTransformControls.setMode("translate");
 debugTransformControls.setSize(0.85);
@@ -166,6 +230,11 @@ dracoLoader.setDecoderPath(
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 const emptyMaskTexture = createSolidTexture(0, 0, 0, 255);
+const photometricPointLightRuntime = createPhotometricPointLightRuntime({
+  camera,
+  emptyTexture: emptyMaskTexture,
+  maxLights: CONFIG.lighting.photometricPointLights?.maxLights ?? 8,
+});
 
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
@@ -221,6 +290,7 @@ const fuelBlendRuntime = new FuelBlendRuntime();
 const audioRuntime = new AudioRuntime({
   sounds: SOUND_REGISTRY,
   groups: SOUND_GROUPS,
+  mix: SOUND_MIX,
   masterVolume: 1,
 });
 let activeShiftProfile = null;
@@ -261,6 +331,7 @@ const levelSceneBuilder = createLevelSceneBuilder({
   appendPanelPhysics: (levelId, collisionModel) => {
     physicsSystem?.addStaticScene(levelId, collisionModel);
     appendPanelPhysics(levelId);
+    appendLevelPrefabPhysics(levelId);
   },
   environmentModels: levelEnvironmentModels,
   collisionModels: levelCollisionModels,
@@ -282,6 +353,7 @@ let testTime = 0;
 let noclipEnabled = Boolean(CONFIG.camera.noclip?.enabled);
 let noclipSpeed = CONFIG.camera.noclip?.speed ?? CONFIG.camera.walkSpeed;
 let movementVelocity = new THREE.Vector3();
+const movingPlatformDelta = new THREE.Vector3();
 let headBobTime = 0;
 let leanAmount = 0;
 let freezeNeedles = false;
@@ -306,8 +378,7 @@ let chromaticAberrationPass = null;
 let lensEffectsPass = null;
 let fxaaPass = null;
 let smaaPass = null;
-let postProcessingDebugPanel = null;
-let sceneDebugPanels = null;
+let debugHub = null;
 let debugPanelsVisible = false;
 let debugToggleBuffer = "";
 let realismComposer = null;
@@ -348,6 +419,7 @@ let screenSpaceShadowQuality = CONFIG.postProcessing.screenSpaceShadows.defaultQ
 const fastDebugBoot = Boolean(CONFIG.debug?.enabled && CONFIG.debug?.fastLoadLevel);
 let loadingComplete = Boolean(CONFIG.loading?.skip || fastDebugBoot);
 let inputLocked = false;
+let playerControlMode = "walk";
 let debugTransformEdit = null;
 let debugTransformInputLockBackup = false;
 let shiftRecorder = createShiftRecorder();
@@ -407,6 +479,7 @@ let roomLightStartupPattern = [];
 let previousAudioLightFactor = 1;
 let reactorAudioPitch = 0.88;
 const narratorTimers = [];
+const narratorSubtitleCache = new Map();
 let welcomeNarrationPlayedForLevel = null;
 let reactorStartupPattern = [];
 let terminalStartupPattern = [];
@@ -783,6 +856,13 @@ const materials = {
   }),
 };
 
+Object.values(materials).forEach((entry) => {
+  if (entry?.isMaterial) photometricPointLightRuntime.patchMaterial(entry);
+  else if (entry && typeof entry === "object") Object.values(entry).forEach((material) => {
+    if (material?.isMaterial) photometricPointLightRuntime.patchMaterial(material);
+  });
+});
+
 Promise.all(interiorCustomTextureMapPromises)
   .then((entries) => {
     entries.forEach(([key, textureMaps, deferredPaths, initialPaths]) => {
@@ -1030,6 +1110,7 @@ function applyPanelTextureMapsToMaterial(material, textureMaps) {
   material.aoMap = textureMaps.ormMap;
   material.roughnessMap = textureMaps.ormMap;
   material.metalnessMap = textureMaps.ormMap;
+  photometricPointLightRuntime.patchMaterial(material);
   material.needsUpdate = true;
 }
 
@@ -1080,6 +1161,7 @@ function applyTextureMapsToMaterial(material, textureMaps, config = {}) {
   applyTextureRepeat(textureMaps, config.textureRepeat);
   applyMaskTextureSettings(textureMaps.maskMap);
   updateMaskOverlayUniforms(material, config);
+  photometricPointLightRuntime.patchMaterial(material);
   material.needsUpdate = true;
 }
 
@@ -1554,25 +1636,131 @@ function updateFxaaResolution() {
 
 function setupPostProcessingDebugPanel() {
   const panelConfig = CONFIG.postProcessing.debugPanel ?? {};
-  if (!panelConfig.enabled || postProcessingDebugPanel) return;
+  if (!panelConfig.enabled) return;
+  setupDebugHub();
+  debugHub?.ensureWorkspace?.();
+}
 
-  postProcessingDebugPanel = createPostProcessingDebugPanel({
+function createPostProcessingDebugPanelInstance() {
+  const panelConfig = CONFIG.postProcessing.debugPanel ?? {};
+  if (!panelConfig.enabled) return null;
+  const panel = createPostProcessingDebugPanel({
     config: CONFIG.postProcessing,
     defaults: defaultPostProcessingConfig,
     rebuild: () => postProcessingRuntime.setup(),
     update: applyLivePostProcessingConfig,
   });
   if (panelConfig.startClosed) {
-    window.setTimeout(() => postProcessingDebugPanel?.gui.close(), 0);
+    window.setTimeout(() => panel?.gui.close(), 0);
   }
-  if (!debugPanelsVisible) postProcessingDebugPanel.hide();
+  return panel;
 }
 
 function setupSceneDebugPanels() {
   const panelConfig = CONFIG.sceneDebug ?? {};
-  if (!panelConfig.enabled || sceneDebugPanels) return;
+  if (!panelConfig.enabled) return;
+  setupDebugHub();
+  debugHub?.ensureWorkspace?.();
+}
 
-  sceneDebugPanels = createSceneDebugPanels({
+function createDebugWorkspaceInstance() {
+  const panelConfig = CONFIG.sceneDebug ?? {};
+  if (!panelConfig.enabled) return null;
+  const workspace = createDebugWorkspace({
+    levelEnvironmentConfigs: CONFIG.levelEnvironments,
+    gameConfig: CONFIG.player,
+    postProcessingConfig: CONFIG.postProcessing,
+    getPostProcessingQualities: () => ({
+      gtao: gtaoQuality,
+      ssgi: ssgiQuality,
+      ssr: ssrQuality,
+      screenSpaceShadows: screenSpaceShadowQuality,
+    }),
+    setPostProcessingQuality: (key, quality) => {
+      if (key === "gtao") return setGtaoQuality(quality);
+      if (key === "ssgi") return setSsgiQuality(quality);
+      if (key === "ssr") return setSsrQuality(quality);
+      if (key === "screenSpaceShadows") return setScreenSpaceShadowQuality(quality);
+      return null;
+    },
+    soundRegistry: SOUND_REGISTRY,
+    soundMix: SOUND_MIX,
+    getAudioDebugState: () => audioRuntime.getDebugState(getDisplayedLevelId()),
+    getSceneSoundKeys: (levelId) => getLevelSceneSoundKeys(levelId ?? getDisplayedLevelId()),
+    applyLevelAmbient: applyLevelAmbientConfig,
+    applyLevelPrefab: applyLevelPrefabConfig,
+    applyLevelWorld: applyLevelWorldConfig,
+    applyPlayerCollisionSettings,
+    applyPostProcessing: applyLivePostProcessingConfig,
+    rebuildPostProcessing: () => postProcessingRuntime.setup(),
+    applyAudioMix: () => audioRuntime.refreshMix(),
+    togglePositionGizmo,
+  });
+  workspace.setActiveLevel(operatorViewMode === "menu" ? null : activeLevelId);
+  return workspace;
+}
+
+function getDisplayedLevelId() {
+  return operatorViewMode === "menu" ? "intro-shift" : getLevelEnvironmentId(activeLevelId);
+}
+
+function getLevelSceneSoundKeys(levelId = getDisplayedLevelId()) {
+  const environmentId = getLevelEnvironmentId(levelId);
+  const env = CONFIG.levelEnvironments?.[environmentId];
+  const keys = new Set(audioRuntime.getDebugState(environmentId).soundKeys ?? []);
+  keys.add("Footsteps1_Walk1");
+
+  if (getLevelPanelConfig(environmentId)) {
+    [
+      "Panel1_SfxLoop1",
+      "FusionCore_Ignite1",
+      "FusionCore_Pulse1",
+      "FusionCore_Working1",
+      "Button_Light1",
+      "Button_Light2",
+      "Button_Light3",
+      "ButtonMechanical1",
+      "ButtonMechanical2",
+      "ButtonMechanical3",
+      "ButtonMechanical4",
+      "LampTurnOn1",
+    ].forEach((key) => keys.add(key));
+  }
+
+  (env?.prefabs ?? []).forEach((prefab) => {
+    if (prefab.light) {
+      ["LampConstantBuzz1", "LampConstantBuzz2", "LampConstantBuzzBroken1", "LampTurnOn1"].forEach((key) => keys.add(key));
+    }
+    if (prefab.radio) {
+      ["MessageEN_Welcome1", "MessageRU_Welcome1", "MessageEN_WelcomeElevator1", "MessageRU_WelcomeElevator1"].forEach((key) => keys.add(key));
+    }
+    if (prefab.prefabType === "bulkheadDoor") {
+      ["DoorBulk1_Open1", "DoorBulk1_Close1", "DoorBulk1_LatchCrank1"].forEach((key) => keys.add(key));
+    }
+    if (["serviceDoor", "door2", "ServiceDoor1"].includes(prefab.prefabType)) {
+      ["DoorPushbar_Open1", "DoorPushbar_Close1"].forEach((key) => keys.add(key));
+    }
+    if (prefab.barrierGate) {
+      [
+        prefab.barrierGate.unlockMotorSoundKey,
+        prefab.barrierGate.unlockBeepSoundKey,
+      ].filter(Boolean).forEach((key) => keys.add(key));
+    }
+    if (prefab.controlPost) {
+      [
+        prefab.controlPost.buzzSoundKey,
+        prefab.controlPost.alertSoundKey,
+      ].filter(Boolean).forEach((key) => keys.add(key));
+    }
+  });
+
+  return [...keys].filter((key) => SOUND_REGISTRY[key]).sort();
+}
+
+function createSceneDebugPanelInstance() {
+  const panelConfig = CONFIG.sceneDebug ?? {};
+  if (!panelConfig.enabled) return null;
+  const panel = createSceneDebugPanels({
     levelId: panelConfig.levelId ?? "global",
     materialConfigs: CONFIG.interior.specialMaterials,
     materialInstances: materials.interiorCustom,
@@ -1595,32 +1783,41 @@ function setupSceneDebugPanels() {
       updateMaskOverlayUniforms(materials.interiorCustom[key], CONFIG.interior.specialMaterials[key]);
     },
   });
-  sceneDebugPanels.setActiveLevel(operatorViewMode === "menu" ? null : activeLevelId);
-  if (!debugPanelsVisible) sceneDebugPanels.setVisible(false);
+  panel.setActiveLevel(operatorViewMode === "menu" ? null : activeLevelId);
+  return panel;
+}
+
+function setupDebugHub() {
+  if (debugHub) return debugHub;
+  debugHub = createDebugHub({
+    debugOverlay,
+    fpsMeter,
+    initialVisible: debugPanelsVisible,
+    onHide: (hidden) => {
+      if (hidden) stopPositionGizmo();
+    },
+    createScenePanel: createSceneDebugPanelInstance,
+    createPostProcessingPanel: createPostProcessingDebugPanelInstance,
+    createWorkspace: createDebugWorkspaceInstance,
+  });
+  return debugHub;
 }
 
 function rebuildSceneDebugPanels() {
-  sceneDebugPanels?.destroy?.();
-  sceneDebugPanels = null;
+  debugHub?.destroyScenePanel?.();
   setupSceneDebugPanels();
 }
 
 function setDebugPanelsVisible(visible) {
   debugPanelsVisible = Boolean(visible);
-  if (!debugPanelsVisible) stopPositionGizmo();
-  if (debugOverlay) debugOverlay.hidden = !debugPanelsVisible;
-  if (fpsMeter) fpsMeter.hidden = !debugPanelsVisible;
-  document.body.classList.toggle("debug-hidden", !debugPanelsVisible);
-  if (postProcessingDebugPanel) {
-    if (debugPanelsVisible) postProcessingDebugPanel.show();
-    else postProcessingDebugPanel.hide();
-  }
-  sceneDebugPanels?.setVisible(debugPanelsVisible);
-  return debugPanelsVisible;
+  setupDebugHub();
+  return debugHub?.setVisible(debugPanelsVisible) ?? debugPanelsVisible;
 }
 
 function toggleDebugPanels() {
-  return setDebugPanelsVisible(!debugPanelsVisible);
+  setupDebugHub();
+  debugPanelsVisible = debugHub?.toggle?.() ?? !debugPanelsVisible;
+  return debugPanelsVisible;
 }
 
 function applyLivePostProcessingConfig() {
@@ -2115,7 +2312,7 @@ function loadPanelModel() {
       });
       operatorPanelRuntime.applyLevel(activeLevelId, operatorViewMode);
       scene.add(panelModel);
-      levelCollisionModels.forEach((_collision, levelId) => appendPanelPhysics(levelId));
+      levelCollisionModels.forEach((_collision, levelId) => rebuildLevelStaticPhysics(levelId));
 
       finishLoading();
       console.log(`[OperatorGame] Loaded SM_Panel1.glb: ${needles.length} arrows, ${lamps.length} lamps`);
@@ -2156,6 +2353,7 @@ async function createLevelEnvironmentRuntime(levelId) {
   try {
     const prefabCountBeforeBuild = environmentConfig.prefabs?.length ?? 0;
     await levelSceneBuilder.build(levelRuntime, levelId, environmentConfig);
+    rebuildLevelStaticPhysics(levelId);
     if ((environmentConfig.prefabs?.length ?? 0) !== prefabCountBeforeBuild) {
       rebuildSceneDebugPanels();
     }
@@ -2201,6 +2399,8 @@ function createPrefabRuntime(prefab, prefabConfig) {
     const materialConfig = CONFIG.interior.specialMaterials?.[materialKey] ?? {};
     const shouldCloneMaterial = Boolean(prefabConfig.light) || materialKey !== prefabConfig.materialKey;
     object.material = shouldCloneMaterial ? sourceMaterial.clone() : sourceMaterial;
+    if (shouldCloneMaterial) photometricPointLightRuntime.resetClonedMaterial(object.material);
+    photometricPointLightRuntime.patchMaterial(object.material);
     object.castShadow = materialConfig.castShadow ?? object.castShadow;
     object.receiveShadow = materialConfig.receiveShadow ?? object.receiveShadow;
     if (shouldCloneMaterial) {
@@ -2220,6 +2420,8 @@ function createPrefabRuntime(prefab, prefabConfig) {
     materialCloneEntries,
     materialKey: prefabConfig.materialKey,
     collisionMeshes,
+    dynamicColliderMeshes: new Set(),
+    staticWhileLockedColliderMeshes: new Set(),
     parts,
     flickerTime: Math.random() * 100,
     flickerSeed: Math.random() * 1000,
@@ -2234,68 +2436,93 @@ function createPrefabRuntime(prefab, prefabConfig) {
   if (prefabConfig.behavior === "analogClock" && prefabConfig.clock?.enabled !== false) {
     runtime.clock = createAnalogClockRuntime(runtime.parts, prefabConfig.clock);
   }
+  if (prefabConfig.behavior === "elevator") {
+    runtime.elevator = createElevatorRuntime(runtime.root, runtime.parts, prefabConfig.elevator);
+    runtime.collisionDisabled = true;
+  }
   if (prefabConfig.behavior === "narratorRadio") {
     runtime.radio = createNarratorRadioRuntime(runtime.parts, prefabConfig.radio);
   }
-  if (prefabConfig.light) {
-    const lightConfig = prefabConfig.light;
-    const light = new THREE.PointLight(
-      lightConfig.color,
-      lightConfig.intensity,
-      lightConfig.distance,
-      lightConfig.decay,
-    );
-    light.name = `${prefabConfig.name}_PointLight`;
-    light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
-    light.userData.baseIntensity = lightConfig.intensity;
-    light.userData.lightConfig = lightConfig;
-    light.userData.fixtureFlicker = runtime.fixtureFlicker;
-    applyShadowSettings(light, lightConfig);
-    prefab.add(light);
-    runtime.light = light;
+  if (prefabConfig.behavior === "barrierGate") {
+    runtime.barrierGate = createBarrierGateRuntime(runtime.parts, prefabConfig.barrierGate);
   }
+  if (prefabConfig.behavior === "controlPost") {
+    runtime.controlPost = createControlPostRuntime(runtime.parts, prefabConfig.controlPost);
+  }
+  if (prefabConfig.light) createPrefabLight(prefab, prefabConfig, runtime);
   return runtime;
 }
 
-function createNarratorRadioRuntime(parts, config = {}) {
-  const lamp = parts.get(config.lampName ?? "SM_Radio1_Lamp") ?? null;
-  const lampMaterials = lamp
-    ? (Array.isArray(lamp.material) ? lamp.material : [lamp.material]).filter(Boolean)
-    : [];
-  lampMaterials.forEach((material) => {
-    material.userData.baseEmissiveIntensity = material.emissiveIntensity ?? 0;
-    material.emissiveIntensity = 0;
-    material.needsUpdate = true;
-  });
-  return {
-    ...config,
-    lamp,
-    lampMaterials,
-    talkingRemaining: 0,
-    talkingElapsed: 0,
-  };
+function createPrefabLight(prefab, prefabConfig, runtime) {
+  const lightConfig = prefabConfig.light;
+  const marker = lightConfig.markerName ? runtime.parts.get(lightConfig.markerName) : null;
+  if (marker?.isLight) {
+    marker.visible = false;
+    marker.intensity = 0;
+  }
+  const type = lightConfig.type ?? (marker?.isSpotLight ? "spot" : "point");
+  const light =
+    type === "spot"
+      ? new THREE.SpotLight(
+          lightConfig.color,
+          lightConfig.intensity,
+          lightConfig.distance,
+          lightConfig.angle ?? marker?.angle ?? Math.PI / 5,
+          lightConfig.penumbra ?? marker?.penumbra ?? 0.35,
+          lightConfig.decay,
+        )
+      : new THREE.PointLight(
+          lightConfig.color,
+          lightConfig.intensity,
+          lightConfig.distance,
+          lightConfig.decay,
+        );
+  light.name = `${prefabConfig.name}_${type === "spot" ? "SpotLight" : "PointLight"}`;
+  const lightParent = marker?.parent ?? prefab;
+  lightParent.add(light);
+  if (marker) {
+    light.position.copy(lightConfig.localOffset ?? marker.position);
+    light.quaternion.copy(marker.quaternion);
+  } else {
+    light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
+  }
+  light.userData.baseIntensity = lightConfig.intensity;
+  light.userData.lightConfig = lightConfig;
+  light.userData.fixtureFlicker = runtime.fixtureFlicker;
+  if (light.isSpotLight) {
+    const target = new THREE.Object3D();
+    target.name = `${prefabConfig.name}_SpotTarget`;
+    lightParent.add(target);
+    light.target = target;
+    applyPrefabSpotTarget(light, lightConfig, marker);
+  }
+  applyShadowSettings(light, lightConfig);
+  runtime.light = light;
+  runtime.photometricPointLight = light.isPointLight
+    ? photometricPointLightRuntime.register(runtime, lightConfig)
+    : null;
+}
+
+function applyPrefabSpotTarget(light, lightConfig, marker = null) {
+  if (!light?.isSpotLight || !light.target) return;
+  if (lightConfig.angle != null) light.angle = lightConfig.angle;
+  if (lightConfig.penumbra != null) light.penumbra = lightConfig.penumbra;
+  const targetOffset =
+    lightConfig.targetLocalOffset ??
+    new THREE.Vector3(0, 0, -Math.max(0.25, Math.min(lightConfig.distance ?? 2, 4)));
+  if (marker && !lightConfig.targetLocalOffset) {
+    const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(marker.quaternion);
+    light.target.position.copy(light.position).add(direction.multiplyScalar(Math.max(0.25, Math.min(lightConfig.distance ?? 2, 4))));
+  } else {
+    light.target.position.copy(light.position).add(targetOffset);
+  }
+  light.target.updateMatrixWorld(true);
 }
 
 function getPrefabPartMaterialKey(object, prefabConfig) {
   const overrides = prefabConfig.materialOverrides ?? {};
   const matchName = getInteriorObjectMatchNames(object).find((name) => overrides[name]);
-  return matchName ? overrides[matchName] : prefabConfig.materialKey;
-}
-
-function createAnalogClockRuntime(parts, config = {}) {
-  const hands = {
-    seconds: parts.get(config.secondsHandName ?? "SM_Clock1_ArrowSeconds") ?? null,
-    minutes: parts.get(config.minutesHandName ?? "SM_Clock1_ArrowMinutes") ?? null,
-    hours: parts.get(config.hoursHandName ?? "SM_Clock1_ArrowHours") ?? null,
-  };
-  Object.values(hands).forEach((hand) => {
-    if (!hand) return;
-    hand.userData.initialRotation = hand.rotation.clone();
-  });
-  return {
-    ...config,
-    hands,
-  };
+  return matchName ? overrides[matchName] : getInteriorCustomMaterialKey(object) ?? prefabConfig.materialKey;
 }
 
 function disposeLevelEnvironmentRuntime(runtime) {
@@ -2317,6 +2544,7 @@ function disposeLevelOwnedObjects(levelId) {
 
   [...levelPrefabInstances.entries()].forEach(([key, runtime]) => {
     if (!key.startsWith(`${levelId}:`)) return;
+    photometricPointLightRuntime.unregister(runtime.photometricPointLight);
     (runtime.materialClones ?? runtime.emissiveMaterials ?? []).forEach((material) => material.dispose());
     runtime.light?.shadow?.dispose?.();
     levelPrefabInstances.delete(key);
@@ -2362,7 +2590,7 @@ function updateActiveLevelEnvironment() {
   });
   operatorPanelRuntime.applyLevel(displayedLevelId, operatorViewMode);
   audioRuntime.setActiveLevel(displayedLevelId);
-  sceneDebugPanels?.setActiveLevel?.(displayedLevelId);
+  debugHub?.setActiveLevel?.(displayedLevelId);
 
   const activeCollision = displayedLevelId && levelCollisionModels.get(displayedLevelId);
   physicsSystem?.setActiveScene(displayedLevelId);
@@ -2380,7 +2608,15 @@ function updateActiveLevelEnvironment() {
     levelPrefabInstances.forEach((runtime, key) => {
       if (!key.startsWith(`${displayedLevelId}:`)) return;
       if (runtime.collisionDisabled || runtime.physicsDoorKey) return;
-      runtime.collisionMeshes.forEach((mesh) => collisionOctree.fromGraphNode(mesh));
+      runtime.collisionMeshes.forEach((mesh) => {
+        if (
+          runtime.dynamicColliderMeshes?.has(mesh) &&
+          !runtime.staticWhileLockedColliderMeshes?.has(mesh)
+        ) {
+          return;
+        }
+        collisionOctree.fromGraphNode(mesh);
+      });
     });
   }
   collisionReady = true;
@@ -2407,6 +2643,41 @@ function appendPanelPhysics(levelId) {
   });
   physicsSystem?.appendStaticScene(levelId, collisionRoot);
   operatorPanelRuntime.applyLevel(levelId, operatorViewMode);
+}
+
+function appendLevelPrefabPhysics(levelId) {
+  if (!levelCollisionModels.has(levelId)) return 0;
+  const collisionRoot = new THREE.Group();
+  let count = 0;
+  levelPrefabInstances.forEach((runtime, key) => {
+    if (!key.startsWith(`${levelId}:`)) return;
+    if (runtime.collisionDisabled || runtime.physicsDoorKey) return;
+    runtime.root.updateWorldMatrix(true, true);
+    runtime.collisionMeshes.forEach((source) => {
+      if (
+        runtime.dynamicColliderMeshes?.has(source) &&
+        !runtime.staticWhileLockedColliderMeshes?.has(source)
+      ) {
+        return;
+      }
+      if (!source.geometry) return;
+      const mesh = new THREE.Mesh(source.geometry);
+      source.updateWorldMatrix(true, false);
+      source.matrixWorld.decompose(mesh.position, mesh.quaternion, mesh.scale);
+      collisionRoot.add(mesh);
+      count += 1;
+    });
+  });
+  if (count > 0) physicsSystem?.appendStaticScene(levelId, collisionRoot);
+  return count;
+}
+
+function rebuildLevelStaticPhysics(levelId) {
+  const collisionModel = levelCollisionModels.get(levelId);
+  if (!collisionModel) return;
+  physicsSystem?.addStaticScene(levelId, collisionModel);
+  appendPanelPhysics(levelId);
+  appendLevelPrefabPhysics(levelId);
 }
 
 function applyLevelWorldConfig(levelId) {
@@ -2561,6 +2832,40 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
     part.rotateZ(THREE.MathUtils.degToRad(rotation.z ?? 0));
   });
   runtime.root.updateMatrixWorld(true);
+  if (runtime.rigidPrefabKey) {
+    physicsSystem?.resetRigidPrefab(runtime.rigidPrefabKey, runtime.root, true);
+  }
+  resetElevatorRuntime(runtime.elevator);
+  if (runtime.barrierGate) {
+    Object.assign(runtime.barrierGate, prefabConfig.barrierGate ?? {});
+    resetBarrierGateRuntime(runtime.barrierGate);
+    if (runtime.barrierGatePhysicsKey) {
+      const gateCollider = runtime.parts.get(runtime.barrierGate.colliderName ?? "UBX_SM_Barrier1_Gate_01");
+      if (gateCollider) {
+        if (runtime.barrierGate.locked === false) {
+          runtime.staticWhileLockedColliderMeshes.delete(gateCollider);
+        } else {
+          runtime.staticWhileLockedColliderMeshes.add(gateCollider);
+        }
+      }
+      physicsSystem?.resetDoor(runtime.barrierGatePhysicsKey);
+      physicsSystem?.configureDoorRestMotor(runtime.barrierGatePhysicsKey, {
+        enabled: runtime.barrierGate.returnToRest,
+        degrees: runtime.barrierGate.restDegrees ?? 0,
+        stiffness: runtime.barrierGate.restMotorStiffness,
+        damping: runtime.barrierGate.restMotorDamping,
+      });
+      physicsSystem?.setDoorEnabled(runtime.barrierGatePhysicsKey, runtime.barrierGate.locked === false);
+      if (structural && activeLevelId === levelId) rebuildLevelStaticPhysics(levelId);
+    }
+  }
+  if (runtime.controlPost) {
+    Object.assign(runtime.controlPost, prefabConfig.controlPost ?? {});
+    resetControlPostRuntime(runtime.controlPost);
+  }
+  runtime.elevatorCagePhysicsDisabled = false;
+  physicsSystem?.setKinematicPrefabEnabled(runtime.elevatorCagePhysicsKey, true);
+  physicsSystem?.setKinematicPrefabEnabled(runtime.elevatorDoorPhysicsKey, true);
   if (runtime.door) {
     const configLatched = Boolean(prefabConfig.state?.latched);
     if (runtime.door.latched !== configLatched) {
@@ -2579,7 +2884,8 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
   runtime.light.userData.baseIntensity = lightConfig.intensity;
   runtime.light.distance = lightConfig.distance;
   runtime.light.decay = lightConfig.decay;
-  runtime.light.position.copy(lightConfig.localOffset ?? new THREE.Vector3());
+  if (lightConfig.localOffset) runtime.light.position.copy(lightConfig.localOffset);
+  if (runtime.light.isSpotLight) applyPrefabSpotTarget(runtime.light, lightConfig, runtime.parts.get(lightConfig.markerName));
   if (lightConfig.enabled !== false && !runtime.wasLightEnabled && lightConfig.fluorescentStartup) {
     runtime.startupPattern = createFluorescentStartupPattern();
     runtime.startupElapsed = 0;
@@ -2594,7 +2900,144 @@ function applyLevelPrefabConfig(levelId, prefabName, structural = false) {
   if (structural && activeLevelId === levelId) updateActiveLevelEnvironment();
 }
 
+function registerElevatorPrefab(levelId, prefabConfig, runtime) {
+  const elevator = runtime.elevator;
+  if (!physicsSystem || !elevator) return;
+
+  const elevatorConfig = prefabConfig.elevator ?? {};
+  const cagePrefixes = elevatorConfig.cageColliderNamePrefixes ?? elevatorConfig.colliderNamePrefixes ?? [];
+  const doorPrefixes = elevatorConfig.doorColliderNamePrefixes ?? [];
+  const cageColliders = findPrefabColliderMeshes(runtime, cagePrefixes);
+  const doorColliders = findPrefabColliderMeshes(runtime, doorPrefixes);
+
+  if (!cageColliders.length) {
+    console.warn(`[Elevator] No cage colliders found for prefab "${prefabConfig.name}"`, cagePrefixes);
+  }
+  runtime.elevatorCagePhysicsKey = `${levelId}:${prefabConfig.name}:cage`;
+  runtime.elevatorDoorPhysicsKey = `${levelId}:${prefabConfig.name}:door`;
+
+  if (cageColliders.length) {
+    physicsSystem.createKinematicPrefab({
+      key: runtime.elevatorCagePhysicsKey,
+      sceneKey: levelId,
+      root: elevator.cage ?? runtime.root,
+      colliderMeshes: cageColliders,
+      friction: elevatorConfig.friction ?? 1,
+      colliderMode: elevatorConfig.cageColliderMode ?? "boxes",
+      floorThickness: elevatorConfig.cageFloorThickness ?? 0.12,
+      floorInset: elevatorConfig.cageFloorInset ?? 0,
+    });
+  }
+
+  if (elevator.door && doorColliders.length) {
+    physicsSystem.createKinematicPrefab({
+      key: runtime.elevatorDoorPhysicsKey,
+      sceneKey: levelId,
+      root: elevator.door,
+      colliderMeshes: doorColliders,
+      friction: elevatorConfig.friction ?? 1,
+    });
+  }
+}
+
+function registerBarrierGatePrefab(levelId, prefabConfig, runtime) {
+  if (!physicsSystem) return;
+  const gateConfig = prefabConfig.barrierGate ?? {};
+  if (gateConfig.enabled === false) return;
+  const gateMesh = runtime.parts.get(gateConfig.gateName ?? "SM_Barrier1_Gate");
+  const colliderMesh = runtime.parts.get(gateConfig.colliderName ?? "UBX_SM_Barrier1_Gate_01");
+  if (!gateMesh || !colliderMesh) {
+    console.warn(`[BarrierGate] Missing gate/collider for prefab "${prefabConfig.name}"`, {
+      gateName: gateConfig.gateName,
+      colliderName: gateConfig.colliderName,
+      hasGate: Boolean(gateMesh),
+      hasCollider: Boolean(colliderMesh),
+    });
+    return;
+  }
+
+  runtime.root.updateMatrixWorld(true);
+  gateMesh.updateWorldMatrix(true, false);
+  colliderMesh.updateWorldMatrix(true, false);
+  runtime.dynamicColliderMeshes.add(colliderMesh);
+  runtime.barrierGatePhysicsKey = `${levelId}:${prefabConfig.name}:barrierGate`;
+  if (gateConfig.locked !== false) {
+    runtime.staticWhileLockedColliderMeshes.add(colliderMesh);
+  }
+  physicsSystem.createHingedDoor({
+    key: runtime.barrierGatePhysicsKey,
+    sceneKey: levelId,
+    doorMesh: gateMesh,
+    colliderMesh,
+    initialDegrees: gateConfig.initialDegrees ?? 0,
+    minDegrees: gateConfig.minDegrees ?? -90,
+    maxDegrees: gateConfig.maxDegrees ?? 90,
+    density: gateConfig.density,
+    angularDamping: gateConfig.angularDamping,
+    maxAngularVelocity: gateConfig.maxAngularVelocity,
+    initialHoldSeconds: gateConfig.initialHoldSeconds,
+    motorStiffness: gateConfig.motorStiffness,
+    motorDamping: gateConfig.motorDamping,
+    restMotorEnabled: gateConfig.returnToRest,
+    restDegrees: gateConfig.restDegrees ?? 0,
+    restMotorStiffness: gateConfig.restMotorStiffness,
+    restMotorDamping: gateConfig.restMotorDamping,
+  });
+  physicsSystem.configureDoorRestMotor(runtime.barrierGatePhysicsKey, {
+    enabled: gateConfig.returnToRest,
+    degrees: gateConfig.restDegrees ?? 0,
+    stiffness: gateConfig.restMotorStiffness,
+    damping: gateConfig.restMotorDamping,
+  });
+  physicsSystem.setDoorEnabled(runtime.barrierGatePhysicsKey, gateConfig.locked === false);
+}
+
+function registerRigidPrefab(levelId, prefabConfig, runtime) {
+  const rigidConfig = prefabConfig.rigidBody;
+  if (!physicsSystem || !rigidConfig?.enabled) return;
+  const colliderPrefixes = rigidConfig.colliderNamePrefixes ?? ["UBX_", "COLL", "Coll"];
+  const colliderMeshes = findPrefabColliderMeshes(runtime, colliderPrefixes);
+  if (!colliderMeshes.length) {
+    console.warn(`[RigidPrefab] No colliders found for prefab "${prefabConfig.name}"`, colliderPrefixes);
+    return;
+  }
+  colliderMeshes.forEach((mesh) => runtime.dynamicColliderMeshes.add(mesh));
+  runtime.rigidPrefabKey = `${levelId}:${prefabConfig.name}:rigid`;
+  physicsSystem.createRigidPrefab({
+    key: runtime.rigidPrefabKey,
+    sceneKey: levelId,
+    root: runtime.root,
+    colliderMeshes,
+    bodyType: rigidConfig.bodyType ?? "dynamic",
+    density: rigidConfig.density,
+    linearDamping: rigidConfig.linearDamping,
+    angularDamping: rigidConfig.angularDamping,
+    friction: rigidConfig.friction,
+    restitution: rigidConfig.restitution,
+    canSleep: rigidConfig.canSleep,
+  });
+}
+
+function findPrefabColliderMeshes(runtime, prefixes = []) {
+  const normalizedPrefixes = prefixes.map(normalizeMatchName);
+  return (runtime.collisionMeshes ?? []).filter((mesh) => {
+    const normalizedNames = getInteriorObjectMatchNames(mesh).map(normalizeMatchName);
+    return normalizedPrefixes.some((prefix) => normalizedNames.some((name) => name.startsWith(prefix)));
+  });
+}
+
 function registerPrefabInteraction(levelId, prefabConfig, runtime) {
+  if (prefabConfig.behavior === "elevator") {
+    registerElevatorPrefab(levelId, prefabConfig, runtime);
+    return;
+  }
+  if (prefabConfig.behavior === "barrierGate") {
+    registerBarrierGatePrefab(levelId, prefabConfig, runtime);
+    return;
+  }
+  if (prefabConfig.rigidBody?.enabled) {
+    registerRigidPrefab(levelId, prefabConfig, runtime);
+  }
   const interaction = prefabConfig.interaction;
   if (interaction?.type !== "hingedDoor") return;
   const doorMesh = runtime.parts.get(interaction.meshName);
@@ -2691,78 +3134,6 @@ function applyHingedDoorRotation(runtime) {
   }
   applyDoorLatchHandleRotation(runtime);
   runtime.root.updateMatrixWorld(true);
-}
-
-function applyDoorLatchHandleRotation(runtime) {
-  const door = runtime?.door;
-  const handles = door?.latchHandles?.length ? door.latchHandles : door?.latchHandle ? [door.latchHandle] : [];
-  if (!handles.length) return;
-  handles.forEach((handle) => {
-    handle.rotation.copy(handle.userData.prefabInitialRotation);
-    const degrees = getDoorLatchHandleDegrees(door, handle);
-    applyAxisRotation(handle, door.interaction.latchHandleAxis ?? "z", THREE.MathUtils.degToRad(degrees));
-  });
-}
-
-function smoothDoorLatchProgress(progress) {
-  return progress * progress * (3 - 2 * progress);
-}
-
-function getDoorLatchBaseDegrees(door, latched = door.latched, handle = door.activeLatchHandle ?? door.latchHandle) {
-  if (door.interaction.latchAction === "holdOpen") return 0;
-  const explicitByName = door.interaction.latchHandleDegreesByName?.[handle?.name];
-  const explicitLatchedDegrees = Number.isFinite(explicitByName)
-    ? explicitByName
-    : door.interaction.latchHandleLatchedDegrees;
-  return latched ? explicitLatchedDegrees ?? -70 : 0;
-}
-
-function getDoorLatchRestDegrees(door, handle = door.activeLatchHandle ?? door.latchHandle) {
-  if (
-    door.activeLatchHandle &&
-    handle !== door.activeLatchHandle &&
-    (door.interaction.latchAction === "toggleDoor" || door.interaction.latchAction === "holdOpen")
-  ) {
-    return 0;
-  }
-  return getDoorLatchBaseDegrees(door, door.latched, handle) + (door.latchHandleSpinOffsetDegrees ?? 0);
-}
-
-function getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress, jerkScale = 1) {
-  const easedProgress = smoothDoorLatchProgress(THREE.MathUtils.clamp(progress, 0, 1));
-  const jerkEnvelope = Math.sin(progress * Math.PI);
-  const mechanicalJerk =
-    Math.sin(progress * Math.PI * (door.interaction.latchJerkFrequency ?? 8)) *
-    (door.interaction.latchJerkDegrees ?? 7) *
-    jerkEnvelope *
-    jerkScale;
-  return THREE.MathUtils.lerp(fromDegrees, toDegrees, easedProgress) + mechanicalJerk;
-}
-
-function getDoorLatchHandleDegrees(door, handle = door.activeLatchHandle ?? door.latchHandle) {
-  if (
-    door.activeLatchHandle &&
-    handle !== door.activeLatchHandle &&
-    (door.interaction.latchAction === "toggleDoor" || door.interaction.latchAction === "holdOpen")
-  ) {
-    return 0;
-  }
-  if (door.latchBlockedAttempt) {
-    const duration = door.interaction.latchBlockedAttemptSeconds ?? 0.55;
-    const progress = THREE.MathUtils.clamp(door.latchBlockedAttempt.elapsed / Math.max(duration, 0.001), 0, 1);
-    const fromDegrees = door.latchBlockedAttempt.fromDegrees ?? getDoorLatchRestDegrees(door, handle);
-    const toDegrees =
-      door.latchBlockedAttempt.toDegrees ??
-      fromDegrees + (door.latchBlockedAttempt.sign ?? 1) * (door.interaction.latchBlockedStopDegrees ?? 26);
-    if (progress < 0.5) {
-      return getDoorLatchMotionDegrees(door, fromDegrees, toDegrees, progress / 0.5, 0.8);
-    }
-    return getDoorLatchMotionDegrees(door, toDegrees, fromDegrees, (progress - 0.5) / 0.5, 0.8);
-  }
-  if (!door.latchOperation) return getDoorLatchRestDegrees(door, handle);
-
-  const progress = THREE.MathUtils.clamp(door.latchOperation.progress ?? 0, 0, 1);
-  return getDoorLatchMotionDegrees(door, door.latchOperation.fromDegrees, door.latchOperation.toDegrees, progress);
 }
 
 function updateDoorLatchHandles(dt) {
@@ -3494,6 +3865,8 @@ function animate() {
   updateLoadingOverlay(dt);
   updateFpsMeter(dt);
   testTime += dt;
+  updateLevelPrefabElevators(dt);
+  updateLevelPrefabBehaviors(dt);
   playerController.update(dt);
   updateHoverTarget();
   updateControlLabels();
@@ -3507,6 +3880,7 @@ function animate() {
   updateNarratorRadios(dt);
   physicsSystem?.step(dt);
   playerController.updateAfterPhysics();
+  photometricPointLightRuntime.updateUniforms();
   updateRuntimeTextureLoading(dt);
   updateDebugOverlay();
   postProcessingRuntime.render(dt);
@@ -3594,20 +3968,106 @@ function updateLevelPrefabLights(dt) {
 
 function updateLevelPrefabClocks() {
   const now = new Date();
-  const milliseconds = now.getMilliseconds();
-  const seconds = now.getSeconds() + milliseconds / 1000;
-  const minutes = now.getMinutes() + seconds / 60;
-  const hours = (now.getHours() % 12) + minutes / 60;
-
   levelPrefabInstances.forEach((runtime) => {
-    if (!runtime.clock?.hands) return;
-    const axis = runtime.clock.axis ?? "z";
-    const direction = runtime.clock.direction ?? -1;
-    const smoothSeconds = runtime.clock.smoothSeconds !== false;
-    applyClockHandRotation(runtime.clock.hands.seconds, axis, direction * ((smoothSeconds ? seconds : Math.floor(seconds)) / 60) * Math.PI * 2);
-    applyClockHandRotation(runtime.clock.hands.minutes, axis, direction * (minutes / 60) * Math.PI * 2);
-    applyClockHandRotation(runtime.clock.hands.hours, axis, direction * (hours / 12) * Math.PI * 2);
+    updateAnalogClockRuntime(runtime.clock, now);
   });
+}
+
+function updateLevelPrefabElevators(dt) {
+  const displayedLevelId = operatorViewMode === "menu" ? "intro-shift" : getLevelEnvironmentId(activeLevelId);
+  levelPrefabInstances.forEach((runtime, key) => {
+    const elevator = runtime.elevator;
+    if (!elevator) return;
+    const [levelId] = key.split(":");
+    const state = updateElevatorRuntime(elevator, dt);
+    if (
+      levelId === displayedLevelId &&
+      playerControlMode === "lookOnlyUntilElevatorArrival" &&
+      state?.arrived &&
+      (elevator.doorElapsed ?? 0) >= (elevator.doorOpenSeconds ?? 0)
+    ) {
+      playerControlMode = "walk";
+      movementVelocity.set(0, 0, 0);
+      movingPlatformDelta.set(0, 0, 0);
+      physicsSystem?.teleportCharacter(playerPosition);
+      syncPlayerCapsule();
+    }
+    const disableCageOnArrival = elevator.disableCageCollisionOnArrival !== false;
+    const shouldDisableCage = disableCageOnArrival && Boolean(state?.arrived);
+    if (shouldDisableCage !== Boolean(runtime.elevatorCagePhysicsDisabled)) {
+      runtime.elevatorCagePhysicsDisabled = shouldDisableCage;
+      physicsSystem?.setKinematicPrefabEnabled(runtime.elevatorCagePhysicsKey, !shouldDisableCage);
+    }
+    if (!shouldDisableCage) {
+      physicsSystem?.updateKinematicPrefab(runtime.elevatorCagePhysicsKey, elevator.cage ?? runtime.root, { immediate: true });
+    }
+    physicsSystem?.updateKinematicPrefab(runtime.elevatorDoorPhysicsKey, elevator.door, { immediate: true });
+    if (levelId !== displayedLevelId || operatorViewMode !== "level") return;
+    if (elevator.carryPlayer === false || !state?.rideDelta) return;
+    if (!isPlayerInsideElevator(elevator)) return;
+    movingPlatformDelta.add(state.rideDelta);
+  });
+}
+
+function updateLevelPrefabBehaviors(dt) {
+  const displayedLevelId = operatorViewMode === "menu" ? "intro-shift" : getLevelEnvironmentId(activeLevelId);
+  levelPrefabInstances.forEach((runtime, key) => {
+    const [levelId] = key.split(":");
+    if (levelId !== displayedLevelId || operatorViewMode !== "level") return;
+
+    const barrierEvents = updateBarrierGateRuntime(runtime.barrierGate, dt);
+    barrierEvents.forEach((event) => {
+      if (event.type === "unlockGate") {
+        if (runtime.barrierGatePhysicsKey) {
+          const gateCollider = runtime.parts.get(runtime.barrierGate?.colliderName ?? "UBX_SM_Barrier1_Gate_01");
+          if (gateCollider) runtime.staticWhileLockedColliderMeshes?.delete(gateCollider);
+          rebuildLevelStaticPhysics(levelId);
+          physicsSystem?.resetDoor(runtime.barrierGatePhysicsKey);
+          physicsSystem?.configureDoorRestMotor(runtime.barrierGatePhysicsKey, {
+            enabled: runtime.barrierGate?.returnToRest,
+            degrees: runtime.barrierGate?.restDegrees ?? 0,
+            stiffness: runtime.barrierGate?.restMotorStiffness,
+            damping: runtime.barrierGate?.restMotorDamping,
+          });
+          physicsSystem?.setDoorEnabled(runtime.barrierGatePhysicsKey, true);
+          physicsSystem?.setDoorDragTarget(
+            runtime.barrierGatePhysicsKey,
+            event.targetDegrees ?? runtime.barrierGate?.targetDegreesOnUnlock ?? 10,
+            true,
+          );
+        }
+        return;
+      }
+      if (event.type !== "sound" || !event.soundKey) return;
+      playSoundAtObject(event.object ?? runtime.root, event.soundKey, {
+        levelId,
+        refDistance: event.refDistance,
+        maxDistance: event.maxDistance,
+      });
+    });
+
+    const controlPostEvent = updateControlPostRuntime(runtime.controlPost, dt, playerPosition);
+    if (controlPostEvent?.type === "sound" && controlPostEvent.soundKey) {
+      playSoundAtObject(controlPostEvent.object ?? runtime.root, controlPostEvent.soundKey, {
+        levelId,
+        refDistance: controlPostEvent.refDistance,
+        maxDistance: controlPostEvent.maxDistance,
+      });
+    }
+  });
+}
+
+function isPlayerInsideElevator(elevator) {
+  const target = elevator.cage ?? elevator.root;
+  if (!target) return false;
+  const center = new THREE.Vector3();
+  target.getWorldPosition(center);
+  const radius = Number(elevator.carryRadius ?? 1.25);
+  const height = Number(elevator.carryHeight ?? 2.4);
+  const dx = playerPosition.x - center.x;
+  const dz = playerPosition.z - center.z;
+  const dy = playerPosition.y - center.y;
+  return dx * dx + dz * dz <= radius * radius && dy > -0.5 && dy < height;
 }
 
 function updateAudioState(dt) {
@@ -3663,6 +4123,19 @@ function updateAudioState(dt) {
     });
   });
 
+  levelPrefabInstances.forEach((runtime, key) => {
+    const [levelId] = key.split(":");
+    const controlPost = runtime.controlPost;
+    if (!controlPost?.enabled || !controlPost.buzzSoundKey) return;
+    audioRuntime.setAttachedLoop(`controlPost:${key}:buzz`, runtime.root, controlPost.buzzSoundKey, levelId === displayedLevelId, {
+      levelId,
+      volume: controlPost.buzzVolume ?? undefined,
+      refDistance: controlPost.refDistance ?? 0.45,
+      maxDistance: controlPost.maxDistance ?? 2,
+      fadeSeconds: controlPost.fadeSeconds ?? 0.35,
+    });
+  });
+
   const runningCore = latestSnapshot.mode === "running";
   const destroyedTerminal = latestSnapshot.failureType === "coreDestroyed" && terminalSequenceElapsed >= 0;
   const completedTerminal = latestSnapshot.mode === "complete" && terminalSequenceElapsed >= 0;
@@ -3705,18 +4178,7 @@ function playSoundAtObject(object, soundKey, options = {}) {
 
 function updateNarratorRadios(dt) {
   levelPrefabInstances.forEach((runtime) => {
-    if (!runtime.radio) return;
-    const radio = runtime.radio;
-    radio.talkingRemaining = Math.max(0, (radio.talkingRemaining ?? 0) - dt);
-    if (radio.talkingRemaining > 0) radio.talkingElapsed = (radio.talkingElapsed ?? 0) + dt;
-    const blinkFrequency = radio.lampBlinkFrequency ?? 1.1;
-    const blink = radio.talkingRemaining > 0
-      ? 0.15 + 0.85 * Math.pow((Math.sin(radio.talkingElapsed * Math.PI * 2 * blinkFrequency) + 1) * 0.5, 1.8)
-      : 0;
-    radio.lampMaterials.forEach((material) => {
-      material.emissiveIntensity = blink * 8.8;
-      material.needsUpdate = true;
-    });
+    updateNarratorRadioRuntime(runtime.radio, dt);
   });
 }
 
@@ -3726,13 +4188,7 @@ function clearNarratorTimers() {
   }
   welcomeNarrationPlayedForLevel = null;
   levelPrefabInstances.forEach((runtime) => {
-    if (!runtime.radio) return;
-    runtime.radio.talkingRemaining = 0;
-    runtime.radio.talkingElapsed = 0;
-    runtime.radio.lampMaterials.forEach((material) => {
-      material.emissiveIntensity = 0;
-      material.needsUpdate = true;
-    });
+    resetNarratorRadioRuntime(runtime.radio);
   });
 }
 
@@ -3743,6 +4199,14 @@ function getLevelNarratorRadioRuntime(levelId = activeLevelId) {
     if (key.startsWith(`${environmentId}:`)) return runtime;
   }
   return null;
+}
+
+function getLevelNarrationLine(levelId = activeLevelId, language = document.documentElement.lang) {
+  const environmentId = getLevelEnvironmentId(levelId);
+  const welcome = CONFIG.levelEnvironments?.[environmentId]?.narration?.welcome;
+  const localized = welcome?.[language] ?? welcome?.en ?? welcome?.ru;
+  if (localized?.soundKey) return localized;
+  return getNarratorWelcomeLine(language);
 }
 
 function getNarratorWelcomeLine(language = document.documentElement.lang) {
@@ -3793,6 +4257,57 @@ function getNarratorWelcomeLine(language = document.documentElement.lang) {
   };
 }
 
+async function resolveNarratorLine(line) {
+  if (!line?.subtitlePath) return line;
+  const subtitles = await loadSrtSubtitles(line.subtitlePath);
+  const duration = line.duration ?? subtitles.reduce((max, subtitle) => Math.max(max, subtitle.at + subtitle.duration), 0);
+  return { ...line, duration, subtitles };
+}
+
+async function loadSrtSubtitles(path) {
+  if (narratorSubtitleCache.has(path)) return narratorSubtitleCache.get(path);
+  const promise = fetch(path)
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status} ${path}`);
+      return response.text();
+    })
+    .then(parseSrtSubtitles)
+    .catch((error) => {
+      console.warn(`[Narrator] Failed to load subtitles "${path}"`, error);
+      return [];
+    });
+  narratorSubtitleCache.set(path, promise);
+  return promise;
+}
+
+function parseSrtSubtitles(source) {
+  return String(source)
+    .replace(/\r/g, "")
+    .split(/\n\s*\n/)
+    .map((block) => {
+      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+      const timeLineIndex = lines.findIndex((line) => line.includes("-->"));
+      if (timeLineIndex < 0) return null;
+      const [startRaw, endRaw] = lines[timeLineIndex].split("-->").map((part) => part.trim());
+      const start = parseSrtTime(startRaw);
+      const end = parseSrtTime(endRaw);
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+      return {
+        at: start,
+        duration: end - start,
+        text: lines.slice(timeLineIndex + 1).join(" "),
+      };
+    })
+    .filter((cue) => cue?.text);
+}
+
+function parseSrtTime(value) {
+  const match = String(value).match(/(\d+):(\d+):(\d+)[,.](\d+)/);
+  if (!match) return NaN;
+  const [, hours, minutes, seconds, millis] = match;
+  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds) + Number(`0.${millis.padEnd(3, "0").slice(0, 3)}`);
+}
+
 function scheduleNarratorTimeout(callback, seconds) {
   const timer = window.setTimeout(() => {
     const index = narratorTimers.indexOf(timer);
@@ -3821,12 +4336,12 @@ function playWelcomeNarrationWhenReady(levelId) {
   playWelcomeNarration(levelId);
 }
 
-function playWelcomeNarration(levelId = activeLevelId) {
+async function playWelcomeNarration(levelId = activeLevelId) {
   const runtime = getLevelNarratorRadioRuntime(levelId);
   if (!runtime?.radio) return false;
-  const line = getNarratorWelcomeLine(document.documentElement.lang);
-  runtime.radio.talkingRemaining = line.duration;
-  runtime.radio.talkingElapsed = 0;
+  const line = await resolveNarratorLine(getLevelNarrationLine(levelId, document.documentElement.lang));
+  if (activeLevelId !== levelId || operatorViewMode !== "level") return false;
+  startNarratorRadioSpeech(runtime.radio, line.duration);
   playSoundAtObject(runtime.root, line.soundKey, {
     levelId,
     refDistance: runtime.radio.refDistance ?? 1,
@@ -3843,18 +4358,13 @@ function playWelcomeNarration(levelId = activeLevelId) {
             text: subtitle.text,
             duration: subtitle.duration,
             priority: 3,
+            mode: line.subtitleMode ?? "film",
           },
         }),
       );
     }, subtitle.at);
   });
   return true;
-}
-
-function applyClockHandRotation(hand, axis, angle) {
-  if (!hand) return;
-  hand.rotation.copy(hand.userData.initialRotation);
-  applyAxisRotation(hand, axis, angle);
 }
 
 function renderRealismComposer(dt) {
@@ -4644,46 +5154,11 @@ function getTerminalPresentationSnapshot(snapshot) {
 }
 
 function createFixtureFlickerState(overrides = null) {
-  const flickerConfig = {
-    ...(CONFIG.feedback.longTermLightFlicker ?? {}),
-    ...(overrides ?? {}),
-  };
-  return {
-    seed: Math.random() * 1000,
-    nextIn: getRandomRangeValue(flickerConfig?.minIntervalSeconds ?? 45, flickerConfig?.maxIntervalSeconds ?? 140),
-    elapsed: 0,
-    duration: 0,
-    pulses: [],
-  };
+  return createFixtureFlickerStateFromConfig(CONFIG.feedback.longTermLightFlicker, overrides);
 }
 
 function updateFixtureFlickerState(state, dt, overrides = null) {
-  const flickerConfig = {
-    ...(CONFIG.feedback.longTermLightFlicker ?? {}),
-    ...(overrides ?? {}),
-  };
-  if (!flickerConfig?.enabled) return;
-
-  if (state.duration > 0) {
-    state.elapsed += dt;
-    if (state.elapsed >= state.duration) {
-      state.elapsed = 0;
-      state.duration = 0;
-      state.pulses = [];
-    }
-    return;
-  }
-
-  state.nextIn -= dt;
-  if (state.nextIn > 0) return;
-
-  state.duration = getRandomConfigRange(flickerConfig.durationSeconds, 0.08, 0.42);
-  state.elapsed = 0;
-  state.pulses = createFixtureFlickerPulses(state.duration, flickerConfig);
-  const retrySoon = Math.random() < (flickerConfig.retryChance ?? 0.35);
-  state.nextIn = retrySoon
-    ? THREE.MathUtils.randFloat(0.8, 3.5)
-    : getRandomRangeValue(flickerConfig.minIntervalSeconds ?? 45, flickerConfig.maxIntervalSeconds ?? 140);
+  updateFixtureFlickerStateFromConfig(state, dt, CONFIG.feedback.longTermLightFlicker, overrides);
 }
 
 function triggerFixtureFlicker(targetName = "") {
@@ -4693,63 +5168,14 @@ function triggerFixtureFlicker(targetName = "") {
     const state = target.userData.fixtureFlicker;
     const fixtureName = target.userData.fixtureName ?? target.userData.lightKey ?? target.name ?? target.name;
     if (!state || (targetName && fixtureName !== targetName)) return;
-    state.duration = getRandomConfigRange(flickerConfig.durationSeconds, 0.08, 0.42);
-    state.elapsed = 0;
-    state.pulses = createFixtureFlickerPulses(state.duration, flickerConfig);
+    triggerFixtureFlickerState(state, flickerConfig);
     triggered.push(fixtureName);
   });
   return [...new Set(triggered)];
 }
 
-function createFixtureFlickerPulses(duration, flickerConfig) {
-  const pulseCount = Math.max(3, Math.round(getRandomConfigRange(flickerConfig.pulseCount, 4, 9)));
-  const clusterEnd = THREE.MathUtils.randFloat(0.72, 0.94);
-
-  return Array.from({ length: pulseCount }, (_, index) => {
-    const sequenceProgress = pulseCount > 1 ? index / (pulseCount - 1) : 0;
-    const center = THREE.MathUtils.clamp(
-      0.035 + sequenceProgress * clusterEnd + THREE.MathUtils.randFloatSpread(0.075),
-      0.015,
-      0.98,
-    );
-    const pulseSeconds = THREE.MathUtils.randFloat(0.025, index === pulseCount - 1 ? 0.075 : 0.13);
-    const width = THREE.MathUtils.clamp(pulseSeconds / Math.max(duration, 0.001), 0.018, 0.19);
-    const minimumFactor = getRandomConfigRange(flickerConfig.minFactor, 0.04, 0.3);
-    const strikeStrength = index === 0 || index === pulseCount - 1 ? 1 : THREE.MathUtils.randFloat(0.72, 1);
-
-    return {
-      center,
-      width,
-      depth: (1 - minimumFactor) * strikeStrength,
-      edgePower: THREE.MathUtils.randFloat(0.85, 1.35),
-      duration,
-    };
-  });
-}
-
 function getFixtureFlickerFactor(target) {
-  const state = target.userData.fixtureFlicker;
-  if (!state || state.duration <= 0) return 1;
-
-  const progress = THREE.MathUtils.clamp(state.elapsed / Math.max(state.duration, 0.001), 0, 1);
-  const factor = state.pulses.reduce((currentFactor, pulse) => {
-    const distance = Math.abs(progress - pulse.center) / pulse.width;
-    if (distance >= 1) return currentFactor;
-    // A glow starter drops out and restrikes abruptly; a broad smooth sine dip reads more like a candle.
-    const dip = Math.pow(1 - distance, pulse.edgePower ?? 0.3) * pulse.depth;
-    return Math.min(currentFactor, 1 - dip);
-  }, 1);
-  return THREE.MathUtils.clamp(factor, 0, 1.08);
-}
-
-function getRandomConfigRange(value, fallbackMin, fallbackMax) {
-  if (Array.isArray(value)) return getRandomRangeValue(value[0] ?? fallbackMin, value[1] ?? fallbackMax);
-  if (Number.isFinite(value)) return value;
-  return getRandomRangeValue(fallbackMin, fallbackMax);
-}
-
-function getRandomRangeValue(min, max) {
-  return THREE.MathUtils.randFloat(Number(min), Number(max));
+  return getFixtureFlickerFactorFromState(target);
 }
 
 function updateSceneLightFeedback() {
@@ -4823,52 +5249,7 @@ function getStartupLightFactor() {
 }
 
 function createFluorescentStartupPattern() {
-  const config = CONFIG.feedback.startup.fluorescentStartup ?? {};
-  const warmupSeconds = getRandomConfigRange(config.warmupSeconds, 0.12, 0.32);
-  const attemptCount = Math.max(2, Math.round(getRandomConfigRange(config.attemptCount, 3, 6)));
-  const pattern = [
-    { time: 0, factor: 0 },
-    { time: warmupSeconds * 0.55, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) * 0.45 },
-    { time: warmupSeconds, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) },
-  ];
-  let time = warmupSeconds;
-
-  for (let index = 0; index < attemptCount; index += 1) {
-    const finalAttempt = index === attemptCount - 1;
-    time += getRandomConfigRange(config.attemptOnSeconds, 0.055, 0.16);
-    pattern.push({
-      time,
-      factor: finalAttempt
-        ? getRandomConfigRange(config.finalOvershoot, 1, 1.06)
-        : getRandomConfigRange(config.strikeFactor, 0.42, 0.92),
-    });
-    if (finalAttempt) break;
-    time += getRandomConfigRange(config.attemptOffSeconds, 0.045, 0.13);
-    pattern.push({ time, factor: getRandomConfigRange(config.dimFactor, 0.04, 0.18) });
-  }
-
-  time += getRandomConfigRange(config.settleSeconds, 0.16, 0.34);
-  pattern.push({ time, factor: 1 });
-  return pattern;
-}
-
-function getFluorescentStartupDuration(pattern) {
-  return pattern?.at(-1)?.time ?? 1.2;
-}
-
-function getFluorescentStartupFactor(pattern, elapsed) {
-  if (pattern.length === 0) return 1;
-
-  let factor = pattern[pattern.length - 1].factor;
-  for (let index = 0; index < pattern.length - 1; index += 1) {
-    const current = pattern[index];
-    const next = pattern[index + 1];
-    if (elapsed < current.time || elapsed > next.time) continue;
-    const ratio = THREE.MathUtils.smoothstep(elapsed, current.time, next.time);
-    factor = THREE.MathUtils.lerp(current.factor, next.factor, ratio);
-    break;
-  }
-  return factor;
+  return createFluorescentStartupPatternFromConfig(CONFIG.feedback.startup.fluorescentStartup);
 }
 
 function applyCameraFeedback() {
@@ -5472,6 +5853,7 @@ function resetOperatorView() {
   leanAmount = 0;
   zoomActive = false;
   const levelPlayerConfig = CONFIG.levelEnvironments?.[activeLevelId]?.player;
+  playerControlMode = levelPlayerConfig?.controlMode ?? "walk";
   const spawnPosition = levelPlayerConfig?.spawnPosition ?? playerSpawnPosition;
   const spawnRotation = levelPlayerConfig?.rotationDegrees;
   playerPosition.copy(spawnPosition);
@@ -5709,12 +6091,27 @@ function updateMovement(dt) {
   movementVelocity.x = THREE.MathUtils.damp(movementVelocity.x, targetVelocity.x, damping, dt);
   movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, targetVelocity.y, damping, dt);
   movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, targetVelocity.z, damping, dt);
+  if (playerControlMode === "lookOnlyUntilElevatorArrival") {
+    movementVelocity.set(0, 0, 0);
+    if (movingPlatformDelta.lengthSq() > 0) {
+      playerPosition.add(movingPlatformDelta);
+      camera.position.add(movingPlatformDelta);
+      physicsSystem?.teleportCharacter(playerPosition);
+      syncPlayerCapsule();
+      movingPlatformDelta.set(0, 0, 0);
+    }
+    applyOperatorCameraOffsets(forward, right, dt);
+    return;
+  }
   if (!noclipEnabled) {
     if (jumpQueued) physicsSystem?.jump(CONFIG.player?.collision?.jumpSpeed ?? 3.2);
     jumpQueued = false;
-    movePlayerWithCollisions(movementVelocity.clone().multiplyScalar(dt), dt);
+    const frameDelta = movementVelocity.clone().multiplyScalar(dt).add(movingPlatformDelta);
+    movingPlatformDelta.set(0, 0, 0);
+    movePlayerWithCollisions(frameDelta, dt);
     syncPlayerCapsule();
   } else {
+    movingPlatformDelta.set(0, 0, 0);
     playerPosition.addScaledVector(movementVelocity, dt);
   }
 
@@ -5976,6 +6373,10 @@ function requestPointerLock() {
   canvas.requestPointerLock?.();
 }
 
+function isLookOnlyControlMode() {
+  return playerControlMode === "lookOnlyUntilElevatorArrival";
+}
+
 function setInputLocked(locked) {
   inputLocked = Boolean(locked);
   if (inputLocked) {
@@ -6066,7 +6467,14 @@ document.addEventListener("keydown", (event) => {
     noclipEnabled = !noclipEnabled;
     console.log(`[OperatorGame] Noclip ${noclipEnabled ? "enabled" : "disabled"}`);
   }
-  if (event.code === "Space" && !event.repeat && !noclipEnabled) jumpQueued = true;
+  if (isLookOnlyControlMode()) {
+    if (["KeyW", "KeyA", "KeyS", "KeyD", "ShiftLeft", "ShiftRight", "Space", "ControlLeft", "ControlRight"].includes(event.code)) {
+      event.preventDefault();
+    }
+    jumpQueued = false;
+  } else if (event.code === "Space" && !event.repeat && !noclipEnabled) {
+    jumpQueued = true;
+  }
   keys.add(event.code);
 });
 document.addEventListener("keyup", (event) => {
@@ -6112,6 +6520,10 @@ canvas.addEventListener(
   "wheel",
   (event) => {
     if (inputLocked) return;
+    if (isLookOnlyControlMode()) {
+      event.preventDefault();
+      return;
+    }
 
     if (event.shiftKey) {
       event.preventDefault();
@@ -6145,6 +6557,11 @@ canvas.addEventListener("mousedown", (event) => {
   audioRuntime.unlock();
   if (debugTransformEdit) return;
   if (inputLocked) {
+    event.preventDefault();
+    return;
+  }
+  if (isLookOnlyControlMode()) {
+    if (event.button === 0 && document.pointerLockElement !== canvas) requestPointerLock();
     event.preventDefault();
     return;
   }
@@ -6580,20 +6997,20 @@ window.operatorGameDebug = {
   setScreenSpaceShadowQuality,
   setDebugPanelsVisible,
   toggleDebugPanels,
-  saveSceneDebugPreset: () => sceneDebugPanels?.save(),
-  saveSceneDebugToProject: () => sceneDebugPanels?.saveProject(),
-  loadSceneDebugPreset: () => sceneDebugPanels?.load(),
-  resetSceneDebugPreset: () => sceneDebugPanels?.reset(),
-  copySceneDebugConfig: () => sceneDebugPanels?.copyConfig(),
+  saveSceneDebugPreset: () => debugHub?.scene.save(),
+  saveSceneDebugToProject: () => debugHub?.scene.saveProject(),
+  loadSceneDebugPreset: () => debugHub?.scene.load(),
+  resetSceneDebugPreset: () => debugHub?.scene.reset(),
+  copySceneDebugConfig: () => debugHub?.scene.copyConfig(),
   rebuildPostProcessing: () => postProcessingRuntime.setup(),
-  showPostProcessingPanel: () => postProcessingDebugPanel?.show(),
-  hidePostProcessingPanel: () => postProcessingDebugPanel?.hide(),
-  togglePostProcessingPanel: () => postProcessingDebugPanel?.toggle(),
-  savePostProcessingPreset: () => postProcessingDebugPanel?.save(),
-  savePostProcessingToProject: () => postProcessingDebugPanel?.saveProject(),
-  loadPostProcessingPreset: () => postProcessingDebugPanel?.load(),
-  resetPostProcessingPreset: () => postProcessingDebugPanel?.reset(),
-  copyPostProcessingConfig: () => postProcessingDebugPanel?.copyConfig(),
+  showPostProcessingPanel: () => debugHub?.postProcessing.show(),
+  hidePostProcessingPanel: () => debugHub?.postProcessing.hide(),
+  togglePostProcessingPanel: () => debugHub?.postProcessing.toggle(),
+  savePostProcessingPreset: () => debugHub?.postProcessing.save(),
+  savePostProcessingToProject: () => debugHub?.postProcessing.saveProject(),
+  loadPostProcessingPreset: () => debugHub?.postProcessing.load(),
+  resetPostProcessingPreset: () => debugHub?.postProcessing.reset(),
+  copyPostProcessingConfig: () => debugHub?.postProcessing.copyConfig(),
   showShiftResults: () => showShiftResults(fusionCore.getSnapshot()),
   startIndicatorTest: startDiagnosticSelfTest,
   startSelfTest: startDiagnosticSelfTest,
@@ -6692,6 +7109,9 @@ window.operatorGameDebug = {
   getPerformanceBenchmark: () => lastPerformanceBenchmark,
   applyQualityProfile,
   setDisplayGamma,
+  setPhotometricDebugMode: (enabled) => {
+    return photometricPointLightRuntime.setDebugMode(enabled);
+  },
   resumeNeedles: () => {
     freezeNeedles = false;
     needles.forEach((needle) => {
@@ -6733,6 +7153,7 @@ window.operatorGameDebug = {
       : null,
     loadedRuntimeLevelId,
     cachedLevelAssets: [...levelAssetCache.keys()],
+    photometricPointLights: photometricPointLightRuntime.getDebugState(),
     interiorFans: interiorFans.map((fan) => fan.name),
     doors: Object.fromEntries(
       [...levelPrefabInstances.entries()]
@@ -6852,3 +7273,4 @@ if (CONFIG.debug?.enabled && CONFIG.debug?.performanceBenchmark?.autoRun) {
     runPerformanceBenchmark().catch((error) => console.error("[OperatorGame benchmark] Failed", error));
   }, delayMs);
 }
+

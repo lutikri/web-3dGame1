@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260717-radio-tight-fade-bright-lamp";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=pointer-capture-rigid-debug";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=pointer-capture-rigid-debug";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=pointer-capture-rigid-debug";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=pointer-capture-rigid-debug";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
@@ -11,8 +11,8 @@ function blenderPosition(x, y, z) {
 const LEVEL_INTRO_SHIFT_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
   saveKind: "introShift",
-  assetPath: "assets/mesh/SM_Interior1_1.glb",
-  collisionAssetPath: "assets/mesh/SM_Interior1_1.glb",
+  assetPath: "assets/mesh/environment/SM_Interior1_1.glb",
+  collisionAssetPath: "assets/mesh/environment/SM_Interior1_1.glb",
   collision: {
     meshNameIncludes: ["convcolonly"],
   },

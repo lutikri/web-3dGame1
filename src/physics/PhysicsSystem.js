@@ -16,6 +16,8 @@ export async function createPhysicsSystem() {
   let world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
   const sceneColliders = new Map();
   const doors = new Map();
+  const kinematicPrefabs = new Map();
+  const rigidPrefabs = new Map();
   let activeSceneKey = null;
   let character = null;
   let characterSpec = null;
@@ -64,7 +66,13 @@ export async function createPhysicsSystem() {
     sceneColliders.forEach((colliders, sceneKey) => {
       colliders.forEach((collider) => collider.setEnabled(sceneKey === key));
     });
-    doors.forEach((door) => door.body.setEnabled(door.sceneKey === key));
+    doors.forEach((door) => {
+      const enabled = door.enabled !== false && door.sceneKey === key;
+      door.body.setEnabled(enabled);
+      door.fixedBody.setEnabled(enabled);
+    });
+    kinematicPrefabs.forEach((prefab) => prefab.body.setEnabled(prefab.sceneKey === key));
+    rigidPrefabs.forEach((prefab) => prefab.body.setEnabled(prefab.sceneKey === key));
   }
 
   function createCharacter({ eyePosition, eyeHeight, height, radius, config }) {
@@ -102,9 +110,10 @@ export async function createPhysicsSystem() {
     if (!character) return null;
     character.verticalVelocity += world.gravity.y * dt;
     const desiredVertical = character.verticalVelocity * dt;
+    const externalVertical = Number(horizontalDelta.y ?? 0);
     const desired = {
       x: horizontalDelta.x,
-      y: desiredVertical > 0 ? desiredVertical : Math.min(desiredVertical, -0.001),
+      y: externalVertical + (desiredVertical > 0 ? desiredVertical : Math.min(desiredVertical, -0.001)),
       z: horizontalDelta.z,
     };
     character.controller.computeColliderMovement(character.collider, desired);
@@ -162,6 +171,10 @@ export async function createPhysicsSystem() {
     initialHoldSeconds = 0.45,
     motorStiffness = 55,
     motorDamping = 10,
+    restMotorEnabled = false,
+    restDegrees = initialDegrees,
+    restMotorStiffness = 0,
+    restMotorDamping = 0,
   }) {
     removeDoor(key);
     doorMesh.updateWorldMatrix(true, false);
@@ -233,6 +246,10 @@ export async function createPhysicsSystem() {
       initialDegrees,
       motorStiffness,
       motorDamping,
+      restMotorEnabled: Boolean(restMotorEnabled),
+      restTargetRadians: THREE.MathUtils.degToRad(restDegrees - initialDegrees),
+      restMotorStiffness,
+      restMotorDamping,
       maxAngularVelocity,
       initialHoldRemaining: initialHoldSeconds,
       initialHoldSeconds,
@@ -244,6 +261,7 @@ export async function createPhysicsSystem() {
         w: hingeQuaternion.w,
       },
       locked: false,
+      enabled: true,
       targetDegrees: null,
       motorRemaining: 0,
     };
@@ -344,16 +362,311 @@ export async function createPhysicsSystem() {
     return true;
   }
 
+  function configureDoorRestMotor(key, config = {}) {
+    const door = doors.get(key);
+    if (!door) return false;
+    door.restMotorEnabled = Boolean(config.enabled);
+    door.restTargetRadians = THREE.MathUtils.degToRad(
+      Number(config.degrees ?? door.initialDegrees) - door.initialDegrees,
+    );
+    door.restMotorStiffness = Number(config.stiffness ?? door.restMotorStiffness ?? 0);
+    door.restMotorDamping = Number(config.damping ?? door.restMotorDamping ?? 0);
+    return true;
+  }
+
+  function setDoorEnabled(key, enabled) {
+    const door = doors.get(key);
+    if (!door) return false;
+    const active = Boolean(enabled) && door.sceneKey === activeSceneKey;
+    door.enabled = Boolean(enabled);
+    if (!active) {
+      resetDoor(key);
+    }
+    door.body.setEnabled(active);
+    door.fixedBody.setEnabled(active);
+    if (active) door.body.wakeUp();
+    return true;
+  }
+
   function resetDoors(sceneKey = null) {
     doors.forEach((door, key) => {
       if (sceneKey == null || door.sceneKey === sceneKey) resetDoor(key);
     });
   }
 
+  function createKinematicPrefab({
+    key,
+    sceneKey,
+    root,
+    colliderMeshes = [],
+    friction = 1,
+    colliderMode = "boxes",
+    floorThickness = 0.12,
+    floorInset = 0,
+  }) {
+    removeKinematicPrefab(key);
+    root.updateWorldMatrix(true, true);
+    const rootPosition = new THREE.Vector3();
+    const rootQuaternion = new THREE.Quaternion();
+    const rootScale = new THREE.Vector3();
+    root.matrixWorld.decompose(rootPosition, rootQuaternion, rootScale);
+    const body = world.createRigidBody(
+      RAPIER.RigidBodyDesc.kinematicPositionBased()
+        .setTranslation(rootPosition.x, rootPosition.y, rootPosition.z)
+        .setRotation(rootQuaternion),
+    );
+    const inverseRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    const colliders = [];
+
+    if (colliderMode === "floor") {
+      const bounds = getMeshesBoundsInRoot(colliderMeshes, inverseRoot);
+      if (bounds && !bounds.isEmpty()) {
+        const size = bounds.getSize(new THREE.Vector3());
+        const center = bounds.getCenter(new THREE.Vector3());
+        const thickness = Math.max(0.01, Number(floorThickness) || 0.12);
+        const inset = Math.max(0, Number(floorInset) || 0);
+        center.y = bounds.min.y + thickness * 0.5;
+        const collider = world.createCollider(
+          RAPIER.ColliderDesc.cuboid(
+            Math.max(size.x * 0.5 - inset, 0.05),
+            thickness * 0.5,
+            Math.max(size.z * 0.5 - inset, 0.05),
+          )
+            .setTranslation(center.x, center.y, center.z)
+            .setFriction(friction)
+            .setRestitution(0),
+          body,
+        );
+        colliders.push(collider);
+      }
+    } else {
+      colliderMeshes.forEach((mesh) => {
+        if (!mesh.geometry?.attributes?.position) return;
+        mesh.updateWorldMatrix(true, false);
+        const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
+        mesh.geometry.computeBoundingBox();
+        const box = mesh.geometry.boundingBox;
+        const center = box.getCenter(new THREE.Vector3()).applyMatrix4(colliderInRoot);
+        const size = box.getSize(new THREE.Vector3());
+        const relativePosition = new THREE.Vector3();
+        const relativeQuaternion = new THREE.Quaternion();
+        const relativeScale = new THREE.Vector3();
+        colliderInRoot.decompose(relativePosition, relativeQuaternion, relativeScale);
+        size.multiply(relativeScale).multiplyScalar(0.5);
+        const collider = world.createCollider(
+          RAPIER.ColliderDesc.cuboid(
+            Math.max(Math.abs(size.x), 0.01),
+            Math.max(Math.abs(size.y), 0.01),
+            Math.max(Math.abs(size.z), 0.01),
+          )
+            .setTranslation(center.x, center.y, center.z)
+            .setRotation(relativeQuaternion)
+            .setFriction(friction)
+            .setRestitution(0),
+          body,
+        );
+        colliders.push(collider);
+      });
+    }
+    body.setEnabled(sceneKey === activeSceneKey);
+    const prefab = {
+      key,
+      sceneKey,
+      root,
+      body,
+      colliders,
+    };
+    kinematicPrefabs.set(key, prefab);
+    return prefab;
+  }
+
+  function getMeshesBoundsInRoot(meshes, inverseRoot) {
+    const bounds = new THREE.Box3();
+    const corner = new THREE.Vector3();
+    meshes.forEach((mesh) => {
+      if (!mesh.geometry?.attributes?.position) return;
+      mesh.updateWorldMatrix(true, false);
+      mesh.geometry.computeBoundingBox();
+      const box = mesh.geometry.boundingBox;
+      if (!box) return;
+      const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
+      for (const x of [box.min.x, box.max.x]) {
+        for (const y of [box.min.y, box.max.y]) {
+          for (const z of [box.min.z, box.max.z]) {
+            corner.set(x, y, z).applyMatrix4(colliderInRoot);
+            bounds.expandByPoint(corner);
+          }
+        }
+      }
+    });
+    return bounds;
+  }
+
+  function updateKinematicPrefab(key, root, options = {}) {
+    const prefab = kinematicPrefabs.get(key);
+    if (!prefab) return false;
+    const sourceRoot = root ?? prefab.root;
+    sourceRoot.updateWorldMatrix(true, true);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    sourceRoot.matrixWorld.decompose(position, quaternion, scale);
+    const translation = { x: position.x, y: position.y, z: position.z };
+    const rotation = {
+      x: quaternion.x,
+      y: quaternion.y,
+      z: quaternion.z,
+      w: quaternion.w,
+    };
+    if (options.immediate) {
+      prefab.body.setTranslation(translation, true);
+      prefab.body.setRotation(rotation, true);
+    } else {
+      prefab.body.setNextKinematicTranslation(translation);
+      prefab.body.setNextKinematicRotation(rotation);
+    }
+    return true;
+  }
+
+  function removeKinematicPrefab(key) {
+    const prefab = kinematicPrefabs.get(key);
+    if (!prefab) return;
+    world.removeRigidBody(prefab.body);
+    kinematicPrefabs.delete(key);
+  }
+
+  function setKinematicPrefabEnabled(key, enabled) {
+    const prefab = kinematicPrefabs.get(key);
+    if (!prefab) return false;
+    prefab.body.setEnabled(Boolean(enabled) && prefab.sceneKey === activeSceneKey);
+    return true;
+  }
+
+  function createRigidPrefab({
+    key,
+    sceneKey,
+    root,
+    colliderMeshes = [],
+    bodyType = "dynamic",
+    density = 80,
+    linearDamping = 0.8,
+    angularDamping = 1.4,
+    friction = 0.8,
+    restitution = 0,
+    canSleep = true,
+  }) {
+    removeRigidPrefab(key);
+    root.updateWorldMatrix(true, true);
+    const rootPosition = new THREE.Vector3();
+    const rootQuaternion = new THREE.Quaternion();
+    const rootScale = new THREE.Vector3();
+    root.matrixWorld.decompose(rootPosition, rootQuaternion, rootScale);
+    const desc =
+      bodyType === "fixed"
+        ? RAPIER.RigidBodyDesc.fixed()
+        : RAPIER.RigidBodyDesc.dynamic()
+            .setLinearDamping(linearDamping)
+            .setAngularDamping(angularDamping)
+            .setCanSleep(canSleep);
+    const body = world.createRigidBody(
+      desc
+        .setTranslation(rootPosition.x, rootPosition.y, rootPosition.z)
+        .setRotation(rootQuaternion),
+    );
+    const inverseRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    const colliders = [];
+    colliderMeshes.forEach((mesh) => {
+      if (!mesh.geometry?.attributes?.position) return;
+      mesh.updateWorldMatrix(true, false);
+      const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
+      mesh.geometry.computeBoundingBox();
+      const box = mesh.geometry.boundingBox;
+      if (!box) return;
+      const center = box.getCenter(new THREE.Vector3()).applyMatrix4(colliderInRoot);
+      const size = box.getSize(new THREE.Vector3());
+      const relativePosition = new THREE.Vector3();
+      const relativeQuaternion = new THREE.Quaternion();
+      const relativeScale = new THREE.Vector3();
+      colliderInRoot.decompose(relativePosition, relativeQuaternion, relativeScale);
+      size.multiply(relativeScale).multiplyScalar(0.5);
+      const collider = world.createCollider(
+        RAPIER.ColliderDesc.cuboid(
+          Math.max(Math.abs(size.x), 0.01),
+          Math.max(Math.abs(size.y), 0.01),
+          Math.max(Math.abs(size.z), 0.01),
+        )
+          .setTranslation(center.x, center.y, center.z)
+          .setRotation(relativeQuaternion)
+          .setDensity(density)
+          .setFriction(friction)
+          .setRestitution(restitution),
+        body,
+      );
+      colliders.push(collider);
+    });
+    body.setEnabled(sceneKey === activeSceneKey);
+    const prefab = {
+      key,
+      sceneKey,
+      root,
+      body,
+      colliders,
+      initialPosition: { x: rootPosition.x, y: rootPosition.y, z: rootPosition.z },
+      initialRotation: {
+        x: rootQuaternion.x,
+        y: rootQuaternion.y,
+        z: rootQuaternion.z,
+        w: rootQuaternion.w,
+      },
+    };
+    rigidPrefabs.set(key, prefab);
+    return prefab;
+  }
+
+  function removeRigidPrefab(key) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return;
+    world.removeRigidBody(prefab.body);
+    rigidPrefabs.delete(key);
+  }
+
+  function resetRigidPrefab(key, root = null, updateInitial = false) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return false;
+    if (root) {
+      root.updateWorldMatrix(true, true);
+      const position = new THREE.Vector3();
+      const quaternion = new THREE.Quaternion();
+      const scale = new THREE.Vector3();
+      root.matrixWorld.decompose(position, quaternion, scale);
+      if (updateInitial) {
+        prefab.initialPosition = { x: position.x, y: position.y, z: position.z };
+        prefab.initialRotation = {
+          x: quaternion.x,
+          y: quaternion.y,
+          z: quaternion.z,
+          w: quaternion.w,
+        };
+      }
+    }
+    prefab.body.setTranslation(prefab.initialPosition, true);
+    prefab.body.setRotation(prefab.initialRotation, true);
+    prefab.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    prefab.body.wakeUp();
+    return true;
+  }
+
   function unloadScene(key) {
     removeStaticScene(key);
     [...doors.entries()].forEach(([doorKey, door]) => {
       if (door.sceneKey === key) removeDoor(doorKey);
+    });
+    [...kinematicPrefabs.entries()].forEach(([prefabKey, prefab]) => {
+      if (prefab.sceneKey === key) removeKinematicPrefab(prefabKey);
+    });
+    [...rigidPrefabs.entries()].forEach(([prefabKey, prefab]) => {
+      if (prefab.sceneKey === key) removeRigidPrefab(prefabKey);
     });
     if (activeSceneKey === key) activeSceneKey = null;
   }
@@ -370,6 +683,8 @@ export async function createPhysicsSystem() {
     world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
     sceneColliders.clear();
     doors.clear();
+    kinematicPrefabs.clear();
+    rigidPrefabs.clear();
     activeSceneKey = null;
     character = null;
     characterSpec = null;
@@ -405,6 +720,12 @@ export async function createPhysicsSystem() {
       door.initialHoldRemaining = door.locked ? 0 : Math.max(0, door.initialHoldRemaining - dt);
       if (!door.locked && door.initialHoldRemaining > 0 && door.targetDegrees == null) {
         door.joint.configureMotorPosition(0, door.motorStiffness * 1.5, door.motorDamping * 1.5);
+      } else if (!door.locked && door.restMotorEnabled && door.targetDegrees == null) {
+        door.joint.configureMotorPosition(
+          door.restTargetRadians ?? 0,
+          door.restMotorStiffness ?? 0,
+          door.restMotorDamping ?? 0,
+        );
       } else if (!door.locked && door.initialHoldRemaining === 0 && door.targetDegrees == null) {
         door.joint.configureMotorPosition(0, 0, 0);
       }
@@ -441,6 +762,21 @@ export async function createPhysicsSystem() {
         );
       }
     });
+    rigidPrefabs.forEach((prefab) => {
+      if (!prefab.body.isEnabled()) return;
+      const position = prefab.body.translation();
+      const rotation = prefab.body.rotation();
+      const worldMatrix = new THREE.Matrix4().compose(
+        new THREE.Vector3(position.x, position.y, position.z),
+        new THREE.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w),
+        new THREE.Vector3(1, 1, 1),
+      );
+      prefab.root.parent?.updateWorldMatrix(true, false);
+      const parentInverse = new THREE.Matrix4().copy(prefab.root.parent.matrixWorld).invert();
+      const localMatrix = new THREE.Matrix4().multiplyMatrices(parentInverse, worldMatrix);
+      localMatrix.decompose(prefab.root.position, prefab.root.quaternion, prefab.root.scale);
+      prefab.root.updateWorldMatrix(true, true);
+    });
   }
 
   return {
@@ -456,6 +792,15 @@ export async function createPhysicsSystem() {
     teleportCharacter,
     jump,
     createHingedDoor,
+    createKinematicPrefab,
+    updateKinematicPrefab,
+    setKinematicPrefabEnabled,
+    removeKinematicPrefab,
+    createRigidPrefab,
+    removeRigidPrefab,
+    resetRigidPrefab,
+    setDoorEnabled,
+    configureDoorRestMotor,
     setDoorDragTarget,
     setDoorLocked,
     getDoorDegrees,
@@ -474,6 +819,8 @@ export async function createPhysicsSystem() {
         0,
       ),
       doorCount: doors.size,
+      kinematicPrefabCount: kinematicPrefabs.size,
+      rigidPrefabCount: rigidPrefabs.size,
       hasCharacter: Boolean(character),
     }),
   };

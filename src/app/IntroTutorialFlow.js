@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=20260717-radio-tight-fade-bright-lamp";
+import { translateRequired } from "./Localization.js?v=pointer-capture-rigid-debug";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -2,8 +2,8 @@
 export const LEVEL_INTRO_SHIFT_OVERRIDES = {
   "schemaVersion": 1,
   "saveKind": "introShift",
-  "assetPath": "assets/mesh/SM_Interior1_1.glb",
-  "collisionAssetPath": "assets/mesh/SM_Interior1_1.glb",
+  "assetPath": "assets/mesh/environment/SM_Interior1_1.glb",
+  "collisionAssetPath": "assets/mesh/environment/SM_Interior1_1.glb",
   "collision": {
     "meshNameIncludes": [
       "convcolonly"

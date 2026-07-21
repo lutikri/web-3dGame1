@@ -1,10 +1,20 @@
 import * as THREE from "three";
 
 export class AudioRuntime {
-  constructor({ sounds, groups = {}, masterVolume = 1 }) {
+  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1 }) {
     this.sounds = sounds;
     this.groups = groups;
-    this.masterVolume = masterVolume;
+    this.mix = {
+      master: masterVolume,
+      ambience: 1,
+      interaction: 1,
+      machinery: 1,
+      narration: 1,
+      player: 1,
+      ui: 1,
+      ...mix,
+    };
+    this.masterVolume = this.mix.master;
     this.context = null;
     this.masterGain = null;
     this.bufferPromises = new Map();
@@ -94,7 +104,7 @@ export class AudioRuntime {
         source.buffer = buffer;
         source.loop = Boolean(options.loop ?? config.loop);
         source.playbackRate.value = options.playbackRate ?? 1;
-        gain.gain.value = THREE.MathUtils.clamp((options.volume ?? config.volume ?? 1) * this.masterVolume, 0, 1);
+        gain.gain.value = THREE.MathUtils.clamp((options.volume ?? config.volume ?? 1) * this.getSoundMixVolume(soundKey), 0, 1);
         source.connect(gain).connect(this.masterGain);
         source.start();
       })
@@ -138,7 +148,7 @@ export class AudioRuntime {
         const gain = context.createGain();
         source.buffer = buffer;
         source.playbackRate.value = options.playbackRate ?? 1;
-        gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.masterVolume, 0, 1);
+        gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.getSoundMixVolume(soundKey), 0, 1);
         source.connect(gain).connect(this.masterGain);
         source.onended = () => {
           state.ended = true;
@@ -279,13 +289,13 @@ export class AudioRuntime {
     state.targetVolume = target;
     const damping = state.fadeSeconds <= 0 ? 1000 : 1 / Math.max(state.fadeSeconds, 0.001);
     state.currentVolume = THREE.MathUtils.damp(state.currentVolume ?? 0, state.targetVolume ?? 0, damping, dt);
-    if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.masterVolume, 0, 1);
+    if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.getSoundMixVolume(state.soundKey), 0, 1);
   }
 
   fadeLoopState(state, dt) {
     const damping = state.fadeSeconds <= 0 ? 1000 : 1 / Math.max(state.fadeSeconds, 0.001);
     state.currentVolume = THREE.MathUtils.damp(state.currentVolume ?? 0, state.targetVolume ?? 0, damping, dt);
-    if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.masterVolume, 0, 1);
+    if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp(state.currentVolume * this.getSoundMixVolume(state.soundKey), 0, 1);
     if (state.source) {
       const targetRate = THREE.MathUtils.clamp(state.targetPlaybackRate ?? 1, 0.25, 4);
       const smoothing = state.playbackRateSmoothing ?? 0.18;
@@ -319,7 +329,7 @@ export class AudioRuntime {
         source.buffer = buffer;
         source.loop = true;
         source.playbackRate.value = THREE.MathUtils.clamp(state.targetPlaybackRate ?? 1, 0.25, 4);
-        gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.masterVolume, 0, 1);
+        gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
         source.connect(gain).connect(this.masterGain);
         source.onended = () => {
           if (state.source === source) state.source = null;
@@ -401,6 +411,71 @@ export class AudioRuntime {
     this.masterGain.gain.value = this.masterVolume;
     this.masterGain.connect(this.context.destination);
     return this.context;
+  }
+
+  setMasterVolume(value) {
+    this.masterVolume = THREE.MathUtils.clamp(Number(value) || 0, 0, 2);
+    this.mix.master = this.masterVolume;
+    if (this.masterGain) this.masterGain.gain.value = this.masterVolume;
+  }
+
+  setMixVolume(group, value) {
+    if (!group || group === "master") {
+      this.setMasterVolume(value);
+      return;
+    }
+    this.mix[group] = THREE.MathUtils.clamp(Number(value) || 0, 0, 2);
+    this.refreshMix();
+  }
+
+  refreshMix() {
+    this.setMasterVolume(this.mix.master ?? this.masterVolume ?? 1);
+    this.loops.forEach((state) => {
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
+    this.attachedLoops.forEach((state) => {
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
+    this.attachedOneShots.forEach((state) => {
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
+    this.ambienceVolumes.forEach((state) => {
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
+  }
+
+  getDebugState(levelId = this.activeLevelId) {
+    const soundKeys = new Set();
+    const collectLoop = (state) => {
+      if (!state?.soundKey) return;
+      if (state.levelId && levelId && state.levelId !== levelId) return;
+      soundKeys.add(state.soundKey);
+    };
+    this.loops.forEach(collectLoop);
+    this.attachedLoops.forEach(collectLoop);
+    this.attachedOneShots.forEach(collectLoop);
+    this.ambienceVolumes.forEach(collectLoop);
+    return {
+      activeLevelId: levelId,
+      unlocked: this.unlocked,
+      soundKeys: [...soundKeys].sort(),
+      loops: this.loops.size,
+      attachedLoops: this.attachedLoops.size,
+      ambienceVolumes: this.ambienceVolumes.size,
+      oneShots: this.attachedOneShots.size,
+    };
+  }
+
+  getSoundMixVolume(soundKey) {
+    const category = this.getSoundCategory(soundKey);
+    return this.mix[category] ?? 1;
+  }
+
+  getSoundCategory(soundKey) {
+    const config = this.sounds[soundKey] ?? {};
+    if (config.mixGroup) return config.mixGroup;
+    const match = String(config.path ?? "").match(/assets\/sounds\/([^/]+)\//);
+    return match?.[1] ?? "machinery";
   }
 
   parseMarkerName(prefix, name) {

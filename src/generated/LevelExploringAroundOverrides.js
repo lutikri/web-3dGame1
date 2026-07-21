@@ -2,8 +2,8 @@
 export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
   "schemaVersion": 1,
   "saveKind": "exploringAround",
-  "assetPath": "assets/mesh/SM_Interior2.glb",
-  "collisionAssetPath": "assets/mesh/SM_Interior2.glb",
+  "assetPath": "assets/mesh/environment/SM_Interior2.glb",
+  "collisionAssetPath": "assets/mesh/environment/SM_Interior2.glb",
   "collision": {
     "meshNameIncludes": [
       "convcolonly",
@@ -145,10 +145,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.35,
-        "distance": 4.1,
-        "decay": 1.06,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
+        "decay": 1,
         "localOffset": {
           "x": 0.060629,
           "y": -0.41959,
@@ -161,9 +161,15 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
-        "startupDelaySeconds": 2,
+        "startupDelaySeconds": 0,
         "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
@@ -172,10 +178,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "exponent": 2.4
         },
         "flicker": {
-          "enabled": true,
-          "minIntervalSeconds": 4,
-          "maxIntervalSeconds": 10,
-          "retryChance": 0.39
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
         }
       },
       "name": "Lamp1_Corridor_1",
@@ -200,9 +206,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#e0c2ff",
-        "intensity": 1.35,
-        "distance": 1,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -216,10 +222,16 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
-        "startupDelaySeconds": 4,
-        "faultyStarterLoop": true,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
           "durationSeconds": 3,
@@ -255,9 +267,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.35,
-        "distance": 5,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -271,9 +283,15 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
-        "startupDelaySeconds": 6,
+        "startupDelaySeconds": 0,
         "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
@@ -310,9 +328,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.35,
-        "distance": 5,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -326,9 +344,15 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
-        "startupDelaySeconds": 8,
+        "startupDelaySeconds": 0,
         "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
@@ -365,25 +389,31 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#fffdfa",
-        "intensity": 1.98,
-        "distance": 3.25,
-        "decay": 0.33,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
+        "decay": 1,
         "localOffset": {
           "x": 0.060629,
-          "y": -0.45930362303042627,
+          "y": -0.41959,
           "z": 0
         },
-        "castShadow": true,
+        "castShadow": false,
         "shadowMapSize": 512,
-        "shadowBias": 0.00024,
+        "shadowBias": -0.0002,
         "shadowNormalBias": 0.012,
-        "shadowRadius": 5.2,
+        "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
-        "roomLightControlled": true,
-        "startupDelaySeconds": 3,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
         "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
@@ -392,7 +422,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "exponent": 2.4
         },
         "flicker": {
-          "enabled": true,
+          "enabled": false,
           "minIntervalSeconds": 35,
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
@@ -488,9 +518,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 2.45,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -504,6 +534,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
@@ -543,9 +579,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 2.45,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -559,6 +595,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
@@ -599,8 +641,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "light": {
         "enabled": true,
         "color": "#ff1b0a",
-        "intensity": 0.2,
-        "distance": 3,
+        "intensity": 2.04,
+        "distance": 2,
         "decay": 1,
         "localOffset": {
           "x": 0,
@@ -608,12 +650,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "z": 0
         },
         "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0006,
+        "shadowMapSize": 128,
+        "shadowBias": 0.5,
         "shadowNormalBias": 0.035,
-        "shadowRadius": 1,
+        "shadowRadius": 0,
         "shadowNear": 0.1,
-        "shadowFar": 9,
+        "shadowFar": 2,
         "fluorescentStartup": false,
         "startupDelaySeconds": 0,
         "faultyStarterLoop": false,
@@ -646,9 +688,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.35,
-        "distance": 5.9,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 5,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -662,6 +704,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
@@ -747,9 +795,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 4.65,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 5,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -763,6 +811,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
@@ -802,14 +856,14 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1,
-        "distance": 2.6,
-        "decay": 0.98,
+        "color": "#ffffff",
+        "intensity": 2,
+        "distance": 3,
+        "decay": 1,
         "localOffset": {
-          "x": 0.060628999999999995,
-          "y": -0.4874294873870887,
-          "z": -8.307941108438657e-18
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
         },
         "castShadow": false,
         "shadowMapSize": 512,
@@ -818,6 +872,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "shadowRadius": 1,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
@@ -875,13 +935,6 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
-      "radio": {
-        "lampName": "SM_Radio1_Lamp",
-        "welcomeDelaySeconds": 0.7,
-        "maxDistance": 3.8,
-        "refDistance": 0.7,
-        "lampBlinkFrequency": 1.1
-      },
       "name": "radio_CorridorEntry1",
       "position": {
         "x": 1.0201904773712158,
@@ -900,12 +953,43 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "y": 1,
         "z": 1
       }
+    },
+    {
+      "name": "Barrier1_1",
+      "barrierGate": {
+        "enabled": true,
+        "locked": true,
+        "unlockDelaySeconds": 20,
+        "unlockMotorSoundKey": "MotorSmall1",
+        "unlockBeepSoundKey": "BeepShortLight1",
+        "soundGapSeconds": 0.35,
+        "refDistance": 0.55,
+        "maxDistance": 3,
+        "axis": "y",
+        "minDegrees": -90,
+        "maxDegrees": 90
+      }
+    },
+    {
+      "name": "Controlpost_1",
+      "controlPost": {
+        "enabled": true,
+        "triggerName": "SM_ControlPost1_Trigger_1",
+        "buzzSoundKey": "ControlPostBuzzLoop1",
+        "alertSoundKey": "ControlPostAlert1",
+        "triggerHoldSeconds": 0.5,
+        "triggerCooldownSeconds": 8,
+        "refDistance": 0.45,
+        "maxDistance": 2,
+        "alertRefDistance": 0.55,
+        "alertMaxDistance": 2.4
+      }
     }
   ],
   "lighting": {
     "ambientSky": "#71808c",
-    "ambientGround": "#08090a",
-    "ambientIntensity": 1,
+    "ambientGround": "#000000",
+    "ambientIntensity": 0.1,
     "pointLights": {
       "fill": {
         "color": "#75bcff",

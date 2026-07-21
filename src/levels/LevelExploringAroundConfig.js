@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=20260717-radio-tight-fade-bright-lamp";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=pointer-capture-rigid-debug";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=pointer-capture-rigid-debug";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=pointer-capture-rigid-debug";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=pointer-capture-rigid-debug";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -14,8 +14,8 @@ const corridorLampXs = [1.6, 5.10382, 8.60764, 12.11146];
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
   saveKind: "exploringAround",
-  assetPath: "assets/mesh/SM_Interior2.glb",
-  collisionAssetPath: "assets/mesh/SM_Interior2.glb",
+  assetPath: "assets/mesh/environment/SM_Interior2.glb",
+  collisionAssetPath: "assets/mesh/environment/SM_Interior2.glb",
   collision: {
     meshNameIncludes: ["convcolonly", "UBX_"],
     meshNameExcludes: ["SM_Door2"],

@@ -1,5 +1,9 @@
 # OperatorGame — Game Architecture
 
+> Status: older high-level design draft for a possible Unreal/future version. It is not the current browser project code map. For current code ownership and folders, use `docs/project-structure.md`.
+>
+> Current lore direction: the first run is `Elevator Arrival -> Facility Entrance -> Control Booth Tutorial -> Shift Report -> assigned shifts`. Shift 1/2/3/4 notes below are still useful mechanically, but should be interpreted as assigned facility shifts rather than disconnected prototype levels.
+
 Working architecture draft for the Unreal version of **OperatorGame / Fusion Core Operator**.
 
 The goal of this document is to keep the project from turning into one giant `BP_GodObject_Final2`, while also avoiding over-engineering. The game should be built around a small number of clear gameplay systems, reusable physical controls, data-driven shift scenarios, and one persistent facility that opens up over time.

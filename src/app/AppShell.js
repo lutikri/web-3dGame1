@@ -1,9 +1,9 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
-import { BRIEFING_UI } from "./BriefingUiConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { translate } from "./Localization.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=20260717-radio-tight-fade-bright-lamp";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=pointer-capture-rigid-debug";
+import { BRIEFING_UI } from "./BriefingUiConfig.js?v=pointer-capture-rigid-debug";
+import { translate } from "./Localization.js?v=pointer-capture-rigid-debug";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=pointer-capture-rigid-debug";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=pointer-capture-rigid-debug";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=pointer-capture-rigid-debug";
 
 const STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
@@ -723,6 +723,7 @@ export function createAppShell({ gameApi }) {
       "og('complete intro-shift')",
       "og('attempt unexpected-stuff')",
       "og('clear fuel-problems')",
+      "og('goto intro-elevator')",
       "og('goto intro-shift')",
       "og('reset progress')",
       "og('progress')",

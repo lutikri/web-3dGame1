@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { DoorInteractionSystem } from "../src/interactions/DoorInteractionSystem.js";
 import { LightingRuntime } from "../src/lighting/LightingRuntime.js";
 import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
+import { applyLevelOverrides } from "../src/levels/LevelConfigOverrides.js";
 import {
   mergeMarkerPrefabs,
   parsePrefabMarkerName,
@@ -32,6 +33,62 @@ test("manual prefab configs override markers with the same stable name", () => {
     () => parsePrefabMarkerName("PF_missingType_Instance"),
     /unknown prefab type/,
   );
+});
+
+test("scene builder applies saved overrides to nested prefab markers", async () => {
+  const scene = new THREE.Scene();
+  const environmentModels = new Map();
+  const collisionModels = new Map();
+  const prefabInstances = new Map();
+  const environmentConfig = {
+    assetPath: "room.glb",
+    collisionAssetPath: "collision.glb",
+    position: new THREE.Vector3(),
+    rotation: new THREE.Euler(),
+    scale: new THREE.Vector3(1, 1, 1),
+    prefabs: [],
+  };
+  applyLevelOverrides(environmentConfig, {
+    prefabs: [
+      {
+        name: "Elevator1__fluorescentLamp_CabinCeiling",
+        light: { intensity: 4.25 },
+        position: { x: 0.25, y: 1.5, z: -0.5 },
+      },
+    ],
+  });
+
+  const builder = createLevelSceneBuilder({
+    scene,
+    loadSceneAsset: async (path) => {
+      const group = new THREE.Group();
+      if (path === "room.glb") {
+        const marker = new THREE.Object3D();
+        marker.name = "PF_Elevator1";
+        group.add(marker);
+      } else if (path.includes("SM_Elevator1")) {
+        const marker = new THREE.Object3D();
+        marker.name = "PF_fluorescentLamp_CabinCeiling";
+        group.add(marker);
+      }
+      return group;
+    },
+    collisionDebugMaterial: new THREE.MeshBasicMaterial(),
+    isCollisionVisible: () => false,
+    registerEnvironmentObject: () => {},
+    createPrefabRuntime: (root) => ({ root, collisionMeshes: [], parts: new Map() }),
+    registerPrefabInteraction: () => {},
+    applyPrefabConfig: () => {},
+    appendPanelPhysics: () => {},
+    environmentModels,
+    collisionModels,
+    prefabInstances,
+  });
+
+  await builder.build({ levelId: "level" }, "level", environmentConfig);
+  const nested = environmentConfig.prefabs.find((prefab) => prefab.name === "Elevator1__fluorescentLamp_CabinCeiling");
+  assert.equal(nested.light.intensity, 4.25);
+  assert.deepEqual(nested.position.toArray(), [0.25, 1.5, -0.5]);
 });
 
 test("door interaction emits a level event and resets through shared physics", () => {

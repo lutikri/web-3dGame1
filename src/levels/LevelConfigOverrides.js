@@ -4,11 +4,12 @@ const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "materialOverrides",
   "behavior",
   "clock",
+  "elevator",
   "interaction",
   "radio",
   "prefabType",
 ]);
-const PENDING_PREFAB_OVERRIDES = Symbol("pendingPrefabOverrides");
+const PENDING_PREFAB_OVERRIDES = Symbol.for("operatorGame.pendingPrefabOverrides");
 
 export function applyLevelOverrides(target, overrides, path = "") {
   Object.entries(overrides ?? {}).forEach(([key, value]) => {
@@ -53,7 +54,15 @@ function mergeNamedArray(target, overrides, path) {
 }
 
 export function applyPendingPrefabOverrides(prefabs, sourcePrefabs = prefabs) {
-  (sourcePrefabs?.[PENDING_PREFAB_OVERRIDES] ?? []).forEach((entry) => {
+  return applyPrefabOverrideEntries(prefabs, sourcePrefabs?.[PENDING_PREFAB_OVERRIDES] ?? []);
+}
+
+export function getPendingPrefabOverrides(sourcePrefabs = []) {
+  return [...(sourcePrefabs?.[PENDING_PREFAB_OVERRIDES] ?? [])];
+}
+
+export function applyPrefabOverrideEntries(prefabs, entries = []) {
+  entries.forEach((entry) => {
     const target = prefabs.find((prefab) => prefab?.name === entry.name);
     if (!target) return;
     const safeEntry = Object.fromEntries(

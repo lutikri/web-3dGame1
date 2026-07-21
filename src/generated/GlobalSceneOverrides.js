@@ -92,6 +92,15 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "emissive": "#000000",
       "emissiveIntensity": 0
     },
+    "rock1": {
+      "color": "#6c706a",
+      "roughness": 1.4,
+      "metalness": 0,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
     "radio1": {
       "color": "#ffffff",
       "roughness": 1,
@@ -169,6 +178,9 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "ambientSky": "#9fb6c7",
     "ambientGround": "#101010",
     "ambientIntensity": 0,
+    "photometricPointLights": {
+      "maxLights": 16
+    },
     "pointLights": {},
     "fixtures": {}
   }

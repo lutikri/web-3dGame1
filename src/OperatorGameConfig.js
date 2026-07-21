@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=20260717-radio-tight-fade-bright-lamp";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=pointer-capture-rigid-debug";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=pointer-capture-rigid-debug";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=pointer-capture-rigid-debug";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=pointer-capture-rigid-debug";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -12,7 +12,7 @@ function applyLevelMaterialTuning(materials, tuning) {
 }
 
 export const CONFIG = {
-  assetPath: "assets/mesh/SM_Panel1.glb",
+  assetPath: "assets/mesh/panel/SM_Panel1.glb",
   playerEyeHeight: 1.45,
   player: {
     spawnPosition: new THREE.Vector3(0, 1.45, 2),
@@ -234,7 +234,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       pipes1: {
-        materialNames: ["M_Pipes1"],
+        materialNames: ["M_Pipes1", "M_Pipes1.001"],
         namePrefixes: ["SM_Pipes1", "SM_Cable"],
         meshNames: [
           "SM_Pipes1_1",
@@ -271,7 +271,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       beams1: {
-        materialNames: ["M_Beams"],
+        materialNames: ["M_Beams", "M_Beams.001", "M_Beams.002"],
         namePrefixes: ["SM_Beams", "M_Beams"],
         meshNames: ["SM_Beams_1", "SM_Beams_2", "SM_Beams_PipeAttachemts1"],
         maps: {
@@ -295,7 +295,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
       },
       trimConcrete1: {
-        materialNames: ["M_TrimConcrete1"],
+        materialNames: ["M_TrimConcrete1", "M_TrimConcrete1.001", "M_TrimConcrete1.002", "M_TrimConcrete1.003"],
         namePrefixes: ["SM_TrimConcrete"],
         maps: {
           preview: {
@@ -312,6 +312,17 @@ export const CONFIG = {
         color: "#ffffff",
         roughness: 1,
         metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      rock1: {
+        materialNames: ["M_Rock1"],
+        namePrefixes: ["SM_Rock", "Rock"],
+        color: "#6c706a",
+        roughness: 1.4,
+        metalness: 0,
         normalScale: 1,
         aoMapIntensity: 1,
         emissive: "#000000",
@@ -425,6 +436,75 @@ export const CONFIG = {
         side: THREE.DoubleSide,
         castShadow: false,
         receiveShadow: false,
+      },
+      barrier1: {
+        materialNames: ["M_Barrier1", "M_Barrier1.001"],
+        namePrefixes: ["SM_Barrier1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Barrier1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Barrier1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Barrier1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Barrier1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Barrier1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Barrier1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      controlPost1: {
+        materialNames: ["M_ControlPost1", "M_ControlPost1.001"],
+        namePrefixes: ["SM_ControlPost1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_ControlPost1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_ControlPost1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_ControlPost1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_ControlPost1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_ControlPost1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_ControlPost1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      desk1: {
+        materialNames: ["M_Desk1", "M_Desk1.001"],
+        namePrefixes: ["SM_Desk1", "SM_Chair1", "SM_LampDesk1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Desk1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Desk1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Desk1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Desk1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Desk1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Desk1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
       },
       doorLamp2: {
         materialNames: ["M_DoorLamp2"],
@@ -644,6 +724,9 @@ export const CONFIG = {
     ambientSky: "#9fb6c7",
     ambientGround: "#101010",
     ambientIntensity: 0,
+    photometricPointLights: {
+      maxLights: 16,
+    },
     pointLights: {},
     fixtures: {},
   },

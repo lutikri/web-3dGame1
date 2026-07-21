@@ -1,11 +1,20 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=20260717-radio-tight-fade-bright-lamp";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=20260717-radio-tight-fade-bright-lamp";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=pointer-capture-rigid-debug";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=pointer-capture-rigid-debug";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=pointer-capture-rigid-debug";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=pointer-capture-rigid-debug";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
 
 export const LEVEL_DEFINITIONS = {
+  "intro-elevator": {
+    id: "intro-elevator",
+    title: "ELEVATOR ARRIVAL",
+    mode: "arrival",
+    description: "One-time freight elevator descent into Terragen Systems.",
+    playable: true,
+    environment: LEVEL_INTRO_ELEVATOR_CONFIG,
+  },
   "intro-shift": {
     id: "intro-shift",
     title: "INTRO SHIFT",
