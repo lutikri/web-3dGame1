@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=prototype-flow-1";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=suspended-lamp-properties-2";
 
 export class PanelControlRuntime {
   constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {

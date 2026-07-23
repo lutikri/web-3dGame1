@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=prototype-flow-1";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=suspended-lamp-properties-2";
 
 const MARKER_PREFIX = "PF_";
 

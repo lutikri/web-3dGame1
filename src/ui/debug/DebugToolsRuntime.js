@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=prototype-flow-1";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=prototype-flow-1";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=prototype-flow-1";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=prototype-flow-1";
+import { createDebugHub } from "./DebugHub.js?v=suspended-lamp-properties-2";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=suspended-lamp-properties-2";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=suspended-lamp-properties-2";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=suspended-lamp-properties-2";
 
 export class DebugToolsRuntime {
   constructor(options) {
@@ -34,6 +34,7 @@ export class DebugToolsRuntime {
     if (!this.config.sceneDebug?.enabled) return null;
     const workspace = this.factories.createDebugWorkspace({
       levelEnvironmentConfigs: this.config.levelEnvironments,
+      materialConfigs: this.config.interior.specialMaterials,
       gameConfig: this.config.player,
       postProcessingConfig: this.config.postProcessing,
       getPostProcessingQualities: this.getPostProcessingQualities,
@@ -49,6 +50,7 @@ export class DebugToolsRuntime {
       applyPostProcessing: this.applyPostProcessing,
       rebuildPostProcessing: this.rebuildPostProcessing,
       applyAudioMix: this.applyAudioMix,
+      applyMaterialConfig: this.applyMaterialConfig,
       togglePositionGizmo: this.togglePositionGizmo,
     });
     workspace.setActiveLevel(this.getActiveDebugLevel());

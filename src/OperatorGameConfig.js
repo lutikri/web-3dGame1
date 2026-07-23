@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=prototype-flow-1";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=prototype-flow-1";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=prototype-flow-1";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=prototype-flow-1";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=suspended-lamp-properties-2";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=suspended-lamp-properties-2";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=suspended-lamp-properties-2";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=suspended-lamp-properties-2";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -113,6 +113,17 @@ export const CONFIG = {
       metalness: 0,
     },
     specialMaterials: applyLevelMaterialTuning({
+      lampDome1Bulb: {
+        materialNames: ["M_EmissBulb1"],
+        meshNames: ["SM_LampDome1_Bulb"],
+        color: "#ffffff",
+        roughness: 0.35,
+        metalness: 0,
+        emissive: "#fff0cf",
+        emissiveIntensity: 6,
+        castShadow: false,
+        receiveShadow: false,
+      },
       lamp1: {
         materialNames: ["M_Lamp1"],
         meshNames: ["SM_Lamp1", "SM_Lamp1_1", "SM_Lamp1_2", "SM_Lamp1001"],

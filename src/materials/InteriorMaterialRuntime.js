@@ -1,6 +1,22 @@
 export class InteriorMaterialRuntime {
   constructor(options) { Object.assign(this, options); }
 
+  applyConfig(materialKey) {
+    const config = this.configs?.[materialKey];
+    const source = this.materials?.[materialKey];
+    if (!config || !source) return 0;
+    applyMaterialScalars(source, config);
+    let updated = 1;
+    this.prefabInstances.forEach((runtime) => {
+      (runtime.materialCloneEntries ?? []).forEach((entry) => {
+        if (entry.materialKey !== materialKey) return;
+        applyMaterialScalars(entry.material, config);
+        updated += 1;
+      });
+    });
+    return updated;
+  }
+
   syncPrefabClones(materialKey) {
     const textureMaps = this.textureMaps[materialKey];
     const materialConfig = this.configs?.[materialKey];
@@ -36,4 +52,17 @@ export class InteriorMaterialRuntime {
       }];
     }));
   }
+}
+
+function applyMaterialScalars(material, config) {
+  material.color.set(config.color ?? "#ffffff");
+  material.roughness = config.roughness ?? 1;
+  material.metalness = config.metalness ?? 0;
+  material.aoMapIntensity = config.aoMapIntensity ?? 1;
+  material.emissive.set(config.emissive ?? "#000000");
+  material.emissiveIntensity = config.emissiveIntensity ?? 0;
+  material.userData.baseEmissiveIntensity = material.emissiveIntensity;
+  const normalScale = config.normalScale ?? 1;
+  material.normalScale.set(normalScale, normalScale);
+  material.needsUpdate = true;
 }

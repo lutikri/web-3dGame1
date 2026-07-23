@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=prototype-flow-1";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=prototype-flow-1";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=prototype-flow-1";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=prototype-flow-1";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=suspended-lamp-properties-2";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=suspended-lamp-properties-2";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=suspended-lamp-properties-2";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=suspended-lamp-properties-2";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=prototype-flow-1";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

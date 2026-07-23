@@ -1,10 +1,11 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prototype-flow-1";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prototype-flow-1";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prototype-flow-1";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prototype-flow-1";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=prototype-flow-1";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=suspended-lamp-properties-2";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=suspended-lamp-properties-2";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=suspended-lamp-properties-2";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=suspended-lamp-properties-2";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=suspended-lamp-properties-2";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=suspended-lamp-properties-2";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -100,6 +101,8 @@ export function createPrefabRuntimeFactory({
       runtime.barrierGate = createBarrierGateRuntime(runtime.parts, prefabConfig.barrierGate);
     } else if (prefabConfig.behavior === "controlPost") {
       runtime.controlPost = createControlPostRuntime(runtime.parts, prefabConfig.controlPost);
+    } else if (prefabConfig.behavior === "suspendedLamp") {
+      runtime.suspendedLamp = createSuspendedLampRuntime(runtime.parts, prefabConfig.suspension, prefabConfig.name);
     }
   }
 
@@ -117,7 +120,8 @@ export function createPrefabRuntimeFactory({
           lightConfig.penumbra ?? marker?.penumbra ?? 0.35, lightConfig.decay)
       : new THREE.PointLight(lightConfig.color, lightConfig.intensity, lightConfig.distance, lightConfig.decay);
     light.name = `${prefabConfig.name}_${type === "spot" ? "SpotLight" : "PointLight"}`;
-    const lightParent = marker?.parent ?? prefab;
+    const configuredParent = lightConfig.parentName ? runtime.parts.get(lightConfig.parentName) : null;
+    const lightParent = configuredParent ?? marker?.parent ?? prefab;
     lightParent.add(light);
     if (marker) {
       light.position.copy(lightConfig.localOffset ?? marker.position);

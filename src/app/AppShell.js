@@ -1,8 +1,8 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=prototype-flow-1";
-import { translate } from "./Localization.js?v=prototype-flow-1";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=prototype-flow-1";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=prototype-flow-1";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=prototype-flow-1";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=suspended-lamp-properties-2";
+import { translate } from "./Localization.js?v=suspended-lamp-properties-2";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=suspended-lamp-properties-2";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=suspended-lamp-properties-2";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=suspended-lamp-properties-2";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -12,12 +12,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=prototype-flow-1";
-import { createAppPanelController } from "./AppPanelController.js?v=prototype-flow-1";
-import { createAppRouter } from "./AppRouter.js?v=prototype-flow-1";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=prototype-flow-1";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=prototype-flow-1";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=prototype-flow-1";
+} from "./AppPersistence.js?v=suspended-lamp-properties-2";
+import { createAppPanelController } from "./AppPanelController.js?v=suspended-lamp-properties-2";
+import { createAppRouter } from "./AppRouter.js?v=suspended-lamp-properties-2";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=suspended-lamp-properties-2";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=suspended-lamp-properties-2";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=suspended-lamp-properties-2";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

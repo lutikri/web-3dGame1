@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=prototype-flow-1";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
 
 const EFFECT_KEYS = [
   "bloom",

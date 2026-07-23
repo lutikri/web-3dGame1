@@ -57,7 +57,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "name": "Panel1",
       "position": {
         "x": 3.6,
-        "y": -0.055,
+        "y": -0.011524767831431922,
         "z": -2.44
       },
       "rotation": {
@@ -498,9 +498,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "name": "Clock1_Exploring",
       "position": {
-        "x": 3.1,
-        "y": 2,
-        "z": -1.35
+        "x": 2.735935485382484,
+        "y": 1.9098327113075795,
+        "z": -2.207282524460111
       },
       "rotation": {
         "isEuler": true,
@@ -955,23 +955,52 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
-      "name": "Barrier1_1",
       "barrierGate": {
         "enabled": true,
+        "gateName": "SM_Barrier1_Gate",
+        "colliderName": "UBX_SM_Barrier1_Gate_01",
+        "axis": "y",
+        "minDegrees": -90,
+        "maxDegrees": 90,
         "locked": true,
         "unlockDelaySeconds": 20,
         "unlockMotorSoundKey": "MotorSmall1",
         "unlockBeepSoundKey": "BeepShortLight1",
         "soundGapSeconds": 0.35,
+        "targetDegreesOnUnlock": 10,
+        "density": 70,
+        "angularDamping": 0.85,
+        "maxAngularVelocity": 1.7,
+        "initialHoldSeconds": 0.2,
+        "motorStiffness": 42,
+        "motorDamping": 9,
+        "returnToRest": true,
+        "restDegrees": 0,
+        "restMotorStiffness": 3.5,
+        "restMotorDamping": 0.9,
         "refDistance": 0.55,
-        "maxDistance": 3,
-        "axis": "y",
-        "minDegrees": -90,
-        "maxDegrees": 90
+        "maxDistance": 3
+      },
+      "name": "Barrier1_1",
+      "position": {
+        "x": -0.531583309173584,
+        "y": 0.0395781472325325,
+        "z": 9.902828216552734
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
       }
     },
     {
-      "name": "Controlpost_1",
       "controlPost": {
         "enabled": true,
         "triggerName": "SM_ControlPost1_Trigger_1",
@@ -983,13 +1012,334 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "maxDistance": 2,
         "alertRefDistance": 0.55,
         "alertMaxDistance": 2.4
+      },
+      "name": "Controlpost_1",
+      "position": {
+        "x": 0.1305466592311859,
+        "y": 0.04730645567178726,
+        "z": 7.848264217376709
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "rootName": "SM_Chair1",
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Chair1"
+        ],
+        "density": 55,
+        "linearDamping": 0.75,
+        "angularDamping": 1.3,
+        "friction": 0.8,
+        "restitution": 0.02,
+        "canSleep": true
+      },
+      "name": "Chair1_1",
+      "position": {
+        "x": -2.8932535648345947,
+        "y": 0.0473063662648201,
+        "z": 8.532602310180664
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0.28771234029703546,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000000080575076,
+        "y": 1,
+        "z": 1.0000000080575076
+      }
+    },
+    {
+      "rootName": "SM_Desk1",
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Desk1"
+        ],
+        "density": 260,
+        "linearDamping": 1.2,
+        "angularDamping": 2.2,
+        "friction": 0.95,
+        "restitution": 0,
+        "canSleep": true
+      },
+      "name": "Desk1_1",
+      "position": {
+        "x": -2.767220973968506,
+        "y": 0.0473063662648201,
+        "z": 9.287038803100586
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "rootName": "SM_LampDesk1",
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Lamp1"
+        ],
+        "density": 35,
+        "linearDamping": 0.85,
+        "angularDamping": 1.6,
+        "friction": 0.82,
+        "restitution": 0.01,
+        "canSleep": true
+      },
+      "light": {
+        "enabled": true,
+        "type": "spot",
+        "markerName": "LGT_DeskLamp1",
+        "color": "#fff1cf",
+        "intensity": 1.25,
+        "distance": 4,
+        "decay": 1.5,
+        "angle": 0.63,
+        "penumbra": 0.18,
+        "localOffset": {
+          "x": 0.000087,
+          "y": 0.3648,
+          "z": -0.108834
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0004,
+        "shadowNormalBias": 0.02,
+        "shadowRadius": 1,
+        "shadowNear": 0.05,
+        "shadowFar": 5,
+        "fluorescentStartup": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 25,
+          "maxIntervalSeconds": 80,
+          "retryChance": 0.12
+        }
+      },
+      "name": "LampDesk1_1",
+      "position": {
+        "x": -2.0735652446746826,
+        "y": 0.9503130316734314,
+        "z": 9.494028091430664
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0.3280852922395897,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000000097488206,
+        "y": 1,
+        "z": 1.0000000097488206
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_4",
+      "position": {
+        "x": -1.7408807277679443,
+        "y": 0.20201075077056885,
+        "z": 22.6992244720459
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "suspension": {
+        "enabled": true,
+        "pivotName": "PIVOT_LampDome1_Suspension",
+        "maxAngleDegrees": 14,
+        "initialAngleDegrees": 0.45,
+        "naturalPeriodSeconds": 3,
+        "dampingPerSecond": 0.35,
+        "airflowDegrees": 1.2,
+        "airflowPeriodXSeconds": 7.1,
+        "airflowPeriodZSeconds": 2.3
+      },
+      "light": {
+        "enabled": true,
+        "color": "#fff0cf",
+        "intensity": 2,
+        "distance": 4,
+        "decay": 1.2,
+        "parentName": "SM_LampDome1",
+        "localOffset": {
+          "x": 0.0007149569379157021,
+          "y": -0.0770367646843663,
+          "z": -0.00033419247937191394
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 7,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_LampDome1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": false,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": false,
+          "durationSeconds": 0.001,
+          "initialFactor": 0,
+          "exponent": 1
+        },
+        "flicker": {
+          "enabled": true,
+          "minIntervalSeconds": 90,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "LampDome1_EntHall1",
+      "position": {
+        "x": -1.7408807277679443,
+        "y": 2.297290086746216,
+        "z": 15.8051118850708
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": -0.6865855921886015,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.000000004667939,
+        "y": 1,
+        "z": 1.000000004667939
+      }
+    },
+    {
+      "suspension": {
+        "enabled": true,
+        "pivotName": "PIVOT_LampDome1_Suspension",
+        "maxAngleDegrees": 1.4,
+        "initialAngleDegrees": 0.45,
+        "naturalPeriodSeconds": 3.6,
+        "dampingPerSecond": 0.65,
+        "airflowDegrees": 0.28,
+        "airflowPeriodXSeconds": 7.1,
+        "airflowPeriodZSeconds": 9.3
+      },
+      "light": {
+        "enabled": true,
+        "color": "#fff0cf",
+        "intensity": 2,
+        "distance": 4,
+        "decay": 1.2,
+        "parentName": "SM_LampDome1",
+        "localOffset": {
+          "x": 0.0007149569379157021,
+          "y": -0.0770367646843663,
+          "z": -0.00033419247937191394
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 7,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_LampDome1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": false,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": false,
+          "durationSeconds": 0.001,
+          "initialFactor": 0,
+          "exponent": 1
+        },
+        "flicker": {
+          "enabled": true,
+          "minIntervalSeconds": 90,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "LampDome1_EntHall2001",
+      "position": {
+        "x": -1.7408807277679443,
+        "y": 2.297290086746216,
+        "z": 20.41893196105957
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0.09758382613376501,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000000002173655,
+        "y": 1,
+        "z": 1.0000000002173655
       }
     }
   ],
   "lighting": {
     "ambientSky": "#71808c",
-    "ambientGround": "#000000",
-    "ambientIntensity": 0.1,
+    "ambientGround": "#8c8c8c",
+    "ambientIntensity": 0.5,
     "pointLights": {
       "fill": {
         "color": "#75bcff",

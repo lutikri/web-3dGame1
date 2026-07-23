@@ -5,6 +5,7 @@ export function createPhotometricPointLightRuntime({
   camera,
   emptyTexture,
   maxLights = 8,
+  maxProfiles = 4,
 } = {}) {
   if (!emptyTexture) {
     emptyTexture = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat);
@@ -43,7 +44,7 @@ export function createPhotometricPointLightRuntime({
     };
     material.customProgramCacheKey = () => {
       const previousKey = previousCustomProgramCacheKey?.call(material) ?? material.name ?? "";
-      return `${previousKey}:photometric-point-light-v3`;
+      return `${previousKey}:photometric-point-light-v4:${maxProfiles}`;
     };
     material.needsUpdate = true;
   }
@@ -67,7 +68,7 @@ export function createPhotometricPointLightRuntime({
     if (!runtime?.light || profileConfig?.enabled !== true || !profileConfig.path) return null;
     const entry = {
       light: runtime.light,
-      root: runtime.root,
+      root: runtime.light.parent ?? runtime.root,
       path: profileConfig.path,
       strength: THREE.MathUtils.clamp(Number(profileConfig.strength ?? 1), 0, 2),
       flipY: Boolean(profileConfig.flipY),
@@ -120,7 +121,7 @@ export function createPhotometricPointLightRuntime({
     const activeEntries = entries
       .filter((entry) => entry.light?.visible && entry.light.intensity > 0 && entry.texture)
       .slice(0, maxLights);
-    const profileTexture = activeEntries[0]?.texture ?? emptyTexture;
+    const { profiles, profileIndices } = assignPhotometricProfileSlots(activeEntries, maxProfiles);
     camera?.updateMatrixWorld();
     if (camera?.matrixWorld && camera?.matrixWorldInverse) {
       camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
@@ -129,7 +130,9 @@ export function createPhotometricPointLightRuntime({
     patchedMaterials.forEach((material) => {
       const uniforms = materialUniforms.get(material);
       if (!uniforms) return;
-      uniforms.photometricPointLightProfile.value = profileTexture;
+      for (let index = 0; index < maxProfiles; index += 1) {
+        uniforms[`photometricPointLightProfile${index}`].value = profiles[index]?.texture ?? emptyTexture;
+      }
       uniforms.photometricPointLightCount.value = activeEntries.length;
       uniforms.photometricPointLightDebugMode.value = debugMode ? 1 : 0;
       activeEntries.forEach((entry, index) => {
@@ -141,6 +144,7 @@ export function createPhotometricPointLightRuntime({
         uniforms.photometricPointLightWorldToLocal.value[index].copy(matrixScratch);
         uniforms.photometricPointLightStrength.value[index] = entry.strength;
         uniforms.photometricPointLightFlipY.value[index] = entry.flipY ? 1 : 0;
+        uniforms.photometricPointLightProfileIndex.value[index] = profileIndices[index];
       });
     });
   }
@@ -160,6 +164,7 @@ export function createPhotometricPointLightRuntime({
       active: entries.filter((entry) => entry.light?.visible && entry.light.intensity > 0).length,
       loadedProfiles: new Set(entries.filter((entry) => entry.texture).map((entry) => entry.path)).size,
       maxLights,
+      maxProfiles,
       patchedMaterials: patchedMaterials.size,
       compiledMaterials: compiledMaterials.size,
       debugMode,
@@ -177,8 +182,7 @@ export function createPhotometricPointLightRuntime({
   }
 
   function createUniforms() {
-    return {
-      photometricPointLightProfile: { value: emptyTexture },
+    const uniforms = {
       photometricPointLightCount: { value: 0 },
       photometricPointLightViewPosition: {
         value: Array.from({ length: maxLights }, () => new THREE.Vector3()),
@@ -188,22 +192,42 @@ export function createPhotometricPointLightRuntime({
       },
       photometricPointLightStrength: { value: Array.from({ length: maxLights }, () => 1) },
       photometricPointLightFlipY: { value: Array.from({ length: maxLights }, () => 0) },
+      photometricPointLightProfileIndex: { value: Array.from({ length: maxLights }, () => -1) },
       photometricPointLightDebugMode: { value: 0 },
     };
+    for (let index = 0; index < maxProfiles; index += 1) {
+      uniforms[`photometricPointLightProfile${index}`] = { value: emptyTexture };
+    }
+    return uniforms;
   }
 
   function injectShader(fragmentShader) {
-    if (fragmentShader.includes("photometricPointLightProfile")) return fragmentShader;
+    if (fragmentShader.includes("photometricPointLightProfileIndex")) return fragmentShader;
+    const profileUniforms = Array.from(
+      { length: maxProfiles },
+      (_, index) => `uniform sampler2D photometricPointLightProfile${index};`,
+    ).join("\n");
+    const profileSamples = Array.from(
+      { length: maxProfiles },
+      (_, index) => `${index === 0 ? "if" : "else if"} ( profileIndex == ${index} ) profileValue = max( luminance( texture2D( photometricPointLightProfile${index}, uv ).rgb ), 0.0 );`,
+    ).join("\n  ");
     const pars = `
 #if NUM_POINT_LIGHTS > 0
 #define MAX_PHOTOMETRIC_POINT_LIGHTS ${maxLights}
-uniform sampler2D photometricPointLightProfile;
+${profileUniforms}
 uniform int photometricPointLightCount;
 uniform vec3 photometricPointLightViewPosition[ MAX_PHOTOMETRIC_POINT_LIGHTS ];
 uniform mat4 photometricPointLightWorldToLocal[ MAX_PHOTOMETRIC_POINT_LIGHTS ];
 uniform float photometricPointLightStrength[ MAX_PHOTOMETRIC_POINT_LIGHTS ];
 uniform float photometricPointLightFlipY[ MAX_PHOTOMETRIC_POINT_LIGHTS ];
+uniform int photometricPointLightProfileIndex[ MAX_PHOTOMETRIC_POINT_LIGHTS ];
 uniform float photometricPointLightDebugMode;
+
+float samplePhotometricProfile( const in int profileIndex, const in vec2 uv ) {
+  float profileValue = 1.0;
+  ${profileSamples}
+  return profileValue;
+}
 
 vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, const in vec3 geometryPosition ) {
   vec3 factor = vec3( 1.0 );
@@ -214,6 +238,7 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
   float nearestDistanceSq = 0.25;
   float selectedStrength = 1.0;
   float selectedFlipY = 0.0;
+  int selectedProfileIndex = -1;
   vec3 selectedLocalDirection = vec3( 0.0, -1.0, 0.0 );
   bool selectedLight = false;
 
@@ -225,6 +250,7 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
       nearestDistanceSq = distanceSq;
       selectedStrength = photometricPointLightStrength[ j ];
       selectedFlipY = photometricPointLightFlipY[ j ];
+      selectedProfileIndex = photometricPointLightProfileIndex[ j ];
       selectedLocalDirection = normalize( ( photometricPointLightWorldToLocal[ j ] * vec4( worldDirection, 0.0 ) ).xyz );
       selectedLight = true;
     }
@@ -233,7 +259,7 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
   if ( selectedLight ) {
     vec2 profileUv = equirectUv( selectedLocalDirection );
     profileUv.y = mix( profileUv.y, 1.0 - profileUv.y, selectedFlipY );
-    float profileValue = max( luminance( texture2D( photometricPointLightProfile, profileUv ).rgb ), 0.0 );
+    float profileValue = samplePhotometricProfile( selectedProfileIndex, profileUv );
     if ( photometricPointLightDebugMode > 0.5 ) {
       float debugValue = clamp( profileValue, 0.0, 1.0 );
       factor = mix( vec3( 0.0, 0.08, 2.0 ), vec3( 2.0, 0.08, 0.0 ), debugValue );
@@ -267,4 +293,17 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
     unregister,
     updateUniforms,
   };
+}
+
+export function assignPhotometricProfileSlots(entries, maxProfiles = 4) {
+  const profiles = [];
+  const profileIndices = entries.map((entry) => {
+    let index = profiles.findIndex((profile) => profile.path === entry.path);
+    if (index < 0 && profiles.length < maxProfiles) {
+      index = profiles.length;
+      profiles.push({ path: entry.path, texture: entry.texture });
+    }
+    return index;
+  });
+  return { profiles, profileIndices };
 }

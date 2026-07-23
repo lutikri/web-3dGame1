@@ -168,6 +168,63 @@ const PREFAB_DEFINITIONS = {
       },
     },
   },
+  LampDome1: {
+    assetPath: "assets/mesh/prefabs/SM_LampDome1.glb",
+    materialKey: "controlPost1",
+    behavior: "suspendedLamp",
+    materialOverrides: {
+      SM_LampDome1_Bulb: "lampDome1Bulb",
+    },
+    suspension: {
+      enabled: true,
+      pivotName: "PIVOT_LampDome1_Suspension",
+      maxAngleDegrees: 1.4,
+      initialAngleDegrees: 0.45,
+      naturalPeriodSeconds: 3.6,
+      dampingPerSecond: 0.65,
+      airflowDegrees: 0.28,
+      airflowPeriodXSeconds: 7.1,
+      airflowPeriodZSeconds: 9.3,
+    },
+    light: {
+      enabled: true,
+      color: "#fff0cf",
+      intensity: 2.5,
+      distance: 6,
+      decay: 2,
+      parentName: "SM_LampDome1",
+      localOffset: new THREE.Vector3(0, 0, 0),
+      castShadow: false,
+      shadowMapSize: 512,
+      shadowBias: -0.0002,
+      shadowNormalBias: 0.012,
+      shadowRadius: 1,
+      shadowNear: 0.1,
+      shadowFar: 7,
+      photometricProfile: {
+        enabled: true,
+        path: "assets/runtime-textures/T_LampDome1_LightDistribution_1024_RGBE.hdr",
+        strength: 1,
+        flipY: true,
+      },
+      fluorescentStartup: false,
+      roomLightControlled: false,
+      startupDelaySeconds: 0,
+      faultyStarterLoop: false,
+      afterglow: {
+        enabled: false,
+        durationSeconds: 0.001,
+        initialFactor: 0,
+        exponent: 1,
+      },
+      flicker: {
+        enabled: false,
+        minIntervalSeconds: 35,
+        maxIntervalSeconds: 110,
+        retryChance: 0.35,
+      },
+    },
+  },
   bulkheadDoor: {
     assetPath: "assets/mesh/prefabs/SM_DoorBulk1.glb",
     materialKey: "doorLamp2",
@@ -383,6 +440,10 @@ const PREFAB_DEFINITIONS = {
     },
   },
 };
+
+// Blender-facing alias for authored markers such as PF_DoorBulk1_4.
+// Both keys resolve the same registry-owned asset, physics, interaction, and behavior defaults.
+PREFAB_DEFINITIONS.DoorBulk1 = PREFAB_DEFINITIONS.bulkheadDoor;
 
 const REGISTRY_OWNED_KEYS = new Set([
   "assetPath",

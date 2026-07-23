@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=prototype-flow-1";
+import { LevelRuntime } from "./LevelRuntime.js?v=suspended-lamp-properties-2";
 
 export class LevelEnvironmentLifecycle {
   constructor({

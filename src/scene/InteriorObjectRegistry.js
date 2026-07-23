@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=prototype-flow-1";
+import { applyAxisRotation } from "./TransformUtils.js?v=suspended-lamp-properties-2";
 
 export class InteriorObjectRegistry {
   constructor(options) {

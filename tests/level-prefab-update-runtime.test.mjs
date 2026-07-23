@@ -5,6 +5,7 @@ import { LevelPrefabUpdateRuntime } from "../src/prefabs/LevelPrefabUpdateRuntim
 
 test("level prefab update runtime owns light intensity and emissive feedback", () => {
   const emissive = { emissiveIntensity: 0, userData: { baseEmissiveIntensity: 2 } };
+  const darkFixture = { emissiveIntensity: 1, userData: { baseEmissiveIntensity: 0 } };
   const placed = {
     light: { intensity: 0, visible: false },
     startupElapsed: 0,
@@ -13,7 +14,7 @@ test("level prefab update runtime owns light intensity and emissive feedback", (
     flickerTime: 0,
     fixtureFlicker: {},
     startupPattern: [],
-    emissiveMaterials: [emissive],
+    emissiveMaterials: [emissive, darkFixture],
   };
   const runtime = new LevelPrefabUpdateRuntime({
     config: {
@@ -40,5 +41,5 @@ test("level prefab update runtime owns light intensity and emissive feedback", (
   assert.equal(placed.light.visible, true);
   assert.equal(placed.light.intensity, 2);
   assert.equal(emissive.emissiveIntensity, 1);
+  assert.equal(darkFixture.emissiveIntensity, 0);
 });
-

@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prototype-flow-1";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prototype-flow-1";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prototype-flow-1";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prototype-flow-1";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=suspended-lamp-properties-2";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=suspended-lamp-properties-2";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=suspended-lamp-properties-2";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=suspended-lamp-properties-2";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=suspended-lamp-properties-2";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -55,8 +56,7 @@ export class LevelPrefabUpdateRuntime {
       runtime.light.visible = light.enabled !== false;
       runtime.light.intensity = light.intensity * (light.enabled === false ? 0 : factor) * roomPoint * sceneFactor;
       runtime.emissiveMaterials.forEach((material) => {
-        const base = this.config.interior.specialMaterials?.[prefab.materialKey]?.emissiveIntensity
-          ?? material.userData.baseEmissiveIntensity ?? 1;
+        const base = material.userData.baseEmissiveIntensity ?? 1;
         material.emissiveIntensity = base * (light.enabled === false ? localAfterglow : factor) * roomEmissive * sceneFactor;
       });
     });
@@ -97,6 +97,7 @@ export class LevelPrefabUpdateRuntime {
     this.instances.forEach((runtime, key) => {
       const [levelId] = key.split(":");
       if (levelId !== displayed || !this.isLevelView()) return;
+      updateSuspendedLampRuntime(runtime.suspendedLamp, dt);
       updateBarrierGateRuntime(runtime.barrierGate, dt).forEach((event) => {
         if (event.type === "unlockGate") this.#unlockBarrier(runtime, levelId, event);
         else if (event.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);
@@ -144,4 +145,3 @@ export class LevelPrefabUpdateRuntime {
     return dx * dx + dz * dz <= radius * radius && dy > -0.5 && dy < Number(elevator.carryHeight ?? 2.4);
   }
 }
-

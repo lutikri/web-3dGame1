@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=prototype-flow-1";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=suspended-lamp-properties-2";
 
 const DISMISS_MS = 300;
 

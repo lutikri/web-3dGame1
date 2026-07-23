@@ -16,6 +16,30 @@ test("interior material runtime synchronizes registered prefab material clones",
   assert.equal(material.userData.baseEmissiveIntensity, 2);
 });
 
+test("interior material runtime applies live scalar config to source and prefab clones", () => {
+  const createMaterial = () => ({
+    color: { value: null, set(value) { this.value = value; } },
+    emissive: { value: null, set(value) { this.value = value; } },
+    normalScale: { value: null, set(x, y) { this.value = [x, y]; } },
+    userData: {},
+    needsUpdate: false,
+  });
+  const source = createMaterial();
+  const clone = createMaterial();
+  const runtime = new InteriorMaterialRuntime({
+    configs: { bulb: { color: "#fff", emissive: "#f80", emissiveIntensity: 9, normalScale: 1 } },
+    materials: { bulb: source },
+    prefabInstances: new Map([["room:lamp", {
+      materialCloneEntries: [{ materialKey: "bulb", material: clone }],
+    }]]),
+  });
+
+  assert.equal(runtime.applyConfig("bulb"), 2);
+  assert.equal(source.emissiveIntensity, 9);
+  assert.equal(clone.emissiveIntensity, 9);
+  assert.equal(clone.userData.baseEmissiveIntensity, 9);
+});
+
 test("interior material runtime exposes stable debug material state", () => {
   const material = new THREE.MeshStandardMaterial({ name: "Lens", color: "#ffffff", emissive: "#101010" });
   material.userData.textureTier = "full";

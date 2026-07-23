@@ -3,122 +3,122 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=prototype-flow-1";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=suspended-lamp-properties-2";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=prototype-flow-1";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=prototype-flow-1";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=prototype-flow-1";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=prototype-flow-1";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=prototype-flow-1";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=prototype-flow-1";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=prototype-flow-1";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=prototype-flow-1";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=prototype-flow-1";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=prototype-flow-1";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=prototype-flow-1";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=prototype-flow-1";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=prototype-flow-1";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=prototype-flow-1";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=prototype-flow-1";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=prototype-flow-1";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=prototype-flow-1";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=prototype-flow-1";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=prototype-flow-1";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=prototype-flow-1";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=prototype-flow-1";
+} from "./game/ShiftReport.js?v=suspended-lamp-properties-2";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=suspended-lamp-properties-2";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=suspended-lamp-properties-2";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=suspended-lamp-properties-2";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=suspended-lamp-properties-2";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=suspended-lamp-properties-2";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=suspended-lamp-properties-2";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=suspended-lamp-properties-2";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=suspended-lamp-properties-2";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=suspended-lamp-properties-2";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=suspended-lamp-properties-2";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=suspended-lamp-properties-2";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=suspended-lamp-properties-2";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=suspended-lamp-properties-2";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=suspended-lamp-properties-2";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=suspended-lamp-properties-2";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=suspended-lamp-properties-2";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=suspended-lamp-properties-2";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=suspended-lamp-properties-2";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=suspended-lamp-properties-2";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=suspended-lamp-properties-2";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=prototype-flow-1";
+} from "./config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=prototype-flow-1";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=prototype-flow-1";
-import { createStatusScreen } from "./StatusScreen.js?v=prototype-flow-1";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=prototype-flow-1";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=prototype-flow-1";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=prototype-flow-1";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=prototype-flow-1";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=prototype-flow-1";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=prototype-flow-1";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=prototype-flow-1";
+} from "./scene/TextureStreaming.js?v=suspended-lamp-properties-2";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=suspended-lamp-properties-2";
+import { createStatusScreen } from "./StatusScreen.js?v=suspended-lamp-properties-2";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=suspended-lamp-properties-2";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=suspended-lamp-properties-2";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=suspended-lamp-properties-2";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=suspended-lamp-properties-2";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=suspended-lamp-properties-2";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=suspended-lamp-properties-2";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=suspended-lamp-properties-2";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=prototype-flow-1";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=prototype-flow-1";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=prototype-flow-1";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=suspended-lamp-properties-2";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=suspended-lamp-properties-2";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=suspended-lamp-properties-2";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=prototype-flow-1";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=prototype-flow-1";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=prototype-flow-1";
-import { AssetCache } from "./runtime/AssetCache.js?v=prototype-flow-1";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=prototype-flow-1";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=prototype-flow-1";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=prototype-flow-1";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=prototype-flow-1";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=prototype-flow-1";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=prototype-flow-1";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=prototype-flow-1";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=prototype-flow-1";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=prototype-flow-1";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=prototype-flow-1";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=prototype-flow-1";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=prototype-flow-1";
+} from "./lighting/FluorescentBehavior.js?v=suspended-lamp-properties-2";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=suspended-lamp-properties-2";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=suspended-lamp-properties-2";
+import { AssetCache } from "./runtime/AssetCache.js?v=suspended-lamp-properties-2";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=suspended-lamp-properties-2";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=suspended-lamp-properties-2";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=suspended-lamp-properties-2";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=suspended-lamp-properties-2";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=suspended-lamp-properties-2";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=suspended-lamp-properties-2";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=suspended-lamp-properties-2";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=suspended-lamp-properties-2";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=suspended-lamp-properties-2";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=suspended-lamp-properties-2";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=suspended-lamp-properties-2";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=suspended-lamp-properties-2";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=prototype-flow-1";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=prototype-flow-1";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=prototype-flow-1";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=prototype-flow-1";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=prototype-flow-1";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=prototype-flow-1";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=prototype-flow-1";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=prototype-flow-1";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=prototype-flow-1";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=prototype-flow-1";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=prototype-flow-1";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=prototype-flow-1";
-import { PlayerController } from "./player/PlayerController.js?v=prototype-flow-1";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=prototype-flow-1";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=prototype-flow-1";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=prototype-flow-1";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=prototype-flow-1";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=prototype-flow-1";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=prototype-flow-1";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=prototype-flow-1";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=prototype-flow-1";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=prototype-flow-1";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=prototype-flow-1";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=prototype-flow-1";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=prototype-flow-1";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=prototype-flow-1";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=prototype-flow-1";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=prototype-flow-1";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=prototype-flow-1";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=prototype-flow-1";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=prototype-flow-1";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=prototype-flow-1";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=prototype-flow-1";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=prototype-flow-1";
+} from "./scene/InteriorObjectRegistry.js?v=suspended-lamp-properties-2";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=suspended-lamp-properties-2";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=suspended-lamp-properties-2";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=suspended-lamp-properties-2";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=suspended-lamp-properties-2";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=suspended-lamp-properties-2";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=suspended-lamp-properties-2";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=suspended-lamp-properties-2";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=suspended-lamp-properties-2";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=suspended-lamp-properties-2";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=suspended-lamp-properties-2";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=suspended-lamp-properties-2";
+import { PlayerController } from "./player/PlayerController.js?v=suspended-lamp-properties-2";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=suspended-lamp-properties-2";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=suspended-lamp-properties-2";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=suspended-lamp-properties-2";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=suspended-lamp-properties-2";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=suspended-lamp-properties-2";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=suspended-lamp-properties-2";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=suspended-lamp-properties-2";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=suspended-lamp-properties-2";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=suspended-lamp-properties-2";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=suspended-lamp-properties-2";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=suspended-lamp-properties-2";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=suspended-lamp-properties-2";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=suspended-lamp-properties-2";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=suspended-lamp-properties-2";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=suspended-lamp-properties-2";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=suspended-lamp-properties-2";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=suspended-lamp-properties-2";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=suspended-lamp-properties-2";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=suspended-lamp-properties-2";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=suspended-lamp-properties-2";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=suspended-lamp-properties-2";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=prototype-flow-1";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=suspended-lamp-properties-2";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1201,6 +1201,7 @@ const debugToolsRuntime = new DebugToolsRuntime({
   applyPostProcessing: applyLivePostProcessingConfig,
   rebuildPostProcessing: () => postProcessingRuntime.setup(),
   applyAudioMix: () => audioRuntime.refreshMix(),
+  applyMaterialConfig: (materialKey) => interiorMaterialRuntime.applyConfig(materialKey),
   togglePositionGizmo,
   stopPositionGizmo,
   getActiveDebugLevel: () => operatorViewMode === "menu" ? null : activeLevelId,

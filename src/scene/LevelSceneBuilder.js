@@ -3,11 +3,11 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=prototype-flow-1";
+} from "../prefabs/PrefabMarkerResolver.js?v=suspended-lamp-properties-2";
 import {
   applyPrefabOverrideEntries,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=prototype-flow-1";
+} from "../levels/LevelConfigOverrides.js?v=suspended-lamp-properties-2";
 
 export function createLevelSceneBuilder({
   scene,

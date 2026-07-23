@@ -1,4 +1,4 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=prototype-flow-1";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=suspended-lamp-properties-2";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const SHADOW_MAP_SIZES = [128, 256, 512, 1024, 2048, 4096];
@@ -44,6 +44,7 @@ const AUDIO_MIX_ORDER = ["master", "ambience", "machinery", "interaction", "play
 
 export function createDebugWorkspace({
   levelEnvironmentConfigs = {},
+  materialConfigs = {},
   gameConfig = {},
   postProcessingConfig = {},
   getPostProcessingQualities,
@@ -59,6 +60,7 @@ export function createDebugWorkspace({
   applyPostProcessing,
   rebuildPostProcessing,
   applyAudioMix,
+  applyMaterialConfig,
   togglePositionGizmo,
 }) {
   const root = document.createElement("section");
@@ -253,6 +255,23 @@ export function createDebugWorkspace({
         ]),
       ]),
     ];
+    const suspendedLamp = getSuspendedLampDebugProperties(prefab, materialConfigs);
+    if (suspendedLamp) {
+      const applySuspension = () => applyLevelPrefab?.(levelId, prefab.name);
+      body.push(section("Suspended lamp", [
+        booleanRow("Movement enabled", suspendedLamp.suspension, "enabled", applySuspension),
+        numberRow("Max angle", suspendedLamp.suspension, "maxAngleDegrees", 0, 12, 0.05, applySuspension),
+        numberRow("Swing period", suspendedLamp.suspension, "naturalPeriodSeconds", 0.5, 12, 0.05, applySuspension),
+        numberRow("Damping", suspendedLamp.suspension, "dampingPerSecond", 0, 4, 0.01, applySuspension),
+        numberRow("Airflow strength", suspendedLamp.suspension, "airflowDegrees", 0, 8, 0.05, applySuspension),
+        numberRow("Airflow period X", suspendedLamp.suspension, "airflowPeriodXSeconds", 1, 30, 0.1, applySuspension),
+        numberRow("Airflow period Z", suspendedLamp.suspension, "airflowPeriodZSeconds", 1, 30, 0.1, applySuspension),
+        suspendedLamp.bulbMaterial
+          ? numberRow("Bulb emissive", suspendedLamp.bulbMaterial, "emissiveIntensity", 0, 30, 0.05,
+            () => applyMaterialConfig?.("lampDome1Bulb"))
+          : null,
+      ]));
+    }
     if (prefab.light) body.push(renderPrefabLightSection(levelId, prefab));
     if (prefab.radio) {
       body.push(section("Radio", [
@@ -754,6 +773,14 @@ export function createDebugWorkspace({
     savePostProcessingToProject,
     copyPostProcessingConfig,
     refresh: render,
+  };
+}
+
+export function getSuspendedLampDebugProperties(prefab, materialConfigs = {}) {
+  if (prefab?.behavior !== "suspendedLamp" || !prefab.suspension) return null;
+  return {
+    suspension: prefab.suspension,
+    bulbMaterial: materialConfigs.lampDome1Bulb ?? null,
   };
 }
 

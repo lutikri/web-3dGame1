@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=prototype-flow-1";
+import { LevelSession } from "./LevelSession.js?v=suspended-lamp-properties-2";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {} } = {}) {
