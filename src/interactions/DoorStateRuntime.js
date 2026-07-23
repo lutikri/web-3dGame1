@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=suspended-lamp-properties-2";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=suspended-lamp-properties-2";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=environment-polish";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=environment-polish";
 
 export class DoorStateRuntime {
   constructor(options) {

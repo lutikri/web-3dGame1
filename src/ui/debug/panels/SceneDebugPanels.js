@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=suspended-lamp-properties-2";
+} from "../../../levels/LevelConfigSerialization.js?v=environment-polish";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

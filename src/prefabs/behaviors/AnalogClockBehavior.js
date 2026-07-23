@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=suspended-lamp-properties-2";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=environment-polish";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

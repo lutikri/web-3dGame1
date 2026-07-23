@@ -42,6 +42,7 @@ export class LevelOwnedState {
       if (!key.startsWith(`${levelId}:`)) continue;
       this.photometricLights.unregister(runtime.photometricPointLight);
       (runtime.materialClones ?? runtime.emissiveMaterials ?? []).forEach((material) => material.dispose());
+      runtime.briefSheet?.dispose?.();
       runtime.light?.shadow?.dispose?.();
       this.prefabInstances.delete(key);
     }

@@ -3,11 +3,12 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=suspended-lamp-properties-2";
+} from "../prefabs/PrefabMarkerResolver.js?v=environment-polish";
 import {
   applyPrefabOverrideEntries,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=suspended-lamp-properties-2";
+} from "../levels/LevelConfigOverrides.js?v=environment-polish";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=environment-polish";
 
 export function createLevelSceneBuilder({
   scene,
@@ -22,6 +23,7 @@ export function createLevelSceneBuilder({
   environmentModels,
   collisionModels,
   prefabInstances,
+  getLanguage = () => "en",
 }) {
   return {
     async build(levelRuntime, levelId, environmentConfig) {
@@ -74,7 +76,10 @@ export function createLevelSceneBuilder({
     excludedMeshes.forEach((object) => object.parent?.remove(object));
     environmentModels.set(levelId, model);
     scene.add(model);
-    return resolvePrefabMarkers(model);
+    return [
+      ...resolvePrefabMarkers(model),
+      ...resolveBriefSocketPrefabs(model, config.physicalBriefing, getLanguage()),
+    ];
   }
 
   async function buildCollision(levelId, config) {
@@ -124,7 +129,7 @@ export function createLevelSceneBuilder({
     pendingPrefabOverrides = [],
   ) {
     const prefab = await loadSceneAsset(prefabConfig.assetPath);
-    isolatePrefabRoot(prefab, prefabConfig.rootName);
+    isolatePrefabRoot(prefab, prefabConfig.rootName, [prefabConfig.light?.markerName]);
     prefab.name = prefabConfig.name;
     prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
     prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
@@ -153,7 +158,7 @@ export function createLevelSceneBuilder({
   }
 }
 
-function isolatePrefabRoot(prefab, rootName) {
+export function isolatePrefabRoot(prefab, rootName, preservedNames = []) {
   if (!rootName) return;
   const rootObject = prefab.getObjectByName(rootName);
   if (!rootObject || rootObject === prefab) {
@@ -162,8 +167,9 @@ function isolatePrefabRoot(prefab, rootName) {
   }
   prefab.updateWorldMatrix(true, true);
   prefab.attach(rootObject);
+  const preserved = new Set(preservedNames.filter(Boolean));
   [...prefab.children].forEach((child) => {
-    if (child !== rootObject) prefab.remove(child);
+    if (child !== rootObject && !preserved.has(child.name)) prefab.remove(child);
   });
 }
 

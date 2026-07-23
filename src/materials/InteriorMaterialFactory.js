@@ -70,6 +70,7 @@ export function createInteriorMaterialFactory({
       emissive: config.emissive ?? "#fff2b0",
       emissiveIntensity: config.emissiveIntensity ?? 1.35,
       transparent: Boolean(config.transparent),
+      alphaTest: config.alphaTest ?? 0,
       opacity: config.opacity ?? 1,
       depthWrite: config.depthWrite ?? true,
       side: config.side ?? THREE.FrontSide,

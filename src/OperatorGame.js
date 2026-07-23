@@ -3,122 +3,123 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=suspended-lamp-properties-2";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=environment-polish";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=suspended-lamp-properties-2";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=suspended-lamp-properties-2";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=suspended-lamp-properties-2";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=suspended-lamp-properties-2";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=suspended-lamp-properties-2";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=suspended-lamp-properties-2";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=suspended-lamp-properties-2";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=suspended-lamp-properties-2";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=suspended-lamp-properties-2";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=suspended-lamp-properties-2";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=suspended-lamp-properties-2";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=suspended-lamp-properties-2";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=suspended-lamp-properties-2";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=suspended-lamp-properties-2";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=suspended-lamp-properties-2";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=suspended-lamp-properties-2";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=suspended-lamp-properties-2";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=suspended-lamp-properties-2";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=suspended-lamp-properties-2";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=suspended-lamp-properties-2";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=suspended-lamp-properties-2";
+} from "./game/ShiftReport.js?v=environment-polish";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=environment-polish";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=environment-polish";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=environment-polish";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=environment-polish";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=environment-polish";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=environment-polish";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=environment-polish";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=environment-polish";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=environment-polish";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=environment-polish";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=environment-polish";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=environment-polish";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=environment-polish";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=environment-polish";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=environment-polish";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=environment-polish";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=environment-polish";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=environment-polish";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=environment-polish";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=environment-polish";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=environment-polish";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
+} from "./config/GraphicsQualityProfiles.js?v=environment-polish";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=suspended-lamp-properties-2";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=suspended-lamp-properties-2";
-import { createStatusScreen } from "./StatusScreen.js?v=suspended-lamp-properties-2";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=suspended-lamp-properties-2";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=suspended-lamp-properties-2";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=suspended-lamp-properties-2";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=suspended-lamp-properties-2";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=suspended-lamp-properties-2";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=suspended-lamp-properties-2";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=suspended-lamp-properties-2";
+} from "./scene/TextureStreaming.js?v=environment-polish";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=environment-polish";
+import { createStatusScreen } from "./StatusScreen.js?v=environment-polish";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=environment-polish";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=environment-polish";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=environment-polish";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=environment-polish";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=environment-polish";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=environment-polish";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=environment-polish";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=suspended-lamp-properties-2";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=suspended-lamp-properties-2";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=suspended-lamp-properties-2";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=environment-polish";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=environment-polish";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=environment-polish";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=suspended-lamp-properties-2";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=suspended-lamp-properties-2";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=suspended-lamp-properties-2";
-import { AssetCache } from "./runtime/AssetCache.js?v=suspended-lamp-properties-2";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=suspended-lamp-properties-2";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=suspended-lamp-properties-2";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=suspended-lamp-properties-2";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=suspended-lamp-properties-2";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=suspended-lamp-properties-2";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=suspended-lamp-properties-2";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=suspended-lamp-properties-2";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=suspended-lamp-properties-2";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=suspended-lamp-properties-2";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=suspended-lamp-properties-2";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=suspended-lamp-properties-2";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=suspended-lamp-properties-2";
+} from "./lighting/FluorescentBehavior.js?v=environment-polish";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=environment-polish";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=environment-polish";
+import { AssetCache } from "./runtime/AssetCache.js?v=environment-polish";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=environment-polish";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=environment-polish";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=environment-polish";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=environment-polish";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=environment-polish";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=environment-polish";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=environment-polish";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=environment-polish";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=environment-polish";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=environment-polish";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=environment-polish";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=environment-polish";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=suspended-lamp-properties-2";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=suspended-lamp-properties-2";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=suspended-lamp-properties-2";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=suspended-lamp-properties-2";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=suspended-lamp-properties-2";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=suspended-lamp-properties-2";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=suspended-lamp-properties-2";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=suspended-lamp-properties-2";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=suspended-lamp-properties-2";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=suspended-lamp-properties-2";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=suspended-lamp-properties-2";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=suspended-lamp-properties-2";
-import { PlayerController } from "./player/PlayerController.js?v=suspended-lamp-properties-2";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=suspended-lamp-properties-2";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=suspended-lamp-properties-2";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=suspended-lamp-properties-2";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=suspended-lamp-properties-2";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=suspended-lamp-properties-2";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=suspended-lamp-properties-2";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=suspended-lamp-properties-2";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=suspended-lamp-properties-2";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=suspended-lamp-properties-2";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=suspended-lamp-properties-2";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=suspended-lamp-properties-2";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=suspended-lamp-properties-2";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=suspended-lamp-properties-2";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=suspended-lamp-properties-2";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=suspended-lamp-properties-2";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=suspended-lamp-properties-2";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=suspended-lamp-properties-2";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=suspended-lamp-properties-2";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=suspended-lamp-properties-2";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=suspended-lamp-properties-2";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=suspended-lamp-properties-2";
+} from "./scene/InteriorObjectRegistry.js?v=environment-polish";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=environment-polish";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=environment-polish";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=environment-polish";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=environment-polish";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=environment-polish";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=environment-polish";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=environment-polish";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=environment-polish";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=environment-polish";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=environment-polish";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=environment-polish";
+import { PlayerController } from "./player/PlayerController.js?v=environment-polish";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=environment-polish";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=environment-polish";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=environment-polish";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=environment-polish";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=environment-polish";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=environment-polish";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=environment-polish";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=environment-polish";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=environment-polish";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=environment-polish";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=environment-polish";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=environment-polish";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=environment-polish";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=environment-polish";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=environment-polish";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=environment-polish";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=environment-polish";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=environment-polish";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=environment-polish";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=environment-polish";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=environment-polish";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=suspended-lamp-properties-2";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=environment-polish";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -410,6 +411,7 @@ const levelSceneBuilder = createLevelSceneBuilder({
   environmentModels: levelEnvironmentModels,
   collisionModels: levelCollisionModels,
   prefabInstances: levelPrefabInstances,
+  getLanguage: () => document.documentElement.lang,
 });
 const levelAssetCache = new AssetCache({
   load: (assetPath) => gltfLoader.loadAsync(assetPath),
@@ -683,6 +685,16 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   isObjectVisible: isObjectHierarchyVisible,
   getTooltipText,
   setHoveredDoor: setHoveredHingedDoor,
+});
+let briefingSheetOpener = null;
+const briefInteractionRuntime = new BriefInteractionRuntime({
+  interactive,
+  getHoveredInteractive: interactionHoverRuntime.getHoveredInteractive,
+  openBriefingSheet: (request) => briefingSheetOpener?.(request),
+  setHoldProgress: (progress, active) => {
+    document.body.style.setProperty("--hold-progress", String(progress * 100));
+    document.body.classList.toggle("hold-interaction-active", active);
+  },
 });
 const updateHoverTarget = interactionHoverRuntime.update;
 const setHoveredKnob = interactionHoverRuntime.setHoveredKnob;
@@ -1226,6 +1238,7 @@ const animationLoop = new AnimationLoop({
     updateLevelPrefabBehaviors,
     (dt) => playerController.update(dt),
     updateHoverTarget,
+    (dt) => briefInteractionRuntime.update(dt),
     updateControlLabels,
     updateInterior,
     (dt) => operatorPanelRuntime.update(dt),
@@ -1463,7 +1476,9 @@ levelPrefabConfigRuntime = new LevelPrefabConfigRuntime({
 });
 
 function registerPrefabInteraction(...args) {
-  return prefabPhysicsRegistrar.register(...args);
+  const physicsRuntime = prefabPhysicsRegistrar.register(...args);
+  briefInteractionRuntime.register(...args);
+  return physicsRuntime;
 }
 
 function applyHingedDoorRotation(runtime) {
@@ -1824,13 +1839,15 @@ const operatorInputRuntime = createOperatorInputRuntime({
   updateHoverTarget,
   getHoveredInteractive: interactionHoverRuntime.getHoveredInteractive,
   activateInteractive: (target) => {
-    if (target?.userData.kind === "controlButton") setControlButtonPressed(target, true);
+    if (target?.userData.kind === "briefSheet") briefInteractionRuntime.begin(target);
+    else if (target?.userData.kind === "controlButton") setControlButtonPressed(target, true);
     else if (target?.userData.kind === "roomLightButton") setRoomLightButtonPressed(target, true);
     else if (target?.userData.kind === "bulkheadHandle") beginBulkheadHandleInteraction();
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
   },
   releasePrimaryInteractions: () => {
+    briefInteractionRuntime.release();
     bulkheadExitRuntime.release();
     releaseDoorLatchHandles();
     endHingedDoorDrag();
@@ -1948,6 +1965,11 @@ installOperatorGameApi(window, {
   requestPointerLock,
   releasePointerLock: () => document.exitPointerLock?.(),
   setInputLocked,
+  setBriefingSheetOpener: (callback) => {
+    briefingSheetOpener = typeof callback === "function" ? callback : null;
+  },
+  playSoundGroup: (groupKey, options) => audioRuntime.playRandom(groupKey, options),
+  finishHoldInteraction: () => briefInteractionRuntime.release(),
   setBaseFov: (degrees) => {
     baseFovDegrees = THREE.MathUtils.clamp(Number(degrees), 50, 105);
     CONFIG.camera.fovDegrees = baseFovDegrees;

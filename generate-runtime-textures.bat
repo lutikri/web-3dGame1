@@ -83,6 +83,8 @@ $jobs = @(
   @{ Source = "T_Clock1_Normal.png"; Prefix = "T_Clock1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Clock1_OcclusionRoughnessMetallic.png"; Prefix = "T_Clock1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
 
+  @{ Source = "T_Posters1.png"; Prefix = "T_Posters1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 180 },
+
   @{ Source = "T_Radio1_BaseColor.png"; Prefix = "T_Radio1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
   @{ Source = "T_Radio1_Normal.png"; Prefix = "T_Radio1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Radio1_OcclusionRoughnessMetallic.png"; Prefix = "T_Radio1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },

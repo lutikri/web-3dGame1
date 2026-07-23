@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import * as THREE from "three";
 import { DoorInteractionSystem } from "../src/interactions/DoorInteractionSystem.js";
 import { LightingRuntime, applyLightShadowSettings } from "../src/lighting/LightingRuntime.js";
-import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
+import { createLevelSceneBuilder, isolatePrefabRoot } from "../src/scene/LevelSceneBuilder.js";
 import { applyLevelOverrides } from "../src/levels/LevelConfigOverrides.js";
 import {
   mergeMarkerPrefabs,
@@ -326,4 +326,21 @@ test("scene builder waits for all branches before reporting a load failure", asy
     /collision failed/,
   );
   assert.equal(slowPrefabFinished, true);
+});
+
+test("prefab root isolation preserves registry-declared sibling markers", () => {
+  const prefab = new THREE.Group();
+  const root = new THREE.Group();
+  root.name = "SM_LampDesk1";
+  const marker = new THREE.Object3D();
+  marker.name = "LGT_DeskLamp1";
+  const unrelated = new THREE.Object3D();
+  unrelated.name = "Unused";
+  prefab.add(root, marker, unrelated);
+
+  isolatePrefabRoot(prefab, root.name, [marker.name]);
+
+  assert.equal(prefab.getObjectByName(root.name), root);
+  assert.equal(prefab.getObjectByName(marker.name), marker);
+  assert.equal(prefab.getObjectByName(unrelated.name), undefined);
 });

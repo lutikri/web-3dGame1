@@ -8,7 +8,7 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=suspended-lamp-properties-2";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=environment-polish";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -16,7 +16,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=suspended-lamp-properties-2";
+} from "./PostProcessingShaders.js?v=environment-polish";
 
 export class PostProcessingRuntime {
   composer = null;

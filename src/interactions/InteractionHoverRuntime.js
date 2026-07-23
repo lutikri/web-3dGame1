@@ -50,6 +50,8 @@ export function createInteractionHoverRuntime({
   function applyTarget(target, hit = null, forceTooltip = false) {
     hoveredInteractive = target;
     body.classList.toggle("interactive-hover", Boolean(target));
+    body.classList.toggle("brief-interactive-hover", target?.userData.kind === "briefSheet");
+    body.classList.toggle("hold-interactive-hover", Number(target?.userData.holdInteractionSeconds) > 0);
     if (target && hit) {
       target.userData.lastHitDistance = hit.distance;
       target.userData.lastHitPoint = hit.point.clone();
@@ -86,6 +88,8 @@ export function createInteractionHoverRuntime({
     setHoveredTooltipTarget(null);
     setHoveredDoor(null);
     body.classList.remove("interactive-hover");
+    body.classList.remove("brief-interactive-hover");
+    body.classList.remove("hold-interactive-hover");
     dispatchHoverSignal(null);
   }
 

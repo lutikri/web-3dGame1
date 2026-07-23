@@ -52,6 +52,23 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     }
   },
+  "physicalBriefing": {
+    "enabled": true,
+    "prefabType": "briefSheet",
+    "socketPrefix": "SOCKET_Brief_",
+    "briefingLevelId": "intro-shift",
+    "holdSeconds": 0.5,
+    "maxDistance": 1.65,
+    "sheets": {
+      "en": [
+        "assets/ui/briefings/Intro1-us.png"
+      ],
+      "ru": [
+        "assets/ui/briefings/Intro1-ru.png",
+        "assets/ui/briefings/Intro1_2-ru.png"
+      ]
+    }
+  },
   "prefabs": [
     {
       "name": "Panel1",
@@ -496,6 +513,13 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "audio": {
+        "loopSoundKey": "Clock1_loop",
+        "volume": 0.22,
+        "refDistance": 0.35,
+        "maxDistance": 2.4,
+        "fadeSeconds": 0.25
+      },
       "name": "Clock1_Exploring",
       "position": {
         "x": 2.735935485382484,
@@ -915,6 +939,13 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "audio": {
+        "loopSoundKey": "Clock1_loop",
+        "volume": 0.22,
+        "refDistance": 0.35,
+        "maxDistance": 2.4,
+        "fadeSeconds": 0.25
+      },
       "name": "analogClock_Exit",
       "position": {
         "x": -4.113340377807617,
@@ -1120,8 +1151,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "type": "spot",
         "markerName": "LGT_DeskLamp1",
         "color": "#fff1cf",
-        "intensity": 1.25,
-        "distance": 4,
+        "intensity": 0.6,
+        "distance": 1,
         "decay": 1.5,
         "angle": 0.63,
         "penumbra": 0.18,
@@ -1333,6 +1364,90 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "x": 1.0000000002173655,
         "y": 1,
         "z": 1.0000000002173655
+      }
+    },
+    {
+      "rootName": "SM_Brief1",
+      "briefSheet": {
+        "meshName": "SM_Brief1",
+        "texturePath": "assets/ui/briefings/Intro1-ru.png",
+        "sheetIndex": 0,
+        "briefingLevelId": "intro-shift",
+        "holdSeconds": 0.5,
+        "maxDistance": 1.65
+      },
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Brief1"
+        ],
+        "density": 80,
+        "linearDamping": 0.8,
+        "angularDamping": 1.4,
+        "friction": 0.72,
+        "restitution": 0,
+        "canSleep": true
+      },
+      "name": "Brief_01",
+      "position": {
+        "x": -2.44248366355896,
+        "y": 0.9720377922058105,
+        "z": 9.112358093261719
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": -0.1365851666228528,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000000002559692,
+        "y": 1,
+        "z": 1.0000000002559692
+      }
+    },
+    {
+      "rootName": "SM_Brief1",
+      "briefSheet": {
+        "meshName": "SM_Brief1",
+        "texturePath": "assets/ui/briefings/Intro1_2-ru.png",
+        "sheetIndex": 1,
+        "briefingLevelId": "intro-shift",
+        "holdSeconds": 0.5,
+        "maxDistance": 1.65
+      },
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Brief1"
+        ],
+        "density": 80,
+        "linearDamping": 0.8,
+        "angularDamping": 1.4,
+        "friction": 0.72,
+        "restitution": 0,
+        "canSleep": true
+      },
+      "name": "Brief_02",
+      "position": {
+        "x": -2.838200092315674,
+        "y": 0.9720377922058105,
+        "z": 9.112358093261719
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0.10035192153932494,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 0.9999999999735899,
+        "y": 1,
+        "z": 0.9999999999735899
       }
     }
   ],

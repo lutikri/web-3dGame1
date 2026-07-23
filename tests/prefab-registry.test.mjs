@@ -31,6 +31,18 @@ test("dome lamp owns its bulb material, zero-offset point light, and runtime pho
   assert.equal(lamp.light.photometricProfile.flipY, true);
 });
 
+test("desk lamp owns its emissive bulb override and authored spotlight marker", () => {
+  const lamp = createPrefabInstance("LampDesk1", { name: "DeskLamp" });
+  assert.equal(lamp.materialOverrides.SM_LampDesk1_Bulb, "lampDesk1Bulb");
+  assert.equal(lamp.light.markerName, "LGT_DeskLamp1");
+});
+
+test("analog clock owns a reusable positional loop definition", () => {
+  const clock = createPrefabInstance("analogClock", { name: "HallClock" });
+  assert.equal(clock.audio.loopSoundKey, "Clock1_loop");
+  assert.equal(clock.audio.maxDistance, 2.4);
+});
+
 test("unknown override fields cannot extend a prefab definition", () => {
   const instance = createPrefabInstance("bulkheadDoor", {
     name: "Door",

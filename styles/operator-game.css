@@ -132,9 +132,9 @@ body.interactive-hover .crosshair {
   opacity: 1;
 }
 
-body.door-interactive-hover .crosshair {
+body.door-interactive-hover .crosshair,
+body.brief-interactive-hover .crosshair {
   border-color: #42ff79;
-  box-shadow: 0 0 9px rgba(66, 255, 121, 0.75);
 }
 
 #lockButton {
@@ -203,6 +203,48 @@ body.door-interactive-hover .crosshair {
 .operator-subtitle.is-visible {
   transform: translate(-50%, 0);
   opacity: 1;
+}
+
+.hold-indicator {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  top: 50%;
+  left: 50%;
+  overflow: visible;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transition: opacity 120ms ease;
+  transition-delay: 0ms;
+}
+
+.hold-indicator circle {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.hold-indicator-track {
+  stroke: rgba(66, 255, 121, 0.28);
+}
+
+.hold-indicator-progress {
+  stroke: #42ff79;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--hold-progress, 0));
+}
+
+body.hold-interactive-hover .hold-indicator {
+  opacity: 1;
+  transition-delay: 140ms;
+}
+
+body.hold-interaction-active .hold-indicator {
+  transition-delay: 0ms;
+}
+
+body:not(.hold-interaction-active) .hold-indicator-progress {
+  opacity: 0;
 }
 
 .operator-subtitle[data-mode="film"] {

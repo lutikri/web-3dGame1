@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=suspended-lamp-properties-2";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=suspended-lamp-properties-2";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=suspended-lamp-properties-2";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=suspended-lamp-properties-2";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=environment-polish";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=environment-polish";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=environment-polish";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=environment-polish";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -39,6 +39,21 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         axis: "z",
         speedDegreesPerSecond: 120,
       },
+    },
+  },
+  physicalBriefing: {
+    enabled: true,
+    prefabType: "briefSheet",
+    socketPrefix: "SOCKET_Brief_",
+    briefingLevelId: "intro-shift",
+    holdSeconds: 0.5,
+    maxDistance: 1.65,
+    sheets: {
+      en: ["assets/ui/briefings/Intro1-us.png"],
+      ru: [
+        "assets/ui/briefings/Intro1-ru.png",
+        "assets/ui/briefings/Intro1_2-ru.png",
+      ],
     },
   },
   session: {

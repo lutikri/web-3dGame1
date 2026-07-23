@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=suspended-lamp-properties-2";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=suspended-lamp-properties-2";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=suspended-lamp-properties-2";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=suspended-lamp-properties-2";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=environment-polish";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=environment-polish";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=environment-polish";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=environment-polish";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -113,6 +113,21 @@ export const CONFIG = {
       metalness: 0,
     },
     specialMaterials: applyLevelMaterialTuning({
+      briefPaper: {
+        materialNames: ["M_Brief", "M_Brief.001"],
+        meshNames: ["SM_Brief1"],
+        color: "#ffffff",
+        roughness: 0.82,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        alphaTest: 0.5,
+        side: THREE.DoubleSide,
+        castShadow: true,
+        receiveShadow: true,
+      },
       lampDome1Bulb: {
         materialNames: ["M_EmissBulb1"],
         meshNames: ["SM_LampDome1_Bulb"],
@@ -516,6 +531,36 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#000000",
         emissiveIntensity: 0,
+      },
+      lampDesk1Bulb: {
+        meshNames: ["SM_LampDesk1_Bulb"],
+        color: "#fff4d6",
+        roughness: 0.34,
+        metalness: 0,
+        emissive: "#fff0c7",
+        emissiveIntensity: 5,
+        castShadow: false,
+        receiveShadow: false,
+      },
+      posters1: {
+        materialNames: ["M_Posters1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Posters1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Posters1_BaseColor_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 0.82,
+        metalness: 0,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        alphaTest: 0.5,
+        side: THREE.DoubleSide,
+        castShadow: true,
+        receiveShadow: true,
       },
       doorLamp2: {
         materialNames: ["M_DoorLamp2"],

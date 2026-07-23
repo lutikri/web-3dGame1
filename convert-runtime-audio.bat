@@ -23,10 +23,10 @@ if (!(Test-Path -LiteralPath $sourceDir)) {
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 function Get-AudioCategory($name) {
-  if ($name -like "Ambience_*") { return "ambience" }
+  if ($name -like "Ambience_*" -or $name -like "AmbienceLoop_*") { return "ambience" }
   if ($name -like "UI_*") { return "ui" }
   if ($name -like "Message*" -or $name -like "Radio*") { return "narration" }
-  if ($name -like "FusionCore_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "ControlPostBuzz*") { return "machinery" }
+  if ($name -like "FusionCore_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "ControlPostBuzz*" -or $name -like "Clock*") { return "machinery" }
   if ($name -like "Footsteps*") { return "player" }
   if ($name -like "Button*" -or $name -like "Door*" -or $name -like "Motor*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*") { return "interaction" }
   return "misc"
@@ -53,6 +53,10 @@ foreach ($source in $sources) {
   New-Item -ItemType Directory -Force -Path $categoryOutDir | Out-Null
   $targetName = [System.IO.Path]::ChangeExtension($source.Name, ".ogg")
   $targetPath = Join-Path $categoryOutDir $targetName
+  if ((Test-Path -LiteralPath $targetPath) -and (Get-Item -LiteralPath $targetPath).LastWriteTimeUtc -ge $source.LastWriteTimeUtc) {
+    Write-Host "[$index/$($sources.Count)] Current $category/$targetName"
+    continue
+  }
   Write-Host "[$index/$($sources.Count)] $($source.Name) -> $category/$targetName"
   & $ffmpegCommand.Source -y -hide_banner -loglevel error -i $source.FullName -c:a libvorbis -q:a $quality $targetPath
   if ($LASTEXITCODE -ne 0) {

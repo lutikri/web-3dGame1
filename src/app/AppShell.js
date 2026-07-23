@@ -1,8 +1,8 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=suspended-lamp-properties-2";
-import { translate } from "./Localization.js?v=suspended-lamp-properties-2";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=suspended-lamp-properties-2";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=suspended-lamp-properties-2";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=suspended-lamp-properties-2";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=environment-polish";
+import { translate } from "./Localization.js?v=environment-polish";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=environment-polish";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=environment-polish";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=environment-polish";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -12,12 +12,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=suspended-lamp-properties-2";
-import { createAppPanelController } from "./AppPanelController.js?v=suspended-lamp-properties-2";
-import { createAppRouter } from "./AppRouter.js?v=suspended-lamp-properties-2";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=suspended-lamp-properties-2";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=suspended-lamp-properties-2";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=suspended-lamp-properties-2";
+} from "./AppPersistence.js?v=environment-polish";
+import { createAppPanelController } from "./AppPanelController.js?v=environment-polish";
+import { createAppRouter } from "./AppRouter.js?v=environment-polish";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=environment-polish";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=environment-polish";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=environment-polish";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -89,12 +89,26 @@ export function createAppShell({ gameApi }) {
   });
   briefingPanel = createBriefingPanel({
     levels: LEVELS,
-    onActiveChange: updateInputLock,
+    onActiveChange: (active) => {
+      updateInputLock(active);
+      if (!active) gameApi.finishHoldInteraction?.();
+    },
     onDismissed: (levelId, delayMs) => maybeStartIntroTutorial(levelId, delayMs),
+    onSheetShown: () => {
+      gameApi.finishHoldInteraction?.();
+      gameApi.playSoundGroup?.("paperSlide");
+    },
   });
   const preloadLevelBriefing = briefingPanel.preload;
   const showLevelBriefing = briefingPanel.show;
   const dismissBriefing = briefingPanel.dismiss;
+  function dismissBriefingAndRestorePointerLock() {
+    const dismissed = dismissBriefing();
+    if (dismissed && !briefingPanel.isActive()) gameApi.requestPointerLock?.();
+    return dismissed;
+  }
+  gameApi.setBriefingSheetOpener?.(({ levelId, sheetIndex }) =>
+    briefingPanel.showSheet(levelId, sheetIndex));
   let resolveInitialRouteReady = null;
   const initialRouteReady = new Promise((resolve) => {
     resolveInitialRouteReady = resolve;
@@ -139,12 +153,12 @@ export function createAppShell({ gameApi }) {
     document.addEventListener("keydown", (event) => {
       if (briefingPanel.isActive() && event.code === "Enter" && !event.repeat) {
         event.preventDefault();
-        dismissBriefing();
+        dismissBriefingAndRestorePointerLock();
         return;
       }
       if (briefingPanel.isActive() && event.key === "Enter" && !event.repeat) {
         event.preventDefault();
-        dismissBriefing();
+        dismissBriefingAndRestorePointerLock();
         return;
       }
       if (briefingPanel.isActive()) {

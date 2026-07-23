@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=environment-polish";
 
 const EFFECT_KEYS = [
   "bloom",

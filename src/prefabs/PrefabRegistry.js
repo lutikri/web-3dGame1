@@ -225,6 +225,31 @@ const PREFAB_DEFINITIONS = {
       },
     },
   },
+  briefSheet: {
+    assetPath: "assets/mesh/prefabs/SM_Brief1.glb",
+    rootName: "SM_Brief1",
+    materialKey: "briefPaper",
+    behavior: "briefSheet",
+    briefSheet: {
+      meshName: "SM_Brief1",
+      texturePath: "",
+      sheetIndex: 0,
+      briefingLevelId: "intro-shift",
+      holdSeconds: 0.5,
+      maxDistance: 1.65,
+    },
+    rigidBody: {
+      enabled: true,
+      bodyType: "dynamic",
+      colliderNamePrefixes: ["UBX_SM_Brief1"],
+      density: 80,
+      linearDamping: 0.8,
+      angularDamping: 1.4,
+      friction: 0.72,
+      restitution: 0,
+      canSleep: true,
+    },
+  },
   bulkheadDoor: {
     assetPath: "assets/mesh/prefabs/SM_DoorBulk1.glb",
     materialKey: "doorLamp2",
@@ -353,6 +378,9 @@ const PREFAB_DEFINITIONS = {
     rootName: "SM_LampDesk1",
     materialKey: "desk1",
     behavior: "rigidProp",
+    materialOverrides: {
+      SM_LampDesk1_Bulb: "lampDesk1Bulb",
+    },
     rigidBody: {
       enabled: true,
       bodyType: "dynamic",
@@ -438,6 +466,13 @@ const PREFAB_DEFINITIONS = {
       hoursHandName: "SM_Clock1_ArrowHours",
       smoothSeconds: true,
     },
+    audio: {
+      loopSoundKey: "Clock1_loop",
+      volume: 0.22,
+      refDistance: 0.35,
+      maxDistance: 2.4,
+      fadeSeconds: 0.25,
+    },
   },
 };
 
@@ -453,6 +488,7 @@ const REGISTRY_OWNED_KEYS = new Set([
   "behavior",
   "interaction",
   "radio",
+  "audio",
   "prefabType",
 ]);
 

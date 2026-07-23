@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=suspended-lamp-properties-2";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=suspended-lamp-properties-2";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=suspended-lamp-properties-2";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=suspended-lamp-properties-2";
+import { createDebugHub } from "./DebugHub.js?v=environment-polish";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=environment-polish";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=environment-polish";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=environment-polish";
 
 export class DebugToolsRuntime {
   constructor(options) {

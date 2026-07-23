@@ -97,6 +97,17 @@ export class SceneAudioRuntime {
             fadeSeconds: post.fadeSeconds ?? 0.35,
           });
       }
+      const prefabLoop = prefab?.audio;
+      if (prefabLoop?.loopSoundKey) {
+        this.audio.setAttachedLoop(`prefab:${key}:loop`, runtime.root, prefabLoop.loopSoundKey,
+          levelId === displayedLevelId, {
+            levelId,
+            volume: prefabLoop.volume,
+            refDistance: prefabLoop.refDistance,
+            maxDistance: prefabLoop.maxDistance,
+            fadeSeconds: prefabLoop.fadeSeconds,
+          });
+      }
     });
   }
 

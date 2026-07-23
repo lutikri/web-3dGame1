@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=suspended-lamp-properties-2";
-import { applyLocalization } from "./app/Localization.js?v=suspended-lamp-properties-2";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=suspended-lamp-properties-2";
+import { createPreflight } from "./app/Preflight.js?v=environment-polish";
+import { applyLocalization } from "./app/Localization.js?v=environment-polish";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=environment-polish";
 
-const APP_BUILD_REVISION = "suspended-lamp-properties-2";
+const APP_BUILD_REVISION = "environment-polish";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=suspended-lamp-properties-2`);
+await import(`./OperatorGame.js?v=environment-polish`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=suspended-lamp-properties-2`);
+const { createAppShell } = await import(`./app/AppShell.js?v=environment-polish`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=suspended-lamp-properties-2`
+    `./runtime/RuntimeSmoke.js?v=environment-polish`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

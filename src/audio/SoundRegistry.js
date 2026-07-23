@@ -1,4 +1,10 @@
 export const SOUND_REGISTRY = {
+  Ambience_EntryHall1: {
+    path: "assets/sounds/ambience/AmbienceLoop_EntryHall1.ogg",
+    loop: true,
+    volume: 0.38,
+    fadeDistance: 1.8,
+  },
   Ambience_Cave1: {
     path: "assets/sounds/ambience/Ambience_Cave1.ogg",
     loop: true,
@@ -28,6 +34,14 @@ export const SOUND_REGISTRY = {
     refDistance: 0.45,
     maxDistance: 2,
     fadeSeconds: 0.35,
+  },
+  Clock1_loop: {
+    path: "assets/sounds/machinery/Clock1_loop.ogg",
+    loop: true,
+    volume: 0.22,
+    refDistance: 0.35,
+    maxDistance: 2.4,
+    fadeSeconds: 0.25,
   },
   DoorBulk1_Close1: { path: "assets/sounds/interaction/DoorBulk1_Close1.ogg", volume: 0.78 },
   DoorBulk1_LatchCrank1: { path: "assets/sounds/interaction/DoorBulk1_LatchCrank1.ogg", volume: 0.86 },

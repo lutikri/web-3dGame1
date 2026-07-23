@@ -29,7 +29,12 @@
     <div id="app">
       <div id="fpsMeter" class="fps-meter" aria-live="polite" hidden>FPS --</div>
       <pre id="debugOverlay" class="debug-overlay" hidden>camera</pre>
-      <div class="crosshair" aria-hidden="true"></div>
+      <div class="crosshair" aria-hidden="true">
+        <svg class="hold-indicator" viewBox="0 0 36 36">
+          <circle class="hold-indicator-track" cx="18" cy="18" r="15.5" />
+          <circle class="hold-indicator-progress" cx="18" cy="18" r="15.5" pathLength="100" />
+        </svg>
+      </div>
       <button id="lockButton" type="button">Enter First Person</button>
       <canvas id="scene"></canvas>
       <div id="loadingOverlay" class="loading-overlay" aria-live="polite">
@@ -254,6 +259,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=suspended-lamp-properties-2"></script>
+    <script type="module" src="src/main.js?v=environment-polish"></script>
   </body>
 </html>

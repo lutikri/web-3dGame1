@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=suspended-lamp-properties-2";
+} from "./FluorescentBehavior.js?v=environment-polish";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

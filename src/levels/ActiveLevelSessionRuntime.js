@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=suspended-lamp-properties-2";
+import { LevelSession } from "./LevelSession.js?v=environment-polish";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {} } = {}) {

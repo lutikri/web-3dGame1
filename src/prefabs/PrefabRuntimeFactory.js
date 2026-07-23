@@ -1,11 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=suspended-lamp-properties-2";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=suspended-lamp-properties-2";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=suspended-lamp-properties-2";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=suspended-lamp-properties-2";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=suspended-lamp-properties-2";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=suspended-lamp-properties-2";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=environment-polish";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=environment-polish";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=environment-polish";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=environment-polish";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=environment-polish";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=environment-polish";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=environment-polish";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -47,7 +48,8 @@ export function createPrefabRuntimeFactory({
       const materialKey = resolveMaterialKey(object, prefabConfig);
       const sourceMaterial = materials.interiorCustom[materialKey] ?? materials.interior;
       const materialConfig = config.interior.specialMaterials?.[materialKey] ?? {};
-      const shouldClone = Boolean(prefabConfig.light) || materialKey !== prefabConfig.materialKey;
+      const shouldClone = prefabConfig.behavior === "briefSheet"
+        || Boolean(prefabConfig.light) || materialKey !== prefabConfig.materialKey;
       object.material = shouldClone ? sourceMaterial.clone() : sourceMaterial;
       if (shouldClone) photometricLights.resetClonedMaterial(object.material);
       photometricLights.patchMaterial(object.material);
@@ -103,6 +105,8 @@ export function createPrefabRuntimeFactory({
       runtime.controlPost = createControlPostRuntime(runtime.parts, prefabConfig.controlPost);
     } else if (prefabConfig.behavior === "suspendedLamp") {
       runtime.suspendedLamp = createSuspendedLampRuntime(runtime.parts, prefabConfig.suspension, prefabConfig.name);
+    } else if (prefabConfig.behavior === "briefSheet") {
+      runtime.briefSheet = createBriefSheetRuntime(runtime.parts, prefabConfig.briefSheet);
     }
   }
 

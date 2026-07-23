@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=suspended-lamp-properties-2";
+import { translateRequired } from "./Localization.js?v=environment-polish";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

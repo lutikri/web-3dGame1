@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=suspended-lamp-properties-2";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=environment-polish";
 
 const DISMISS_MS = 300;
 
@@ -6,6 +6,7 @@ export function createBriefingPanel({
   levels,
   onActiveChange,
   onDismissed,
+  onSheetShown,
   root = document,
   getLanguage = () => document.documentElement.lang,
 }) {
@@ -66,6 +67,16 @@ export function createBriefingPanel({
 
   function show(requestedLevelId) {
     const sheets = getSheets(requestedLevelId);
+    return showSheets(requestedLevelId, sheets);
+  }
+
+  function showSheet(requestedLevelId, sheetIndex) {
+    const sheets = getSheets(requestedLevelId);
+    const selected = sheets[Number.isInteger(sheetIndex) ? sheetIndex : -1];
+    return showSheets(requestedLevelId, selected ? [selected] : []);
+  }
+
+  function showSheets(requestedLevelId, sheets) {
     if (sheets.length === 0 || !overlay || !image) return false;
     window.clearTimeout(hideTimer);
     sheetToken += 1;
@@ -130,6 +141,7 @@ export function createBriefingPanel({
       overlay.hidden = false;
       overlay.getBoundingClientRect();
       overlay.classList.add("is-visible");
+      onSheetShown?.({ levelId, source });
     };
     image.src = source;
     if (image.complete) image.onload();
@@ -187,7 +199,7 @@ export function createBriefingPanel({
     onActiveChange?.(active);
   }
 
-  return { wire, preload, show, dismiss, hide, isActive: () => active, getSheets };
+  return { wire, preload, show, showSheet, dismiss, hide, isActive: () => active, getSheets };
 }
 
 export function isPointInsideRect(x, y, rect) {
