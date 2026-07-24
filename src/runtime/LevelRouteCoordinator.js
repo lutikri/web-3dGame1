@@ -11,10 +11,12 @@ export class LevelRouteCoordinator {
     return this.enterMenuView();
   };
 
-  enterLevel = async ({ levelId, mode }) => {
+  enterLevel = async ({ levelId, mode, onProgress }) => {
     this.stopEditing();
+    onProgress?.(8);
     const loadedLevelId = await this.loadEnvironment(levelId);
     if (loadedLevelId !== this.resolveEnvironmentId(levelId)) return false;
+    onProgress?.(68);
 
     const config = this.getLevelConfig(levelId, loadedLevelId);
     this.setActiveRoute(levelId, mode);
@@ -22,6 +24,7 @@ export class LevelRouteCoordinator {
     this.setLevelView();
     this.resetDoors(levelId);
     this.activateEnvironment();
+    onProgress?.(76);
     this.restartPrefabLights(loadedLevelId);
     this.setRoomLights(true, { instant: false });
     this.resetDiagnostics({ levelId, config });
@@ -34,7 +37,16 @@ export class LevelRouteCoordinator {
     const snapshot = this.getCoreSnapshot();
     this.resetCompletion(snapshot.mode);
     this.updateStatus(snapshot, true);
-    this.scheduleNarration(levelId);
+    const warmupStarted = nowMilliseconds();
+    await this.warmupRendering?.(loadedLevelId);
+    console.info(`[RenderWarmup] ${loadedLevelId}: ${(nowMilliseconds() - warmupStarted).toFixed(1)}ms`);
+    onProgress?.(94);
+    if (config.narration?.autoStart !== false) this.scheduleNarration(levelId);
+    onProgress?.(98);
     return true;
   };
+}
+
+function nowMilliseconds() {
+  return globalThis.performance?.now?.() ?? Date.now();
 }

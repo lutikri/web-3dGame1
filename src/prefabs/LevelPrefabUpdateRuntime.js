@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=environment-polish";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=environment-polish";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=environment-polish";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=environment-polish";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=environment-polish";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=subtitle-route-fades";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=subtitle-route-fades";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=subtitle-route-fades";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=subtitle-route-fades";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -53,7 +53,7 @@ export class LevelPrefabUpdateRuntime {
       const roomEmissive = light.roomLightControlled
         ? Math.max(this.getRoomLightVisualFactor(), this.getRoomLightAfterglowFactor()) : 1;
       const sceneFactor = this.getSceneLightFactor();
-      runtime.light.visible = light.enabled !== false;
+      runtime.light.visible = true;
       runtime.light.intensity = light.intensity * (light.enabled === false ? 0 : factor) * roomPoint * sceneFactor;
       runtime.emissiveMaterials.forEach((material) => {
         const base = material.userData.baseEmissiveIntensity ?? 1;

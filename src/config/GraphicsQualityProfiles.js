@@ -11,6 +11,7 @@ const POST_EFFECT_KEYS = [
 export const GRAPHICS_QUALITY_PROFILES = {
   low: {
     pixelRatio: 0.6,
+    photometricLightSlots: 1,
     shadowQuality: "off",
     gtaoQuality: "off",
     fullTextures: false,
@@ -18,6 +19,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
   },
   medium: {
     pixelRatio: 0.75,
+    photometricLightSlots: 2,
     shadowQuality: "off",
     gtaoQuality: "off",
     fullTextures: true,
@@ -25,6 +27,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
   },
   high: {
     pixelRatio: 1,
+    photometricLightSlots: 4,
     shadowQuality: "med",
     gtaoQuality: "max",
     fullTextures: true,

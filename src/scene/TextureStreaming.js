@@ -53,6 +53,7 @@ export function createTextureStreaming({ renderer, transcoderPath, onProgress, o
       map: paths.baseColor ? loadRuntimeTexture(paths.baseColor, { ...options, colorSpace: THREE.SRGBColorSpace }) : null,
       normalMap: paths.normal ? loadRuntimeTexture(paths.normal, options) : null,
       ormMap: paths.orm ? loadRuntimeTexture(paths.orm, options) : null,
+      roughnessMap: paths.roughness ? loadRuntimeTexture(paths.roughness, options) : null,
       emissiveMap: paths.emissive
         ? loadRuntimeTexture(paths.emissive, { ...options, colorSpace: THREE.SRGBColorSpace })
         : null,

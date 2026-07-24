@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=environment-polish";
+import { translateRequired } from "./Localization.js?v=subtitle-route-fades";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

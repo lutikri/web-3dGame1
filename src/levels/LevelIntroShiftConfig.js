@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=environment-polish";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=environment-polish";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=environment-polish";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=environment-polish";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=subtitle-route-fades";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=subtitle-route-fades";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=subtitle-route-fades";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=subtitle-route-fades";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

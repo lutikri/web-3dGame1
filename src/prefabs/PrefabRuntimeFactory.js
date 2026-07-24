@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=environment-polish";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=environment-polish";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=environment-polish";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=environment-polish";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=environment-polish";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=environment-polish";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=environment-polish";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=subtitle-route-fades";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=subtitle-route-fades";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=subtitle-route-fades";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=subtitle-route-fades";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=subtitle-route-fades";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=subtitle-route-fades";
 
 export function createPrefabRuntimeFactory({
   config,

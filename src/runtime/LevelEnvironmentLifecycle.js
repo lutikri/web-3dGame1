@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=environment-polish";
+import { LevelRuntime } from "./LevelRuntime.js?v=subtitle-route-fades";
 
 export class LevelEnvironmentLifecycle {
   constructor({
@@ -22,6 +22,7 @@ export class LevelEnvironmentLifecycle {
   }
 
   async load(levelId) {
+    const loadStarted = nowMilliseconds();
     const environment = this.environments?.[levelId];
     if (!environment) throw new Error(`[LevelRuntime] Unknown environment: ${levelId}`);
     const runtime = new LevelRuntime(levelId);
@@ -29,11 +30,16 @@ export class LevelEnvironmentLifecycle {
     this.lighting.createLevel(levelId, environment.lighting);
     try {
       const prefabCountBeforeBuild = environment.prefabs?.length ?? 0;
+      const buildStarted = nowMilliseconds();
       await this.sceneBuilder.build(runtime, levelId, environment);
+      const buildMs = nowMilliseconds() - buildStarted;
+      const physicsStarted = nowMilliseconds();
       this.rebuildStaticPhysics(levelId);
+      const physicsMs = nowMilliseconds() - physicsStarted;
       if ((environment.prefabs?.length ?? 0) !== prefabCountBeforeBuild) this.rebuildDebugPanels();
       this.updateActiveEnvironment();
       console.log(`[LevelRuntime] Loaded only: ${levelId}`);
+      console.info(`[LevelLoadTiming] ${levelId}: total=${(nowMilliseconds() - loadStarted).toFixed(1)}ms build=${buildMs.toFixed(1)}ms physics=${physicsMs.toFixed(1)}ms`);
       return runtime.activate();
     } catch (error) {
       try {
@@ -48,4 +54,8 @@ export class LevelEnvironmentLifecycle {
   dispose(runtime) {
     return runtime.dispose();
   }
+}
+
+function nowMilliseconds() {
+  return globalThis.performance?.now?.() ?? Date.now();
 }

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=environment-polish";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=environment-polish";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=environment-polish";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=environment-polish";
+import { createDebugHub } from "./DebugHub.js?v=subtitle-route-fades";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=subtitle-route-fades";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=subtitle-route-fades";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=subtitle-route-fades";
 
 export class DebugToolsRuntime {
   constructor(options) {

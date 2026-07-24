@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=environment-polish";
+import { LevelSession } from "./LevelSession.js?v=subtitle-route-fades";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {} } = {}) {

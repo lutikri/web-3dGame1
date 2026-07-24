@@ -15,7 +15,13 @@ export function createInteriorMaterialFactory({
           y: Number(repeatConfig.y ?? repeatConfig[1] ?? repeatConfig.x ?? repeatConfig[0] ?? 1),
         }
       : { x: Number(repeatConfig ?? 1), y: Number(repeatConfig ?? 1) };
-    [textureMaps.map, textureMaps.normalMap, textureMaps.ormMap, textureMaps.emissiveMap].forEach((texture) => {
+    [
+      textureMaps.map,
+      textureMaps.normalMap,
+      textureMaps.ormMap,
+      textureMaps.roughnessMap,
+      textureMaps.emissiveMap,
+    ].forEach((texture) => {
       if (!texture) return;
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
@@ -90,7 +96,7 @@ export function createInteriorMaterialFactory({
     material.map = textureMaps.map ?? null;
     material.normalMap = textureMaps.normalMap ?? null;
     material.aoMap = textureMaps.ormMap ?? null;
-    material.roughnessMap = textureMaps.ormMap ?? null;
+    material.roughnessMap = textureMaps.roughnessMap ?? textureMaps.ormMap ?? null;
     material.metalnessMap = textureMaps.ormMap ?? null;
     material.emissiveMap = textureMaps.emissiveMap ?? null;
     material.userData.maskMap = textureMaps.maskMap ?? null;

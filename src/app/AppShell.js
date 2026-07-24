@@ -1,8 +1,8 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=environment-polish";
-import { translate } from "./Localization.js?v=environment-polish";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=environment-polish";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=environment-polish";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=environment-polish";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=subtitle-route-fades";
+import { translate } from "./Localization.js?v=subtitle-route-fades";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=subtitle-route-fades";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=subtitle-route-fades";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=subtitle-route-fades";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -12,12 +12,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=environment-polish";
-import { createAppPanelController } from "./AppPanelController.js?v=environment-polish";
-import { createAppRouter } from "./AppRouter.js?v=environment-polish";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=environment-polish";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=environment-polish";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=environment-polish";
+} from "./AppPersistence.js?v=subtitle-route-fades";
+import { createAppPanelController } from "./AppPanelController.js?v=subtitle-route-fades";
+import { createAppRouter } from "./AppRouter.js?v=subtitle-route-fades";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=subtitle-route-fades";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=subtitle-route-fades";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=subtitle-route-fades";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -279,7 +279,7 @@ export function createAppShell({ gameApi }) {
       runRouteTransition({
         title: translate("actions.mainMenu"),
         status: translate("loading.returning"),
-        action: async () => {
+        action: async ({ setProgress }) => {
           gameApi.hideShiftResults?.({ immediate: true });
           await gameApi.resetForMenu?.();
           activeGameplayLevelId = null;
@@ -303,10 +303,10 @@ export function createAppShell({ gameApi }) {
       runRouteTransition({
         title: translate("loading.restartingShift"),
         status: translate("loading.resettingCore"),
-        action: async () => {
+        action: async ({ setProgress }) => {
           gameApi.hideShiftResults?.({ immediate: true });
           hideOverlay();
-          await gameApi.restartGame?.();
+          await gameApi.restartGame?.({ onProgress: setProgress });
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
           await preloadLevelBriefing(activeGameplayLevelId);
           showLevelBriefing(activeGameplayLevelId);
@@ -340,10 +340,10 @@ export function createAppShell({ gameApi }) {
     const transition = runRouteTransition({
       title: getLevelTitle(levelId),
       status: translate("loading.loadingShift"),
-      action: async () => {
+      action: async ({ setProgress }) => {
         gameApi.hideShiftResults?.();
         hideOverlay();
-        await gameApi.startLevel?.({ levelId, mode: level.mode });
+        await gameApi.startLevel?.({ levelId, mode: level.mode, onProgress: setProgress });
         activeGameplayLevelId = levelId;
         await preloadLevelBriefing(levelId);
         showLevelBriefing(levelId);

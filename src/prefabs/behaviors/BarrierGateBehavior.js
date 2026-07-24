@@ -8,6 +8,8 @@ export function createBarrierGateRuntime(parts, config = {}) {
     unlockSequenceStarted: !Boolean(config.locked),
     beepPlayed: false,
     nudgeIssued: !Boolean(config.locked),
+    unlockRequested: false,
+    unlockElapsed: null,
   };
 }
 
@@ -18,6 +20,14 @@ export function resetBarrierGateRuntime(runtime) {
   runtime.unlockSequenceStarted = !Boolean(runtime.locked);
   runtime.beepPlayed = false;
   runtime.nudgeIssued = !Boolean(runtime.locked);
+  runtime.unlockRequested = false;
+  runtime.unlockElapsed = null;
+}
+
+export function requestBarrierGateUnlock(runtime) {
+  if (!runtime || runtime.unlocked) return false;
+  runtime.unlockRequested = true;
+  return true;
 }
 
 export function updateBarrierGateRuntime(runtime, dt) {
@@ -25,8 +35,12 @@ export function updateBarrierGateRuntime(runtime, dt) {
   runtime.elapsed = (runtime.elapsed ?? 0) + dt;
   const events = [];
 
-  if (!runtime.unlocked && runtime.elapsed >= Math.max(0, runtime.unlockDelaySeconds ?? 20)) {
+  const timedUnlock = runtime.unlockMode !== "command"
+    && runtime.elapsed >= Math.max(0, runtime.unlockDelaySeconds ?? 20);
+  if (!runtime.unlocked && (runtime.unlockRequested || timedUnlock)) {
     runtime.unlocked = true;
+    runtime.unlockRequested = false;
+    runtime.unlockElapsed = runtime.elapsed;
     runtime.unlockSequenceStarted = true;
     runtime.nudgeIssued = true;
     events.push({
@@ -44,7 +58,7 @@ export function updateBarrierGateRuntime(runtime, dt) {
     }
   }
 
-  const beepAt = Math.max(0, runtime.unlockDelaySeconds ?? 20) + Math.max(0, runtime.soundGapSeconds ?? 0.35);
+  const beepAt = (runtime.unlockElapsed ?? runtime.elapsed) + Math.max(0, runtime.soundGapSeconds ?? 0.35);
   if (runtime.unlocked && !runtime.beepPlayed && runtime.elapsed >= beepAt) {
     runtime.beepPlayed = true;
     if (runtime.unlockBeepSoundKey) {

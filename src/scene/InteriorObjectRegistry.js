@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=environment-polish";
+import { applyAxisRotation } from "./TransformUtils.js?v=subtitle-route-fades";
 
 export class InteriorObjectRegistry {
   constructor(options) {

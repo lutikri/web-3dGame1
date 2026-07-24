@@ -18,6 +18,7 @@ function createCoordinator({ loaded = "room" } = {}) {
     getLevelConfig: () => ({ session: { objectives: [] }, shiftProfile: "high" }),
     setActiveRoute: record("route"), setLevelView: record("levelView"), resetDoors: record("doors"),
     activateEnvironment: record("activate"), restartPrefabLights: record("lights"),
+    warmupRendering: async () => { calls.push(["warmup"]); },
     setRoomLights: record("roomLights"), resetDiagnostics: record("diagnostics"),
     resetFuelBlend: record("fuelReset"), resetRecorder: record("recorder"), resetCore: record("coreReset"),
     stopFuelBlend: record("fuelStop"), getCoreSnapshot: () => ({ mode: "standby" }),
@@ -28,12 +29,18 @@ function createCoordinator({ loaded = "room" } = {}) {
 
 test("level route coordinator composes a complete level entry", async () => {
   const { coordinator, calls } = createCoordinator();
-  assert.equal(await coordinator.enterLevel({ levelId: "qualification", mode: "tutorial" }), true);
+  const progress = [];
+  assert.equal(await coordinator.enterLevel({
+    levelId: "qualification",
+    mode: "tutorial",
+    onProgress: (value) => progress.push(value),
+  }), true);
   assert.deepEqual(calls.map(([name]) => name), [
     "stopEditing", "route", "sessionStart", "levelView", "doors", "activate", "lights",
     "roomLights", "diagnostics", "fuelReset", "shiftProfile", "resetLevel", "recorder",
-    "coreReset", "fuelStop", "completion", "status", "narration",
+    "coreReset", "fuelStop", "completion", "status", "warmup", "narration",
   ]);
+  assert.deepEqual(progress, [8, 68, 76, 94, 98]);
 });
 
 test("level route coordinator aborts when the requested environment was not loaded", async () => {

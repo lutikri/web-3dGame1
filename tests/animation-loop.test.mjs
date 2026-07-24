@@ -13,8 +13,8 @@ test("animation loop clamps delta and executes ordered runtime steps", () => {
       (dt) => calls.push(["render", dt]),
     ],
     requestFrame: (callback) => { nextFrame = callback; },
-    requestBackgroundFrame: () => assert.fail("foreground loop used background scheduler"),
-    isBackground: () => false,
+    requestDelayedFrame: () => assert.fail("foreground loop used delayed scheduler"),
+    getFrameDelay: () => null,
   });
 
   loop.start();
@@ -26,17 +26,47 @@ test("animation loop clamps delta and executes ordered runtime steps", () => {
   assert.equal(calls.length, 2);
 });
 
-test("animation loop throttles scheduling while the page is in background", () => {
-  let backgroundFrames = 0;
+test("animation loop uses the delay selected by its scheduling policy", () => {
+  const delays = [];
   const loop = new AnimationLoop({
     clock: { getDelta: () => 0.01 },
     steps: [() => {}],
-    requestFrame: () => assert.fail("background loop used foreground scheduler"),
-    requestBackgroundFrame: () => { backgroundFrames += 1; },
-    isBackground: () => true,
+    requestFrame: () => assert.fail("delayed loop used foreground scheduler"),
+    requestDelayedFrame: (_callback, delayMs) => { delays.push(delayMs); },
+    getFrameDelay: () => 1000,
   });
 
   loop.start();
-  assert.equal(backgroundFrames, 1);
+  assert.deepEqual(delays, [1000]);
 });
 
+test("animation loop wakes immediately when scheduling state changes", () => {
+  let delayMs = 1000;
+  let schedulingListener;
+  let delayedFrame;
+  let foregroundFrame;
+  let steps = 0;
+  const schedulingPolicy = {
+    getDelayMs: () => delayMs,
+    subscribe: (listener) => {
+      schedulingListener = listener;
+      return () => { schedulingListener = null; };
+    },
+  };
+  const loop = new AnimationLoop({
+    clock: { getDelta: () => 0.01 },
+    steps: [() => { steps += 1; }],
+    schedulingPolicy,
+    requestFrame: (callback) => { foregroundFrame = callback; },
+    requestDelayedFrame: (callback) => { delayedFrame = callback; },
+  });
+
+  loop.start();
+  delayMs = null;
+  schedulingListener();
+  delayedFrame();
+  assert.equal(steps, 1);
+  foregroundFrame();
+  assert.equal(steps, 2);
+  loop.stop();
+});

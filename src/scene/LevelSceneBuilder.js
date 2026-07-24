@@ -3,12 +3,12 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=environment-polish";
+} from "../prefabs/PrefabMarkerResolver.js?v=subtitle-route-fades";
 import {
   applyPrefabOverrideEntries,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=environment-polish";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=environment-polish";
+} from "../levels/LevelConfigOverrides.js?v=subtitle-route-fades";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=subtitle-route-fades";
 
 export function createLevelSceneBuilder({
   scene,
@@ -64,6 +64,10 @@ export function createLevelSceneBuilder({
     const excludedNameParts = config.render?.meshNameExcludes ?? [];
     const excludedMeshes = [];
     model.traverse((object) => {
+      if (object.name.startsWith("TRGVOL_")) {
+        object.visible = false;
+        return;
+      }
       if (
         object.isMesh &&
         excludedNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()))

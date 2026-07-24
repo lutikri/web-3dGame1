@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=environment-polish";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=environment-polish";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=environment-polish";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=environment-polish";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=subtitle-route-fades";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=subtitle-route-fades";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=subtitle-route-fades";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=subtitle-route-fades";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -346,8 +346,20 @@ export const CONFIG = {
       rock1: {
         materialNames: ["M_Rock1"],
         namePrefixes: ["SM_Rock", "Rock"],
-        color: "#6c706a",
-        roughness: 1.4,
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Rock1_BaseColor_Background_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Rock1_Normal_Background_Preview_1024_ETC1S.ktx2",
+            roughness: "assets/runtime-textures/T_Rock1_Roughness_Background_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Rock1_BaseColor_Background_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Rock1_Normal_Background_Full_ETC1S.ktx2",
+            roughness: "assets/runtime-textures/T_Rock1_Roughness_Background_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
         metalness: 0,
         normalScale: 1,
         aoMapIntensity: 1,
@@ -561,6 +573,30 @@ export const CONFIG = {
         side: THREE.DoubleSide,
         castShadow: true,
         receiveShadow: true,
+      },
+      signs1: {
+        materialNames: ["M_Signs1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Signs1_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Signs1_Normal_Secondary_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Signs1_OcclusionRoughnessMetallic_Secondary_Preview_1024_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Signs1_Emissive_Secondary_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Signs1_BaseColor_Secondary_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Signs1_Normal_Secondary_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Signs1_OcclusionRoughnessMetallic_Secondary_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_Signs1_Emissive_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#ffffff",
+        emissiveIntensity: 1,
       },
       doorLamp2: {
         materialNames: ["M_DoorLamp2"],
@@ -781,7 +817,11 @@ export const CONFIG = {
     ambientGround: "#101010",
     ambientIntensity: 0,
     photometricPointLights: {
-      maxLights: 16,
+      maxLights: 4,
+      maxProfiles: 2,
+      selectionRadius: 20,
+      selectionHysteresis: 2,
+      transitionSeconds: 0.6,
     },
     pointLights: {},
     fixtures: {},

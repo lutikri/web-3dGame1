@@ -130,6 +130,7 @@ export class MaterialTextureRuntime {
       map: paths?.baseColor ?? null,
       normalMap: paths?.normal ?? null,
       ormMap: paths?.orm ?? null,
+      roughnessMap: paths?.roughness ?? null,
       emissiveMap: paths?.emissive ?? null,
       maskMap: paths?.mask ?? null,
     };

@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=environment-polish";
+} from "./FluorescentBehavior.js?v=subtitle-route-fades";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

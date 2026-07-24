@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=environment-polish";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=subtitle-route-fades";
 
 const DISMISS_MS = 300;
 

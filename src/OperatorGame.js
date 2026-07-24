@@ -3,123 +3,127 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=environment-polish";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=subtitle-route-fades";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=environment-polish";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=environment-polish";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=environment-polish";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=environment-polish";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=environment-polish";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=environment-polish";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=environment-polish";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=environment-polish";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=environment-polish";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=environment-polish";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=environment-polish";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=environment-polish";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=environment-polish";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=environment-polish";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=environment-polish";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=environment-polish";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=environment-polish";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=environment-polish";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=environment-polish";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=environment-polish";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=environment-polish";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=environment-polish";
+} from "./game/ShiftReport.js?v=subtitle-route-fades";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=subtitle-route-fades";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=subtitle-route-fades";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=subtitle-route-fades";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=subtitle-route-fades";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=subtitle-route-fades";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=subtitle-route-fades";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=subtitle-route-fades";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=subtitle-route-fades";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=subtitle-route-fades";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=subtitle-route-fades";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=subtitle-route-fades";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=subtitle-route-fades";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=subtitle-route-fades";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=subtitle-route-fades";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=subtitle-route-fades";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=subtitle-route-fades";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=subtitle-route-fades";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=subtitle-route-fades";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=subtitle-route-fades";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=subtitle-route-fades";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=subtitle-route-fades";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=subtitle-route-fades";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=subtitle-route-fades";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=subtitle-route-fades";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=environment-polish";
+} from "./config/GraphicsQualityProfiles.js?v=subtitle-route-fades";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=environment-polish";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=environment-polish";
-import { createStatusScreen } from "./StatusScreen.js?v=environment-polish";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=environment-polish";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=environment-polish";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=environment-polish";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=environment-polish";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=environment-polish";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=environment-polish";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=environment-polish";
+} from "./scene/TextureStreaming.js?v=subtitle-route-fades";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=subtitle-route-fades";
+import { createStatusScreen } from "./StatusScreen.js?v=subtitle-route-fades";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=subtitle-route-fades";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=subtitle-route-fades";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=subtitle-route-fades";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=subtitle-route-fades";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=subtitle-route-fades";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=subtitle-route-fades";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=subtitle-route-fades";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=environment-polish";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=environment-polish";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=environment-polish";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=subtitle-route-fades";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=subtitle-route-fades";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=subtitle-route-fades";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=environment-polish";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=environment-polish";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=environment-polish";
-import { AssetCache } from "./runtime/AssetCache.js?v=environment-polish";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=environment-polish";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=environment-polish";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=environment-polish";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=environment-polish";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=environment-polish";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=environment-polish";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=environment-polish";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=environment-polish";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=environment-polish";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=environment-polish";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=environment-polish";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=environment-polish";
+} from "./lighting/FluorescentBehavior.js?v=subtitle-route-fades";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=subtitle-route-fades";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=subtitle-route-fades";
+import { AssetCache } from "./runtime/AssetCache.js?v=subtitle-route-fades";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=subtitle-route-fades";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=subtitle-route-fades";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=subtitle-route-fades";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=subtitle-route-fades";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=subtitle-route-fades";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=subtitle-route-fades";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=subtitle-route-fades";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=subtitle-route-fades";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=subtitle-route-fades";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=subtitle-route-fades";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=subtitle-route-fades";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=subtitle-route-fades";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=environment-polish";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=environment-polish";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=environment-polish";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=environment-polish";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=environment-polish";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=environment-polish";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=environment-polish";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=environment-polish";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=environment-polish";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=environment-polish";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=environment-polish";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=environment-polish";
-import { PlayerController } from "./player/PlayerController.js?v=environment-polish";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=environment-polish";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=environment-polish";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=environment-polish";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=environment-polish";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=environment-polish";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=environment-polish";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=environment-polish";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=environment-polish";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=environment-polish";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=environment-polish";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=environment-polish";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=environment-polish";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=environment-polish";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=environment-polish";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=environment-polish";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=environment-polish";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=environment-polish";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=environment-polish";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=environment-polish";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=environment-polish";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=environment-polish";
+} from "./scene/InteriorObjectRegistry.js?v=subtitle-route-fades";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=subtitle-route-fades";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=subtitle-route-fades";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=subtitle-route-fades";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=subtitle-route-fades";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=subtitle-route-fades";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=subtitle-route-fades";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=subtitle-route-fades";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=subtitle-route-fades";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=subtitle-route-fades";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=subtitle-route-fades";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=subtitle-route-fades";
+import { PlayerController } from "./player/PlayerController.js?v=subtitle-route-fades";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=subtitle-route-fades";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=subtitle-route-fades";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=subtitle-route-fades";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=subtitle-route-fades";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=subtitle-route-fades";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=subtitle-route-fades";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=subtitle-route-fades";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=subtitle-route-fades";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=subtitle-route-fades";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=subtitle-route-fades";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=subtitle-route-fades";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=subtitle-route-fades";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=subtitle-route-fades";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=subtitle-route-fades";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=subtitle-route-fades";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=subtitle-route-fades";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=subtitle-route-fades";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=subtitle-route-fades";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=subtitle-route-fades";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=subtitle-route-fades";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=subtitle-route-fades";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=environment-polish";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=subtitle-route-fades";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -254,7 +258,13 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 const photometricPointLightRuntime = createPhotometricPointLightRuntime({
   camera,
-  maxLights: CONFIG.lighting.photometricPointLights?.maxLights ?? 8,
+  maxLights: getGraphicsQualityProfile(bootOptions.qualityProfile ?? "high").photometricLightSlots
+    ?? CONFIG.lighting.photometricPointLights?.maxLights
+    ?? 4,
+  maxProfiles: CONFIG.lighting.photometricPointLights?.maxProfiles ?? 2,
+  selectionRadius: CONFIG.lighting.photometricPointLights?.selectionRadius ?? 15,
+  selectionHysteresis: CONFIG.lighting.photometricPointLights?.selectionHysteresis ?? 2,
+  transitionSeconds: CONFIG.lighting.photometricPointLights?.transitionSeconds ?? 0.6,
 });
 
 const clock = new THREE.Clock();
@@ -817,6 +827,9 @@ const getRoomLightVisualFactor = roomLightingRuntime.getVisualFactor;
 const getRoomLightAfterglowFactor = roomLightingRuntime.getAfterglowFactor;
 const narrationRuntime = createNarrationRuntime({
   getActiveLevelId: () => activeLevelId,
+  prefabInstances: levelPrefabInstances,
+  config: CONFIG,
+  getLevelEnvironmentId,
   isPlaybackAllowed: (levelId) =>
     activeLevelId === levelId &&
     operatorViewMode === "level" &&
@@ -1142,6 +1155,32 @@ const updateLevelPrefabLights = levelPrefabUpdateRuntime.updateLights;
 const updateLevelPrefabClocks = levelPrefabUpdateRuntime.updateClocks;
 const updateLevelPrefabElevators = levelPrefabUpdateRuntime.updateElevators;
 const updateLevelPrefabBehaviors = levelPrefabUpdateRuntime.updateBehaviors;
+const levelTriggerSequenceRuntime = new LevelTriggerSequenceRuntime({
+  environmentModels: levelEnvironmentModels,
+  prefabInstances: levelPrefabInstances,
+  getActiveLevelId: () => activeLevelId,
+  resolveEnvironmentId: getLevelEnvironmentId,
+  getLevelConfig: (levelId) => CONFIG.levelEnvironments?.[getLevelEnvironmentId(levelId)],
+  getPlayerPosition: () => playerPosition,
+  isLevelView: () => operatorViewMode === "level",
+  playNarration: (levelId, line) => line === "welcome" ? narrationRuntime.playWelcome(levelId) : null,
+  requestBarrierUnlock: requestBarrierGateUnlock,
+});
+const frameSchedulingPolicy = new FrameSchedulingPolicy();
+const renderWarmupRuntime = new RenderWarmupRuntime({
+  renderer,
+  scene,
+  camera,
+  acquireForegroundLease: frameSchedulingPolicy.acquireForegroundLease,
+  prepare: async () => {
+    await photometricPointLightRuntime.prepare();
+    photometricPointLightRuntime.updateUniforms(1);
+  },
+  renderFrame: (dt) => {
+    photometricPointLightRuntime.updateUniforms(dt);
+    postProcessingRuntime.render(dt);
+  },
+});
 const levelRouteCoordinator = new LevelRouteCoordinator({
   sessions: activeLevelSessionRuntime,
   stopEditing: stopPositionGizmo,
@@ -1156,6 +1195,7 @@ const levelRouteCoordinator = new LevelRouteCoordinator({
   setLevelView: () => { operatorViewMode = "level"; },
   resetDoors: resetLevelDoors,
   activateEnvironment: updateActiveLevelEnvironment,
+  warmupRendering: renderWarmupRuntime.warmup,
   restartPrefabLights: (loadedLevelId) => {
     levelPrefabInstances.forEach((runtime, key) => {
       if (!key.startsWith(`${loadedLevelId}:`) || !runtime.light?.userData.lightConfig?.fluorescentStartup) return;
@@ -1230,12 +1270,14 @@ const debugToolsRuntime = new DebugToolsRuntime({
 const updateRuntimeTextureLoading = runtimeTextureLoadingIndicator.update;
 const animationLoop = new AnimationLoop({
   clock,
+  schedulingPolicy: frameSchedulingPolicy,
   steps: [
     updateLoadingOverlay,
     updateFpsMeter,
     (dt) => { testTime += dt; },
     updateLevelPrefabElevators,
     updateLevelPrefabBehaviors,
+    levelTriggerSequenceRuntime.update,
     (dt) => playerController.update(dt),
     updateHoverTarget,
     (dt) => briefInteractionRuntime.update(dt),
@@ -1250,7 +1292,7 @@ const animationLoop = new AnimationLoop({
     updateNarratorRadios,
     (dt) => physicsSystem?.step(dt),
     () => playerController.updateAfterPhysics(),
-    () => photometricPointLightRuntime.updateUniforms(),
+    (dt) => photometricPointLightRuntime.updateUniforms(dt),
     updateRuntimeTextureLoading,
     updateDebugOverlay,
     (dt) => postProcessingRuntime.render(dt),
@@ -1712,6 +1754,7 @@ function resetPanelControls() {
 }
 
 function resetLevelSession() {
+  levelTriggerSequenceRuntime.reset();
   hideShiftResults();
   playerController.reset();
   operatorPanelRuntime.reset();
@@ -1741,8 +1784,8 @@ async function resetForMenu() {
   return levelRouteCoordinator.resetForMenu();
 }
 
-async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode } = {}) {
-  return levelRouteCoordinator.enterLevel({ levelId, mode });
+async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode, onProgress } = {}) {
+  return levelRouteCoordinator.enterLevel({ levelId, mode, onProgress });
 }
 
 function runControlButtonAction(button) {

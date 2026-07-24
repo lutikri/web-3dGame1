@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=environment-polish";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=subtitle-route-fades";
 
 const MARKER_PREFIX = "PF_";
 

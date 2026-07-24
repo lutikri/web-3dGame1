@@ -1,0 +1,41 @@
+1
+00:00:01,835 --> 00:00:03,900
+Welcome to Terragen Systems.
+
+2
+00:00:04,666 --> 00:00:05,376
+Congratulations.
+
+3
+00:00:05,949 --> 00:00:08,453
+You've been approved to operate equipment
+
+4
+00:00:08,465 --> 00:00:11,206
+considerably more expensive than you are.
+
+5
+00:00:11,868 --> 00:00:14,566
+Your qualification shift begins now.
+
+6
+00:00:15,024 --> 00:00:16,973
+Review the shift brief on the desk.
+
+7
+00:00:17,635 --> 00:00:21,171
+Then, before somebody corrects their mistake,
+
+8
+00:00:21,196 --> 00:00:22,640
+proceed to the control booth.
+
+9
+00:00:23,820 --> 00:00:23,940
+Immediately.
+
+10
+00:00:23,941 --> 00:00:24,480
+Immediately.
+
+

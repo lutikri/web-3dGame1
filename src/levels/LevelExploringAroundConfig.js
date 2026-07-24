@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=environment-polish";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=environment-polish";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=environment-polish";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=environment-polish";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=subtitle-route-fades";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=subtitle-route-fades";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=subtitle-route-fades";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=subtitle-route-fades";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -67,6 +67,36 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
       },
     ],
   },
+  narration: {
+    autoStart: false,
+    welcome: {
+      en: {
+        soundKey: "MessageEN_Welcome1",
+        subtitlePath: "assets/sounds/narration/MessageEN_Welcome1.srt",
+        duration: 24.48,
+      },
+      ru: {
+        soundKey: "MessageRU_Welcome1",
+        subtitlePath: "assets/sounds/narration/MessageRU_Welcome1.srt",
+        duration: 25.6,
+      },
+    },
+  },
+  triggerSequences: [
+    {
+      name: "WelcomeEntry",
+      trigger: { markerName: "TRGVOL_WelcomeEntry_01", once: true },
+      narration: "welcome",
+      actions: [
+        {
+          action: "unlockBarrierGate",
+          target: "Barrier1_1",
+          relativeTo: "narrationEnd",
+          offsetSeconds: -0.8,
+        },
+      ],
+    },
+  ],
   prefabs: [
     createPrefabInstance("operatorPanel", {
       name: "Panel1",
@@ -178,8 +208,8 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     },
   },
   player: {
-    spawnPosition: new THREE.Vector3(0.45, 1.52, 1.56),
-    rotationDegrees: new THREE.Vector3(1.1, 280, 0),
+    spawnPosition: new THREE.Vector3(-1.74, 1.52, 21.94),
+    rotationDegrees: new THREE.Vector3(0, 0, 0),
   },
 };
 

@@ -799,7 +799,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       },
       "name": "serviceDoor_Exit2",
       "position": {
-        "x": -2.2149112224578857,
+        "x": -2.217810699608926,
         "y": 0.0473066121339798,
         "z": 13.029474258422852
       },
@@ -1496,13 +1496,13 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
   },
   "player": {
     "spawnPosition": {
-      "x": -1.59,
-      "y": 1.51,
-      "z": 12
+      "x": -1.74,
+      "y": 1.52,
+      "z": 21.94
     },
     "rotationDegrees": {
-      "x": 1.1,
-      "y": 280,
+      "x": 0,
+      "y": 0,
       "z": 0
     }
   }

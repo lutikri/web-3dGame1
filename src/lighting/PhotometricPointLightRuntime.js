@@ -4,8 +4,11 @@ import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 export function createPhotometricPointLightRuntime({
   camera,
   emptyTexture,
-  maxLights = 8,
+  maxLights = 4,
   maxProfiles = 4,
+  selectionRadius = 15,
+  selectionHysteresis = 2,
+  transitionSeconds = 0.6,
 } = {}) {
   if (!emptyTexture) {
     emptyTexture = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat);
@@ -19,6 +22,9 @@ export function createPhotometricPointLightRuntime({
   const patchedMaterials = new Set();
   const compiledMaterials = new Set();
   const matrixScratch = new THREE.Matrix4();
+  const cameraPositionScratch = new THREE.Vector3();
+  const lightPositionScratch = new THREE.Vector3();
+  let selectedEntries = [];
   let debugMode = false;
 
   function patchMaterial(material) {
@@ -44,7 +50,7 @@ export function createPhotometricPointLightRuntime({
     };
     material.customProgramCacheKey = () => {
       const previousKey = previousCustomProgramCacheKey?.call(material) ?? material.name ?? "";
-      return `${previousKey}:photometric-point-light-v4:${maxProfiles}`;
+      return `${previousKey}:photometric-point-light-v5:${maxLights}:${maxProfiles}`;
     };
     material.needsUpdate = true;
   }
@@ -73,9 +79,10 @@ export function createPhotometricPointLightRuntime({
       strength: THREE.MathUtils.clamp(Number(profileConfig.strength ?? 1), 0, 2),
       flipY: Boolean(profileConfig.flipY),
       texture: null,
+      blend: 0,
     };
     entries.push(entry);
-    loadTexture(profileConfig.path)
+    entry.ready = loadTexture(profileConfig.path)
       .then((texture) => {
         entry.texture = texture;
         updateUniforms();
@@ -84,6 +91,11 @@ export function createPhotometricPointLightRuntime({
         console.warn(`[PhotometricPointLightRuntime] Failed to load profile "${profileConfig.path}"`, error);
       });
     return entry;
+  }
+
+  async function prepare() {
+    await Promise.allSettled(entries.map((entry) => entry.ready).filter(Boolean));
+    updateUniforms();
   }
 
   function unregister(entry) {
@@ -117,12 +129,37 @@ export function createPhotometricPointLightRuntime({
     return texture;
   }
 
-  function updateUniforms() {
-    const activeEntries = entries
-      .filter((entry) => entry.light?.visible && entry.light.intensity > 0 && entry.texture)
-      .slice(0, maxLights);
-    const { profiles, profileIndices } = assignPhotometricProfileSlots(activeEntries, maxProfiles);
+  function updateUniforms(dt = 0) {
     camera?.updateMatrixWorld();
+    camera?.getWorldPosition?.(cameraPositionScratch);
+    const candidates = entries
+      .filter((entry) => entry.light?.visible && entry.light.intensity > 0 && entry.texture)
+      .map((entry) => {
+        entry.root?.updateMatrixWorld?.(true);
+        entry.light.updateMatrixWorld?.(true);
+        entry.light.getWorldPosition(lightPositionScratch);
+        return {
+          entry,
+          distanceSq: camera ? lightPositionScratch.distanceToSquared(cameraPositionScratch) : 0,
+        };
+      });
+    selectedEntries = selectPhotometricLightEntries(candidates, {
+      maxLights,
+      radius: selectionRadius,
+      hysteresis: selectionHysteresis,
+      selectedEntries,
+    });
+    const selectedSet = new Set(selectedEntries);
+    entries.forEach((entry) => {
+      entry.blend = advancePhotometricBlend(
+        entry.blend,
+        selectedSet.has(entry),
+        dt,
+        transitionSeconds,
+      );
+    });
+    const activeEntries = selectedEntries;
+    const { profiles, profileIndices } = assignPhotometricProfileSlots(activeEntries, maxProfiles);
     if (camera?.matrixWorld && camera?.matrixWorldInverse) {
       camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
     }
@@ -142,7 +179,7 @@ export function createPhotometricPointLightRuntime({
         entry.root.updateMatrixWorld(true);
         matrixScratch.copy(entry.root.matrixWorld).invert();
         uniforms.photometricPointLightWorldToLocal.value[index].copy(matrixScratch);
-        uniforms.photometricPointLightStrength.value[index] = entry.strength;
+        uniforms.photometricPointLightStrength.value[index] = entry.strength * entry.blend;
         uniforms.photometricPointLightFlipY.value[index] = entry.flipY ? 1 : 0;
         uniforms.photometricPointLightProfileIndex.value[index] = profileIndices[index];
       });
@@ -165,6 +202,10 @@ export function createPhotometricPointLightRuntime({
       loadedProfiles: new Set(entries.filter((entry) => entry.texture).map((entry) => entry.path)).size,
       maxLights,
       maxProfiles,
+      selectionRadius,
+      selectionHysteresis,
+      transitionSeconds,
+      selected: selectedEntries.length,
       patchedMaterials: patchedMaterials.size,
       compiledMaterials: compiledMaterials.size,
       debugMode,
@@ -177,6 +218,8 @@ export function createPhotometricPointLightRuntime({
         intensity: Number((entry.light?.intensity ?? 0).toFixed(3)),
         strength: entry.strength,
         flipY: entry.flipY,
+        selected: selectedEntries.includes(entry),
+        blend: Number(entry.blend.toFixed(3)),
       })),
     };
   }
@@ -287,6 +330,7 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
   return {
     getDebugState,
     patchMaterial,
+    prepare,
     register,
     resetClonedMaterial,
     setDebugMode,
@@ -306,4 +350,38 @@ export function assignPhotometricProfileSlots(entries, maxProfiles = 4) {
     return index;
   });
   return { profiles, profileIndices };
+}
+
+export function selectPhotometricLightEntries(candidates, {
+  maxLights = 4,
+  radius = 15,
+  hysteresis = 2,
+  selectedEntries = [],
+} = {}) {
+  const selectedSet = new Set(selectedEntries);
+  const enterRadius = Math.max(0, Number(radius) || 0);
+  const retentionDistance = Math.max(0, Number(hysteresis) || 0);
+  const exitRadiusSq = (enterRadius + retentionDistance) ** 2;
+  const enterRadiusSq = enterRadius ** 2;
+
+  return candidates
+    .filter(({ entry, distanceSq }) => (
+      Number.isFinite(distanceSq)
+      && distanceSq <= (selectedSet.has(entry) ? exitRadiusSq : enterRadiusSq)
+    ))
+    .sort((left, right) => {
+      const leftScore = Math.sqrt(left.distanceSq) - (selectedSet.has(left.entry) ? retentionDistance : 0);
+      const rightScore = Math.sqrt(right.distanceSq) - (selectedSet.has(right.entry) ? retentionDistance : 0);
+      return leftScore - rightScore;
+    })
+    .slice(0, Math.max(0, Math.floor(maxLights)))
+    .map(({ entry }) => entry);
+}
+
+export function advancePhotometricBlend(current, selected, dt, transitionSeconds = 0.6) {
+  const value = THREE.MathUtils.clamp(Number(current) || 0, 0, 1);
+  const duration = Math.max(0, Number(transitionSeconds) || 0);
+  if (duration === 0) return selected ? 1 : 0;
+  const step = Math.max(0, Number(dt) || 0) / duration;
+  return THREE.MathUtils.clamp(value + (selected ? step : -step), 0, 1);
 }

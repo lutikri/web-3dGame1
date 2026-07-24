@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=environment-polish";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=environment-polish";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=environment-polish";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=environment-polish";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=subtitle-route-fades";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=subtitle-route-fades";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=subtitle-route-fades";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -82,7 +82,8 @@ export class LevelPrefabConfigRuntime {
       this.#refreshStructural(levelId, structural);
       return;
     }
-    runtime.light.visible = light.enabled !== false;
+    // Disabled prefab lights stay registered with zero intensity to keep shader programs stable.
+    runtime.light.visible = true;
     runtime.light.color.set(light.color);
     runtime.light.userData.baseIntensity = light.intensity;
     runtime.light.distance = light.distance;
@@ -106,4 +107,3 @@ export class LevelPrefabConfigRuntime {
     if (structural && this.getActiveLevelId() === levelId) this.updateActivation();
   }
 }
-

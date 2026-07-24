@@ -79,6 +79,15 @@ $jobs = @(
   @{ Source = "T_Trim2Tiles1_Normal.png"; Prefix = "T_Trim2Tiles1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
   @{ Source = "T_Trim2Tiles1_OcclusionRoughnessMetallic.png"; Prefix = "T_Trim2Tiles1_OcclusionRoughnessMetallic_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
 
+  @{ Source = "T_Rock1_BaseColor.jpg"; Prefix = "T_Rock1_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
+  @{ Source = "T_Rock1_Normal.jpg"; Prefix = "T_Rock1_Normal_Background"; Preview = 1024; Mode = "normal"; Quality = 195 },
+  @{ Source = "T_Rock1_Roughness.jpg"; Prefix = "T_Rock1_Roughness_Background"; Preview = 1024; Mode = "linear"; Quality = 180 },
+
+  @{ Source = "T_Signs1_BaseColor.png"; Prefix = "T_Signs1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
+  @{ Source = "T_Signs1_Normal.png"; Prefix = "T_Signs1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Signs1_OcclusionRoughnessMetallic.png"; Prefix = "T_Signs1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },
+  @{ Source = "T_Signs1_Emissive.png"; Prefix = "T_Signs1_Emissive_Secondary"; Preview = 512; Mode = "srgb"; Quality = 170 },
+
   @{ Source = "T_Clock1_BaseColor.png"; Prefix = "T_Clock1_BaseColor_Secondary"; Preview = 1024; Mode = "srgb"; Quality = 185 },
   @{ Source = "T_Clock1_Normal.png"; Prefix = "T_Clock1_Normal_Secondary"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Clock1_OcclusionRoughnessMetallic.png"; Prefix = "T_Clock1_OcclusionRoughnessMetallic_Secondary"; Preview = 1024; Mode = "linear"; Quality = 185 },

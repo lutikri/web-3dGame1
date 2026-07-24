@@ -25,7 +25,7 @@ export function createNarrationRuntime({
     if (!runtime?.radio) return false;
     playedLevelId = levelId;
     schedule(() => playWhenReady(levelId), runtime.radio.welcomeDelaySeconds ?? 0.7);
-    return true;
+    return line;
   }
 
   function playWhenReady(levelId) {

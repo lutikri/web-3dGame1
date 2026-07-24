@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=environment-polish";
-import { applyLocalization } from "./app/Localization.js?v=environment-polish";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=environment-polish";
+import { createPreflight } from "./app/Preflight.js?v=subtitle-route-fades";
+import { applyLocalization } from "./app/Localization.js?v=subtitle-route-fades";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=subtitle-route-fades";
 
-const APP_BUILD_REVISION = "environment-polish";
+const APP_BUILD_REVISION = "subtitle-route-fades";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=environment-polish`);
+await import(`./OperatorGame.js?v=subtitle-route-fades`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=environment-polish`);
+const { createAppShell } = await import(`./app/AppShell.js?v=subtitle-route-fades`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=environment-polish`
+    `./runtime/RuntimeSmoke.js?v=subtitle-route-fades`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

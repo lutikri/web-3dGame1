@@ -303,6 +303,7 @@ const PREFAB_DEFINITIONS = {
       minDegrees: -90,
       maxDegrees: 90,
       locked: true,
+      unlockMode: "command",
       unlockDelaySeconds: 20,
       unlockMotorSoundKey: "MotorSmall1",
       unlockBeepSoundKey: "BeepShortLight1",

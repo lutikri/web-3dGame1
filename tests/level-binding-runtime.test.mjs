@@ -27,3 +27,18 @@ test("level binding runtime routes room light actions", () => {
   assert.equal(runtime.execute({ action: "toggleRoomLights" }, "room"), true);
   assert.equal(toggles, 1);
 });
+
+test("disabled prefab lights keep a stable renderer light layout", () => {
+  const light = { enabled: true };
+  const instance = { root: {}, light: { visible: true, intensity: 1 }, afterglowRemaining: 0 };
+  const runtime = new LevelBindingRuntime({
+    config: { levelEnvironments: { room: { prefabs: [{ name: "lamp", light }] } } },
+    levelPrefabInstances: new Map([["room:lamp", instance]]),
+    applyLevelPrefabConfig: () => {}, updateControlTooltip: () => {},
+    createFixtureFlickerState: () => ({}), createFluorescentStartupPattern: () => [],
+    playSoundAtObject: () => {},
+  });
+  assert.equal(runtime.setPrefabLightEnabled("room", "lamp", false), true);
+  assert.equal(instance.light.visible, true);
+  assert.equal(instance.light.intensity, 0);
+});

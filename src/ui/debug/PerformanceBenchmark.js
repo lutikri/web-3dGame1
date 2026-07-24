@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=environment-polish";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=subtitle-route-fades";
 
 const EFFECT_KEYS = [
   "bloom",

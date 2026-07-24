@@ -40,7 +40,8 @@ export class LevelBindingRuntime {
     }
     this.applyLevelPrefabConfig(levelId, prefabName, false);
     if (nextEnabled && !wasEnabled) this.resetStartup(runtime, lightConfig);
-    runtime.light.visible = nextEnabled;
+    // Keep the light in Three.js' light layout so OFF/ON does not compile new NUM_*_LIGHTS shader variants.
+    runtime.light.visible = true;
     if (!nextEnabled) runtime.light.intensity = 0;
     this.updateControlTooltip();
     return true;
