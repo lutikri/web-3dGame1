@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=subtitle-route-fades";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=startup-audio-light-tuning";
 
 const MARKER_PREFIX = "PF_";
 

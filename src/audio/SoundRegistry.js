@@ -35,6 +35,17 @@ export const SOUND_REGISTRY = {
     maxDistance: 2,
     fadeSeconds: 0.35,
   },
+  Core1_DefaultLoop1: { path: "assets/sounds/machinery/Core1_DefaultLoop1.ogg", loop: true, volume: 0.64 },
+  Core1_Panel1_AlarmCoreStall: { path: "assets/sounds/machinery/Core1_Panel1_AlarmCoreStall.ogg", loop: true, volume: 0.66 },
+  Core1_Panel1_AlarmHighCoreStress1: { path: "assets/sounds/machinery/Core1_Panel1_AlarmHighCoreStress1.ogg", loop: true, volume: 0.62 },
+  Core1_Panel1_AlarmHighTemp1: { path: "assets/sounds/machinery/Core1_Panel1_AlarmHighTemp1.ogg", volume: 0.64 },
+  Core1_Panel1_Loop: { path: "assets/sounds/machinery/Core1_Panel1_Loop.ogg", loop: true, volume: 0.18 },
+  Core1_Pulse: { path: "assets/sounds/machinery/Core1_Pulse.ogg", volume: 0.7 },
+  Core1_StartupFailed1: { path: "assets/sounds/machinery/Core1_StartupFailed1.ogg", volume: 0.86 },
+  Core1_StartupNormal1: { path: "assets/sounds/machinery/Core1_StartupNormal1.ogg", volume: 0.43 },
+  Core1_Stress_Loop: { path: "assets/sounds/machinery/Core1_Stress_Loop.ogg", loop: true, volume: 0.34 },
+  Core1_Trip1: { path: "assets/sounds/machinery/Core1_Trip1.ogg", volume: 0.9 },
+  Core1_TurnDown: { path: "assets/sounds/machinery/Core1_TurnDown.ogg", volume: 0.84 },
   Clock1_loop: {
     path: "assets/sounds/machinery/Clock1_loop.ogg",
     loop: true,
@@ -67,7 +78,11 @@ export const SOUND_REGISTRY = {
   MessageRU_WelcomeElevator1: { path: "assets/sounds/narration/MessageRU_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MotorSmall1: { path: "assets/sounds/interaction/MotorSmall1.ogg", volume: 0.56, refDistance: 0.55, maxDistance: 3 },
   Panel1_SfxLoop1: { path: "assets/sounds/machinery/Panel1_SfxLoop1.ogg", loop: true, volume: 0.18 },
+  Panel_KnobTick1: { path: "assets/sounds/interaction/Panel_KnobTick1.ogg", volume: 0.15, refDistance: 0.35, maxDistance: 2.4 },
+  Panel_KnobTick2: { path: "assets/sounds/interaction/Panel_KnobTick2.ogg", volume: 0.15, refDistance: 0.35, maxDistance: 2.4 },
+  Panel_KnobTick3: { path: "assets/sounds/interaction/Panel_KnobTick3.ogg", volume: 0.15, refDistance: 0.35, maxDistance: 2.4 },
   UI_Hint1: { path: "assets/sounds/ui/UI_Hint1.ogg", volume: 0.46 },
+  UI_Hint2: { path: "assets/sounds/ui/UI_Hint2.ogg", volume: 0.46 },
   UI_PaperSlide1: { path: "assets/sounds/ui/UI_PaperSlide1.ogg", volume: 0.42 },
   UI_PaperSlide2: { path: "assets/sounds/ui/UI_PaperSlide2.ogg", volume: 0.42 },
   UI_PaperSlide3: { path: "assets/sounds/ui/UI_PaperSlide3.ogg", volume: 0.42 },
@@ -79,6 +94,8 @@ export const SOUND_GROUPS = {
   mechanicalButton: ["ButtonMechanical1", "ButtonMechanical2", "ButtonMechanical3", "ButtonMechanical4"],
   lampConstantBuzz: ["LampConstantBuzz1", "LampConstantBuzz2"],
   paperSlide: ["UI_PaperSlide1", "UI_PaperSlide2", "UI_PaperSlide3", "UI_PaperSlide4"],
+  tutorialHint: ["UI_Hint2"],
+  panelKnobTick: ["Panel_KnobTick1", "Panel_KnobTick2", "Panel_KnobTick3"],
 };
 
 export const SOUND_MIX = {

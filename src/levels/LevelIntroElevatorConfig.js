@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=subtitle-route-fades";
-import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=subtitle-route-fades";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=subtitle-route-fades";
+import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=startup-audio-light-tuning";
+import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=startup-audio-light-tuning";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=startup-audio-light-tuning";
 
 const elevatorStart = new THREE.Vector3(0.8082548379898071, 35.64804458618164, -2.094832181930542);
 

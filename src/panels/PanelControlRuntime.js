@@ -1,15 +1,16 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=subtitle-route-fades";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=startup-audio-light-tuning";
 
 export class PanelControlRuntime {
-  constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {
+  constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, getTime = () => performance.now() / 1000, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {
     this.config = config;
     this.knobs = knobs;
     this.buttons = buttons;
     this.auxiliaryButtons = auxiliaryButtons;
     this.diagnostics = diagnostics;
     this.onChanged = onChanged;
-    Object.assign(this, { playSound, runAction, toggleRoomLights, executeLevelBinding, emitLevelEvent, log });
+    Object.assign(this, { playSound, getTime, runAction, toggleRoomLights, executeLevelBinding, emitLevelEvent, log });
+    this.lastKnobAdjustmentAt = -Infinity;
   }
 
   getPercent = (name) => this.knobs.find((knob) => knob.name === name)?.userData.controlPercent ?? 0;
@@ -52,6 +53,11 @@ export class PanelControlRuntime {
     knob.userData.controlPercent = next;
     this.diagnostics.registerKnobMovement(knob.name, deltaPercent);
     this.applyKnobTransform(knob);
+    const now = this.getTime();
+    if (now - this.lastKnobAdjustmentAt >= 0.14) {
+      this.playSound("panelKnobTick", knob);
+    }
+    this.lastKnobAdjustmentAt = now;
     this.onChanged();
     return true;
   };
@@ -74,6 +80,7 @@ export class PanelControlRuntime {
     if (pressed) {
       this.playSound("panelButtonLight");
       this.runAction(button);
+      this.emitLevelEvent("buttonPressed", { target: button.name });
     }
     this.log(`[OperatorGame] ${button.userData.controlLabel} ${pressed ? "PRESSED" : "RELEASED"}`);
     return true;

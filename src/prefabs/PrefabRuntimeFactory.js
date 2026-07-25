@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=subtitle-route-fades";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=subtitle-route-fades";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=subtitle-route-fades";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=subtitle-route-fades";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=subtitle-route-fades";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=subtitle-route-fades";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=startup-audio-light-tuning";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=startup-audio-light-tuning";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=startup-audio-light-tuning";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=startup-audio-light-tuning";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=startup-audio-light-tuning";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=startup-audio-light-tuning";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=startup-audio-light-tuning";
 
 export function createPrefabRuntimeFactory({
   config,

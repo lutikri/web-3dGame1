@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=subtitle-route-fades";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=subtitle-route-fades";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=subtitle-route-fades";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=startup-audio-light-tuning";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=startup-audio-light-tuning";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=startup-audio-light-tuning";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=startup-audio-light-tuning";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

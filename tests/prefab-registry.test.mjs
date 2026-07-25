@@ -13,6 +13,10 @@ test("prefab instances clone registry-owned nested defaults", () => {
   assert.equal(second.position.x, 0);
 });
 
+test("service door registry uses the current authored GLB", () => {
+  assert.equal(getPrefabDefinition("serviceDoor").assetPath, "assets/mesh/prefabs/SM_Door2.glb");
+});
+
 test("dome lamp owns its bulb material, zero-offset point light, and runtime photometric profile", () => {
   const lamp = createPrefabInstance("LampDome1", {
     name: "HallLamp",

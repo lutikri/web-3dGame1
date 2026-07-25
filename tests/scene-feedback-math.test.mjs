@@ -47,3 +47,18 @@ test("terminal light factor delegates destroyed startup ownership", () => {
   });
   assert.equal(factor, 0.25);
 });
+
+test("destroyed core lighting returns to the configured level after restart", () => {
+  assert.equal(getTerminalLightFactor({
+    snapshot: { mode: "failed", failureType: "coreDestroyed" },
+    terminalElapsed: 10,
+    terminalConfig: {
+      destroyedLightFactor: 1,
+      destroyedBlackoutSeconds: 1,
+      emergencyLightSettleSeconds: 1,
+    },
+    startupPattern: [],
+    getStartupDuration: () => 2,
+    getStartupFactor: () => 1,
+  }), 1);
+});

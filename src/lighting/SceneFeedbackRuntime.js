@@ -17,6 +17,7 @@ export class SceneFeedbackRuntime {
     });
     this.appliedCameraRoll = 0;
     this.startupTimer = 0;
+    this.roomStartupTimer = 0;
     this.indicatorTimer = 0;
     this.ignitionPulseTimer = 0;
     this.startupPattern = [];
@@ -24,6 +25,7 @@ export class SceneFeedbackRuntime {
 
   update = (dt) => {
     this.startupTimer = Math.max(0, this.startupTimer - dt);
+    this.roomStartupTimer = Math.max(0, this.roomStartupTimer - dt);
     this.ignitionPulseTimer = Math.max(0, this.ignitionPulseTimer - dt);
     this.updateIndicatorTest(dt);
     this.updateFixtureFlicker(dt);
@@ -34,6 +36,7 @@ export class SceneFeedbackRuntime {
 
   triggerStartup = () => {
     this.startupTimer = this.config.feedback.startup.duration;
+    this.roomStartupTimer = this.config.feedback.startup.roomDimSeconds ?? 0;
     this.startupPattern = this.createStartupPattern();
   };
   triggerIgnitionPulse = () => { this.ignitionPulseTimer = this.config.feedback.ignitionPulse.duration; };
@@ -45,11 +48,24 @@ export class SceneFeedbackRuntime {
     this.indicatorTimer = Math.min(this.indicatorTimer + dt, this.config.feedback.indicatorTest.duration);
   };
   getStartupLightFactor = () => {
-    if (this.startupTimer <= 0) return 1;
     const startup = this.config.feedback.startup;
+    const roomDimSeconds = startup.roomDimSeconds ?? 0;
+    if (roomDimSeconds > 0) {
+      if (this.roomStartupTimer <= 0) return 1;
+      const progress = 1 - this.roomStartupTimer / roomDimSeconds;
+      return THREE.MathUtils.lerp(
+        startup.roomMinLightFactor ?? 0.82,
+        1,
+        THREE.MathUtils.smoothstep(progress, 0, 1),
+      );
+    }
+    if (this.startupTimer <= 0) return 1;
     return this.getStartupPatternFactor(this.startupPattern, startup.duration - this.startupTimer);
   };
-  setStartupTimer = (value) => { this.startupTimer = Math.max(0, Number(value) || 0); };
+  setStartupTimer = (value) => {
+    this.startupTimer = Math.max(0, Number(value) || 0);
+    if (this.startupTimer === 0) this.roomStartupTimer = 0;
+  };
   setIndicatorTimer = (value) => { this.indicatorTimer = Math.max(0, Number(value) || 0); };
   getStartupTimer = () => this.startupTimer;
   getIndicatorTimer = () => this.indicatorTimer;
@@ -118,7 +134,11 @@ export class SceneFeedbackRuntime {
       ? Math.exp(-Math.max(0, this.config.feedback.startupFault.resetSeconds - (snapshot.resetPending ?? 0)) * 2)
       : 0;
     const outputLow = snapshot.mode === "running" && snapshot.warning?.outputLow ? 1 : 0;
-    const shake = this.getStartupAmount() * this.config.feedback.startup.cameraShake
+    const roomStartupAmount = this.config.feedback.startup.roomDimSeconds > 0
+      ? this.roomStartupTimer / this.config.feedback.startup.roomDimSeconds
+      : 0;
+    const shake = roomStartupAmount * (this.config.feedback.startup.roomCameraShake ?? 0)
+      + this.getStartupAmount() * this.config.feedback.startup.cameraShake
       + this.getIgnitionPulseAmount() * this.config.feedback.ignitionPulse.cameraShake
       + startupFault * this.config.feedback.startupFault.cameraShake
       + outputLow * this.config.feedback.outputLow.cameraShake * this.flickerWave(11, 0.7)

@@ -49,16 +49,16 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
     getSnapshot: () => ({
       mode: "running", failureType: null, plasmaTemp: 100, coreStress: 20, coreStall: 0,
     }),
-    getTerminalElapsed: () => -1,
-    getTime: () => 0,
+    coreAudio: {
+      update: (dt, state) => attached.push(["coreAudio", dt, state]),
+    },
     playSound: () => {},
   });
 
   runtime.update(0.016);
 
-  assert.ok(attached.some(([id, , , active]) => id === "panel:Panel1" && active));
   assert.ok(attached.some(([id, , , active]) => id === "lamp:room:LampA" && active));
-  assert.ok(attached.some(([id, , , active]) => id === "core:FusionCore_Working1" && active));
+  assert.ok(attached.some(([id, , state]) => id === "coreAudio" && state.active));
   assert.ok(attached.some(([id, , soundKey, active]) => id === "prefab:room:ClockA:loop" && soundKey === "Clock1_loop" && active));
   assert.ok(loops.some(([id, active]) => id === "Footsteps1_Walk1" && active));
 });

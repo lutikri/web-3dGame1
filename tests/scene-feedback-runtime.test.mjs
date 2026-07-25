@@ -74,6 +74,19 @@ test("scene feedback runtime owns startup, ignition and indicator timers", () =>
   assert.equal(runtime.getIndicatorTimer(), 0);
 });
 
+test("scene startup gently restores room light across the long audio intro", () => {
+  const runtime = new SceneFeedbackRuntime({
+    config: { feedback: { startup: { duration: 3.2, roomDimSeconds: 18, roomMinLightFactor: 0.82 }, ignitionPulse: {}, indicatorTest: {} } },
+    diagnostics: {}, roomLighting: {}, createStartupPattern: () => [],
+  });
+  runtime.triggerStartup();
+  assert.equal(runtime.getStartupLightFactor(), 0.82);
+  runtime.roomStartupTimer = 9;
+  assert.ok(Math.abs(runtime.getStartupLightFactor() - 0.91) < 0.001);
+  runtime.roomStartupTimer = 0;
+  assert.equal(runtime.getStartupLightFactor(), 1);
+});
+
 test("scene feedback runtime applies combined room emissive factors", () => {
   const material = new THREE.MeshStandardMaterial({ emissiveIntensity: 2 });
   material.userData.roomLightControlled = true;

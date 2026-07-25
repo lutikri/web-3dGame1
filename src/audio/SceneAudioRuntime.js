@@ -16,17 +16,15 @@ export class SceneAudioRuntime {
     isNoclipEnabled,
     getLightFactor,
     getSnapshot,
-    getTerminalElapsed,
-    getTime,
+    coreAudio,
     playSound,
   }) {
     Object.assign(this, {
       config, audio, camera, getPanel, keys, prefabInstances, getViewMode, getActiveLevelId,
       resolveEnvironmentId, hasPanel, getMovementVelocity, isNoclipEnabled, getLightFactor,
-      getSnapshot, getTerminalElapsed, getTime, playSound,
+      getSnapshot, coreAudio, playSound,
     });
     this.previousLightFactor = 1;
-    this.reactorPitch = 0.88;
   }
 
   update = (dt) => {
@@ -43,17 +41,15 @@ export class SceneAudioRuntime {
     this.#updatePanel(displayedLevelId, viewMode);
     this.#updateFootsteps(viewMode);
     this.#updatePrefabLoops(displayedLevelId, lightFactor);
-    this.#updateCore(displayedLevelId, dt);
+    this.coreAudio.update(dt, {
+      levelId: displayedLevelId,
+      active: viewMode === "level" && this.hasPanel(displayedLevelId),
+      snapshot: this.getSnapshot(),
+    });
   };
 
   #updatePanel(levelId, viewMode) {
-    this.audio.setAttachedLoop("panel:Panel1", this.getPanel(), "Panel1_SfxLoop1", this.hasPanel(levelId), {
-      levelId,
-      volume: viewMode === "menu" ? 0.08 : 0.18,
-      refDistance: 0.8,
-      maxDistance: 4.5,
-      fadeSeconds: 0.8,
-    });
+    // CoreAudioRuntime owns the reactor panel bed and its alarm layers.
   }
 
   #updateFootsteps(viewMode) {
@@ -111,29 +107,4 @@ export class SceneAudioRuntime {
     });
   }
 
-  #updateCore(levelId, dt) {
-    const snapshot = this.getSnapshot();
-    const elapsed = this.getTerminalElapsed();
-    const destroyed = snapshot.failureType === "coreDestroyed" && elapsed >= 0;
-    const completed = snapshot.mode === "complete" && elapsed >= 0;
-    const tempPitch = THREE.MathUtils.clamp((snapshot.plasmaTemp - 55) / 120, 0, 1);
-    const stressPitch = THREE.MathUtils.clamp((snapshot.coreStress ?? 0) / 100, 0, 1);
-    const stallDrop = THREE.MathUtils.clamp((snapshot.coreStall ?? 0) / 90, 0, 1);
-    const age = Math.max(0, elapsed);
-    const destroyedFade = destroyed ? Math.max(0, 1 - age / 5.5) : 1;
-    const completeFade = completed ? Math.max(0, 1 - age / 2.4) : 1;
-    const volume = (0.3 + tempPitch * 0.17) * (1 - stallDrop * 0.72) * destroyedFade * completeFade;
-    const wobble = destroyed ? Math.sin(this.getTime() * 5.7) * 0.08 * destroyedFade : 0;
-    const targetPitch = Math.max(0.35, 0.88 + tempPitch * 0.18 + stressPitch * 0.08 - stallDrop * 0.42 + wobble);
-    this.reactorPitch = THREE.MathUtils.damp(this.reactorPitch, targetPitch, destroyed ? 4.5 : 2.2, dt);
-    const audible = snapshot.mode === "running" || destroyed || completed;
-    this.audio.setAttachedLoop("core:FusionCore_Working1", this.getPanel(), "FusionCore_Working1", audible && volume > 0.01, {
-      levelId,
-      volume,
-      refDistance: 1.2,
-      maxDistance: 20,
-      fadeSeconds: destroyed ? 0.35 : 1.1,
-      playbackRate: this.reactorPitch,
-    });
-  }
 }

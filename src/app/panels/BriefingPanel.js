@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=subtitle-route-fades";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=startup-audio-light-tuning";
 
 const DISMISS_MS = 300;
 

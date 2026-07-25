@@ -1,8 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=subtitle-route-fades";
-import { translate } from "./Localization.js?v=subtitle-route-fades";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=subtitle-route-fades";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=subtitle-route-fades";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=subtitle-route-fades";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=startup-audio-light-tuning";
+import { translate } from "./Localization.js?v=startup-audio-light-tuning";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=startup-audio-light-tuning";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=startup-audio-light-tuning";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=startup-audio-light-tuning";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=startup-audio-light-tuning";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=startup-audio-light-tuning";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -12,12 +14,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=subtitle-route-fades";
-import { createAppPanelController } from "./AppPanelController.js?v=subtitle-route-fades";
-import { createAppRouter } from "./AppRouter.js?v=subtitle-route-fades";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=subtitle-route-fades";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=subtitle-route-fades";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=subtitle-route-fades";
+} from "./AppPersistence.js?v=startup-audio-light-tuning";
+import { createAppPanelController } from "./AppPanelController.js?v=startup-audio-light-tuning";
+import { createAppRouter } from "./AppRouter.js?v=startup-audio-light-tuning";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=startup-audio-light-tuning";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=startup-audio-light-tuning";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=startup-audio-light-tuning";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -32,6 +34,11 @@ export function createAppShell({ gameApi }) {
   const tutorialHintQueue = createTutorialHintQueue({
     element: document.querySelector("#tutorialHint"),
     translate,
+    onShow: () => gameApi.playSoundGroup?.("tutorialHint"),
+  });
+  const tutorialWorldHint = createTutorialWorldHintPresenter({
+    element: document.querySelector("#tutorialWorldHint"),
+    getAnchor: (target) => gameApi.getTutorialAnchor?.(target),
   });
   const panels = new Map([...document.querySelectorAll("[data-app-panel]")].map((panel) => [panel.dataset.appPanel, panel]));
   const settings = loadSettings();
@@ -55,6 +62,7 @@ export function createAppShell({ gameApi }) {
     onBeforeShow: () => {
       hideBriefing(true);
       introTutorialFlow.stop();
+      levelTutorialRuntime.stop();
       gameApi.releasePointerLock?.();
     },
     onVisibilityChange: ({ open, panelName }) => {
@@ -87,10 +95,23 @@ export function createAppShell({ gameApi }) {
           !document.querySelector("#resultsOverlay")?.classList.contains("is-visible"),
       ),
   });
+  const levelTutorialRuntime = createLevelTutorialRuntime({
+    hintQueue: tutorialHintQueue,
+    worldHint: tutorialWorldHint,
+    emitThought: (id) => gameApi.emitThought?.(id),
+    isAllowed: (state) => Boolean(
+      state?.levelId === activeGameplayLevelId
+      && !briefingPanel?.isActive()
+      && !transitionActive
+      && !isOpen()
+      && !document.querySelector("#resultsOverlay")?.classList.contains("is-visible")
+    ),
+  });
   briefingPanel = createBriefingPanel({
     levels: LEVELS,
     onActiveChange: (active) => {
       updateInputLock(active);
+      levelTutorialRuntime.refresh();
       if (!active) gameApi.finishHoldInteraction?.();
     },
     onDismissed: (levelId, delayMs) => maybeStartIntroTutorial(levelId, delayMs),
@@ -167,6 +188,7 @@ export function createAppShell({ gameApi }) {
       }
 
       introTutorialFlow.handleKey(event);
+      levelTutorialRuntime.handleKey(event);
 
       if (event.code !== "KeyP" || event.repeat) return;
       if (document.querySelector("#resultsOverlay")?.classList.contains("is-visible")) return;
@@ -236,14 +258,22 @@ export function createAppShell({ gameApi }) {
   }
 
   function wireTutorialHints() {
+    document.addEventListener("mousemove", (event) => levelTutorialRuntime.handleMouseMove(event));
     window.addEventListener("operatorgame:hover-target", (event) => {
       introTutorialFlow.handleHover(event.detail);
+      levelTutorialRuntime.handleHover(event.detail);
     });
     window.addEventListener("operatorgame:input-action", (event) => {
       introTutorialFlow.handleInputAction(event.detail);
+      levelTutorialRuntime.handleInputAction(event.detail);
     });
-    window.addEventListener("operatorgame:knob-adjusted", () => {
+    window.addEventListener("operatorgame:knob-adjusted", (event) => {
       introTutorialFlow.handleKnobAdjusted();
+      levelTutorialRuntime.handleEvent({ type: "knobAdjusted", detail: event.detail });
+    });
+    window.addEventListener("operatorgame:level-event", (event) => {
+      if (event.detail?.levelId !== activeGameplayLevelId) return;
+      levelTutorialRuntime.handleEvent(event.detail);
     });
   }
 
@@ -300,7 +330,7 @@ export function createAppShell({ gameApi }) {
     } else if (action === "back") {
       showPanel(previousPanel || "main-menu");
     } else if (action === "restart") {
-      runRouteTransition({
+      const transition = runRouteTransition({
         title: translate("loading.restartingShift"),
         status: translate("loading.resettingCore"),
         action: async ({ setProgress }) => {
@@ -311,6 +341,9 @@ export function createAppShell({ gameApi }) {
           await preloadLevelBriefing(activeGameplayLevelId);
           showLevelBriefing(activeGameplayLevelId);
         },
+      });
+      transition.then((restarted) => {
+        if (restarted && activeGameplayLevelId) maybeStartLevelTutorial(activeGameplayLevelId);
       });
     } else if (action === "quick-level-select") {
       showPanel("level-select");
@@ -348,6 +381,9 @@ export function createAppShell({ gameApi }) {
         await preloadLevelBriefing(levelId);
         showLevelBriefing(levelId);
       },
+    });
+    transition.then((entered) => {
+      if (entered) maybeStartLevelTutorial(levelId);
     });
     return transition;
   }
@@ -490,7 +526,10 @@ export function createAppShell({ gameApi }) {
   }
 
   function hideBriefing(immediate = false, { keepTutorialHints = false } = {}) {
-    if (!keepTutorialHints) introTutorialFlow.stop();
+    if (!keepTutorialHints) {
+      introTutorialFlow.stop();
+      levelTutorialRuntime.stop();
+    }
     briefingPanel.hide(immediate);
   }
 
@@ -508,12 +547,19 @@ export function createAppShell({ gameApi }) {
     introTutorialFlow.start({ levelId, delayMs });
   }
 
+  function maybeStartLevelTutorial(levelId) {
+    levelTutorialRuntime.stop();
+    const config = LEVELS[levelId]?.environment?.tutorial;
+    if (config?.enabled) levelTutorialRuntime.start({ levelId, config });
+  }
+
   function updateInputLock() {
     const uiBlocked = Boolean(transitionActive || briefingPanel.isActive() || isOpen());
     gameApi.setInputLocked?.(uiBlocked);
     subtitleQueue.setBlocked(
       uiBlocked || Boolean(document.querySelector("#resultsOverlay")?.classList.contains("is-visible")),
     );
+    levelTutorialRuntime.refresh();
   }
 
   function isOpen() {

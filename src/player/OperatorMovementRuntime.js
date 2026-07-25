@@ -18,6 +18,7 @@ export function createOperatorMovementRuntime({
   moveWithCollisions,
   syncCapsule,
   applyCameraOffset,
+  limitCameraOffset = (_origin, offset) => offset,
   getYaw,
   setYaw,
   getPitch,
@@ -108,7 +109,11 @@ export function createOperatorMovementRuntime({
     leanAmount = THREE.MathUtils.damp(leanAmount, getZoomActive() ? 1 : 0, movementConfig.leanDamping ?? 11, dt);
     const leanOffset = forward.clone().multiplyScalar(leanAmount * (movementConfig.leanForward ?? 0.16));
     leanOffset.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
-    applyCameraOffset(leanOffset);
+    applyCameraOffset(limitCameraOffset(
+      camera.position,
+      leanOffset,
+      config.player?.collision?.cameraRadius ?? 0.12,
+    ));
   }
 
   function updateZoom(dt) {

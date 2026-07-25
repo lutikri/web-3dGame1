@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 const SERVICE_DOOR_DEFINITION = {
-  assetPath: "assets/mesh/prefabs/SM_Door2_1.glb",
+  assetPath: "assets/mesh/prefabs/SM_Door2.glb",
   materialKey: "door2",
   behavior: "hingedDoor",
   materialOverrides: {
@@ -12,6 +12,7 @@ const SERVICE_DOOR_DEFINITION = {
     meshName: "SM_Door2_Door",
     colliderName: "UBX_SM_Door2_Door_01",
     latchHandleNames: ["SM_Door2_Handle1", "SM_Door2_Handle2"],
+    tutorialHintSocketName: "SOCKET_TutorialHint_DoorHandle",
     latchHandleAxis: "z",
     latchHandleDegreesByName: {
       SM_Door2_Handle1: 28,

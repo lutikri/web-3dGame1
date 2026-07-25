@@ -168,13 +168,23 @@ export class AudioRuntime {
   }
 
   playRandom(groupKey, options = {}) {
+    const soundKey = this.pickRandomSound(groupKey);
+    return soundKey ? this.play(soundKey, options) : null;
+  }
+
+  playRandomAttached(object, groupKey, listenerPosition, options = {}) {
+    const soundKey = this.pickRandomSound(groupKey);
+    return soundKey ? this.playAttached(object, soundKey, listenerPosition, options) : null;
+  }
+
+  pickRandomSound(groupKey) {
     const choices = this.groups[groupKey] ?? [];
     if (!choices.length) return null;
     const last = this.lastGroupChoice.get(groupKey);
     const pool = choices.length > 1 ? choices.filter((key) => key !== last) : choices;
     const soundKey = pool[Math.floor(Math.random() * pool.length)];
     this.lastGroupChoice.set(groupKey, soundKey);
-    return this.play(soundKey, options);
+    return soundKey;
   }
 
   setLoop(soundKey, active, options = {}) {

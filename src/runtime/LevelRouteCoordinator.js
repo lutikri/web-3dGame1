@@ -32,6 +32,7 @@ export class LevelRouteCoordinator {
     this.setShiftProfile(config.shiftProfile ?? null);
     this.resetLevelRuntime();
     this.resetRecorder();
+    this.resetThoughts?.();
     this.resetCore();
     this.stopFuelBlend();
     const snapshot = this.getCoreSnapshot();

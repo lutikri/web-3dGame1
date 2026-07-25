@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=subtitle-route-fades";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=subtitle-route-fades";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=startup-audio-light-tuning";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=startup-audio-light-tuning";
 
 export class DoorStateRuntime {
   constructor(options) {

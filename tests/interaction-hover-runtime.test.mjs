@@ -8,6 +8,8 @@ import {
   getTooltipTarget,
   createInteractionTooltipPolicy,
   isObjectHierarchyVisible,
+  resolveVisibleInteractionHit,
+  getSafeViewOffsetScale,
 } from "../src/interactions/InteractionHoverRuntime.js";
 
 test("interaction hover resolves hit proxies and distance policy", () => {
@@ -19,6 +21,12 @@ test("interaction hover resolves hit proxies and distance policy", () => {
   assert.equal(getInteractionMaxDistance(root, { panelMaxDistance: 2 }), 0.75);
   assert.equal(getTooltipTarget(root), root);
   assert.equal(getTooltipTarget({ userData: { kind: "hingedDoor" } }), null);
+});
+
+test("dynamic view obstruction continuously limits an active lean offset", () => {
+  assert.ok(Math.abs(getSafeViewOffsetScale(0.16, 0.2, 0.12) - 0.5) < 1e-9);
+  assert.equal(getSafeViewOffsetScale(0.16, 0.1, 0.12), 0);
+  assert.equal(getSafeViewOffsetScale(0.16, Infinity, 0.12), 1);
 });
 
 test("interaction tooltip policy describes knob, prefab light and latch state", () => {
@@ -43,4 +51,27 @@ test("object hierarchy visibility rejects hidden ancestors", () => {
   assert.equal(isObjectHierarchyVisible(child, scene), true);
   parent.visible = false;
   assert.equal(isObjectHierarchyVisible(child, scene), false);
+});
+
+test("interaction hover rejects a handle hidden behind the nearest visible mesh", () => {
+  const handle = { isMesh: true, userData: { kind: "doorLatchHandle", levelId: "room" }, parent: null };
+  const blocker = { isMesh: true, userData: {}, parent: null };
+  const options = {
+    interactionLevelId: "room",
+    interactionConfig: {},
+    isObjectVisible: () => true,
+    isInteractiveRoot: (root) => root === handle,
+  };
+  assert.equal(resolveVisibleInteractionHit([
+    { object: blocker, distance: 0.5 },
+    { object: handle, distance: 0.8 },
+  ], options), null);
+  assert.equal(resolveVisibleInteractionHit([
+    { object: handle, distance: 0.5 },
+    { object: blocker, distance: 0.8 },
+  ], options).root, handle);
+  assert.equal(resolveVisibleInteractionHit([
+    { object: blocker, distance: 0.5 },
+    { object: handle, distance: 0.515 },
+  ], options).root, handle);
 });

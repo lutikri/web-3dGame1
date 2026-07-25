@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=subtitle-route-fades";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=startup-audio-light-tuning";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

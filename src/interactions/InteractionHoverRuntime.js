@@ -20,6 +20,7 @@ export function createInteractionHoverRuntime({
   isObjectVisible,
   getTooltipText,
   setHoveredDoor,
+  getOcclusionRoots = () => [],
   body = document.body,
 }) {
   const worldPosition = new THREE.Vector3();
@@ -36,15 +37,43 @@ export function createInteractionHoverRuntime({
     }
     raycaster.setFromCamera(pointer, camera);
     const interactionLevelId = getInteractionLevelId();
-    const hit = raycaster.intersectObjects(interactive, true).find((candidate) => {
-      if (candidate.object.userData.prefabCollider || !isObjectVisible(candidate.object)) return false;
-      const root = findInteractiveRoot(candidate.object);
-      if (root?.userData.levelId && root.userData.levelId !== interactionLevelId) return false;
-      const maxDistance = getInteractionMaxDistance(root, config.interaction);
-      return !Number.isFinite(maxDistance) || candidate.distance <= maxDistance;
+    const roots = getOcclusionRoots().filter(Boolean);
+    const candidates = roots.length > 0
+      ? raycaster.intersectObjects(roots, true)
+      : raycaster.intersectObjects(interactive, true);
+    const hit = resolveVisibleInteractionHit(candidates, {
+      interactionLevelId,
+      interactionConfig: config.interaction,
+      isObjectVisible,
+      isInteractiveRoot: (root) => interactive.includes(root),
+      occlusionTolerance: config.interaction?.occlusionTolerance ?? 0.03,
     });
-    applyTarget(hit ? findInteractiveRoot(hit.object) : null, hit);
+    applyTarget(hit?.root ?? null, hit?.candidate ?? null);
     return hoveredInteractive;
+  }
+
+  function isViewObstructed(maxDistance) {
+    const roots = getOcclusionRoots().filter(Boolean);
+    if (roots.length === 0) return false;
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
+    raycaster.set(camera.position, direction);
+    return raycaster.intersectObjects(roots, true).some((candidate) => {
+      if (candidate.distance > maxDistance) return false;
+      return isInteractionOccluder(candidate.object, isObjectVisible);
+    });
+  }
+
+  function limitViewOffset(origin, offset, clearance = 0) {
+    const distance = offset.length();
+    const roots = getOcclusionRoots().filter(Boolean);
+    if (distance <= 0.0001 || roots.length === 0) return offset;
+    raycaster.set(origin, offset.clone().normalize());
+    const hit = raycaster.intersectObjects(roots, true).find(
+      (candidate) => isInteractionOccluder(candidate.object, isObjectVisible),
+    );
+    if (!hit || hit.distance >= distance + clearance) return offset;
+    return offset.clone().multiplyScalar(getSafeViewOffsetScale(distance, hit.distance, clearance));
   }
 
   function applyTarget(target, hit = null, forceTooltip = false) {
@@ -116,11 +145,13 @@ export function createInteractionHoverRuntime({
     const levelId = getActiveLevelId();
     const kind = target?.userData.kind ?? "none";
     const name = target?.name ?? "";
-    const signal = `${levelId}:${kind}:${name}`;
+    const levelPrefabKey = target?.userData.levelPrefabKey ?? "";
+    const prefabName = levelPrefabKey.split(":").slice(1).join(":");
+    const signal = `${levelId}:${kind}:${name}:${prefabName}`;
     if (signal === lastHoverSignal) return;
     lastHoverSignal = signal;
     window.dispatchEvent(new CustomEvent("operatorgame:hover-target", {
-      detail: { levelId, kind, name, controlLabel: target?.userData.controlLabel ?? "" },
+      detail: { levelId, kind, name, prefabName, controlLabel: target?.userData.controlLabel ?? "" },
     }));
   }
 
@@ -134,7 +165,48 @@ export function createInteractionHoverRuntime({
     getHoveredInteractive: () => hoveredInteractive,
     getHoveredKnob: () => hoveredKnob,
     getTooltipTarget: () => hoveredTooltipTarget,
+    isViewObstructed,
+    limitViewOffset,
   };
+}
+
+export function getSafeViewOffsetScale(offsetDistance, hitDistance, clearance = 0) {
+  if (offsetDistance <= 0.0001 || !Number.isFinite(hitDistance)) return 1;
+  return THREE.MathUtils.clamp((hitDistance - clearance) / offsetDistance, 0, 1);
+}
+
+export function resolveVisibleInteractionHit(candidates, {
+  interactionLevelId,
+  interactionConfig = {},
+  isObjectVisible,
+  isInteractiveRoot = () => true,
+  occlusionTolerance = 0.03,
+}) {
+  let interactionHit = null;
+  for (const candidate of candidates) {
+    const object = candidate.object;
+    if (!isInteractionOccluder(object, isObjectVisible)) continue;
+    const root = findInteractiveRoot(object);
+    if (!root || !isInteractiveRoot(root)) continue;
+    if (root.userData.levelId && root.userData.levelId !== interactionLevelId) continue;
+    const maxDistance = getInteractionMaxDistance(root, interactionConfig);
+    if (!Number.isFinite(maxDistance) || candidate.distance <= maxDistance) {
+      interactionHit = { candidate, root };
+      break;
+    }
+  }
+  if (!interactionHit) return null;
+  const blocker = candidates.find((candidate) => {
+    if (!isInteractionOccluder(candidate.object, isObjectVisible)) return false;
+    const root = findInteractiveRoot(candidate.object);
+    if (root && isInteractiveRoot(root)) return false;
+    return candidate.distance + occlusionTolerance < interactionHit.candidate.distance;
+  });
+  return blocker ? null : interactionHit;
+}
+
+function isInteractionOccluder(object, isObjectVisible) {
+  return Boolean(object?.isMesh && !object.userData.prefabCollider && isObjectVisible(object));
 }
 
 export function getInteractionMaxDistance(object, interactionConfig = {}) {

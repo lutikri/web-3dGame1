@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=subtitle-route-fades";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=subtitle-route-fades";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=subtitle-route-fades";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=subtitle-route-fades";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=startup-audio-light-tuning";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=startup-audio-light-tuning";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=startup-audio-light-tuning";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=startup-audio-light-tuning";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -96,7 +96,28 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         },
       ],
     },
+    {
+      name: "MainCorridorEntrance",
+      trigger: { markerName: "TRGVOL_MainCorridorEntrance_1", once: true },
+    },
+    {
+      name: "ControlBooth",
+      trigger: { markerName: "TRGVOL_ControlBooth_1", once: true },
+    },
   ],
+  tutorial: {
+    enabled: true,
+    spawnHintDelaySeconds: 2,
+    advanceHintDelaySeconds: 2,
+    postMovementDelaySeconds: 5,
+    hoverConfirmSeconds: 0.4,
+    entryDoorTarget: "serviceDoor_Exit2",
+    welcomeTrigger: "WelcomeEntry",
+    mainCorridorTrigger: "MainCorridorEntrance",
+    controlBoothTrigger: "ControlBooth",
+    mainCorridorThought: "tutorial-control-booth",
+    startCoreThought: "tutorial-start-core",
+  },
   prefabs: [
     createPrefabInstance("operatorPanel", {
       name: "Panel1",

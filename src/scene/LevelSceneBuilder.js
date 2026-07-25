@@ -3,12 +3,12 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=subtitle-route-fades";
+} from "../prefabs/PrefabMarkerResolver.js?v=startup-audio-light-tuning";
 import {
   applyPrefabOverrideEntries,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=subtitle-route-fades";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=subtitle-route-fades";
+} from "../levels/LevelConfigOverrides.js?v=startup-audio-light-tuning";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=startup-audio-light-tuning";
 
 export function createLevelSceneBuilder({
   scene,

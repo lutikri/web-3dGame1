@@ -1,9 +1,10 @@
 export class BriefInteractionRuntime {
-  constructor({ interactive, getHoveredInteractive, openBriefingSheet, setHoldProgress = () => {} }) {
+  constructor({ interactive, getHoveredInteractive, openBriefingSheet, setHoldProgress = () => {}, onOpened = () => {} }) {
     this.interactive = interactive;
     this.getHoveredInteractive = getHoveredInteractive;
     this.openBriefingSheet = openBriefingSheet;
     this.setHoldProgress = setHoldProgress;
+    this.onOpened = onOpened;
     this.activeTarget = null;
     this.elapsed = 0;
   }
@@ -56,6 +57,7 @@ export class BriefInteractionRuntime {
     this.elapsed = 0;
     const opened = this.openBriefingSheet?.(request);
     if (opened === false) this.release();
+    else this.onOpened({ ...request, target });
     return true;
   }
 }

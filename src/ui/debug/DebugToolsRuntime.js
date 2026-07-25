@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=subtitle-route-fades";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=subtitle-route-fades";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=subtitle-route-fades";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=subtitle-route-fades";
+import { createDebugHub } from "./DebugHub.js?v=startup-audio-light-tuning";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=startup-audio-light-tuning";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=startup-audio-light-tuning";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=startup-audio-light-tuning";
 
 export class DebugToolsRuntime {
   constructor(options) {

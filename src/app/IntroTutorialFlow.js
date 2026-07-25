@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=subtitle-route-fades";
+import { translateRequired } from "./Localization.js?v=startup-audio-light-tuning";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

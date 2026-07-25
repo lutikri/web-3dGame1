@@ -274,6 +274,8 @@ body:not(.hold-interaction-active) .hold-indicator-progress {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.2, 0.8, 0.25, 1);
+  scale: 0.625;
+  transform-origin: 50% 100%;
 }
 
 .tutorial-hint[hidden] {
@@ -355,6 +357,25 @@ body:not(.hold-interaction-active) .hold-indicator-progress {
 
 .tutorial-mouse.is-right span {
   display: none;
+}
+
+.tutorial-mouse:not(.is-left):not(.is-right) span {
+  display: none;
+}
+
+.tutorial-mouse.is-left span {
+  display: none;
+}
+
+.tutorial-mouse.is-left::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 21px;
+  border-radius: 14px 0 0 5px;
+  background: rgba(159, 242, 181, 0.4);
 }
 
 .tutorial-mouse.is-right::after {
@@ -683,6 +704,22 @@ body:not(.hold-interaction-active) .hold-indicator-progress {
   overflow: hidden;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 12px;
+}
+
+.tutorial-world-hint {
+  position: fixed;
+  z-index: 47;
+  width: 45px;
+  height: 45px;
+  border: 2px solid rgba(159, 242, 181, 0.92);
+  border-radius: 50%;
+  transform: translate(-50%, -135%);
+  background: rgba(5, 24, 14, 0.9);
+  color: #9ff2b5;
+  box-shadow: 0 0 18px rgba(47, 191, 112, 0.38), 0 3px 9px rgba(0, 0, 0, 0.4);
+  font: 700 28px/41px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+  pointer-events: none;
 }
 
 .level-panel .panel-header {

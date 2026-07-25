@@ -18,6 +18,7 @@ test("panel control runtime owns knob values and button animation", () => {
     initialPosition: button.position.clone(),
   };
   let changed = 0;
+  const sounds = [];
   const runtime = new PanelControlRuntime({
     config: { controls: { knobValue0DialPercent: 0, knobValue100DialPercent: 100, knobDialDegrees: 180, knobRotationAxis: "z" } },
     knobs: [knob],
@@ -28,10 +29,13 @@ test("panel control runtime owns knob values and button animation", () => {
       registerKnobMovement: () => {},
     },
     onChanged: () => { changed += 1; },
+    playSound: (...args) => sounds.push(args),
+    getTime: () => 1,
   });
   assert.equal(runtime.adjustKnob(knob, 10), true);
   assert.equal(runtime.getPercent("Fuel"), 40);
   assert.equal(changed, 1);
+  assert.deepEqual(sounds, [["panelKnobTick", knob]]);
   assert.ok(Math.abs(knob.rotation.z - THREE.MathUtils.degToRad(72)) < 0.001);
   runtime.update(1);
   assert.ok(button.position.z < 0);
@@ -48,7 +52,15 @@ test("panel control runtime routes primary and level-bound auxiliary buttons", (
   });
   assert.equal(runtime.setControlButtonPressed(primary, true), true);
   assert.equal(runtime.setAuxiliaryButtonPressed(auxiliary, true), true);
-  assert.deepEqual(calls, ["panelButtonLight", "action", "mechanicalButton", "toggleRoomLights", ["buttonPressed", "Lights"], "changed"]);
+  assert.deepEqual(calls, [
+    "panelButtonLight",
+    "action",
+    ["buttonPressed", "Start"],
+    "mechanicalButton",
+    "toggleRoomLights",
+    ["buttonPressed", "Lights"],
+    "changed",
+  ]);
   runtime.releaseAll();
   assert.equal(primary.userData.pressed, false);
   assert.equal(auxiliary.userData.pressed, false);
@@ -71,4 +83,27 @@ test("panel control runtime exposes simulation inputs from physical controls", (
     fuelInjection: 35, magneticField: 60, coolantFlow: 45,
     ventActive: true, pulseActive: true, fuelBlend, shiftProfile,
   });
+});
+
+test("panel knob audio emits once for a burst of wheel adjustments", () => {
+  let now = 1;
+  const sounds = [];
+  const knob = new THREE.Object3D();
+  knob.name = "Fuel";
+  knob.userData.controlPercent = 20;
+  knob.userData.initialRotation = knob.rotation.clone();
+  const runtime = new PanelControlRuntime({
+    config: { controls: {} }, knobs: [knob], buttons: [], auxiliaryButtons: [],
+    diagnostics: { getKnobSensitivity: () => 1, registerKnobMovement() {} },
+    onChanged() {}, getTime: () => now, playSound: (...args) => sounds.push(args),
+  });
+  runtime.adjustKnob(knob, 1);
+  now += 0.04;
+  runtime.adjustKnob(knob, 1);
+  now += 0.04;
+  runtime.adjustKnob(knob, 1);
+  assert.equal(sounds.length, 1);
+  now += 0.15;
+  runtime.adjustKnob(knob, 1);
+  assert.equal(sounds.length, 2);
 });

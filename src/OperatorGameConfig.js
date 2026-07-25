@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=subtitle-route-fades";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=subtitle-route-fades";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=subtitle-route-fades";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=subtitle-route-fades";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=startup-audio-light-tuning";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=startup-audio-light-tuning";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=startup-audio-light-tuning";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=startup-audio-light-tuning";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -835,10 +835,13 @@ export const CONFIG = {
   feedback: {
     startup: {
       duration: 3.2,
+      roomDimSeconds: 18,
+      roomMinLightFactor: 0.82,
+      roomCameraShake: 0.00065,
       blackoutSeconds: 0.28,
       lampFrequency: 18,
       needleJitterDegrees: 40,
-      cameraShake: 0.004,
+      cameraShake: 0,
       fluorescentStartup: {
         warmupSeconds: [0.12, 0.32],
         attemptCount: [3, 6],
@@ -911,7 +914,7 @@ export const CONFIG = {
       resultsHoldSeconds: 10,
       completeLightFactor: 0.82,
       failedLightFactor: 0.55,
-      destroyedLightFactor: 0.32,
+      destroyedLightFactor: 1,
     },
     indicatorTest: {
       duration: 10,

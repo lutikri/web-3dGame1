@@ -3,11 +3,12 @@ import * as THREE from "three";
 export class LevelTriggerSequenceRuntime {
   constructor({ environmentModels, prefabInstances, getActiveLevelId, resolveEnvironmentId = (id) => id,
     getLevelConfig, getPlayerPosition, isLevelView, playNarration, requestBarrierUnlock,
+    emitEvent = () => {},
     setTimeoutFn = (callback, ms) => window.setTimeout(callback, ms),
     clearTimeoutFn = (timer) => window.clearTimeout(timer) }) {
     Object.assign(this, { environmentModels, prefabInstances, getActiveLevelId, resolveEnvironmentId,
       getLevelConfig, getPlayerPosition, isLevelView, playNarration, requestBarrierUnlock,
-      setTimeoutFn, clearTimeoutFn });
+      emitEvent, setTimeoutFn, clearTimeoutFn });
     this.levelId = null;
     this.triggerStates = new Map();
     this.timers = new Set();
@@ -39,6 +40,7 @@ export class LevelTriggerSequenceRuntime {
       state.inside = inside;
       if (!entered || (sequence.trigger?.once !== false && state.fired)) continue;
       state.fired = true;
+      this.emitEvent("triggerEntered", { target: sequence.name ?? markerName, markerName });
       void this.#runSequence(levelId, sequence);
     }
   };

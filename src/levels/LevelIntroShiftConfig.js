@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=subtitle-route-fades";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=subtitle-route-fades";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=subtitle-route-fades";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=subtitle-route-fades";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=startup-audio-light-tuning";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=startup-audio-light-tuning";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=startup-audio-light-tuning";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=startup-audio-light-tuning";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

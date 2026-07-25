@@ -3,127 +3,128 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=subtitle-route-fades";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=startup-audio-light-tuning";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=subtitle-route-fades";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=subtitle-route-fades";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=subtitle-route-fades";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=subtitle-route-fades";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=subtitle-route-fades";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=subtitle-route-fades";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=subtitle-route-fades";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=subtitle-route-fades";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=subtitle-route-fades";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=subtitle-route-fades";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=subtitle-route-fades";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=subtitle-route-fades";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=subtitle-route-fades";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=subtitle-route-fades";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=subtitle-route-fades";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=subtitle-route-fades";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=subtitle-route-fades";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=subtitle-route-fades";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=subtitle-route-fades";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=subtitle-route-fades";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=subtitle-route-fades";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=subtitle-route-fades";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=subtitle-route-fades";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=subtitle-route-fades";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=subtitle-route-fades";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=subtitle-route-fades";
+} from "./game/ShiftReport.js?v=startup-audio-light-tuning";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=startup-audio-light-tuning";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=startup-audio-light-tuning";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=startup-audio-light-tuning";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=startup-audio-light-tuning";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=startup-audio-light-tuning";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=startup-audio-light-tuning";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=startup-audio-light-tuning";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=startup-audio-light-tuning";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=startup-audio-light-tuning";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=startup-audio-light-tuning";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=startup-audio-light-tuning";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=startup-audio-light-tuning";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=startup-audio-light-tuning";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=startup-audio-light-tuning";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=startup-audio-light-tuning";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=startup-audio-light-tuning";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=startup-audio-light-tuning";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=startup-audio-light-tuning";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=startup-audio-light-tuning";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=startup-audio-light-tuning";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=startup-audio-light-tuning";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=startup-audio-light-tuning";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=startup-audio-light-tuning";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=startup-audio-light-tuning";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=startup-audio-light-tuning";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=startup-audio-light-tuning";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=subtitle-route-fades";
+} from "./config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=subtitle-route-fades";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=subtitle-route-fades";
-import { createStatusScreen } from "./StatusScreen.js?v=subtitle-route-fades";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=subtitle-route-fades";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=subtitle-route-fades";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=subtitle-route-fades";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=subtitle-route-fades";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=subtitle-route-fades";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=subtitle-route-fades";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=subtitle-route-fades";
+} from "./scene/TextureStreaming.js?v=startup-audio-light-tuning";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=startup-audio-light-tuning";
+import { createStatusScreen } from "./StatusScreen.js?v=startup-audio-light-tuning";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=startup-audio-light-tuning";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=startup-audio-light-tuning";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=startup-audio-light-tuning";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=startup-audio-light-tuning";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=startup-audio-light-tuning";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=startup-audio-light-tuning";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=startup-audio-light-tuning";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=subtitle-route-fades";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=subtitle-route-fades";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=subtitle-route-fades";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=startup-audio-light-tuning";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=startup-audio-light-tuning";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=startup-audio-light-tuning";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=subtitle-route-fades";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=subtitle-route-fades";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=subtitle-route-fades";
-import { AssetCache } from "./runtime/AssetCache.js?v=subtitle-route-fades";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=subtitle-route-fades";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=subtitle-route-fades";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=subtitle-route-fades";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=subtitle-route-fades";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=subtitle-route-fades";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=subtitle-route-fades";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=subtitle-route-fades";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=subtitle-route-fades";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=subtitle-route-fades";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=subtitle-route-fades";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=subtitle-route-fades";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=subtitle-route-fades";
+} from "./lighting/FluorescentBehavior.js?v=startup-audio-light-tuning";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=startup-audio-light-tuning";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=startup-audio-light-tuning";
+import { AssetCache } from "./runtime/AssetCache.js?v=startup-audio-light-tuning";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=startup-audio-light-tuning";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=startup-audio-light-tuning";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=startup-audio-light-tuning";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=startup-audio-light-tuning";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=startup-audio-light-tuning";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=startup-audio-light-tuning";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=startup-audio-light-tuning";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=startup-audio-light-tuning";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=startup-audio-light-tuning";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=startup-audio-light-tuning";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=startup-audio-light-tuning";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=startup-audio-light-tuning";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=subtitle-route-fades";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=subtitle-route-fades";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=subtitle-route-fades";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=subtitle-route-fades";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=subtitle-route-fades";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=subtitle-route-fades";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=subtitle-route-fades";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=subtitle-route-fades";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=subtitle-route-fades";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=subtitle-route-fades";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=subtitle-route-fades";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=subtitle-route-fades";
-import { PlayerController } from "./player/PlayerController.js?v=subtitle-route-fades";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=subtitle-route-fades";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=subtitle-route-fades";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=subtitle-route-fades";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=subtitle-route-fades";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=subtitle-route-fades";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=subtitle-route-fades";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=subtitle-route-fades";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=subtitle-route-fades";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=subtitle-route-fades";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=subtitle-route-fades";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=subtitle-route-fades";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=subtitle-route-fades";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=subtitle-route-fades";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=subtitle-route-fades";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=subtitle-route-fades";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=subtitle-route-fades";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=subtitle-route-fades";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=subtitle-route-fades";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=subtitle-route-fades";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=subtitle-route-fades";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=subtitle-route-fades";
+} from "./scene/InteriorObjectRegistry.js?v=startup-audio-light-tuning";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=startup-audio-light-tuning";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=startup-audio-light-tuning";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=startup-audio-light-tuning";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=startup-audio-light-tuning";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=startup-audio-light-tuning";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=startup-audio-light-tuning";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=startup-audio-light-tuning";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=startup-audio-light-tuning";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=startup-audio-light-tuning";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=startup-audio-light-tuning";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=startup-audio-light-tuning";
+import { PlayerController } from "./player/PlayerController.js?v=startup-audio-light-tuning";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=startup-audio-light-tuning";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=startup-audio-light-tuning";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=startup-audio-light-tuning";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=startup-audio-light-tuning";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=startup-audio-light-tuning";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=startup-audio-light-tuning";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=startup-audio-light-tuning";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=startup-audio-light-tuning";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=startup-audio-light-tuning";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=startup-audio-light-tuning";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=startup-audio-light-tuning";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=startup-audio-light-tuning";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=startup-audio-light-tuning";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=startup-audio-light-tuning";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=startup-audio-light-tuning";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=startup-audio-light-tuning";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=startup-audio-light-tuning";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=startup-audio-light-tuning";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=startup-audio-light-tuning";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=startup-audio-light-tuning";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=startup-audio-light-tuning";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=subtitle-route-fades";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=startup-audio-light-tuning";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -341,7 +342,9 @@ const panelControlRuntime = new PanelControlRuntime({
   auxiliaryButtons: roomLightButtons,
   diagnostics: diagnosticRuntime,
   onChanged: () => updateControlTooltip(),
-  playSound: (group) => audioRuntime.playRandom(group),
+  playSound: (group, object) => object
+    ? audioRuntime.playRandomAttached(object, group, camera.position)
+    : audioRuntime.playRandom(group),
   runAction: runControlButtonAction,
   toggleRoomLights: () => toggleRoomLights(),
   executeLevelBinding,
@@ -548,6 +551,7 @@ const operatorMovementRuntime = createOperatorMovementRuntime({
   moveWithCollisions: movePlayerWithCollisions,
   syncCapsule: syncPlayerCapsule,
   applyCameraOffset: applyCollisionLimitedCameraOffset,
+  limitCameraOffset: (origin, offset, clearance) => interactionHoverRuntime.limitViewOffset(origin, offset, clearance),
   getYaw: () => yaw,
   setYaw: (value) => { yaw = value; },
   getPitch: () => pitch,
@@ -695,12 +699,24 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   isObjectVisible: isObjectHierarchyVisible,
   getTooltipText,
   setHoveredDoor: setHoveredHingedDoor,
+  getOcclusionRoots: () => {
+    const environmentId = getLevelEnvironmentId(operatorViewMode === "menu" ? "intro-shift" : activeLevelId);
+    return [
+      levelEnvironmentModels.get(environmentId),
+      levelEnvironmentModels.get(`${environmentId}:prefabs`),
+      panelModel,
+    ];
+  },
 });
 let briefingSheetOpener = null;
 const briefInteractionRuntime = new BriefInteractionRuntime({
   interactive,
   getHoveredInteractive: interactionHoverRuntime.getHoveredInteractive,
   openBriefingSheet: (request) => briefingSheetOpener?.(request),
+  onOpened: (detail) => activeLevelSessionRuntime.emit("briefOpened", {
+    target: "brief",
+    sheetIndex: detail.sheetIndex,
+  }),
   setHoldProgress: (progress, active) => {
     document.body.style.setProperty("--hold-progress", String(progress * 100));
     document.body.classList.toggle("hold-interaction-active", active);
@@ -730,8 +746,7 @@ const shiftCompletionRuntime = new ShiftCompletionRuntime({
   initialMode: latestSnapshot.mode,
   createStartupPattern: createFluorescentStartupPattern,
   getStartupDuration: getFluorescentStartupDuration,
-  stopCoreLoop: () =>
-    audioRuntime.setAttachedLoop("core:FusionCore_Working1", panelModel, "FusionCore_Working1", false),
+  stopCoreLoop: () => {},
   emitThought: (...args) => emitOperatorThought(...args),
   canUnlockBulkhead: bulkheadExitRuntime.canUnlock,
   unlockBulkhead: bulkheadExitRuntime.unlock,
@@ -777,6 +792,11 @@ const levelStaticPhysicsRuntime = new LevelStaticPhysicsRuntime({
   applyOperatorPanelLevel: (levelId) => operatorPanelRuntime.applyLevel(levelId, operatorViewMode),
 });
 const activeLevelSessionRuntime = new ActiveLevelSessionRuntime({
+  onEvent: (event, levelId) => {
+    window.dispatchEvent(new CustomEvent("operatorgame:level-event", {
+      detail: { levelId, ...event },
+    }));
+  },
   onComplete: (levelId, session) => {
     window.dispatchEvent(new CustomEvent("operatorgame:level-objectives-complete", {
       detail: { levelId, session },
@@ -801,8 +821,8 @@ const shiftLifecycleRuntime = new ShiftLifecycleRuntime({
   resetBulkhead: resetBulkheadExit,
   resetThoughts: resetOperatorThoughts,
   emitThought: emitOperatorThought,
-  playIgnition: () => playSoundAtObject(panelModel, "FusionCore_Ignite1", { maxDistance: 20 }),
-  stopCoreLoop: () => audioRuntime.setAttachedLoop("core:FusionCore_Working1", panelModel, "FusionCore_Working1", false),
+  playIgnition: () => {},
+  stopCoreLoop: () => {},
   triggerStartupFeedback,
   setStartupTimer: (value) => sceneFeedbackRuntime.setStartupTimer(value),
   setIndicatorTimer: (value) => sceneFeedbackRuntime.setIndicatorTimer(value),
@@ -843,6 +863,8 @@ const narrationRuntime = createNarrationRuntime({
     }),
   startRadioSpeech: startNarratorRadioSpeech,
   resetRadio: resetNarratorRadioRuntime,
+  onStarted: (detail) => activeLevelSessionRuntime.emit("narrationStarted", detail),
+  onEnded: (detail) => activeLevelSessionRuntime.emit("narrationEnded", detail),
 });
 const sceneFeedbackMath = createSceneFeedbackMath({
   config: CONFIG,
@@ -862,6 +884,12 @@ const getThermalEmergencyAmount = sceneFeedbackMath.getThermalEmergencyAmount;
 const getTerminalLightFactor = sceneFeedbackMath.getTerminalLightFactor;
 const getDangerNeedleJitter = sceneFeedbackMath.getDangerNeedleJitter;
 const getOperationalNeedleJitter = sceneFeedbackMath.getOperationalNeedleJitter;
+const coreAudioRuntime = new CoreAudioRuntime({
+  audio: audioRuntime,
+  getCoreAnchor: () => panelModel,
+  getPanel: () => panelModel,
+  playSound: playSoundAtObject,
+});
 const sceneAudioRuntime = new SceneAudioRuntime({
   config: CONFIG,
   audio: audioRuntime,
@@ -878,8 +906,7 @@ const sceneAudioRuntime = new SceneAudioRuntime({
   getLightFactor: () =>
     getStartupLightFactor() * getTerminalLightFactor() * diagnosticRuntime.getBlackoutFactor(),
   getSnapshot: () => latestSnapshot,
-  getTerminalElapsed: () => shiftCompletionRuntime.terminalElapsed,
-  getTime: () => testTime,
+  coreAudio: coreAudioRuntime,
   playSound: playSoundAtObject,
 });
 const updateAudioState = sceneAudioRuntime.update;
@@ -1064,7 +1091,7 @@ const operatorPanelRuntime = new OperatorPanelRuntime({
     areNeedlesFrozen: () => freezeNeedles,
     onIgnitionPulse: () => {
       sceneFeedbackRuntime.triggerIgnitionPulse();
-      playSoundAtObject(panelModel, "FusionCore_Pulse1", { maxDistance: 20 });
+      playSoundAtObject(panelModel, "Core1_Pulse", { maxDistance: 20 });
     },
     onLightRestart: triggerRoomLightBoot,
     updateThoughts: updateOperatorThoughts,
@@ -1165,6 +1192,7 @@ const levelTriggerSequenceRuntime = new LevelTriggerSequenceRuntime({
   isLevelView: () => operatorViewMode === "level",
   playNarration: (levelId, line) => line === "welcome" ? narrationRuntime.playWelcome(levelId) : null,
   requestBarrierUnlock: requestBarrierGateUnlock,
+  emitEvent: (type, detail) => activeLevelSessionRuntime.emit(type, detail),
 });
 const frameSchedulingPolicy = new FrameSchedulingPolicy();
 const renderWarmupRuntime = new RenderWarmupRuntime({
@@ -1204,6 +1232,7 @@ const levelRouteCoordinator = new LevelRouteCoordinator({
       runtime.faultyStarterElapsed = 0;
     });
   },
+  resetThoughts: resetOperatorThoughts,
   setRoomLights: setRoomLightsEnabled,
   resetDiagnostics: (options) => diagnosticRuntime.reset(options),
   resetFuelBlend: (options) => fuelBlendRuntime.reset(options),
@@ -1790,6 +1819,7 @@ async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMo
 
 function runControlButtonAction(button) {
   if (button.userData.controlAction === "start") {
+    activeLevelSessionRuntime.emit("coreStarted", { target: button.name });
     startShift();
     console.log("[OperatorGame] Fusion core run started");
   } else if (button.userData.controlAction === "reset") {
@@ -1881,6 +1911,9 @@ const operatorInputRuntime = createOperatorInputRuntime({
   getActiveLevelId: () => activeLevelId,
   updateHoverTarget,
   getHoveredInteractive: interactionHoverRuntime.getHoveredInteractive,
+  canLean: () => !interactionHoverRuntime.isViewObstructed(
+    (CONFIG.camera.operatorMovement?.leanForward ?? 0.16) + (CONFIG.player?.collision?.cameraRadius ?? 0.12),
+  ),
   activateInteractive: (target) => {
     if (target?.userData.kind === "briefSheet") briefInteractionRuntime.begin(target);
     else if (target?.userData.kind === "controlButton") setControlButtonPressed(target, true);
@@ -2013,6 +2046,28 @@ installOperatorGameApi(window, {
   },
   playSoundGroup: (groupKey, options) => audioRuntime.playRandom(groupKey, options),
   finishHoldInteraction: () => briefInteractionRuntime.release(),
+  emitThought: (id) => emitOperatorThought(id),
+  getTutorialAnchor: ({ prefab, role } = {}) => {
+    const environmentId = getLevelEnvironmentId(activeLevelId);
+    const runtime = levelPrefabInstances.get(`${environmentId}:${prefab}`);
+    const authoredSocket = role === "latchHandle"
+      ? runtime?.parts?.get(runtime?.door?.interaction?.tutorialHintSocketName)
+      : null;
+    const target = role === "latchHandle"
+      ? authoredSocket ?? runtime?.door?.latchHandles?.[0] ?? runtime?.door?.latchHandle
+      : runtime?.root;
+    if (!target) return null;
+    const position = new THREE.Vector3();
+    target.getWorldPosition(position);
+    if (!authoredSocket && role === "latchHandle") position.y += 0.18;
+    position.project(camera);
+    return {
+      visible: position.z >= -1 && position.z <= 1
+        && Math.abs(position.x) <= 1.1 && Math.abs(position.y) <= 1.1,
+      x: (position.x * 0.5 + 0.5) * window.innerWidth,
+      y: (-position.y * 0.5 + 0.5) * window.innerHeight,
+    };
+  },
   setBaseFov: (degrees) => {
     baseFovDegrees = THREE.MathUtils.clamp(Number(degrees), 50, 105);
     CONFIG.camera.fovDegrees = baseFovDegrees;

@@ -39,6 +39,7 @@ export function createOperatorInputRuntime({
   getActiveLevelId,
   updateHoverTarget,
   getHoveredInteractive,
+  canLean = () => true,
   activateInteractive,
   releasePrimaryInteractions,
   releaseAllControls,
@@ -160,6 +161,7 @@ export function createOperatorInputRuntime({
     }
     if (event.button === 2) {
       event.preventDefault();
+      if (!canLean()) return;
       setZoomActive(true);
       window.dispatchEvent(new CustomEvent("operatorgame:input-action", {
         detail: { action: "lean", levelId: getActiveLevelId() },
@@ -170,7 +172,18 @@ export function createOperatorInputRuntime({
     if (event.button !== 0) return;
     if (document.pointerLockElement !== canvas) updatePointerFromEvent(event);
     updateHoverTarget();
-    activateInteractive(getHoveredInteractive());
+    const target = getHoveredInteractive();
+    const levelPrefabKey = target?.userData.levelPrefabKey ?? "";
+    window.dispatchEvent(new CustomEvent("operatorgame:input-action", {
+      detail: {
+        action: "primary",
+        levelId: getActiveLevelId(),
+        kind: target?.userData.kind,
+        name: target?.name,
+        prefabName: levelPrefabKey.split(":").slice(1).join(":"),
+      },
+    }));
+    activateInteractive(target);
   }
 
   function handleMouseUp(event) {

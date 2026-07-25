@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=subtitle-route-fades";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

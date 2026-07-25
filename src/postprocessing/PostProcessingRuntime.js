@@ -8,7 +8,7 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=subtitle-route-fades";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=startup-audio-light-tuning";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -16,7 +16,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=subtitle-route-fades";
+} from "./PostProcessingShaders.js?v=startup-audio-light-tuning";
 
 export class PostProcessingRuntime {
   composer = null;

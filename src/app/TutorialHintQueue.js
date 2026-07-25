@@ -1,20 +1,25 @@
 const TOKEN_PLACEHOLDER_PATTERN = /\{(keys|key|button|wheel)\}/g;
 
-export function createTutorialHintQueue({ element, translate }) {
+export function createTutorialHintQueue({ element, translate, onShow = () => {} }) {
   let activeId = null;
+  let pendingId = null;
   let hideTimer = 0;
   let revealTimer = 0;
 
   function show({ id, textKey, tokens = {}, delayMs = 0, durationMs = 0 } = {}) {
     if (!element || !id || !textKey) return;
+    if (id === activeId || id === pendingId) return;
     window.clearTimeout(revealTimer);
+    pendingId = id;
     revealTimer = window.setTimeout(() => {
+      pendingId = null;
       window.clearTimeout(hideTimer);
       activeId = id;
       element.innerHTML = renderHint(translate(textKey), tokens);
       element.hidden = false;
       element.getBoundingClientRect();
       element.classList.add("is-visible");
+      onShow({ id, textKey });
       if (durationMs > 0) {
         hideTimer = window.setTimeout(() => hide(id), durationMs);
       }
@@ -28,6 +33,7 @@ export function createTutorialHintQueue({ element, translate }) {
     element.classList.remove("is-visible");
     const hiddenId = activeId;
     activeId = null;
+    pendingId = null;
     window.setTimeout(() => {
       if (activeId || hiddenId !== id) return;
       element.hidden = true;
@@ -39,6 +45,7 @@ export function createTutorialHintQueue({ element, translate }) {
     window.clearTimeout(hideTimer);
     window.clearTimeout(revealTimer);
     activeId = null;
+    pendingId = null;
     if (!element) return;
     element.classList.remove("is-visible");
     element.hidden = true;

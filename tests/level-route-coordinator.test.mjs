@@ -21,6 +21,7 @@ function createCoordinator({ loaded = "room" } = {}) {
     warmupRendering: async () => { calls.push(["warmup"]); },
     setRoomLights: record("roomLights"), resetDiagnostics: record("diagnostics"),
     resetFuelBlend: record("fuelReset"), resetRecorder: record("recorder"), resetCore: record("coreReset"),
+    resetThoughts: record("thoughtsReset"),
     stopFuelBlend: record("fuelStop"), getCoreSnapshot: () => ({ mode: "standby" }),
     resetCompletion: record("completion"), updateStatus: record("status"), scheduleNarration: record("narration"),
   });
@@ -38,7 +39,7 @@ test("level route coordinator composes a complete level entry", async () => {
   assert.deepEqual(calls.map(([name]) => name), [
     "stopEditing", "route", "sessionStart", "levelView", "doors", "activate", "lights",
     "roomLights", "diagnostics", "fuelReset", "shiftProfile", "resetLevel", "recorder",
-    "coreReset", "fuelStop", "completion", "status", "warmup", "narration",
+    "thoughtsReset", "coreReset", "fuelStop", "completion", "status", "warmup", "narration",
   ]);
   assert.deepEqual(progress, [8, 68, 76, 94, 98]);
 });

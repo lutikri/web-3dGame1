@@ -69,6 +69,66 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       ]
     }
   },
+  "narration": {
+    "autoStart": false,
+    "welcome": {
+      "en": {
+        "soundKey": "MessageEN_Welcome1",
+        "subtitlePath": "assets/sounds/narration/MessageEN_Welcome1.srt",
+        "duration": 24.48
+      },
+      "ru": {
+        "soundKey": "MessageRU_Welcome1",
+        "subtitlePath": "assets/sounds/narration/MessageRU_Welcome1.srt",
+        "duration": 25.6
+      }
+    }
+  },
+  "triggerSequences": [
+    {
+      "name": "WelcomeEntry",
+      "trigger": {
+        "markerName": "TRGVOL_WelcomeEntry_01",
+        "once": true
+      },
+      "narration": "welcome",
+      "actions": [
+        {
+          "action": "unlockBarrierGate",
+          "target": "Barrier1_1",
+          "relativeTo": "narrationEnd",
+          "offsetSeconds": -0.8
+        }
+      ]
+    },
+    {
+      "name": "MainCorridorEntrance",
+      "trigger": {
+        "markerName": "TRGVOL_MainCorridorEntrance_1",
+        "once": true
+      }
+    },
+    {
+      "name": "ControlBooth",
+      "trigger": {
+        "markerName": "TRGVOL_ControlBooth_1",
+        "once": true
+      }
+    }
+  ],
+  "tutorial": {
+    "enabled": true,
+    "spawnHintDelaySeconds": 2,
+    "advanceHintDelaySeconds": 2,
+    "postMovementDelaySeconds": 5,
+    "hoverConfirmSeconds": 0.4,
+    "entryDoorTarget": "serviceDoor_Exit2",
+    "welcomeTrigger": "WelcomeEntry",
+    "mainCorridorTrigger": "MainCorridorEntrance",
+    "controlBoothTrigger": "ControlBooth",
+    "mainCorridorThought": "tutorial-control-booth",
+    "startCoreThought": "tutorial-start-core"
+  },
   "prefabs": [
     {
       "name": "Panel1",
@@ -994,6 +1054,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "minDegrees": -90,
         "maxDegrees": 90,
         "locked": true,
+        "unlockMode": "command",
         "unlockDelaySeconds": 20,
         "unlockMotorSoundKey": "MotorSmall1",
         "unlockBeepSoundKey": "BeepShortLight1",
@@ -1205,7 +1266,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "position": {
         "x": -1.7408807277679443,
         "y": 0.20201075077056885,
-        "z": 22.6992244720459
+        "z": 22.752719760907137
       },
       "rotation": {
         "isEuler": true,
@@ -1367,6 +1428,136 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_5",
+      "position": {
+        "x": -11.45419087960374,
+        "y": 0.20201075077056885,
+        "z": 1.2458066940307617
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 1.5707961910388573,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 0.9999999657714602,
+        "y": 1,
+        "z": 0.9999999657714602
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_5001",
+      "position": {
+        "x": -6.000972747802734,
+        "y": 0.20201075077056885,
+        "z": -0.008083742100360836
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_4001",
+      "position": {
+        "x": 10.239900588989258,
+        "y": 0.20201075077056885,
+        "z": 2.4595053244392
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": -3.141592653589793,
+        "_y": -3.2584136988588153e-7,
+        "_z": -3.141592653589793,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.000000000000053,
+        "y": 1,
+        "z": 1.000000000000053
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor1",
+      "position": {
+        "x": -9.533289909362793,
+        "y": 2.352693796157837,
+        "z": 1.241472840309143
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": -1.570796193514859,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 1.0000001343588654,
+        "y": 1,
+        "z": 1.0000001343588654
+      }
+    },
+    {
       "rootName": "SM_Brief1",
       "briefSheet": {
         "meshName": "SM_Brief1",
@@ -1406,48 +1597,6 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "x": 1.0000000002559692,
         "y": 1,
         "z": 1.0000000002559692
-      }
-    },
-    {
-      "rootName": "SM_Brief1",
-      "briefSheet": {
-        "meshName": "SM_Brief1",
-        "texturePath": "assets/ui/briefings/Intro1_2-ru.png",
-        "sheetIndex": 1,
-        "briefingLevelId": "intro-shift",
-        "holdSeconds": 0.5,
-        "maxDistance": 1.65
-      },
-      "rigidBody": {
-        "enabled": true,
-        "bodyType": "dynamic",
-        "colliderNamePrefixes": [
-          "UBX_SM_Brief1"
-        ],
-        "density": 80,
-        "linearDamping": 0.8,
-        "angularDamping": 1.4,
-        "friction": 0.72,
-        "restitution": 0,
-        "canSleep": true
-      },
-      "name": "Brief_02",
-      "position": {
-        "x": -2.838200092315674,
-        "y": 0.9720377922058105,
-        "z": 9.112358093261719
-      },
-      "rotation": {
-        "isEuler": true,
-        "_x": 0,
-        "_y": 0.10035192153932494,
-        "_z": 0,
-        "_order": "XYZ"
-      },
-      "scale": {
-        "x": 0.9999999999735899,
-        "y": 1,
-        "z": 0.9999999999735899
       }
     }
   ],

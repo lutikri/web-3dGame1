@@ -1,15 +1,18 @@
-import { LevelSession } from "./LevelSession.js?v=subtitle-route-fades";
+import { LevelSession } from "./LevelSession.js?v=startup-audio-light-tuning";
 
 export class ActiveLevelSessionRuntime {
-  constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {} } = {}) {
+  constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {
     this.createSession = createSession;
     this.onComplete = onComplete;
+    this.onEvent = onEvent;
     this.session = null;
+    this.levelId = null;
     this.previousStatus = "idle";
   }
 
   start({ levelId, config = {}, resume = false }) {
     this.reset({ clearSaved: true });
+    this.levelId = levelId;
     this.session = this.createSession({ levelId, config });
     const state = this.session.start({ resume });
     this.previousStatus = state.status;
@@ -27,12 +30,15 @@ export class ActiveLevelSessionRuntime {
   }
 
   emit(type, detail = {}) {
-    return this.session?.emit(type, detail) ?? null;
+    const state = this.session?.emit(type, detail) ?? null;
+    if (state) this.onEvent({ type, detail }, this.levelId);
+    return state;
   }
 
   reset({ clearSaved = true } = {}) {
     const state = this.session?.reset({ clearSaved }) ?? null;
     this.session = null;
+    this.levelId = null;
     this.previousStatus = "idle";
     return state;
   }

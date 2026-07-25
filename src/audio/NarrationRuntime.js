@@ -12,6 +12,8 @@ export function createNarrationRuntime({
   getLanguage = () => document.documentElement.lang,
   dispatchSubtitle = defaultDispatchSubtitle,
   fetchText = defaultFetchText,
+  onStarted = () => {},
+  onEnded = () => {},
 }) {
   getRadioRuntime ??= (levelId) => findLevelRadioRuntime(prefabInstances, getLevelEnvironmentId(levelId));
   getConfiguredLine ??= (levelId, language) => findConfiguredNarrationLine(config, getLevelEnvironmentId(levelId), language);
@@ -25,7 +27,7 @@ export function createNarrationRuntime({
     if (!runtime?.radio) return false;
     playedLevelId = levelId;
     schedule(() => playWhenReady(levelId), runtime.radio.welcomeDelaySeconds ?? 0.7);
-    return line;
+    return true;
   }
 
   function playWhenReady(levelId) {
@@ -45,6 +47,10 @@ export function createNarrationRuntime({
     if (getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return false;
     startRadioSpeech(runtime.radio, line.duration);
     playLine(runtime, line, levelId);
+    onStarted({ levelId, line: "welcome", duration: line.duration });
+    schedule(() => {
+      if (getActiveLevelId() === levelId) onEnded({ levelId, line: "welcome" });
+    }, line.duration);
     const subtitleIdBase = `narrator-welcome-${levelId}-${Date.now()}`;
     line.subtitles.forEach((subtitle, index) => {
       schedule(() => {
@@ -58,7 +64,7 @@ export function createNarrationRuntime({
         });
       }, subtitle.at);
     });
-    return true;
+    return line;
   }
 
   function clear(radioRuntimes = []) {
