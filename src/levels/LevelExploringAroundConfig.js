@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=startup-audio-light-tuning";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=startup-audio-light-tuning";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=startup-audio-light-tuning";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=startup-audio-light-tuning";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=exploring-exit-objective";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=exploring-exit-objective";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=exploring-exit-objective";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=exploring-exit-objective";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -57,7 +57,17 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     },
   },
   session: {
-    objectives: [],
+    completion: "all",
+    objectives: [
+      { id: "complete-shift", type: "shiftComplete" },
+      {
+        id: "exit-complex",
+        type: "event",
+        event: "doorUnlocked",
+        target: "DoorBulk1_4",
+        blockedStopDegrees: 5,
+      },
+    ],
     bindings: [
       {
         source: "SM_Details_LightButton1",
@@ -118,6 +128,15 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     mainCorridorThought: "tutorial-control-booth",
     startCoreThought: "tutorial-start-core",
   },
+  prefabStatePolicies: [
+    {
+      prefabTypes: ["bulkheadDoor", "DoorBulk1"],
+      state: { latched: true },
+      exceptions: {
+        DoorBulk1_A: { latched: false },
+      },
+    },
+  ],
   prefabs: [
     createPrefabInstance("operatorPanel", {
       name: "Panel1",

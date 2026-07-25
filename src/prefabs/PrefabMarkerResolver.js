@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=startup-audio-light-tuning";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=exploring-exit-objective";
 
 const MARKER_PREFIX = "PF_";
 

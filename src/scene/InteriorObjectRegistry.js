@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=startup-audio-light-tuning";
+import { applyAxisRotation } from "./TransformUtils.js?v=exploring-exit-objective";
 
 export class InteriorObjectRegistry {
   constructor(options) {

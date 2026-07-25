@@ -1,4 +1,8 @@
 import * as THREE from "three";
+import {
+  getDoorLatchBaseDegrees,
+  getDoorLatchRestDegrees,
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=exploring-exit-objective";
 
 export class DoorInteractionSystem {
   constructor({
@@ -73,8 +77,8 @@ export class DoorInteractionSystem {
     door.latchBlockedAttempt = null;
     const targetLatched = !door.latched;
     const fullTurnDegrees = door.interaction.latchTurnDegrees ?? 360;
-    const baseDegrees = door.latched ? door.interaction.latchLockedDegrees ?? 0 : door.interaction.latchUnlockedDegrees ?? 0;
-    const targetBaseDegrees = targetLatched ? door.interaction.latchLockedDegrees ?? 0 : door.interaction.latchUnlockedDegrees ?? 0;
+    const baseDegrees = getDoorLatchBaseDegrees(door, door.latched, door.activeLatchHandle);
+    const targetBaseDegrees = getDoorLatchBaseDegrees(door, targetLatched, door.activeLatchHandle);
     const finalSpinOffsetDegrees = (door.latchHandleSpinOffsetDegrees ?? 0) + (targetLatched ? -1 : 1) * fullTurnDegrees;
     door.latchOperation = {
       held: true,
@@ -187,9 +191,9 @@ export class DoorInteractionSystem {
     const door = runtime?.door;
     if (!door) return;
     door.latchOperation = null;
-    const restDegrees = (door.latched ? door.interaction.latchLockedDegrees ?? 0 : door.interaction.latchUnlockedDegrees ?? 0)
-      + (door.latchHandleSpinOffsetDegrees ?? 0);
-    const blockedTurnDegrees = door.interaction.latchBlockedStopDegrees
+    const restDegrees = getDoorLatchRestDegrees(door, door.activeLatchHandle);
+    const blockedTurnDegrees = door.blockedLatchStopDegrees
+      ?? door.interaction.latchBlockedStopDegrees
       ?? Math.min(Math.abs(door.interaction.latchTurnDegrees ?? 360) * 0.25, 95);
     door.latchBlockedAttempt = {
       elapsed: 0,

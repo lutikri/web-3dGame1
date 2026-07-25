@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=startup-audio-light-tuning";
-import { translate } from "./Localization.js?v=startup-audio-light-tuning";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=startup-audio-light-tuning";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=startup-audio-light-tuning";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=startup-audio-light-tuning";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=startup-audio-light-tuning";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=startup-audio-light-tuning";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=exploring-exit-objective";
+import { translate } from "./Localization.js?v=exploring-exit-objective";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=exploring-exit-objective";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=exploring-exit-objective";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=exploring-exit-objective";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=exploring-exit-objective";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=exploring-exit-objective";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,12 +14,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=startup-audio-light-tuning";
-import { createAppPanelController } from "./AppPanelController.js?v=startup-audio-light-tuning";
-import { createAppRouter } from "./AppRouter.js?v=startup-audio-light-tuning";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=startup-audio-light-tuning";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=startup-audio-light-tuning";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=startup-audio-light-tuning";
+} from "./AppPersistence.js?v=exploring-exit-objective";
+import { createAppPanelController } from "./AppPanelController.js?v=exploring-exit-objective";
+import { createAppRouter } from "./AppRouter.js?v=exploring-exit-objective";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=exploring-exit-objective";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=exploring-exit-objective";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=exploring-exit-objective";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

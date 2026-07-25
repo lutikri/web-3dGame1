@@ -51,9 +51,15 @@ test("door state runtime owns latch state, physics lock and objective event", ()
 });
 
 test("door state runtime blocks an objective exit until the shift terminates", () => {
-  const objective = { type: "event", event: "doorUnlocked", target: "DoorBulk1" };
+  const objective = {
+    type: "event",
+    event: "doorUnlocked",
+    target: "DoorBulk1",
+    blockedStopDegrees: 5,
+  };
   const { runtime, placed, thoughts } = createDoorState({ objectives: [objective] });
   assert.equal(runtime.canOperateLatch(placed), false);
+  assert.equal(placed.door.blockedLatchStopDegrees, 5);
   assert.deepEqual(thoughts, [["door-shift-incomplete", 2, 2.8]]);
 });
 

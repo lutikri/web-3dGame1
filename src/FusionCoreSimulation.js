@@ -57,8 +57,13 @@ export function createFusionCoreSimulation() {
   const state = createInitialState();
 
   return {
-    start() {
-      Object.assign(state, createInitialState(), { mode: "running", status: "FIELD BUS CHARGING" });
+    start({ delaySeconds = 0 } = {}) {
+      const startupRemaining = Math.max(0, Number(delaySeconds) || 0);
+      Object.assign(state, createInitialState(), {
+        mode: startupRemaining > 0 ? "starting" : "running",
+        startupRemaining,
+        status: startupRemaining > 0 ? "CORE START SEQUENCE" : "FIELD BUS CHARGING",
+      });
     },
 
     reset() {
@@ -66,7 +71,7 @@ export function createFusionCoreSimulation() {
     },
 
     triggerStartupFault() {
-      if (state.mode !== "running") return getSnapshot(state);
+      if (state.mode !== "running" && state.mode !== "starting") return getSnapshot(state);
       state.mode = "startupFault";
       state.resetPending = 20;
       state.status = "START-UP COMMAND CONFLICT";
@@ -74,6 +79,14 @@ export function createFusionCoreSimulation() {
     },
 
     update(dt, controls) {
+      if (state.mode === "starting") {
+        state.startupRemaining = Math.max(0, state.startupRemaining - Math.max(0, dt));
+        if (state.startupRemaining === 0) {
+          state.mode = "running";
+          state.status = "FIELD BUS CHARGING";
+        }
+        return getSnapshot(state);
+      }
       if (state.mode === "startupFault") {
         updateStartupFaultState(state, dt);
         return getSnapshot(state);
@@ -109,6 +122,7 @@ export function createFusionCoreSimulation() {
 function createInitialState() {
   return {
     mode: "standby",
+    startupRemaining: 0,
     elapsed: 0,
     plasmaTemp: 22,
     containment: 82,
@@ -407,6 +421,7 @@ function getSnapshot(state) {
   const phase = getPhase(state.elapsed);
   return {
     mode: state.mode,
+    startupRemaining: state.startupRemaining,
     elapsed: state.elapsed,
     remaining: TOTAL_TIME - state.elapsed,
     phase,

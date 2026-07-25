@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=startup-audio-light-tuning";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=startup-audio-light-tuning";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=exploring-exit-objective";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=exploring-exit-objective";
 
 export class DoorStateRuntime {
   constructor(options) {
@@ -66,14 +66,16 @@ export class DoorStateRuntime {
   canOperateLatch = (placed) => {
     const door = placed?.door;
     const objectives = this.getSessionConfig()?.objectives ?? [];
-    const isExitObjective = door?.prefabName && objectives.some(
+    const exitObjective = door?.prefabName && objectives.find(
       (objective) => objective.type === "event" && objective.event === "doorUnlocked" && objective.target === door.prefabName,
     );
     const mode = this.getGameMode();
-    if (isExitObjective && mode !== "complete" && mode !== "failed") {
+    if (exitObjective && mode !== "complete" && mode !== "failed") {
+      door.blockedLatchStopDegrees = exitObjective.blockedStopDegrees;
       this.emitThought("door-shift-incomplete", 2, 2.8);
       return false;
     }
+    if (door) door.blockedLatchStopDegrees = null;
     return true;
   };
 

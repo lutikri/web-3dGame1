@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=startup-audio-light-tuning";
-import { applyLocalization } from "./app/Localization.js?v=startup-audio-light-tuning";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
+import { createPreflight } from "./app/Preflight.js?v=exploring-exit-objective";
+import { applyLocalization } from "./app/Localization.js?v=exploring-exit-objective";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=exploring-exit-objective";
 
-const APP_BUILD_REVISION = "startup-audio-light-tuning";
+const APP_BUILD_REVISION = "exploring-exit-objective";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=startup-audio-light-tuning`);
+await import(`./OperatorGame.js?v=exploring-exit-objective`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=startup-audio-light-tuning`);
+const { createAppShell } = await import(`./app/AppShell.js?v=exploring-exit-objective`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=startup-audio-light-tuning`
+    `./runtime/RuntimeSmoke.js?v=exploring-exit-objective`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

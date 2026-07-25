@@ -27,3 +27,18 @@ test("deprecated elevator prototype is not a playable assignment", () => {
   assert.equal(LEVEL_DEFINITIONS["intro-elevator"].playable, false);
   assert.equal(getPlayableLevels().some((level) => level.id === "intro-elevator"), false);
 });
+
+test("exploring around completes only after the shift and authored bulkhead exit", () => {
+  const session = LEVEL_DEFINITIONS["exploring-around"].environment.session;
+  assert.equal(session.completion, "all");
+  assert.deepEqual(session.objectives, [
+    { id: "complete-shift", type: "shiftComplete" },
+    {
+      id: "exit-complex",
+      type: "event",
+      event: "doorUnlocked",
+      target: "DoorBulk1_4",
+      blockedStopDegrees: 5,
+    },
+  ]);
+});

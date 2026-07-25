@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=exploring-exit-objective";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

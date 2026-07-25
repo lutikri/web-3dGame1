@@ -63,10 +63,10 @@ export class CoreAudioRuntime {
   #handleModeTransition(mode, levelId) {
     if (mode === this.previousMode) return;
     const coreAnchor = this.getCoreAnchor();
-    if (this.previousMode === "standby" && mode === "running") {
+    if (this.previousMode === "standby" && (mode === "starting" || mode === "running")) {
       this.playSound(coreAnchor, "Core1_StartupNormal1", { levelId, maxDistance: 20 });
       this.transition = { kind: "startup", elapsed: 0, duration: CLIP_SECONDS.startup };
-    } else if (this.previousMode === "running" && mode === "startupFault") {
+    } else if ((this.previousMode === "running" || this.previousMode === "starting") && mode === "startupFault") {
       this.playSound(coreAnchor, "Core1_StartupFailed1", { levelId, maxDistance: 20 });
     } else if (mode === "complete") {
       this.playSound(coreAnchor, "Core1_TurnDown", { levelId, maxDistance: 20 });

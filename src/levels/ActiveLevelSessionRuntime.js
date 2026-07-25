@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=startup-audio-light-tuning";
+import { LevelSession } from "./LevelSession.js?v=exploring-exit-objective";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

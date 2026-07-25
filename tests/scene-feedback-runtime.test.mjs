@@ -76,13 +76,13 @@ test("scene feedback runtime owns startup, ignition and indicator timers", () =>
 
 test("scene startup gently restores room light across the long audio intro", () => {
   const runtime = new SceneFeedbackRuntime({
-    config: { feedback: { startup: { duration: 3.2, roomDimSeconds: 18, roomMinLightFactor: 0.82 }, ignitionPulse: {}, indicatorTest: {} } },
+    config: { feedback: { startup: { duration: 3.2, roomDimSeconds: 18, roomMinLightFactor: 0.5 }, ignitionPulse: {}, indicatorTest: {} } },
     diagnostics: {}, roomLighting: {}, createStartupPattern: () => [],
   });
   runtime.triggerStartup();
-  assert.equal(runtime.getStartupLightFactor(), 0.82);
+  assert.equal(runtime.getStartupLightFactor(), 0.5);
   runtime.roomStartupTimer = 9;
-  assert.ok(Math.abs(runtime.getStartupLightFactor() - 0.91) < 0.001);
+  assert.ok(Math.abs(runtime.getStartupLightFactor() - 0.75) < 0.001);
   runtime.roomStartupTimer = 0;
   assert.equal(runtime.getStartupLightFactor(), 1);
 });

@@ -99,11 +99,11 @@ test("panel knob audio emits once for a burst of wheel adjustments", () => {
   });
   runtime.adjustKnob(knob, 1);
   now += 0.04;
-  runtime.adjustKnob(knob, 1);
+  runtime.adjustKnob(knob, 2);
   now += 0.04;
-  runtime.adjustKnob(knob, 1);
-  assert.equal(sounds.length, 1);
+  runtime.adjustKnob(knob, 4);
+  assert.equal(sounds.length, 2);
   now += 0.15;
   runtime.adjustKnob(knob, 1);
-  assert.equal(sounds.length, 2);
+  assert.equal(sounds.length, 3);
 });

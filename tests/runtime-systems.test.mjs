@@ -187,6 +187,39 @@ test("door interaction system advances latch operations", () => {
   assert.equal(runtime.door.latchHandleSpinOffsetDegrees, 360);
 });
 
+test("bulkhead latch interactions start at the authored rest angle without snapping", () => {
+  const handle = new THREE.Object3D();
+  handle.userData.levelPrefabKey = "level:Door";
+  const runtime = {
+    door: {
+      activeLatchHandle: handle,
+      latchHandle: handle,
+      latched: true,
+      interaction: {
+        latchHandleLatchedDegrees: -70,
+        latchTurnDegrees: 180,
+      },
+    },
+  };
+  const system = new DoorInteractionSystem({
+    prefabInstances: new Map([["level:Door", runtime]]),
+    interactive: [],
+    resolveEnvironmentId: (id) => id,
+    applyVisualRotation: () => {},
+    applyLatchRotation: () => {},
+    playSound: () => {},
+    canOperateLatch: () => true,
+  });
+
+  assert.equal(system.beginLatchInteraction(handle), true);
+  assert.equal(runtime.door.latchOperation.fromDegrees, -70);
+
+  runtime.door.latchOperation = null;
+  system.canOperateLatch = () => false;
+  assert.equal(system.beginLatchInteraction(handle), false);
+  assert.equal(runtime.door.latchBlockedAttempt.fromDegrees, -70);
+});
+
 test("door interaction system owns physical drag lifecycle", () => {
   const calls = [];
   const mesh = new THREE.Object3D();

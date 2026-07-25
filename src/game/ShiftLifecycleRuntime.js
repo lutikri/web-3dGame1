@@ -3,7 +3,7 @@ export class ShiftLifecycleRuntime {
 
   start() {
     const snapshot = this.getSnapshot();
-    if (snapshot.mode === "running") {
+    if (snapshot.mode === "running" || snapshot.mode === "starting") {
       this.simulation.triggerStartupFault();
       this.emitThought("startup-command-fault", 4, 3.6);
       return false;
@@ -13,10 +13,10 @@ export class ShiftLifecycleRuntime {
     this.hideResults();
     this.resetBulkhead();
     this.resetThoughts();
-    this.simulation.start();
+    this.simulation.start({ delaySeconds: this.config?.feedback?.startup?.operationalDelaySeconds ?? 0 });
     this.fuelBlend.start();
     this.playIgnition();
-    this.completion.reset("running");
+    this.completion.reset("starting");
     this.triggerStartupFeedback();
     this.setIndicatorTimer(0);
     this.diagnostics.stopSelfTest();

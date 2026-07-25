@@ -3,12 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=startup-audio-light-tuning";
+} from "../prefabs/PrefabMarkerResolver.js?v=exploring-exit-objective";
 import {
   applyPrefabOverrideEntries,
+  applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=startup-audio-light-tuning";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=startup-audio-light-tuning";
+} from "../levels/LevelConfigOverrides.js?v=exploring-exit-objective";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=exploring-exit-objective";
 
 export function createLevelSceneBuilder({
   scene,
@@ -35,12 +36,10 @@ export function createLevelSceneBuilder({
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
       const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);
-      environmentConfig.prefabs = applyPrefabOverrideEntries(
-        mergeMarkerPrefabs(
-          configuredPrefabs,
-          markerPrefabs,
-        ),
+      environmentConfig.prefabs = resolveLevelPrefabs(
+        mergeMarkerPrefabs(configuredPrefabs, markerPrefabs),
         pendingPrefabOverrides,
+        environmentConfig.prefabStatePolicies,
       );
       const tasks = [
         buildCollision(levelId, environmentConfig),
@@ -147,9 +146,10 @@ export function createLevelSceneBuilder({
 
     const nestedPrefabs = resolveNestedPrefabMarkers(prefab, { parentName: prefabConfig.name });
     if (!nestedPrefabs.length) return;
-    environmentConfig.prefabs = applyPrefabOverrideEntries(
+    environmentConfig.prefabs = resolveLevelPrefabs(
       mergeMarkerPrefabs(environmentConfig.prefabs ?? [], nestedPrefabs),
       pendingPrefabOverrides,
+      environmentConfig.prefabStatePolicies,
     );
     const nestedTasks = nestedPrefabs
       .filter((nestedPrefabConfig) => nestedPrefabConfig.behavior !== "operatorPanel")
@@ -160,6 +160,13 @@ export function createLevelSceneBuilder({
     const failure = results.find((result) => result.status === "rejected");
     if (failure) throw failure.reason;
   }
+}
+
+function resolveLevelPrefabs(prefabs, pendingPrefabOverrides, statePolicies) {
+  return applyPrefabStatePolicies(
+    applyPrefabOverrideEntries(prefabs, pendingPrefabOverrides),
+    statePolicies,
+  );
 }
 
 export function isolatePrefabRoot(prefab, rootName, preservedNames = []) {

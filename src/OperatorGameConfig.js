@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=startup-audio-light-tuning";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=startup-audio-light-tuning";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=startup-audio-light-tuning";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=startup-audio-light-tuning";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=exploring-exit-objective";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=exploring-exit-objective";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=exploring-exit-objective";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=exploring-exit-objective";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -835,8 +835,9 @@ export const CONFIG = {
   feedback: {
     startup: {
       duration: 3.2,
+      operationalDelaySeconds: 18,
       roomDimSeconds: 18,
-      roomMinLightFactor: 0.82,
+      roomMinLightFactor: 0.5,
       roomCameraShake: 0.00065,
       blackoutSeconds: 0.28,
       lampFrequency: 18,

@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=startup-audio-light-tuning";
+import { LevelRuntime } from "./LevelRuntime.js?v=exploring-exit-objective";
 
 export class LevelEnvironmentLifecycle {
   constructor({

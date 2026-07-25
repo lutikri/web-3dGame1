@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=startup-audio-light-tuning";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=exploring-exit-objective";
 
 const DISMISS_MS = 300;
 

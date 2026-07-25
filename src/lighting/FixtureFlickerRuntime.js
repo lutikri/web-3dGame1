@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=startup-audio-light-tuning";
+} from "./FluorescentBehavior.js?v=exploring-exit-objective";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

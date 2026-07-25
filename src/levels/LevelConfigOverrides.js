@@ -73,6 +73,17 @@ export function applyPrefabOverrideEntries(prefabs, entries = []) {
   return prefabs;
 }
 
+export function applyPrefabStatePolicies(prefabs, policies = []) {
+  prefabs.forEach((prefab) => {
+    policies.forEach((policy) => {
+      if (!policy?.prefabTypes?.includes(prefab?.prefabType)) return;
+      const state = policy.exceptions?.[prefab.name] ?? policy.state;
+      if (state) applyLevelOverrides(prefab, { state }, `prefabs.${prefab.name}`);
+    });
+  });
+  return prefabs;
+}
+
 function isMergeable(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }

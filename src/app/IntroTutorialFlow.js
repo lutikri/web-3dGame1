@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=startup-audio-light-tuning";
+import { translateRequired } from "./Localization.js?v=exploring-exit-objective";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

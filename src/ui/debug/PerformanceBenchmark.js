@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=exploring-exit-objective";
 
 const EFFECT_KEYS = [
   "bloom",

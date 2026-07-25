@@ -1,6 +1,16 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=startup-audio-light-tuning";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=exploring-exit-objective";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
+const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
+
+export function compareDebugPrefabs(a, b) {
+  const aType = PREFAB_TYPE_ALIASES[a.prefabType] ?? a.prefabType;
+  const bType = PREFAB_TYPE_ALIASES[b.prefabType] ?? b.prefabType;
+  const ai = PREFAB_GROUP_ORDER.indexOf(aType);
+  const bi = PREFAB_GROUP_ORDER.indexOf(bType);
+  return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi)
+    || a.name.localeCompare(b.name, undefined, { numeric: true });
+}
 const SHADOW_MAP_SIZES = [128, 256, 512, 1024, 2048, 4096];
 const ICONS = {
   global: "◎",
@@ -175,9 +185,9 @@ export function createDebugWorkspace({
       }
     });
     return roots
-      .sort(sortPrefabs)
+      .sort(compareDebugPrefabs)
       .map((prefab) => {
-        const children = (childrenByParent.get(prefab.name) ?? []).sort(sortPrefabs).map((child) =>
+        const children = (childrenByParent.get(prefab.name) ?? []).sort(compareDebugPrefabs).map((child) =>
           itemNode(`prefab:${levelId}:${child.name}`, getPrefabDisplayName(child), getPrefabTypeLabel(child), getPrefabIcon(child)),
         );
         return children.length
@@ -753,12 +763,6 @@ export function createDebugWorkspace({
 
   function destroy() {
     root.remove();
-  }
-
-  function sortPrefabs(a, b) {
-    const ai = PREFAB_GROUP_ORDER.indexOf(a.prefabType);
-    const bi = PREFAB_GROUP_ORDER.indexOf(b.prefabType);
-    return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi) || a.name.localeCompare(b.name);
   }
 
   render();

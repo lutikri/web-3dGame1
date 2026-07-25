@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   applyLevelOverrides,
   applyPendingPrefabOverrides,
+  applyPrefabStatePolicies,
 } from "../src/levels/LevelConfigOverrides.js";
 
 test("level overrides merge prefab instances by stable name", () => {
@@ -57,4 +58,20 @@ test("saved overrides apply when a prefab marker is discovered later", () => {
   applyPendingPrefabOverrides([markerPrefab], target.prefabs);
   assert.equal(markerPrefab.assetPath, "registry.glb");
   assert.deepEqual(markerPrefab.light, { intensity: 4, castShadow: true });
+});
+
+test("level prefab state policies apply after saved marker overrides", () => {
+  const prefabs = [
+    { name: "DoorBulk1_A", prefabType: "bulkheadDoor", state: { latched: true } },
+    { name: "DoorBulk1_4", prefabType: "DoorBulk1", state: { latched: false } },
+    { name: "Door2_ServiceA", prefabType: "serviceDoor", state: { latched: false } },
+  ];
+  applyPrefabStatePolicies(prefabs, [{
+    prefabTypes: ["bulkheadDoor", "DoorBulk1"],
+    state: { latched: true },
+    exceptions: { DoorBulk1_A: { latched: false } },
+  }]);
+  assert.equal(prefabs[0].state.latched, false);
+  assert.equal(prefabs[1].state.latched, true);
+  assert.equal(prefabs[2].state.latched, false);
 });

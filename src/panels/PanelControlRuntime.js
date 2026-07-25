@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=startup-audio-light-tuning";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=exploring-exit-objective";
 
 export class PanelControlRuntime {
   constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, getTime = () => performance.now() / 1000, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {
@@ -11,6 +11,7 @@ export class PanelControlRuntime {
     this.onChanged = onChanged;
     Object.assign(this, { playSound, getTime, runAction, toggleRoomLights, executeLevelBinding, emitLevelEvent, log });
     this.lastKnobAdjustmentAt = -Infinity;
+    this.knobTickStepPercent = 6;
   }
 
   getPercent = (name) => this.knobs.find((knob) => knob.name === name)?.userData.controlPercent ?? 0;
@@ -54,8 +55,13 @@ export class PanelControlRuntime {
     this.diagnostics.registerKnobMovement(knob.name, deltaPercent);
     this.applyKnobTransform(knob);
     const now = this.getTime();
-    if (now - this.lastKnobAdjustmentAt >= 0.14) {
+    const startsGesture = now - this.lastKnobAdjustmentAt >= 0.14;
+    const tickAnchor = knob.userData.knobTickAnchorPercent;
+    const crossedTickStep = Number.isFinite(tickAnchor)
+      && Math.abs(next - tickAnchor) >= this.knobTickStepPercent;
+    if (startsGesture || crossedTickStep) {
       this.playSound("panelKnobTick", knob);
+      knob.userData.knobTickAnchorPercent = next;
     }
     this.lastKnobAdjustmentAt = now;
     this.onChanged();

@@ -3,128 +3,128 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=startup-audio-light-tuning";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=exploring-exit-objective";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=startup-audio-light-tuning";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=startup-audio-light-tuning";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=startup-audio-light-tuning";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=startup-audio-light-tuning";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=startup-audio-light-tuning";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=startup-audio-light-tuning";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=startup-audio-light-tuning";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=startup-audio-light-tuning";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=startup-audio-light-tuning";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=startup-audio-light-tuning";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=startup-audio-light-tuning";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=startup-audio-light-tuning";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=startup-audio-light-tuning";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=startup-audio-light-tuning";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=startup-audio-light-tuning";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=startup-audio-light-tuning";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=startup-audio-light-tuning";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=startup-audio-light-tuning";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=startup-audio-light-tuning";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=startup-audio-light-tuning";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=startup-audio-light-tuning";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=startup-audio-light-tuning";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=startup-audio-light-tuning";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=startup-audio-light-tuning";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=startup-audio-light-tuning";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=startup-audio-light-tuning";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=startup-audio-light-tuning";
+} from "./game/ShiftReport.js?v=exploring-exit-objective";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=exploring-exit-objective";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=exploring-exit-objective";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=exploring-exit-objective";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=exploring-exit-objective";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=exploring-exit-objective";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=exploring-exit-objective";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=exploring-exit-objective";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=exploring-exit-objective";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=exploring-exit-objective";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=exploring-exit-objective";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=exploring-exit-objective";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=exploring-exit-objective";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=exploring-exit-objective";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=exploring-exit-objective";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=exploring-exit-objective";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=exploring-exit-objective";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=exploring-exit-objective";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=exploring-exit-objective";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=exploring-exit-objective";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=exploring-exit-objective";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=exploring-exit-objective";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=exploring-exit-objective";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=exploring-exit-objective";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=exploring-exit-objective";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=exploring-exit-objective";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=exploring-exit-objective";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=startup-audio-light-tuning";
+} from "./config/GraphicsQualityProfiles.js?v=exploring-exit-objective";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=startup-audio-light-tuning";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=startup-audio-light-tuning";
-import { createStatusScreen } from "./StatusScreen.js?v=startup-audio-light-tuning";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=startup-audio-light-tuning";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=startup-audio-light-tuning";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=startup-audio-light-tuning";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=startup-audio-light-tuning";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=startup-audio-light-tuning";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=startup-audio-light-tuning";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=startup-audio-light-tuning";
+} from "./scene/TextureStreaming.js?v=exploring-exit-objective";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=exploring-exit-objective";
+import { createStatusScreen } from "./StatusScreen.js?v=exploring-exit-objective";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=exploring-exit-objective";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=exploring-exit-objective";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=exploring-exit-objective";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=exploring-exit-objective";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=exploring-exit-objective";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=exploring-exit-objective";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=exploring-exit-objective";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=startup-audio-light-tuning";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=startup-audio-light-tuning";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=startup-audio-light-tuning";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=exploring-exit-objective";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=exploring-exit-objective";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=exploring-exit-objective";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=startup-audio-light-tuning";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=startup-audio-light-tuning";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=startup-audio-light-tuning";
-import { AssetCache } from "./runtime/AssetCache.js?v=startup-audio-light-tuning";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=startup-audio-light-tuning";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=startup-audio-light-tuning";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=startup-audio-light-tuning";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=startup-audio-light-tuning";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=startup-audio-light-tuning";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=startup-audio-light-tuning";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=startup-audio-light-tuning";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=startup-audio-light-tuning";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=startup-audio-light-tuning";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=startup-audio-light-tuning";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=startup-audio-light-tuning";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=startup-audio-light-tuning";
+} from "./lighting/FluorescentBehavior.js?v=exploring-exit-objective";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=exploring-exit-objective";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=exploring-exit-objective";
+import { AssetCache } from "./runtime/AssetCache.js?v=exploring-exit-objective";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=exploring-exit-objective";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=exploring-exit-objective";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=exploring-exit-objective";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=exploring-exit-objective";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=exploring-exit-objective";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=exploring-exit-objective";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=exploring-exit-objective";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=exploring-exit-objective";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=exploring-exit-objective";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=exploring-exit-objective";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=exploring-exit-objective";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=exploring-exit-objective";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=startup-audio-light-tuning";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=startup-audio-light-tuning";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=startup-audio-light-tuning";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=startup-audio-light-tuning";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=startup-audio-light-tuning";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=startup-audio-light-tuning";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=startup-audio-light-tuning";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=startup-audio-light-tuning";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=startup-audio-light-tuning";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=startup-audio-light-tuning";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=startup-audio-light-tuning";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=startup-audio-light-tuning";
-import { PlayerController } from "./player/PlayerController.js?v=startup-audio-light-tuning";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=startup-audio-light-tuning";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=startup-audio-light-tuning";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=startup-audio-light-tuning";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=startup-audio-light-tuning";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=startup-audio-light-tuning";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=startup-audio-light-tuning";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=startup-audio-light-tuning";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=startup-audio-light-tuning";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=startup-audio-light-tuning";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=startup-audio-light-tuning";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=startup-audio-light-tuning";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=startup-audio-light-tuning";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=startup-audio-light-tuning";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=startup-audio-light-tuning";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=startup-audio-light-tuning";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=startup-audio-light-tuning";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=startup-audio-light-tuning";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=startup-audio-light-tuning";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=startup-audio-light-tuning";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=startup-audio-light-tuning";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=startup-audio-light-tuning";
+} from "./scene/InteriorObjectRegistry.js?v=exploring-exit-objective";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=exploring-exit-objective";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=exploring-exit-objective";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=exploring-exit-objective";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=exploring-exit-objective";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=exploring-exit-objective";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=exploring-exit-objective";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=exploring-exit-objective";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=exploring-exit-objective";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=exploring-exit-objective";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=exploring-exit-objective";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=exploring-exit-objective";
+import { PlayerController } from "./player/PlayerController.js?v=exploring-exit-objective";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=exploring-exit-objective";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=exploring-exit-objective";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=exploring-exit-objective";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=exploring-exit-objective";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=exploring-exit-objective";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=exploring-exit-objective";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=exploring-exit-objective";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=exploring-exit-objective";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=exploring-exit-objective";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=exploring-exit-objective";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=exploring-exit-objective";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=exploring-exit-objective";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=exploring-exit-objective";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=exploring-exit-objective";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=exploring-exit-objective";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=exploring-exit-objective";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=exploring-exit-objective";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=exploring-exit-objective";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=exploring-exit-objective";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=exploring-exit-objective";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=exploring-exit-objective";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=startup-audio-light-tuning";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=exploring-exit-objective";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -811,6 +811,7 @@ const updateOperatorThoughts = operatorThoughtRuntime.update;
 const emitOperatorThought = operatorThoughtRuntime.emit;
 const resetOperatorThoughts = operatorThoughtRuntime.reset;
 const shiftLifecycleRuntime = new ShiftLifecycleRuntime({
+  config: CONFIG,
   simulation: fusionCore,
   fuelBlend: fuelBlendRuntime,
   completion: shiftCompletionRuntime,

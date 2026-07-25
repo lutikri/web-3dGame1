@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=startup-audio-light-tuning";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=startup-audio-light-tuning";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=startup-audio-light-tuning";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=startup-audio-light-tuning";
+import { createDebugHub } from "./DebugHub.js?v=exploring-exit-objective";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=exploring-exit-objective";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=exploring-exit-objective";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=exploring-exit-objective";
 
 export class DebugToolsRuntime {
   constructor(options) {

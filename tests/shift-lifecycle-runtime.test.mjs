@@ -6,8 +6,9 @@ function createHarness(mode = "standby") {
   const calls = [];
   const snapshot = { mode };
   const runtime = new ShiftLifecycleRuntime({
+    config: { feedback: { startup: { operationalDelaySeconds: 18 } } },
     getSnapshot: () => snapshot,
-    simulation: { getSnapshot: () => snapshot, start: () => calls.push("start"), reset: () => calls.push("reset"), triggerStartupFault: () => calls.push("fault") },
+    simulation: { getSnapshot: () => snapshot, start: (options) => calls.push(["start", options.delaySeconds]), reset: () => calls.push("reset"), triggerStartupFault: () => calls.push("fault") },
     fuelBlend: { start: () => calls.push("fuel-start"), stop: () => calls.push("fuel-stop") },
     completion: { reset: (value) => calls.push(`completion:${value}`) },
     diagnostics: { stopSelfTest: () => calls.push("self-stop"), startTimeline: () => calls.push("timeline-start"), stopTimeline: () => calls.push("timeline-stop"), startSelfTest: () => calls.push("self-start"), createSelfTestSnapshot: () => ({ mode: "test" }) },
@@ -22,7 +23,7 @@ function createHarness(mode = "standby") {
 test("shift lifecycle runtime owns successful shift start", () => {
   const { runtime, calls } = createHarness();
   assert.equal(runtime.start(), true);
-  assert.deepEqual(calls.slice(0, 8), ["recorder", "results", "bulkhead", "thoughts", "start", "fuel-start", "ignition", "completion:running"]);
+  assert.deepEqual(calls.slice(0, 8), ["recorder", "results", "bulkhead", "thoughts", ["start", 18], "fuel-start", "ignition", "completion:starting"]);
   assert.ok(calls.includes("timeline-start"));
 });
 
