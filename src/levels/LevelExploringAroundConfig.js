@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=exploring-exit-objective";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=exploring-exit-objective";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=exploring-exit-objective";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=exploring-exit-objective";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=outcome-radio-wiring";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=outcome-radio-wiring";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=outcome-radio-wiring";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=outcome-radio-wiring";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -90,6 +90,18 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         subtitlePath: "assets/sounds/narration/MessageRU_Welcome1.srt",
         duration: 25.6,
       },
+    },
+    passed: {
+      en: { soundKey: "MessageEN_WelcomePassed1", duration: 15.12 },
+      ru: { soundKey: "MessageRU_WelcomePassed1", subtitlePath: "assets/sounds/narration/MessageRU_WelcomePassed1.srt", duration: 15.44 },
+    },
+    insufficient: {
+      en: { soundKey: "MessageEN_WelcomeInnsuficient1", duration: 21.68 },
+      ru: { soundKey: "MessageRU_WelcomeInnsuficient1", subtitlePath: "assets/sounds/narration/MessageRU_WelcomeInnsuficient1.srt", duration: 17.04 },
+    },
+    trip: {
+      en: { soundKey: "MessageEN_WelcomeTrip1", duration: 17.16 },
+      ru: { soundKey: "MessageRU_WelcomeTrip1", subtitlePath: "assets/sounds/narration/MessageRU_WelcomeTrip1.srt", duration: 18.16 },
     },
   },
   triggerSequences: [

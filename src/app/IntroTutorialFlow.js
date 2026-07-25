@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=exploring-exit-objective";
+import { translateRequired } from "./Localization.js?v=outcome-radio-wiring";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

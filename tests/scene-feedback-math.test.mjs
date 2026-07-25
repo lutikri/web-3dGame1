@@ -48,6 +48,17 @@ test("terminal light factor delegates destroyed startup ownership", () => {
   assert.equal(factor, 0.25);
 });
 
+test("successful shift completion keeps room lighting stable while awaiting exit", () => {
+  assert.equal(getTerminalLightFactor({
+    snapshot: { mode: "complete", failureType: null },
+    terminalElapsed: 30,
+    terminalConfig: { completeLightFactor: 0.5 },
+    startupPattern: [],
+    getStartupDuration: () => 0,
+    getStartupFactor: () => 1,
+  }), 1);
+});
+
 test("destroyed core lighting returns to the configured level after restart", () => {
   assert.equal(getTerminalLightFactor({
     snapshot: { mode: "failed", failureType: "coreDestroyed" },

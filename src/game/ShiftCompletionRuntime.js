@@ -3,11 +3,11 @@ import * as THREE from "three";
 export class ShiftCompletionRuntime {
   constructor({
     config, initialMode, createStartupPattern, getStartupDuration, stopCoreLoop,
-    emitThought, canUnlockBulkhead, unlockBulkhead, shouldWaitForDoorExit,
+    emitThought, playOutcomeNarration = () => {}, canUnlockBulkhead, unlockBulkhead, shouldWaitForDoorExit,
     hasBulkhead, resultsController,
   }) {
     Object.assign(this, {
-      config, createStartupPattern, getStartupDuration, stopCoreLoop, emitThought,
+      config, createStartupPattern, getStartupDuration, stopCoreLoop, emitThought, playOutcomeNarration,
       canUnlockBulkhead, unlockBulkhead, shouldWaitForDoorExit, hasBulkhead, resultsController,
     });
     this.previousMode = initialMode;
@@ -26,6 +26,7 @@ export class ShiftCompletionRuntime {
       this.resultsTimer = this.#resultsDelay(snapshot);
       this.resultsSnapshot = snapshot;
       this.terminalElapsed = 0;
+      this.playOutcomeNarration(resolveOutcomeNarrationKey(snapshot));
     }
     if (this.terminalElapsed >= 0) this.terminalElapsed += dt;
     const thoughtDelay = snapshot.failureType === "coreDestroyed"
@@ -82,4 +83,10 @@ export class ShiftCompletionRuntime {
   #resultsDelay(snapshot) {
     return this.#bulkheadDelay(snapshot) + this.config.feedback.terminal.resultsHoldSeconds;
   }
+}
+
+export function resolveOutcomeNarrationKey(snapshot) {
+  if (snapshot?.mode === "complete") return "passed";
+  if (snapshot?.failureType === "qualityFailure") return "insufficient";
+  return "trip";
 }

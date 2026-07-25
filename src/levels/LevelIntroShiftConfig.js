@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=exploring-exit-objective";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=exploring-exit-objective";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=exploring-exit-objective";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=exploring-exit-objective";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=outcome-radio-wiring";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=outcome-radio-wiring";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=outcome-radio-wiring";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=outcome-radio-wiring";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

@@ -4,7 +4,7 @@ import test from "node:test";
 import * as THREE from "three";
 import { DoorStateRuntime } from "../src/interactions/DoorStateRuntime.js";
 
-function createDoorState({ mode = "running", objectives = [] } = {}) {
+function createDoorState({ mode = "running", objectives = [], results = null, waitForExit = false } = {}) {
   const events = [];
   const thoughts = [];
   const physicsCalls = [];
@@ -32,9 +32,9 @@ function createDoorState({ mode = "running", objectives = [] } = {}) {
     getGameMode: () => mode,
     emitThought: (...args) => thoughts.push(args),
     emitSessionEvent: (...args) => events.push(args),
-    getResults: () => null,
-    shouldWaitForExit: () => false,
-    showResults: () => {},
+    getResults: () => results,
+    shouldWaitForExit: () => waitForExit,
+    showResults: (snapshot) => events.push(["results", snapshot]),
     refreshTooltip: () => {},
     playSound: () => {},
     setHoverClass: () => {},
@@ -68,4 +68,14 @@ test("door state runtime applies authored axis rotation", () => {
   placed.door.degrees = 45;
   runtime.applyRotation(placed);
   assert.ok(Math.abs(placed.door.mesh.rotation.y - Math.PI / 4) < 1e-9);
+});
+
+test("deferred results appear only after unlocking the configured exit latch", () => {
+  const objective = { type: "event", event: "doorUnlocked", target: "DoorBulk1" };
+  const result = { mode: "complete" };
+  const { runtime, placed, events } = createDoorState({ objectives: [objective], results: result, waitForExit: true });
+  runtime.onDoorOpened("room:ServiceDoor");
+  assert.equal(events.some(([type]) => type === "results"), false);
+  runtime.setLatched(placed, false);
+  assert.deepEqual(events.at(-1), ["results", result]);
 });

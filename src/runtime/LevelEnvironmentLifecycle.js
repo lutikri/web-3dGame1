@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=exploring-exit-objective";
+import { LevelRuntime } from "./LevelRuntime.js?v=outcome-radio-wiring";
 
 export class LevelEnvironmentLifecycle {
   constructor({

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { ShiftCompletionRuntime } from "../src/game/ShiftCompletionRuntime.js";
+import { ShiftCompletionRuntime, resolveOutcomeNarrationKey } from "../src/game/ShiftCompletionRuntime.js";
 
 const config = {
   feedback: {
@@ -13,6 +13,12 @@ const config = {
     },
   },
 };
+
+test("terminal outcomes select the authored narrator line", () => {
+  assert.equal(resolveOutcomeNarrationKey({ mode: "complete" }), "passed");
+  assert.equal(resolveOutcomeNarrationKey({ mode: "failed", failureType: "qualityFailure" }), "insufficient");
+  assert.equal(resolveOutcomeNarrationKey({ mode: "failed", failureType: "coreDestroyed" }), "trip");
+});
 
 function terminalSnapshot(overrides = {}) {
   return {
@@ -32,6 +38,7 @@ function terminalSnapshot(overrides = {}) {
 
 test("shift completion owns terminal timing, presentation decay, and result display", () => {
   let stopped = 0;
+  const narration = [];
   const shown = [];
   const resultsController = {
     visible: false,
@@ -47,6 +54,7 @@ test("shift completion owns terminal timing, presentation decay, and result disp
     getStartupDuration: () => 1,
     stopCoreLoop: () => { stopped += 1; },
     emitThought: () => {},
+    playOutcomeNarration: (line) => narration.push(line),
     canUnlockBulkhead: () => false,
     unlockBulkhead: () => {},
     shouldWaitForDoorExit: () => false,
@@ -57,6 +65,7 @@ test("shift completion owns terminal timing, presentation decay, and result disp
 
   runtime.update(0.25, snapshot);
   assert.equal(stopped, 1);
+  assert.deepEqual(narration, ["passed"]);
   assert.equal(runtime.resultsSnapshot, snapshot);
   assert.equal(runtime.terminalElapsed, 0.25);
   assert.equal(runtime.resultsTimer, 1.25);
@@ -95,4 +104,3 @@ test("destroyed core waits for blackout, fluorescent restart, and settling", () 
   runtime.update(0.01, snapshot);
   assert.equal(unlocked, 1);
 });
-

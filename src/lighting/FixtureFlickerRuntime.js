@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=exploring-exit-objective";
+} from "./FluorescentBehavior.js?v=outcome-radio-wiring";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

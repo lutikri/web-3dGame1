@@ -90,13 +90,7 @@ export function getTerminalLightFactor({
   getStartupFactor,
 }) {
   if (terminalElapsed < 0) return 1;
-  if (snapshot.mode === "complete") {
-    return THREE.MathUtils.lerp(
-      1,
-      terminalConfig.completeLightFactor,
-      THREE.MathUtils.smoothstep(terminalElapsed, 0.2, 2),
-    );
-  }
+  if (snapshot.mode === "complete") return 1;
   if (snapshot.failureType === "coreDestroyed") {
     if (terminalElapsed < terminalConfig.destroyedBlackoutSeconds) return 0;
     const bootElapsed = terminalElapsed - terminalConfig.destroyedBlackoutSeconds;

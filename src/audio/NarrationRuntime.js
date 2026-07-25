@@ -40,18 +40,26 @@ export function createNarrationRuntime({
   }
 
   async function playWelcome(levelId = getActiveLevelId()) {
-    const runtime = getRadioRuntime(levelId);
-    if (!runtime?.radio) return false;
+    return playNarration("welcome", levelId);
+  }
+
+  async function playNarration(lineKey, levelId = getActiveLevelId()) {
+    const runtimes = findLevelRadioRuntimes(prefabInstances, getLevelEnvironmentId(levelId));
+    if (!runtimes.length) return false;
     const language = getLanguage();
-    const line = await resolveLine(getConfiguredLine(levelId, language) ?? getFallbackLine(language));
+    const configured = findConfiguredNarrationLine(config, getLevelEnvironmentId(levelId), language, lineKey);
+    const line = await resolveLine(configured ?? (lineKey === "welcome" ? getFallbackLine(language) : null));
+    if (!line?.soundKey) return false;
     if (getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return false;
-    startRadioSpeech(runtime.radio, line.duration);
-    playLine(runtime, line, levelId);
-    onStarted({ levelId, line: "welcome", duration: line.duration });
+    runtimes.forEach((runtime) => {
+      startRadioSpeech(runtime.radio, line.duration);
+      playLine(runtime, line, levelId);
+    });
+    onStarted({ levelId, line: lineKey, duration: line.duration });
     schedule(() => {
-      if (getActiveLevelId() === levelId) onEnded({ levelId, line: "welcome" });
+      if (getActiveLevelId() === levelId) onEnded({ levelId, line: lineKey });
     }, line.duration);
-    const subtitleIdBase = `narrator-welcome-${levelId}-${Date.now()}`;
+    const subtitleIdBase = `narrator-${lineKey}-${levelId}-${Date.now()}`;
     line.subtitles.forEach((subtitle, index) => {
       schedule(() => {
         if (getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return;
@@ -105,19 +113,22 @@ export function createNarrationRuntime({
     return subtitleCache.get(path);
   }
 
-  return { scheduleWelcome, playWelcome, clear, getRadioRuntime, getConfiguredLine };
+  return { scheduleWelcome, playWelcome, playNarration, clear, getRadioRuntime, getConfiguredLine };
+}
+
+export function findLevelRadioRuntimes(prefabInstances, environmentId) {
+  return [...(prefabInstances?.entries?.() ?? [])]
+    .filter(([key, runtime]) => runtime.radio && key.startsWith(`${environmentId}:`))
+    .map(([, runtime]) => runtime);
 }
 
 export function findLevelRadioRuntime(prefabInstances, environmentId) {
-  for (const [key, runtime] of prefabInstances?.entries?.() ?? []) {
-    if (runtime.radio && key.startsWith(`${environmentId}:`)) return runtime;
-  }
-  return null;
+  return findLevelRadioRuntimes(prefabInstances, environmentId)[0] ?? null;
 }
 
-export function findConfiguredNarrationLine(config, environmentId, language) {
-  const welcome = config?.levelEnvironments?.[environmentId]?.narration?.welcome;
-  const localized = welcome?.[language] ?? welcome?.en ?? welcome?.ru;
+export function findConfiguredNarrationLine(config, environmentId, language, lineKey = "welcome") {
+  const line = config?.levelEnvironments?.[environmentId]?.narration?.[lineKey];
+  const localized = line?.[language] ?? line?.en ?? line?.ru;
   return localized?.soundKey ? localized : null;
 }
 

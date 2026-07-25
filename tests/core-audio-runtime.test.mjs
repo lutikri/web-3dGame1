@@ -59,3 +59,15 @@ test("core panel alarms follow stress, red temperature, and stall policies", () 
   runtime.update(0, { levelId: "room", active: true, snapshot: danger });
   assert.equal(oneShots.filter(([, key]) => key === "Core1_Panel1_AlarmHighTemp1").length, 9);
 });
+
+test("core stress alarm starts above eighty or during a rapid stress rise", () => {
+  const { runtime, loops } = createHarness();
+  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 60 }) });
+  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], false);
+  loops.length = 0;
+  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 67 }) });
+  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], true);
+  loops.length = 0;
+  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 81 }) });
+  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], true);
+});

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=exploring-exit-objective";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=exploring-exit-objective";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=exploring-exit-objective";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=exploring-exit-objective";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=outcome-radio-wiring";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=outcome-radio-wiring";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=outcome-radio-wiring";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=outcome-radio-wiring";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

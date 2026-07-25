@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=exploring-exit-objective";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=outcome-radio-wiring";
 
 const EFFECT_KEYS = [
   "bloom",

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=exploring-exit-objective";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=exploring-exit-objective";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=outcome-radio-wiring";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=outcome-radio-wiring";
 
 export class DoorStateRuntime {
   constructor(options) {
@@ -100,19 +100,23 @@ export class DoorStateRuntime {
     this.refreshTooltip();
     if (wasLatched && !door.latched) {
       this.emitSessionEvent("doorUnlocked", { target: door.prefabName });
-      this.#showDeferredResults();
+      this.#showDeferredResults(door.prefabName);
     }
     return true;
   };
 
   onDoorOpened = (prefabKey) => {
     this.emitSessionEvent("doorOpened", { target: prefabKey?.split(":").slice(1).join(":") });
-    this.#showDeferredResults();
   };
 
-  #showDeferredResults() {
+  #showDeferredResults(prefabName) {
+    const isExitTarget = (this.getSessionConfig()?.objectives ?? []).some(
+      (objective) => objective.type === "event"
+        && objective.event === "doorUnlocked"
+        && objective.target === prefabName,
+    );
     const results = this.getResults();
-    if (results && this.shouldWaitForExit()) this.showResults(results);
+    if (isExitTarget && results && this.shouldWaitForExit()) this.showResults(results);
   }
 }
 

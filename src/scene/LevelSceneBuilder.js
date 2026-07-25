@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=exploring-exit-objective";
+} from "../prefabs/PrefabMarkerResolver.js?v=outcome-radio-wiring";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=exploring-exit-objective";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=exploring-exit-objective";
+} from "../levels/LevelConfigOverrides.js?v=outcome-radio-wiring";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=outcome-radio-wiring";
 
 export function createLevelSceneBuilder({
   scene,

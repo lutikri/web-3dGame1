@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=exploring-exit-objective";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=exploring-exit-objective";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=exploring-exit-objective";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=exploring-exit-objective";
+import { createDebugHub } from "./DebugHub.js?v=outcome-radio-wiring";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=outcome-radio-wiring";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=outcome-radio-wiring";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=outcome-radio-wiring";
 
 export class DebugToolsRuntime {
   constructor(options) {

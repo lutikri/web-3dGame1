@@ -7,7 +7,12 @@ const PANEL_SOUNDS = [
   "ButtonMechanical3", "ButtonMechanical4", "LampTurnOn1",
 ];
 const LAMP_SOUNDS = ["LampConstantBuzz1", "LampConstantBuzz2", "LampConstantBuzzBroken1", "LampTurnOn1"];
-const RADIO_SOUNDS = ["MessageEN_Welcome1", "MessageRU_Welcome1", "MessageEN_WelcomeElevator1", "MessageRU_WelcomeElevator1"];
+const RADIO_SOUNDS = [
+  "MessageEN_Welcome1", "MessageRU_Welcome1", "MessageEN_WelcomeElevator1", "MessageRU_WelcomeElevator1",
+  "MessageEN_WelcomePassed1", "MessageRU_WelcomePassed1",
+  "MessageEN_WelcomeInnsuficient1", "MessageRU_WelcomeInnsuficient1",
+  "MessageEN_WelcomeTrip1", "MessageRU_WelcomeTrip1",
+];
 const BULKHEAD_SOUNDS = ["DoorBulk1_Open1", "DoorBulk1_Close1", "DoorBulk1_LatchCrank1"];
 const SERVICE_DOOR_SOUNDS = ["DoorPushbar_Open1", "DoorPushbar_Close1"];
 

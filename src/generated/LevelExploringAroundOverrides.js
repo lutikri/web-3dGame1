@@ -129,6 +129,22 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     "mainCorridorThought": "tutorial-control-booth",
     "startCoreThought": "tutorial-start-core"
   },
+  "prefabStatePolicies": [
+    {
+      "prefabTypes": [
+        "bulkheadDoor",
+        "DoorBulk1"
+      ],
+      "state": {
+        "latched": true
+      },
+      "exceptions": {
+        "DoorBulk1_A": {
+          "latched": false
+        }
+      }
+    }
+  ],
   "prefabs": [
     {
       "name": "Panel1",
@@ -175,7 +191,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
       "name": "DoorBulk1_B",
       "position": {
@@ -1260,7 +1276,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
       "name": "DoorBulk1_4",
       "position": {
@@ -1429,7 +1445,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
       "name": "DoorBulk1_5",
       "position": {
@@ -1452,7 +1468,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
       "name": "DoorBulk1_5001",
       "position": {
@@ -1475,7 +1491,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": false
+        "latched": true
       },
       "name": "DoorBulk1_4001",
       "position": {
@@ -1597,6 +1613,48 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "x": 1.0000000002559692,
         "y": 1,
         "z": 1.0000000002559692
+      }
+    },
+    {
+      "rootName": "SM_Brief1",
+      "briefSheet": {
+        "meshName": "SM_Brief1",
+        "texturePath": "assets/ui/briefings/Intro1_2-ru.png",
+        "sheetIndex": 1,
+        "briefingLevelId": "intro-shift",
+        "holdSeconds": 0.5,
+        "maxDistance": 1.65
+      },
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "colliderNamePrefixes": [
+          "UBX_SM_Brief1"
+        ],
+        "density": 80,
+        "linearDamping": 0.8,
+        "angularDamping": 1.4,
+        "friction": 0.72,
+        "restitution": 0,
+        "canSleep": true
+      },
+      "name": "Brief_02",
+      "position": {
+        "x": -2.838200092315674,
+        "y": 0.9720377922058105,
+        "z": 9.112358093261719
+      },
+      "rotation": {
+        "isEuler": true,
+        "_x": 0,
+        "_y": 0.10035192153932494,
+        "_z": 0,
+        "_order": "XYZ"
+      },
+      "scale": {
+        "x": 0.9999999999735899,
+        "y": 1,
+        "z": 0.9999999999735899
       }
     }
   ],

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { parseSrtSubtitles, findLevelRadioRuntime, findConfiguredNarrationLine } from "../src/audio/NarrationRuntime.js";
+import { parseSrtSubtitles, findLevelRadioRuntime, findLevelRadioRuntimes, findConfiguredNarrationLine } from "../src/audio/NarrationRuntime.js";
 
 test("narration runtime parses SRT cues into scheduled subtitles", () => {
   assert.deepEqual(
@@ -16,6 +16,7 @@ test("narration runtime parses SRT cues into scheduled subtitles", () => {
 test("narration runtime resolves radio ownership and localized configured lines", () => {
   const radio = { radio: {} };
   assert.equal(findLevelRadioRuntime(new Map([["room:Radio", radio], ["other:Radio", { radio: {} }]]), "room"), radio);
+  assert.equal(findLevelRadioRuntimes(new Map([["room:A", radio], ["room:B", { radio: {} }]]), "room").length, 2);
   const config = { levelEnvironments: { room: { narration: { welcome: { en: { soundKey: "English" }, ru: { soundKey: "Russian" } } } } } };
   assert.equal(findConfiguredNarrationLine(config, "room", "ru").soundKey, "Russian");
   assert.equal(findConfiguredNarrationLine(config, "room", "de").soundKey, "English");
