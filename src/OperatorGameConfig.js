@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=ui-blur-pause-guard";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=ui-blur-pause-guard";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=ui-blur-pause-guard";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=ui-blur-pause-guard";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=cinematic-screen-space-stability";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=cinematic-screen-space-stability";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=cinematic-screen-space-stability";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=cinematic-screen-space-stability";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

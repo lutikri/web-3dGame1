@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=ui-blur-pause-guard";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=cinematic-screen-space-stability";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

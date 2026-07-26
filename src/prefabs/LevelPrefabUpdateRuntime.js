@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=ui-blur-pause-guard";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=ui-blur-pause-guard";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=ui-blur-pause-guard";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=ui-blur-pause-guard";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=ui-blur-pause-guard";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=cinematic-screen-space-stability";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=cinematic-screen-space-stability";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=cinematic-screen-space-stability";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=cinematic-screen-space-stability";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

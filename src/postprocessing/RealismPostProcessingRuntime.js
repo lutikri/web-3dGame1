@@ -10,6 +10,8 @@ export class RealismPostProcessingRuntime {
 
   #modulesPromise = null;
   #revision = 0;
+  #originalCopyFramebufferToTexture = null;
+  #compatibleCopyFramebufferToTexture = null;
 
   constructor({ config, renderer, scene, camera, presets, getQuality }) {
     Object.assign(this, { config, renderer, scene, camera, presets, getQuality });
@@ -56,30 +58,36 @@ export class RealismPostProcessingRuntime {
     const quality = this.getQuality();
     const ssgi = this.presets.getSsgi(quality.ssgi);
     const shadows = this.presets.getScreenSpaceShadows(quality.screenSpaceShadows);
-    const effects = [];
+    const selection = resolveRealismEffectSelection({
+      ssgi: ssgi.enabled,
+      screenSpaceShadows: shadows.enabled,
+    });
+    const tracedEffects = [];
+    const presentationEffects = [];
 
     this.composer = new EffectComposer(this.renderer, { depthBuffer: true });
+    this.#installFramebufferCopyCompatibility();
     this.composer.setSize(window.innerWidth, window.innerHeight);
     this.velocityDepthNormalPass = new VelocityDepthNormalPass(this.scene, this.camera);
     this.composer.addPass(this.velocityDepthNormalPass);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
-    if (ssgi.enabled) {
+    if (selection.ssgi) {
       this.ssgiEffect = new SSGIEffect(this.scene, this.camera, this.velocityDepthNormalPass, {
         width: window.innerWidth,
         height: window.innerHeight,
         ...ssgi,
       });
-      effects.push(this.ssgiEffect);
+      tracedEffects.push(this.ssgiEffect);
     }
-    if (shadows.enabled) {
+    if (selection.hbao) {
       this.screenSpaceShadowEffect = new HBAOEffect(this.composer, this.camera, this.scene, {
         ...shadows,
-        velocityDepthNormalPass: this.velocityDepthNormalPass,
-        normalTexture: this.velocityDepthNormalPass.texture,
       });
-      effects.push(this.screenSpaceShadowEffect);
+      tracedEffects.push(this.screenSpaceShadowEffect);
     }
+    if (tracedEffects.length) this.composer.addPass(new EffectPass(this.camera, ...tracedEffects));
+
     const post = this.config.postProcessing;
     if (post.bloom.enabled) {
       this.bloomEffect = new BloomEffect({
@@ -88,7 +96,7 @@ export class RealismPostProcessingRuntime {
         intensity: post.bloom.strength,
         radius: post.bloom.radius,
       });
-      effects.push(this.bloomEffect);
+      presentationEffects.push(this.bloomEffect);
     }
     if (post.chromaticAberration.enabled) {
       this.chromaticAberrationEffect = new ChromaticAberrationEffect({
@@ -96,23 +104,16 @@ export class RealismPostProcessingRuntime {
         radialModulation: true,
         modulationOffset: 0.18,
       });
-      effects.push(this.chromaticAberrationEffect);
+      presentationEffects.push(this.chromaticAberrationEffect);
     }
-    if (effects.length) this.composer.addPass(new EffectPass(this.camera, ...effects));
+    if (presentationEffects.length) {
+      this.composer.addPass(new EffectPass(this.camera, ...presentationEffects));
+    }
   }
 
   render(dt) {
     if (!this.composer) return false;
-    const originalWarn = console.warn;
-    console.warn = (message, ...args) => {
-      if (typeof message === "string" && message.includes("copyFramebufferToTexture function signature has changed")) return;
-      originalWarn.call(console, message, ...args);
-    };
-    try {
-      this.composer.render(dt);
-    } finally {
-      console.warn = originalWarn;
-    }
+    this.composer.render(dt);
     return true;
   }
 
@@ -146,6 +147,7 @@ export class RealismPostProcessingRuntime {
 
   dispose() {
     this.#revision += 1;
+    this.#restoreFramebufferCopyCompatibility();
     this.composer?.dispose?.();
     this.velocityDepthNormalPass?.dispose?.();
     this.ssgiEffect?.dispose?.();
@@ -163,4 +165,38 @@ export class RealismPostProcessingRuntime {
   inspect() {
     return { realismComposer: Boolean(this.composer) };
   }
+
+  #installFramebufferCopyCompatibility() {
+    if (this.#originalCopyFramebufferToTexture || !this.renderer?.copyFramebufferToTexture) return;
+    this.#originalCopyFramebufferToTexture = this.renderer.copyFramebufferToTexture;
+    this.#compatibleCopyFramebufferToTexture = createFramebufferCopyCompatibilityWrapper(
+      this.renderer,
+      this.#originalCopyFramebufferToTexture,
+    );
+    this.renderer.copyFramebufferToTexture = this.#compatibleCopyFramebufferToTexture;
+  }
+
+  #restoreFramebufferCopyCompatibility() {
+    if (this.renderer?.copyFramebufferToTexture === this.#compatibleCopyFramebufferToTexture) {
+      this.renderer.copyFramebufferToTexture = this.#originalCopyFramebufferToTexture;
+    }
+    this.#originalCopyFramebufferToTexture = null;
+    this.#compatibleCopyFramebufferToTexture = null;
+  }
+}
+
+export function resolveRealismEffectSelection({ ssgi = false, screenSpaceShadows = false } = {}) {
+  return {
+    ssgi: Boolean(ssgi),
+    hbao: Boolean(screenSpaceShadows),
+  };
+}
+
+export function createFramebufferCopyCompatibilityWrapper(renderer, copyFramebufferToTexture) {
+  return function copyFramebufferCompatible(textureOrPosition, positionOrTexture = null, level = 0) {
+    if (textureOrPosition?.isTexture) {
+      return copyFramebufferToTexture.call(renderer, textureOrPosition, positionOrTexture, level);
+    }
+    return copyFramebufferToTexture.call(renderer, positionOrTexture, textureOrPosition, level);
+  };
 }

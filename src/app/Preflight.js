@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

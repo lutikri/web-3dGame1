@@ -109,12 +109,13 @@ function buildPostProcessingSnapshot({
     realismComposer: Boolean(realism.composer),
     ssgi: Boolean(realism.ssgiEffect),
     ssgiQuality,
-    ssr: Boolean(post.ssrPass),
+    ssr: Boolean(realism.ssgiEffect || realism.ssrEffect),
     ssrQuality,
     screenSpaceShadows: Boolean(realism.screenSpaceShadowEffect),
+    screenSpaceShadowImplementation: "hbao",
     screenSpaceShadowQuality,
-    bloom: Boolean(post.bloomPass),
-    bloomStrength: post.bloomPass?.strength ?? 0,
+    bloom: Boolean(realism.composer ? realism.bloomEffect : post.bloomPass),
+    bloomStrength: realism.composer ? realism.bloomEffect?.intensity ?? 0 : post.bloomPass?.strength ?? 0,
     antiAliasingMethod: post.fxaaPass ? "fxaa" : post.smaaPass ? "smaa" : "off",
     msaaSamples: post.composer?.renderTarget1?.samples ?? 0,
     lensEffects: Boolean(lens),
@@ -154,4 +155,3 @@ function lampMaterialName(material, materials) {
 function fixed(value) {
   return Number(Number(value ?? 0).toFixed(2));
 }
-

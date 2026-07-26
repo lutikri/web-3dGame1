@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=ui-blur-pause-guard";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=cinematic-screen-space-stability";
 
 const DISMISS_MS = 300;
 

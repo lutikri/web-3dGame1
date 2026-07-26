@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { RealismPostProcessingRuntime } from "../src/postprocessing/RealismPostProcessingRuntime.js";
+import {
+  createFramebufferCopyCompatibilityWrapper,
+  RealismPostProcessingRuntime,
+  resolveRealismEffectSelection,
+} from "../src/postprocessing/RealismPostProcessingRuntime.js";
 
 function createRuntime(enabled = false) {
   return new RealismPostProcessingRuntime({
@@ -16,9 +20,10 @@ function createRuntime(enabled = false) {
     renderer: {}, scene: {}, camera: {},
     presets: {
       getSsgi: () => ({ enabled: false }),
+      getSsr: () => ({ enabled: false }),
       getScreenSpaceShadows: () => ({ enabled: false }),
     },
-    getQuality: () => ({ ssgi: "off", screenSpaceShadows: "off" }),
+    getQuality: () => ({ ssgi: "off", ssr: "off", screenSpaceShadows: "off" }),
   });
 }
 
@@ -28,6 +33,35 @@ test("realism runtime stays disabled when no realism quality is active", async (
   await runtime.setup();
   assert.deepEqual(runtime.inspect(), { realismComposer: false });
   assert.equal(runtime.render(0.016), false);
+});
+
+test("framebuffer copy compatibility accepts current and legacy Three signatures", () => {
+  const renderer = {};
+  const calls = [];
+  const copy = createFramebufferCopyCompatibilityWrapper(renderer, function (...args) {
+    calls.push({ receiver: this, args });
+  });
+  const texture = { isTexture: true };
+  const position = { x: 2, y: 3 };
+
+  copy(texture, position, 1);
+  copy(position, texture, 2);
+
+  assert.deepEqual(calls, [
+    { receiver: renderer, args: [texture, position, 1] },
+    { receiver: renderer, args: [texture, position, 2] },
+  ]);
+});
+
+test("cinematic effect selection avoids layering SSR over full SSGI", () => {
+  assert.deepEqual(resolveRealismEffectSelection({ ssgi: true, screenSpaceShadows: true }), {
+    ssgi: true,
+    hbao: true,
+  });
+  assert.deepEqual(resolveRealismEffectSelection(), {
+    ssgi: false,
+    hbao: false,
+  });
 });
 
 test("realism runtime owns live and emergency effect tuning", () => {

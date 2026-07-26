@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=ui-blur-pause-guard";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=cinematic-screen-space-stability";
 
 const MARKER_PREFIX = "PF_";
 

@@ -5,10 +5,11 @@ import { LUTPass } from "three/addons/postprocessing/LUTPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
+import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=ui-blur-pause-guard";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=cinematic-screen-space-stability";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -16,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=ui-blur-pause-guard";
+} from "./PostProcessingShaders.js?v=cinematic-screen-space-stability";
 
 export class PostProcessingRuntime {
   composer = null;
@@ -33,8 +34,6 @@ export class PostProcessingRuntime {
   smaaPass = null;
 
   #revision = 0;
-  #ssrPassClass = null;
-  #ssrPromise = null;
 
   constructor({
     config,
@@ -91,20 +90,17 @@ export class PostProcessingRuntime {
 
     const ssr = this.presets.getSsr(quality.ssr);
     if (ssr.enabled) {
-      if (this.#ssrPassClass) {
-        const scale = ssr.resolutionScale ?? 1;
-        this.ssrPass = new this.#ssrPassClass({
-          renderer: this.renderer, scene: this.scene, camera: this.camera,
-          width: Math.max(1, Math.round(window.innerWidth * scale)),
-          height: Math.max(1, Math.round(window.innerHeight * scale)),
-        });
-        applySsrPreset(this.ssrPass, ssr);
-        this.composer.addPass(this.ssrPass);
-      } else {
-        this.#loadSsr().then(() => {
-          if (revision === this.#revision && this.presets.getSsr(this.getQuality().ssr).enabled) this.setup();
-        }).catch((error) => console.warn("[PostProcessingRuntime] Failed to load SSRPass", error));
-      }
+      const scale = ssr.resolutionScale ?? 1;
+      this.ssrPass = new SSRPass({
+        renderer: this.renderer,
+        scene: this.scene,
+        camera: this.camera,
+        width: Math.max(1, Math.round(window.innerWidth * scale)),
+        height: Math.max(1, Math.round(window.innerHeight * scale)),
+      });
+      this.ssrPass.output = SSRPass.OUTPUT.Default;
+      applySsrPreset(this.ssrPass, ssr);
+      this.composer.addPass(this.ssrPass);
     }
 
     if (config.bloom.enabled) {
@@ -182,13 +178,13 @@ export class PostProcessingRuntime {
   resize(width, height) {
     this.composer?.setSize(width, height);
     const quality = this.getQuality();
-    if (this.ssrPass) {
-      const scale = this.presets.getSsr(quality.ssr).resolutionScale ?? 1;
-      this.ssrPass.setSize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
-    }
     if (this.gtaoPass) {
       const scale = this.presets.getGtao(quality.gtao).resolutionScale ?? 1;
       this.gtaoPass.setSize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
+    }
+    if (this.ssrPass) {
+      const scale = this.presets.getSsr(quality.ssr).resolutionScale ?? 1;
+      this.ssrPass.setSize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
     }
     this.bloomPass?.setSize(width, height);
     this.sharpenPass?.uniforms.resolution.value.set(width, height);
@@ -237,10 +233,4 @@ export class PostProcessingRuntime {
       1 / Math.max(1, window.innerHeight * ratio));
   }
 
-  async #loadSsr() {
-    if (this.#ssrPassClass) return this.#ssrPassClass;
-    this.#ssrPromise ??= import("three/addons/postprocessing/SSRPass.js").then(({ SSRPass }) => SSRPass);
-    this.#ssrPassClass = await this.#ssrPromise;
-    return this.#ssrPassClass;
-  }
 }

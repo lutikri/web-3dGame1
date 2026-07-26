@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=ui-blur-pause-guard";
-import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=ui-blur-pause-guard";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=ui-blur-pause-guard";
+import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=cinematic-screen-space-stability";
+import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=cinematic-screen-space-stability";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=cinematic-screen-space-stability";
 
 const elevatorStart = new THREE.Vector3(0.8082548379898071, 35.64804458618164, -2.094832181930542);
 

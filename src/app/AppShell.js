@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=ui-blur-pause-guard";
-import { translate } from "./Localization.js?v=ui-blur-pause-guard";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=ui-blur-pause-guard";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=ui-blur-pause-guard";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=ui-blur-pause-guard";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=ui-blur-pause-guard";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=ui-blur-pause-guard";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=cinematic-screen-space-stability";
+import { translate } from "./Localization.js?v=cinematic-screen-space-stability";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=cinematic-screen-space-stability";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=cinematic-screen-space-stability";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=cinematic-screen-space-stability";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=cinematic-screen-space-stability";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=cinematic-screen-space-stability";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,12 +14,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=ui-blur-pause-guard";
-import { createAppPanelController } from "./AppPanelController.js?v=ui-blur-pause-guard";
-import { createAppRouter } from "./AppRouter.js?v=ui-blur-pause-guard";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=ui-blur-pause-guard";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=ui-blur-pause-guard";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=ui-blur-pause-guard";
+} from "./AppPersistence.js?v=cinematic-screen-space-stability";
+import { createAppPanelController } from "./AppPanelController.js?v=cinematic-screen-space-stability";
+import { createAppRouter } from "./AppRouter.js?v=cinematic-screen-space-stability";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=cinematic-screen-space-stability";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=cinematic-screen-space-stability";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=cinematic-screen-space-stability";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -481,6 +481,8 @@ export function createAppShell({ gameApi }) {
     const [command, ...args] = String(commandLine).trim().split(/\s+/).filter(Boolean);
     const levelId = args[0];
     if (!command || command === "help") return getConsoleHelp();
+    const cinematicQuality = resolveCinematicQualityCommand(command, args);
+    if (cinematicQuality) return gameApi.setCinematicPostProcessingQuality?.(cinematicQuality) ?? null;
     if (command === "complete") return completeLevel(levelId);
     if (command === "attempt") return attemptLevel(levelId);
     if (command === "clear") return clearLevelProgress(levelId);
@@ -502,6 +504,9 @@ export function createAppShell({ gameApi }) {
       "og('reset progress')",
       "og('progress')",
       "og('levels')",
+      "og('cinematic max')",
+      "og('cinematic off')",
+      "og('quality cinematic med')",
       "og.complete('intro-shift')",
       "og.goto('fuel-problems')",
       "og.resetProgress()",
@@ -519,6 +524,7 @@ export function createAppShell({ gameApi }) {
       resetProgress,
       progress: getProgressSnapshot,
       levels: listConsoleLevels,
+      cinematic: (quality = "max") => gameApi.setCinematicPostProcessingQuality?.(quality),
     });
     window.og = og;
     window.operatorGameConsole = og;
@@ -605,6 +611,12 @@ function getLevelTitle(levelId) {
     competitive: "levels.competitive.title",
   }[levelId];
   return key ? translate(key) : LEVELS[levelId]?.title ?? levelId;
+}
+
+export function resolveCinematicQualityCommand(command, args = []) {
+  if (command === "cinematic" || command === "cinefx") return args[0] ?? "max";
+  if (command === "quality" && args[0] === "cinematic") return args[1] ?? "max";
+  return null;
 }
 
 export function resolvePauseShortcutAction({ panelOpen, currentPanel, previousPanel, activeGameplayLevelId }) {

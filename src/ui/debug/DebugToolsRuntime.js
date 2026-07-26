@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=ui-blur-pause-guard";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=ui-blur-pause-guard";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=ui-blur-pause-guard";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=ui-blur-pause-guard";
+import { createDebugHub } from "./DebugHub.js?v=cinematic-screen-space-stability";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=cinematic-screen-space-stability";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=cinematic-screen-space-stability";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=cinematic-screen-space-stability";
 
 export class DebugToolsRuntime {
   constructor(options) {

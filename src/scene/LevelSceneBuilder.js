@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=ui-blur-pause-guard";
+} from "../prefabs/PrefabMarkerResolver.js?v=cinematic-screen-space-stability";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=ui-blur-pause-guard";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=ui-blur-pause-guard";
+} from "../levels/LevelConfigOverrides.js?v=cinematic-screen-space-stability";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=cinematic-screen-space-stability";
 
 export function createLevelSceneBuilder({
   scene,

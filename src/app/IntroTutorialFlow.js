@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=ui-blur-pause-guard";
+import { translateRequired } from "./Localization.js?v=cinematic-screen-space-stability";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

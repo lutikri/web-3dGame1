@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=ui-blur-pause-guard";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=ui-blur-pause-guard";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=ui-blur-pause-guard";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=ui-blur-pause-guard";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=ui-blur-pause-guard";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=ui-blur-pause-guard";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=ui-blur-pause-guard";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=cinematic-screen-space-stability";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=cinematic-screen-space-stability";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=cinematic-screen-space-stability";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=cinematic-screen-space-stability";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=cinematic-screen-space-stability";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=cinematic-screen-space-stability";
 
 export function createPrefabRuntimeFactory({
   config,

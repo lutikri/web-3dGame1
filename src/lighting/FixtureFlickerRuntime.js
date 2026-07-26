@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=ui-blur-pause-guard";
+} from "./FluorescentBehavior.js?v=cinematic-screen-space-stability";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

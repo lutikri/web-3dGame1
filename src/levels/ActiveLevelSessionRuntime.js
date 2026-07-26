@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=ui-blur-pause-guard";
+import { LevelSession } from "./LevelSession.js?v=cinematic-screen-space-stability";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

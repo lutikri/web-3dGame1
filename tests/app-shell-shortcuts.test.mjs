@@ -1,12 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { resolvePauseShortcutAction } from "../src/app/AppShell.js";
+import { resolveCinematicQualityCommand, resolvePauseShortcutAction } from "../src/app/AppShell.js";
 
 test("pause shortcut cannot close menu and mail panels", () => {
   assert.equal(resolvePauseShortcutAction({ panelOpen: true, currentPanel: "main-menu" }), null);
   assert.equal(resolvePauseShortcutAction({ panelOpen: true, currentPanel: "level-select" }), null);
   assert.equal(resolvePauseShortcutAction({ panelOpen: true, currentPanel: "credits" }), null);
+});
+
+test("dev console recognizes cinematic post-processing quality commands", () => {
+  assert.equal(resolveCinematicQualityCommand("cinematic", ["max"]), "max");
+  assert.equal(resolveCinematicQualityCommand("quality", ["cinematic", "med"]), "med");
+  assert.equal(resolveCinematicQualityCommand("levels", []), null);
 });
 
 test("pause shortcut only toggles gameplay pause and its settings child", () => {

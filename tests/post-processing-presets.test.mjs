@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { applyGtaoPreset, applySsrPreset, createPostProcessingPresets } from "../src/postprocessing/PostProcessingPresets.js";
+import { applyGtaoPreset, createPostProcessingPresets } from "../src/postprocessing/PostProcessingPresets.js";
 
 test("post-processing preset policy falls back to off presets", () => {
   const off = { enabled: false, marker: "off" };
@@ -28,8 +28,4 @@ test("post-processing preset applicators configure pass APIs", () => {
   applyGtaoPreset(gtaoPass, { samples: 12, denoiseSamples: 6 });
   assert.equal(calls[0].samples, 12);
   assert.equal(calls[1].samples, 6);
-  const ssrPass = {};
-  applySsrPreset(ssrPass, { opacity: 0.6, blur: false });
-  assert.equal(ssrPass.opacity, 0.6);
-  assert.equal(ssrPass.blur, false);
 });

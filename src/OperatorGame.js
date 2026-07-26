@@ -3,129 +3,129 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=ui-blur-pause-guard";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=cinematic-screen-space-stability";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=ui-blur-pause-guard";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=ui-blur-pause-guard";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=ui-blur-pause-guard";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=ui-blur-pause-guard";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=ui-blur-pause-guard";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=ui-blur-pause-guard";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=ui-blur-pause-guard";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=ui-blur-pause-guard";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=ui-blur-pause-guard";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=ui-blur-pause-guard";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=ui-blur-pause-guard";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=ui-blur-pause-guard";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=ui-blur-pause-guard";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=ui-blur-pause-guard";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=ui-blur-pause-guard";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=ui-blur-pause-guard";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=ui-blur-pause-guard";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=ui-blur-pause-guard";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=ui-blur-pause-guard";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=ui-blur-pause-guard";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=ui-blur-pause-guard";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=ui-blur-pause-guard";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=ui-blur-pause-guard";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=ui-blur-pause-guard";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=ui-blur-pause-guard";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=ui-blur-pause-guard";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=ui-blur-pause-guard";
+} from "./game/ShiftReport.js?v=cinematic-screen-space-stability";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=cinematic-screen-space-stability";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=cinematic-screen-space-stability";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=cinematic-screen-space-stability";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=cinematic-screen-space-stability";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=cinematic-screen-space-stability";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=cinematic-screen-space-stability";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=cinematic-screen-space-stability";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=cinematic-screen-space-stability";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=cinematic-screen-space-stability";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=cinematic-screen-space-stability";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=cinematic-screen-space-stability";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=cinematic-screen-space-stability";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=cinematic-screen-space-stability";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=cinematic-screen-space-stability";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=cinematic-screen-space-stability";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=cinematic-screen-space-stability";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=cinematic-screen-space-stability";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=cinematic-screen-space-stability";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=cinematic-screen-space-stability";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=cinematic-screen-space-stability";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=cinematic-screen-space-stability";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=cinematic-screen-space-stability";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=cinematic-screen-space-stability";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=cinematic-screen-space-stability";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=cinematic-screen-space-stability";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
+} from "./config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=ui-blur-pause-guard";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=ui-blur-pause-guard";
-import { createStatusScreen } from "./StatusScreen.js?v=ui-blur-pause-guard";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=ui-blur-pause-guard";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=ui-blur-pause-guard";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=ui-blur-pause-guard";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=ui-blur-pause-guard";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=ui-blur-pause-guard";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=ui-blur-pause-guard";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=ui-blur-pause-guard";
+} from "./scene/TextureStreaming.js?v=cinematic-screen-space-stability";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=cinematic-screen-space-stability";
+import { createStatusScreen } from "./StatusScreen.js?v=cinematic-screen-space-stability";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=cinematic-screen-space-stability";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=cinematic-screen-space-stability";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=cinematic-screen-space-stability";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=cinematic-screen-space-stability";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=cinematic-screen-space-stability";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=cinematic-screen-space-stability";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=cinematic-screen-space-stability";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=ui-blur-pause-guard";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=ui-blur-pause-guard";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=ui-blur-pause-guard";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=cinematic-screen-space-stability";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=cinematic-screen-space-stability";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=cinematic-screen-space-stability";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=ui-blur-pause-guard";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=ui-blur-pause-guard";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=ui-blur-pause-guard";
-import { AssetCache } from "./runtime/AssetCache.js?v=ui-blur-pause-guard";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=ui-blur-pause-guard";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=ui-blur-pause-guard";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=ui-blur-pause-guard";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=ui-blur-pause-guard";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=ui-blur-pause-guard";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=ui-blur-pause-guard";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=ui-blur-pause-guard";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=ui-blur-pause-guard";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=ui-blur-pause-guard";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=ui-blur-pause-guard";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=ui-blur-pause-guard";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=ui-blur-pause-guard";
+} from "./lighting/FluorescentBehavior.js?v=cinematic-screen-space-stability";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=cinematic-screen-space-stability";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=cinematic-screen-space-stability";
+import { AssetCache } from "./runtime/AssetCache.js?v=cinematic-screen-space-stability";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=cinematic-screen-space-stability";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=cinematic-screen-space-stability";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=cinematic-screen-space-stability";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=cinematic-screen-space-stability";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=cinematic-screen-space-stability";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=cinematic-screen-space-stability";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=cinematic-screen-space-stability";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=cinematic-screen-space-stability";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=cinematic-screen-space-stability";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=cinematic-screen-space-stability";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=cinematic-screen-space-stability";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=cinematic-screen-space-stability";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=ui-blur-pause-guard";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=ui-blur-pause-guard";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=ui-blur-pause-guard";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=ui-blur-pause-guard";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=ui-blur-pause-guard";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=ui-blur-pause-guard";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=ui-blur-pause-guard";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=ui-blur-pause-guard";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=ui-blur-pause-guard";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=ui-blur-pause-guard";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=ui-blur-pause-guard";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=ui-blur-pause-guard";
-import { PlayerController } from "./player/PlayerController.js?v=ui-blur-pause-guard";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=ui-blur-pause-guard";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=ui-blur-pause-guard";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=ui-blur-pause-guard";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=ui-blur-pause-guard";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=ui-blur-pause-guard";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=ui-blur-pause-guard";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=ui-blur-pause-guard";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=ui-blur-pause-guard";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=ui-blur-pause-guard";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=ui-blur-pause-guard";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=ui-blur-pause-guard";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=ui-blur-pause-guard";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=ui-blur-pause-guard";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=ui-blur-pause-guard";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=ui-blur-pause-guard";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=ui-blur-pause-guard";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=ui-blur-pause-guard";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=ui-blur-pause-guard";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=ui-blur-pause-guard";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=ui-blur-pause-guard";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=ui-blur-pause-guard";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=ui-blur-pause-guard";
+} from "./scene/InteriorObjectRegistry.js?v=cinematic-screen-space-stability";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=cinematic-screen-space-stability";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=cinematic-screen-space-stability";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=cinematic-screen-space-stability";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=cinematic-screen-space-stability";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=cinematic-screen-space-stability";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=cinematic-screen-space-stability";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=cinematic-screen-space-stability";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=cinematic-screen-space-stability";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=cinematic-screen-space-stability";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=cinematic-screen-space-stability";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=cinematic-screen-space-stability";
+import { PlayerController } from "./player/PlayerController.js?v=cinematic-screen-space-stability";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=cinematic-screen-space-stability";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=cinematic-screen-space-stability";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=cinematic-screen-space-stability";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=cinematic-screen-space-stability";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=cinematic-screen-space-stability";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=cinematic-screen-space-stability";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=cinematic-screen-space-stability";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=cinematic-screen-space-stability";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=cinematic-screen-space-stability";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=cinematic-screen-space-stability";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=cinematic-screen-space-stability";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=cinematic-screen-space-stability";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=cinematic-screen-space-stability";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=cinematic-screen-space-stability";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=cinematic-screen-space-stability";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=cinematic-screen-space-stability";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=cinematic-screen-space-stability";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=cinematic-screen-space-stability";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=cinematic-screen-space-stability";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=cinematic-screen-space-stability";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=cinematic-screen-space-stability";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=cinematic-screen-space-stability";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=ui-blur-pause-guard";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=cinematic-screen-space-stability";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1483,6 +1483,10 @@ function setScreenSpaceShadowQuality(quality = "off") {
   return postProcessingPolicy.setScreenSpaceShadowQuality(quality);
 }
 
+function setCinematicPostProcessingQuality(quality = "off") {
+  return postProcessingPolicy.setCinematicQuality(quality);
+}
+
 function buildRoom() {
   return buildPrimitiveRoom({ scene, roomConfig: CONFIG.room, floorMaterial: materials.floor });
 }
@@ -2105,6 +2109,7 @@ installOperatorGameApi(window, {
   setSsgiQuality,
   setSsrQuality,
   setScreenSpaceShadowQuality,
+  setCinematicPostProcessingQuality,
   setDebugPanelsVisible,
   toggleDebugPanels,
   saveSceneDebugPreset: () => debugHub?.scene.save(),

@@ -25,8 +25,8 @@ export class DebugOverlayRuntime {
       `shadows: ${this.renderer.shadowMap.enabled ? quality.shadows : "off"}`,
       `gtao: ${this.postProcessing.gtaoPass ? quality.gtao : "off"}`,
       `ssgi: ${this.realismPostProcessing.ssgiEffect ? quality.ssgi : "off"}`,
-      `ssr: ${this.postProcessing.ssrPass ? quality.ssr : "off"}`,
-      `contact shadows: ${this.realismPostProcessing.screenSpaceShadowEffect ? quality.screenSpaceShadows : "off"}`,
+      `ssr: ${this.realismPostProcessing.ssgiEffect || this.realismPostProcessing.ssrEffect ? quality.ssr : "off"}`,
+      `screen-space AO (HBAO): ${this.realismPostProcessing.screenSpaceShadowEffect ? quality.screenSpaceShadows : "off"}`,
       "",
       "MEMORY",
       `js heap: ${this.formatMemory(memory.heapUsedBytes)} / ${this.formatMemory(memory.heapLimitBytes)}`,
@@ -43,4 +43,3 @@ export class DebugOverlayRuntime {
     ].join("\n");
   };
 }
-

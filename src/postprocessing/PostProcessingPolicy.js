@@ -114,9 +114,20 @@ export class PostProcessingPolicy {
   };
 
   setGtaoQuality = (quality = "off") => this.#setStandard("gtao", quality, "gtaoPass");
-  setSsrQuality = (quality = "off") => this.#setStandard("ssr", quality, "ssrPass");
-  setSsgiQuality = (quality = "off") => this.#setRealism("ssgi", quality, "ssgiEffect");
+  setSsrQuality = (quality = "off") => this.#setExclusiveTracing("ssr", "ssgi", quality, "ssrPass", this.runtime);
+  setSsgiQuality = (quality = "off") => this.#setExclusiveTracing("ssgi", "ssr", quality, "ssgiEffect");
   setScreenSpaceShadowQuality = (quality = "off") => this.#setRealism("screenSpaceShadows", quality, "screenSpaceShadowEffect");
+
+  setCinematicQuality = (quality = "off") => {
+    const kinds = ["ssgi", "screenSpaceShadows"];
+    const key = kinds.every((kind) => this.config.postProcessing[kind].presets?.[quality]) ? quality : "off";
+    const next = { ssgi: key, ssr: "off", screenSpaceShadows: key };
+    const changed = Object.entries(next).some(([kind, value]) => this.quality[kind] !== value);
+    Object.assign(this.quality, next);
+    const active = Boolean(this.realism?.ssgiEffect || this.realism?.ssrEffect || this.realism?.screenSpaceShadowEffect);
+    if (changed || active !== (key !== "off")) this.runtime?.setup();
+    return { cinematic: key, ...this.snapshot() };
+  };
 
   #setStandard(kind, quality, passName) {
     const section = this.config.postProcessing[kind];
@@ -135,6 +146,19 @@ export class PostProcessingPolicy {
     if (this.quality[kind] === key && Boolean(this.realism?.[effectName]) === Boolean(preset.enabled)) return key;
     this.quality[kind] = key;
     this.realism?.setup();
+    return key;
+  }
+
+  #setExclusiveTracing(kind, conflictingKind, quality, effectName, owner = this.realism) {
+    const section = this.config.postProcessing[kind];
+    const key = section.presets?.[quality] ? quality : section.defaultQuality ?? "off";
+    const preset = kind === "ssgi" ? this.getSsgiPreset(key) : this.getSsrPreset(key);
+    const disablesConflict = Boolean(preset.enabled) && this.quality[conflictingKind] !== "off";
+    const active = Boolean(owner?.[effectName]);
+    if (this.quality[kind] === key && !disablesConflict && active === Boolean(preset.enabled)) return key;
+    this.quality[kind] = key;
+    if (preset.enabled) this.quality[conflictingKind] = "off";
+    this.runtime?.setup();
     return key;
   }
 }

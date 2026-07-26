@@ -53,8 +53,8 @@ test("post-processing policy owns quality state and effect rebuild decisions", (
   assert.deepEqual(policy.snapshot(), {
     shadows: "high", gtao: "high", ssgi: "high", ssr: "off", screenSpaceShadows: "off",
   });
-  assert.equal(standardSetups, 1);
-  assert.equal(realismSetups, 1);
+  assert.equal(standardSetups, 2);
+  assert.equal(realismSetups, 0);
   assert.equal(shadowCalls.length, 1);
 });
 
@@ -72,4 +72,40 @@ test("post-processing policy applies live standard pass configuration", () => {
   assert.equal(runtime.lutPass.intensity, 0.5);
   assert.equal(runtime.sharpenPass.uniforms.amount.value, 0.3);
   assert.equal(realismUpdates, 1);
+});
+
+test("SSGI and standalone SSR are mutually exclusive", () => {
+  const { policy } = createPolicy();
+  let setups = 0;
+  policy.attach({
+    runtime: { setup: () => setups += 1, ssrPass: null },
+    realism: { ssgiEffect: null },
+  });
+
+  policy.setSsgiQuality("high");
+  policy.setSsrQuality("high");
+  assert.equal(policy.snapshot().ssgi, "off");
+  assert.equal(policy.snapshot().ssr, "high");
+  assert.equal(setups, 2);
+});
+
+test("cinematic quality switches the realism bundle with one pipeline rebuild", () => {
+  const { policy } = createPolicy();
+  let setups = 0;
+  policy.attach({
+    runtime: { setup: () => setups += 1 },
+    realism: { ssgiEffect: null, ssrEffect: null, screenSpaceShadowEffect: null },
+  });
+
+  assert.deepEqual(policy.setCinematicQuality("high"), {
+    cinematic: "high",
+    shadows: "min",
+    gtao: "off",
+    ssgi: "high",
+    ssr: "off",
+    screenSpaceShadows: "high",
+  });
+  assert.equal(setups, 1);
+  assert.equal(policy.setCinematicQuality("invalid").cinematic, "off");
+  assert.equal(setups, 2);
 });

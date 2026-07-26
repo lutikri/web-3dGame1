@@ -32,8 +32,8 @@ export function applyGtaoPreset(pass, preset) {
 
 export function applySsrPreset(pass, preset) {
   pass.opacity = preset.opacity ?? 0.35;
-  pass.maxDistance = preset.maxDistance ?? 1.5;
-  pass.thickness = preset.thickness ?? 0.025;
+  pass.maxDistance = preset.maxDistance ?? 2;
+  pass.thickness = preset.thickness ?? 0.03;
   pass.blur = preset.blur ?? true;
   pass.bouncing = preset.bouncing ?? false;
   pass.distanceAttenuation = preset.distanceAttenuation ?? true;

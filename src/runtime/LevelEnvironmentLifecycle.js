@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=ui-blur-pause-guard";
+import { LevelRuntime } from "./LevelRuntime.js?v=cinematic-screen-space-stability";
 
 export class LevelEnvironmentLifecycle {
   constructor({

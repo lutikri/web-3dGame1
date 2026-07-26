@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=ui-blur-pause-guard";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=ui-blur-pause-guard";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=ui-blur-pause-guard";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=ui-blur-pause-guard";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=cinematic-screen-space-stability";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=cinematic-screen-space-stability";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=cinematic-screen-space-stability";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=cinematic-screen-space-stability";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
