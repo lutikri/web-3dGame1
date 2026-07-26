@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=outcome-radio-wiring";
-import { applyLocalization } from "./app/Localization.js?v=outcome-radio-wiring";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=outcome-radio-wiring";
+import { createPreflight } from "./app/Preflight.js?v=terminal-exit-presentation";
+import { applyLocalization } from "./app/Localization.js?v=terminal-exit-presentation";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
 
-const APP_BUILD_REVISION = "outcome-radio-wiring";
+const APP_BUILD_REVISION = "terminal-exit-presentation";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=outcome-radio-wiring`);
+await import(`./OperatorGame.js?v=terminal-exit-presentation`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=outcome-radio-wiring`);
+const { createAppShell } = await import(`./app/AppShell.js?v=terminal-exit-presentation`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=outcome-radio-wiring`
+    `./runtime/RuntimeSmoke.js?v=terminal-exit-presentation`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

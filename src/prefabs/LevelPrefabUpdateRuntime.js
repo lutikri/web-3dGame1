@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=outcome-radio-wiring";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=outcome-radio-wiring";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=outcome-radio-wiring";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=outcome-radio-wiring";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=outcome-radio-wiring";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-exit-presentation";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-exit-presentation";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-exit-presentation";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-exit-presentation";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-exit-presentation";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

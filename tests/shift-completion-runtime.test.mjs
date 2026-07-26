@@ -39,6 +39,7 @@ function terminalSnapshot(overrides = {}) {
 test("shift completion owns terminal timing, presentation decay, and result display", () => {
   let stopped = 0;
   const narration = [];
+  const thoughts = [];
   const shown = [];
   const resultsController = {
     visible: false,
@@ -53,7 +54,7 @@ test("shift completion owns terminal timing, presentation decay, and result disp
     createStartupPattern: () => [0.4, 0.6],
     getStartupDuration: () => 1,
     stopCoreLoop: () => { stopped += 1; },
-    emitThought: () => {},
+    emitThought: (id) => { thoughts.push(id); return true; },
     playOutcomeNarration: (line) => narration.push(line),
     canUnlockBulkhead: () => false,
     unlockBulkhead: () => {},
@@ -66,6 +67,8 @@ test("shift completion owns terminal timing, presentation decay, and result disp
   runtime.update(0.25, snapshot);
   assert.equal(stopped, 1);
   assert.deepEqual(narration, ["passed"]);
+  assert.equal(runtime.onNarrationEnded("passed"), true);
+  assert.deepEqual(thoughts, ["shift-exit"]);
   assert.equal(runtime.resultsSnapshot, snapshot);
   assert.equal(runtime.terminalElapsed, 0.25);
   assert.equal(runtime.resultsTimer, 1.25);

@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=outcome-radio-wiring";
-import { translate } from "./Localization.js?v=outcome-radio-wiring";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=outcome-radio-wiring";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=outcome-radio-wiring";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=outcome-radio-wiring";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=outcome-radio-wiring";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=outcome-radio-wiring";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=terminal-exit-presentation";
+import { translate } from "./Localization.js?v=terminal-exit-presentation";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=terminal-exit-presentation";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=terminal-exit-presentation";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=terminal-exit-presentation";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=terminal-exit-presentation";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=terminal-exit-presentation";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,12 +14,12 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=outcome-radio-wiring";
-import { createAppPanelController } from "./AppPanelController.js?v=outcome-radio-wiring";
-import { createAppRouter } from "./AppRouter.js?v=outcome-radio-wiring";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=outcome-radio-wiring";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=outcome-radio-wiring";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=outcome-radio-wiring";
+} from "./AppPersistence.js?v=terminal-exit-presentation";
+import { createAppPanelController } from "./AppPanelController.js?v=terminal-exit-presentation";
+import { createAppRouter } from "./AppRouter.js?v=terminal-exit-presentation";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=terminal-exit-presentation";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=terminal-exit-presentation";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=terminal-exit-presentation";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

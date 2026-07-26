@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=outcome-radio-wiring";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=outcome-radio-wiring";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=outcome-radio-wiring";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=outcome-radio-wiring";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=outcome-radio-wiring";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=outcome-radio-wiring";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=outcome-radio-wiring";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-exit-presentation";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-exit-presentation";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-exit-presentation";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-exit-presentation";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-exit-presentation";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-exit-presentation";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-exit-presentation";
 
 export function createPrefabRuntimeFactory({
   config,

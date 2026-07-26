@@ -3,128 +3,128 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=outcome-radio-wiring";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=terminal-exit-presentation";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=outcome-radio-wiring";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=outcome-radio-wiring";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=outcome-radio-wiring";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=outcome-radio-wiring";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=outcome-radio-wiring";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=outcome-radio-wiring";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=outcome-radio-wiring";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=outcome-radio-wiring";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=outcome-radio-wiring";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=outcome-radio-wiring";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=outcome-radio-wiring";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=outcome-radio-wiring";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=outcome-radio-wiring";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=outcome-radio-wiring";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=outcome-radio-wiring";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=outcome-radio-wiring";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=outcome-radio-wiring";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=outcome-radio-wiring";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=outcome-radio-wiring";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=outcome-radio-wiring";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=outcome-radio-wiring";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=outcome-radio-wiring";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=outcome-radio-wiring";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=outcome-radio-wiring";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=outcome-radio-wiring";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=outcome-radio-wiring";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=outcome-radio-wiring";
+} from "./game/ShiftReport.js?v=terminal-exit-presentation";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=terminal-exit-presentation";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=terminal-exit-presentation";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=terminal-exit-presentation";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=terminal-exit-presentation";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=terminal-exit-presentation";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=terminal-exit-presentation";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=terminal-exit-presentation";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=terminal-exit-presentation";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=terminal-exit-presentation";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=terminal-exit-presentation";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=terminal-exit-presentation";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=terminal-exit-presentation";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=terminal-exit-presentation";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=terminal-exit-presentation";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=terminal-exit-presentation";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=terminal-exit-presentation";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=terminal-exit-presentation";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=terminal-exit-presentation";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=terminal-exit-presentation";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=terminal-exit-presentation";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=terminal-exit-presentation";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=terminal-exit-presentation";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=terminal-exit-presentation";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=terminal-exit-presentation";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=terminal-exit-presentation";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=terminal-exit-presentation";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=outcome-radio-wiring";
+} from "./config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=outcome-radio-wiring";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=outcome-radio-wiring";
-import { createStatusScreen } from "./StatusScreen.js?v=outcome-radio-wiring";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=outcome-radio-wiring";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=outcome-radio-wiring";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=outcome-radio-wiring";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=outcome-radio-wiring";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=outcome-radio-wiring";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=outcome-radio-wiring";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=outcome-radio-wiring";
+} from "./scene/TextureStreaming.js?v=terminal-exit-presentation";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=terminal-exit-presentation";
+import { createStatusScreen } from "./StatusScreen.js?v=terminal-exit-presentation";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=terminal-exit-presentation";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=terminal-exit-presentation";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=terminal-exit-presentation";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=terminal-exit-presentation";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=terminal-exit-presentation";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=terminal-exit-presentation";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=terminal-exit-presentation";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=outcome-radio-wiring";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=outcome-radio-wiring";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=outcome-radio-wiring";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=terminal-exit-presentation";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=terminal-exit-presentation";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=terminal-exit-presentation";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=outcome-radio-wiring";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=outcome-radio-wiring";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=outcome-radio-wiring";
-import { AssetCache } from "./runtime/AssetCache.js?v=outcome-radio-wiring";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=outcome-radio-wiring";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=outcome-radio-wiring";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=outcome-radio-wiring";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=outcome-radio-wiring";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=outcome-radio-wiring";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=outcome-radio-wiring";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=outcome-radio-wiring";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=outcome-radio-wiring";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=outcome-radio-wiring";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=outcome-radio-wiring";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=outcome-radio-wiring";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=outcome-radio-wiring";
+} from "./lighting/FluorescentBehavior.js?v=terminal-exit-presentation";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=terminal-exit-presentation";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=terminal-exit-presentation";
+import { AssetCache } from "./runtime/AssetCache.js?v=terminal-exit-presentation";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=terminal-exit-presentation";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=terminal-exit-presentation";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=terminal-exit-presentation";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=terminal-exit-presentation";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=terminal-exit-presentation";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=terminal-exit-presentation";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=terminal-exit-presentation";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=terminal-exit-presentation";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=terminal-exit-presentation";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=terminal-exit-presentation";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=terminal-exit-presentation";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=terminal-exit-presentation";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=outcome-radio-wiring";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=outcome-radio-wiring";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=outcome-radio-wiring";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=outcome-radio-wiring";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=outcome-radio-wiring";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=outcome-radio-wiring";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=outcome-radio-wiring";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=outcome-radio-wiring";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=outcome-radio-wiring";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=outcome-radio-wiring";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=outcome-radio-wiring";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=outcome-radio-wiring";
-import { PlayerController } from "./player/PlayerController.js?v=outcome-radio-wiring";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=outcome-radio-wiring";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=outcome-radio-wiring";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=outcome-radio-wiring";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=outcome-radio-wiring";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=outcome-radio-wiring";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=outcome-radio-wiring";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=outcome-radio-wiring";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=outcome-radio-wiring";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=outcome-radio-wiring";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=outcome-radio-wiring";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=outcome-radio-wiring";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=outcome-radio-wiring";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=outcome-radio-wiring";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=outcome-radio-wiring";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=outcome-radio-wiring";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=outcome-radio-wiring";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=outcome-radio-wiring";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=outcome-radio-wiring";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=outcome-radio-wiring";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=outcome-radio-wiring";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=outcome-radio-wiring";
+} from "./scene/InteriorObjectRegistry.js?v=terminal-exit-presentation";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=terminal-exit-presentation";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=terminal-exit-presentation";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=terminal-exit-presentation";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=terminal-exit-presentation";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=terminal-exit-presentation";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=terminal-exit-presentation";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=terminal-exit-presentation";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=terminal-exit-presentation";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=terminal-exit-presentation";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=terminal-exit-presentation";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=terminal-exit-presentation";
+import { PlayerController } from "./player/PlayerController.js?v=terminal-exit-presentation";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=terminal-exit-presentation";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=terminal-exit-presentation";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=terminal-exit-presentation";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=terminal-exit-presentation";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=terminal-exit-presentation";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=terminal-exit-presentation";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=terminal-exit-presentation";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=terminal-exit-presentation";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=terminal-exit-presentation";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=terminal-exit-presentation";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=terminal-exit-presentation";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=terminal-exit-presentation";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=terminal-exit-presentation";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=terminal-exit-presentation";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=terminal-exit-presentation";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=terminal-exit-presentation";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=terminal-exit-presentation";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=terminal-exit-presentation";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=terminal-exit-presentation";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=terminal-exit-presentation";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=terminal-exit-presentation";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=outcome-radio-wiring";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=terminal-exit-presentation";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -794,6 +794,7 @@ const levelStaticPhysicsRuntime = new LevelStaticPhysicsRuntime({
 });
 const activeLevelSessionRuntime = new ActiveLevelSessionRuntime({
   onEvent: (event, levelId) => {
+    operatorThoughtRuntime.handleLevelEvent(event, latestSnapshot);
     window.dispatchEvent(new CustomEvent("operatorgame:level-event", {
       detail: { levelId, ...event },
     }));
@@ -866,7 +867,10 @@ const narrationRuntime = createNarrationRuntime({
   startRadioSpeech: startNarratorRadioSpeech,
   resetRadio: resetNarratorRadioRuntime,
   onStarted: (detail) => activeLevelSessionRuntime.emit("narrationStarted", detail),
-  onEnded: (detail) => activeLevelSessionRuntime.emit("narrationEnded", detail),
+  onEnded: (detail) => {
+    activeLevelSessionRuntime.emit("narrationEnded", detail);
+    shiftCompletionRuntime.onNarrationEnded(detail.line);
+  },
 });
 const sceneFeedbackMath = createSceneFeedbackMath({
   config: CONFIG,

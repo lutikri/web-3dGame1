@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=outcome-radio-wiring";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=terminal-exit-presentation";
 
 const DISMISS_MS = 300;
 

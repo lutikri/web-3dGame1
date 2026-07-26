@@ -15,6 +15,7 @@ export class ShiftCompletionRuntime {
     this.resultsSnapshot = null;
     this.terminalElapsed = -1;
     this.terminalStartupPattern = [];
+    this.outcomeNarrationKey = null;
   }
 
   update = (dt, snapshot) => {
@@ -26,21 +27,20 @@ export class ShiftCompletionRuntime {
       this.resultsTimer = this.#resultsDelay(snapshot);
       this.resultsSnapshot = snapshot;
       this.terminalElapsed = 0;
-      this.playOutcomeNarration(resolveOutcomeNarrationKey(snapshot));
+      this.outcomeNarrationKey = resolveOutcomeNarrationKey(snapshot);
+      this.playOutcomeNarration(this.outcomeNarrationKey);
     }
     if (this.terminalElapsed >= 0) this.terminalElapsed += dt;
-    const thoughtDelay = snapshot.failureType === "coreDestroyed"
-      ? this.config.feedback.terminal.destroyedBlackoutSeconds : 0.8;
-    if (this.terminalElapsed >= thoughtDelay) {
-      if (snapshot.mode === "complete") this.emitThought("shift-complete", 3, 4);
-      else if (snapshot.failureType === "coreDestroyed") this.emitThought("core-destroyed", 4, 4);
-      else if (snapshot.mode === "failed") this.emitThought("fail-safe", 3, 4);
-    }
     if (this.canUnlockBulkhead() && this.terminalElapsed >= this.#bulkheadDelay(snapshot)) this.unlockBulkhead();
     if (this.shouldWaitForDoorExit() || (this.hasBulkhead() && this.resultsSnapshot)) return;
     if (this.resultsTimer <= 0 || this.resultsController.visible) return;
     this.resultsTimer = Math.max(0, this.resultsTimer - dt);
     if (this.resultsTimer === 0 && this.resultsSnapshot) this.resultsController.show(this.resultsSnapshot);
+  };
+
+  onNarrationEnded = (lineKey) => {
+    if (!this.resultsSnapshot || lineKey !== this.outcomeNarrationKey) return false;
+    return this.emitThought("shift-exit", 2, 3.6);
   };
 
   getPresentationSnapshot = (snapshot) => {
@@ -70,6 +70,7 @@ export class ShiftCompletionRuntime {
     this.resultsSnapshot = null;
     this.terminalElapsed = -1;
     this.terminalStartupPattern = [];
+    this.outcomeNarrationKey = null;
   };
 
   #bulkheadDelay(snapshot) {

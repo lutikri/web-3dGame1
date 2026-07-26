@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=outcome-radio-wiring";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=outcome-radio-wiring";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=outcome-radio-wiring";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=outcome-radio-wiring";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=terminal-exit-presentation";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=terminal-exit-presentation";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=terminal-exit-presentation";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=terminal-exit-presentation";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -127,6 +127,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
       trigger: { markerName: "TRGVOL_ControlBooth_1", once: true },
     },
   ],
+  repeatableTriggerSequences: ["MainCorridorEntrance"],
   tutorial: {
     enabled: true,
     spawnHintDelaySeconds: 2,

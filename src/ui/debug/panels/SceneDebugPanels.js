@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=outcome-radio-wiring";
+} from "../../../levels/LevelConfigSerialization.js?v=terminal-exit-presentation";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

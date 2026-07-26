@@ -59,6 +59,17 @@ test("successful shift completion keeps room lighting stable while awaiting exit
   }), 1);
 });
 
+test("insufficient output uses a normal shutdown without dimming facility lights", () => {
+  assert.equal(getTerminalLightFactor({
+    snapshot: { mode: "failed", failureType: "qualityFailure" },
+    terminalElapsed: 30,
+    terminalConfig: { failedLightFactor: 0.3 },
+    startupPattern: [],
+    getStartupDuration: () => 0,
+    getStartupFactor: () => 1,
+  }), 1);
+});
+
 test("destroyed core lighting returns to the configured level after restart", () => {
   assert.equal(getTerminalLightFactor({
     snapshot: { mode: "failed", failureType: "coreDestroyed" },

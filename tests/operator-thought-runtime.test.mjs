@@ -29,3 +29,18 @@ test("operator thought runtime applies tutorial rules and deduplicates subtitles
   assert.equal(subtitles[0].text, "translated:subtitles.field-weak");
 });
 
+test("operator thought runtime points toward the exit on the terminal corridor return", () => {
+  const target = new EventTarget();
+  const subtitles = [];
+  target.addEventListener("operatorgame:subtitle", (event) => subtitles.push(event.detail));
+  const runtime = new OperatorThoughtRuntime({
+    getActiveLevelId: () => "exploring-around",
+    translate: (key) => key,
+    dispatchTarget: target,
+  });
+  assert.equal(runtime.handleLevelEvent({
+    type: "triggerEntered",
+    detail: { target: "MainCorridorEntrance" },
+  }, { mode: "complete" }), true);
+  assert.equal(subtitles[0].id, "shift-exit-corridor");
+});

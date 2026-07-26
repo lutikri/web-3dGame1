@@ -42,3 +42,10 @@ test("exploring around completes only after the shift and authored bulkhead exit
     },
   ]);
 });
+
+test("exploring around keeps the corridor trigger repeatable for the physical return", () => {
+  assert.deepEqual(
+    LEVEL_DEFINITIONS["exploring-around"].environment.repeatableTriggerSequences,
+    ["MainCorridorEntrance"],
+  );
+});

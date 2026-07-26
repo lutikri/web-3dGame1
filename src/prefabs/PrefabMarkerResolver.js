@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=outcome-radio-wiring";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=terminal-exit-presentation";
 
 const MARKER_PREFIX = "PF_";
 

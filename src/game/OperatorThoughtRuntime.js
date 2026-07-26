@@ -31,6 +31,12 @@ export class OperatorThoughtRuntime {
     return true;
   };
 
+  handleLevelEvent = (event, snapshot) => {
+    if (event?.type !== "triggerEntered" || event.detail?.target !== "MainCorridorEntrance") return false;
+    if (snapshot?.mode !== "complete" && snapshot?.mode !== "failed") return false;
+    return this.emit("shift-exit-corridor", 2, 3.4);
+  };
+
   reset = () => {
     this.shown.clear();
     this.dispatchTarget.dispatchEvent(new CustomEvent("operatorgame:subtitle-clear", {
@@ -38,4 +44,3 @@ export class OperatorThoughtRuntime {
     }));
   };
 }
-

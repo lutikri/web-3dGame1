@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=outcome-radio-wiring";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=terminal-exit-presentation";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

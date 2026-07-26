@@ -205,14 +205,9 @@ function drawTerminalStatus(ctx, data) {
   ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
   if (data.terminalBlackout) return;
 
-  const complete = data.mode === "complete";
-  const destroyed = data.failureType === "coreDestroyed";
-  const color = complete ? "#72ff9d" : destroyed ? "#ff4b42" : "#ffcf5a";
-  const lines = complete
-    ? ["SHIFT COMPLETE", "CORE SECURED", "CONTROLLED SHUTDOWN"]
-    : destroyed
-      ? ["FAIL SAFE", "CORE DESTROYED", "EMERGENCY SHUTDOWN"]
-      : ["SHIFT FAILED", "FAIL-SAFE ACTIVE", "CORE SHUTDOWN"];
+  const automaticTrip = data.mode === "failed" && data.failureType !== "qualityFailure";
+  const color = automaticTrip ? "#ff4b42" : "#72ff9d";
+  const lines = getTerminalStatusLines(data);
 
   ctx.strokeStyle = color;
   ctx.lineWidth = 5;
@@ -229,9 +224,16 @@ function drawTerminalStatus(ctx, data) {
   ctx.font = "700 34px Consolas, monospace";
   ctx.fillText(lines[2], SCREEN_W / 2, 360);
   ctx.font = "700 24px Consolas, monospace";
-  ctx.fillText("AUTOMATIC PROTECTION SEQUENCE", SCREEN_W / 2, 430);
+  ctx.fillText(lines[3], SCREEN_W / 2, 430);
   ctx.textAlign = "start";
   ctx.shadowBlur = 0;
+}
+
+export function getTerminalStatusLines(data) {
+  const automaticTrip = data?.mode === "failed" && data?.failureType !== "qualityFailure";
+  return automaticTrip
+    ? ["FAIL SAFE", "AUTOMATIC TRIP", "CORE SHUTDOWN", "RESTART EXTERNALLY"]
+    : ["CORE SHUTDOWN", "REACTION SECURED", "OUTPUT OFFLINE", "LOCAL RESTART AVAILABLE"];
 }
 
 function drawEmergencyBanner(ctx, data) {

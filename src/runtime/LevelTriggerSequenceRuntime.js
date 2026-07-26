@@ -23,7 +23,8 @@ export class LevelTriggerSequenceRuntime {
     const root = this.environmentModels.get(environmentId);
     const playerPosition = this.getPlayerPosition();
     if (!root || !playerPosition) return;
-    for (const sequence of this.getLevelConfig(levelId)?.triggerSequences ?? []) {
+    const levelConfig = this.getLevelConfig(levelId);
+    for (const sequence of levelConfig?.triggerSequences ?? []) {
       const markerName = sequence.trigger?.markerName;
       if (!markerName) continue;
       let state = this.triggerStates.get(markerName);
@@ -38,7 +39,8 @@ export class LevelTriggerSequenceRuntime {
       const inside = this.box.containsPoint(playerPosition);
       const entered = inside && !state.inside;
       state.inside = inside;
-      if (!entered || (sequence.trigger?.once !== false && state.fired)) continue;
+      const repeatable = levelConfig?.repeatableTriggerSequences?.includes(sequence.name);
+      if (!entered || (!repeatable && sequence.trigger?.once !== false && state.fired)) continue;
       state.fired = true;
       this.emitEvent("triggerEntered", { target: sequence.name ?? markerName, markerName });
       void this.#runSequence(levelId, sequence);

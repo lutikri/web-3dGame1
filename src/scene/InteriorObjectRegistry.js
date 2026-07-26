@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=outcome-radio-wiring";
+import { applyAxisRotation } from "./TransformUtils.js?v=terminal-exit-presentation";
 
 export class InteriorObjectRegistry {
   constructor(options) {

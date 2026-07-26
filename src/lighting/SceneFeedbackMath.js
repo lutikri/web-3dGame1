@@ -91,6 +91,7 @@ export function getTerminalLightFactor({
 }) {
   if (terminalElapsed < 0) return 1;
   if (snapshot.mode === "complete") return 1;
+  if (snapshot.failureType === "qualityFailure") return 1;
   if (snapshot.failureType === "coreDestroyed") {
     if (terminalElapsed < terminalConfig.destroyedBlackoutSeconds) return 0;
     const bootElapsed = terminalElapsed - terminalConfig.destroyedBlackoutSeconds;

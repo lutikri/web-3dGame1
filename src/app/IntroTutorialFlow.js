@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=outcome-radio-wiring";
+import { translateRequired } from "./Localization.js?v=terminal-exit-presentation";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

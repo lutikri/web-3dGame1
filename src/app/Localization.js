@@ -170,6 +170,8 @@ const STRINGS = {
     "subtitles.shift-complete": "Done. Time to leave.",
     "subtitles.core-destroyed": "That's gone. I need out. Now.",
     "subtitles.fail-safe": "Fail-safe caught it. Time to go.",
+    "subtitles.shift-exit": "I should head back to the entrance.",
+    "subtitles.shift-exit-corridor": "The exit bulkhead is back this way.",
     "subtitles.startup-command-fault": "Shouldn't have done that.",
   },
   ru: {
@@ -343,6 +345,8 @@ const STRINGS = {
     "subtitles.shift-complete": "Дело сделано, пора уходить.",
     "subtitles.core-destroyed": "Ему конец. Нужно выбираться. Сейчас.",
     "subtitles.fail-safe": "Защита сработала. Пора уходить.",
+    "subtitles.shift-exit": "Надо возвращаться ко входу.",
+    "subtitles.shift-exit-corridor": "Выходной шлюз в этой стороне.",
     "subtitles.startup-command-fault": "Не стоило этого делать.",
   },
 };

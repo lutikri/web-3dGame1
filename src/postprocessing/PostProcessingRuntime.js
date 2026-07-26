@@ -8,7 +8,7 @@ import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=outcome-radio-wiring";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=terminal-exit-presentation";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -16,7 +16,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=outcome-radio-wiring";
+} from "./PostProcessingShaders.js?v=terminal-exit-presentation";
 
 export class PostProcessingRuntime {
   composer = null;

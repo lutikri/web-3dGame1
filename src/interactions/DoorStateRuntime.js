@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=outcome-radio-wiring";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=outcome-radio-wiring";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=terminal-exit-presentation";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=terminal-exit-presentation";
 
 export class DoorStateRuntime {
   constructor(options) {
