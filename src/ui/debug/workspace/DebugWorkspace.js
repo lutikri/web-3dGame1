@@ -1,4 +1,4 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=terminal-exit-presentation";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=ui-blur-pause-guard";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };

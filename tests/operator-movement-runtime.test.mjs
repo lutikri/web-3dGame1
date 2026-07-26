@@ -61,6 +61,13 @@ test("operator movement runtime owns camera zoom presentation", () => {
   assert.equal(runtime.getLeanAmount(), 0);
 });
 
+test("gameplay zoom does not overwrite the authored menu field of view", () => {
+  const { runtime, camera } = createRuntime({ viewMode: "menu", zoom: true });
+  camera.fov = 55;
+  runtime.updateZoom(1);
+  assert.equal(camera.fov, 55);
+});
+
 test("operator movement runtime owns clamped noclip speed", () => {
   const { runtime } = createRuntime();
   assert.equal(runtime.getNoclipSpeed(), 4);

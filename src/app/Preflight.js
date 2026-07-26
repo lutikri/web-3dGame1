@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

@@ -26,6 +26,8 @@ export class OperatorViewRuntime {
   resetLevelView() {
     this.setViewMode("level");
     this.clearTransientInput();
+    this.camera.fov = this.config.camera.fovDegrees;
+    this.camera.updateProjectionMatrix();
     this.setJumpQueued(false);
     const playerConfig = this.config.levelEnvironments?.[this.getActiveLevelId()]?.player;
     const spawnPosition = playerConfig?.spawnPosition ?? this.playerSpawnPosition;
@@ -57,6 +59,8 @@ export class OperatorViewRuntime {
       this.setYaw(yaw);
       this.setPitch(pitch);
     }
+    this.camera.fov = menuView?.fovDegrees ?? this.config.camera.fovDegrees;
+    this.camera.updateProjectionMatrix();
     this.setRoomLightsEnabled(Boolean(menuView?.roomLightsOn), { instant: true });
     return true;
   }

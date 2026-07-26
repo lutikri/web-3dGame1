@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=terminal-exit-presentation";
+import { LevelSession } from "./LevelSession.js?v=ui-blur-pause-guard";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

@@ -3,128 +3,129 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=terminal-exit-presentation";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=ui-blur-pause-guard";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=terminal-exit-presentation";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=terminal-exit-presentation";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=terminal-exit-presentation";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=terminal-exit-presentation";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=terminal-exit-presentation";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=terminal-exit-presentation";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=terminal-exit-presentation";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=terminal-exit-presentation";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=terminal-exit-presentation";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=terminal-exit-presentation";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=terminal-exit-presentation";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=terminal-exit-presentation";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=terminal-exit-presentation";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=terminal-exit-presentation";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=terminal-exit-presentation";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=terminal-exit-presentation";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=terminal-exit-presentation";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=terminal-exit-presentation";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=terminal-exit-presentation";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=terminal-exit-presentation";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=terminal-exit-presentation";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=terminal-exit-presentation";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=terminal-exit-presentation";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=terminal-exit-presentation";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=terminal-exit-presentation";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=terminal-exit-presentation";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=terminal-exit-presentation";
+} from "./game/ShiftReport.js?v=ui-blur-pause-guard";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=ui-blur-pause-guard";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=ui-blur-pause-guard";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=ui-blur-pause-guard";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=ui-blur-pause-guard";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=ui-blur-pause-guard";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=ui-blur-pause-guard";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=ui-blur-pause-guard";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=ui-blur-pause-guard";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=ui-blur-pause-guard";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=ui-blur-pause-guard";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=ui-blur-pause-guard";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=ui-blur-pause-guard";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=ui-blur-pause-guard";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=ui-blur-pause-guard";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=ui-blur-pause-guard";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=ui-blur-pause-guard";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=ui-blur-pause-guard";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=ui-blur-pause-guard";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=ui-blur-pause-guard";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=ui-blur-pause-guard";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=ui-blur-pause-guard";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=ui-blur-pause-guard";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=ui-blur-pause-guard";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=ui-blur-pause-guard";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=ui-blur-pause-guard";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=ui-blur-pause-guard";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
+} from "./config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=terminal-exit-presentation";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=terminal-exit-presentation";
-import { createStatusScreen } from "./StatusScreen.js?v=terminal-exit-presentation";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=terminal-exit-presentation";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=terminal-exit-presentation";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=terminal-exit-presentation";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=terminal-exit-presentation";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=terminal-exit-presentation";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=terminal-exit-presentation";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=terminal-exit-presentation";
+} from "./scene/TextureStreaming.js?v=ui-blur-pause-guard";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=ui-blur-pause-guard";
+import { createStatusScreen } from "./StatusScreen.js?v=ui-blur-pause-guard";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=ui-blur-pause-guard";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=ui-blur-pause-guard";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=ui-blur-pause-guard";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=ui-blur-pause-guard";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=ui-blur-pause-guard";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=ui-blur-pause-guard";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=ui-blur-pause-guard";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=terminal-exit-presentation";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=terminal-exit-presentation";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=terminal-exit-presentation";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=ui-blur-pause-guard";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=ui-blur-pause-guard";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=ui-blur-pause-guard";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=terminal-exit-presentation";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=terminal-exit-presentation";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=terminal-exit-presentation";
-import { AssetCache } from "./runtime/AssetCache.js?v=terminal-exit-presentation";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=terminal-exit-presentation";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=terminal-exit-presentation";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=terminal-exit-presentation";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=terminal-exit-presentation";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=terminal-exit-presentation";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=terminal-exit-presentation";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=terminal-exit-presentation";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=terminal-exit-presentation";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=terminal-exit-presentation";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=terminal-exit-presentation";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=terminal-exit-presentation";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=terminal-exit-presentation";
+} from "./lighting/FluorescentBehavior.js?v=ui-blur-pause-guard";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=ui-blur-pause-guard";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=ui-blur-pause-guard";
+import { AssetCache } from "./runtime/AssetCache.js?v=ui-blur-pause-guard";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=ui-blur-pause-guard";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=ui-blur-pause-guard";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=ui-blur-pause-guard";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=ui-blur-pause-guard";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=ui-blur-pause-guard";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=ui-blur-pause-guard";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=ui-blur-pause-guard";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=ui-blur-pause-guard";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=ui-blur-pause-guard";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=ui-blur-pause-guard";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=ui-blur-pause-guard";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=ui-blur-pause-guard";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=terminal-exit-presentation";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=terminal-exit-presentation";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=terminal-exit-presentation";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=terminal-exit-presentation";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=terminal-exit-presentation";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=terminal-exit-presentation";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=terminal-exit-presentation";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=terminal-exit-presentation";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=terminal-exit-presentation";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=terminal-exit-presentation";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=terminal-exit-presentation";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=terminal-exit-presentation";
-import { PlayerController } from "./player/PlayerController.js?v=terminal-exit-presentation";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=terminal-exit-presentation";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=terminal-exit-presentation";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=terminal-exit-presentation";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=terminal-exit-presentation";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=terminal-exit-presentation";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=terminal-exit-presentation";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=terminal-exit-presentation";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=terminal-exit-presentation";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=terminal-exit-presentation";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=terminal-exit-presentation";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=terminal-exit-presentation";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=terminal-exit-presentation";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=terminal-exit-presentation";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=terminal-exit-presentation";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=terminal-exit-presentation";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=terminal-exit-presentation";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=terminal-exit-presentation";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=terminal-exit-presentation";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=terminal-exit-presentation";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=terminal-exit-presentation";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=terminal-exit-presentation";
+} from "./scene/InteriorObjectRegistry.js?v=ui-blur-pause-guard";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=ui-blur-pause-guard";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=ui-blur-pause-guard";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=ui-blur-pause-guard";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=ui-blur-pause-guard";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=ui-blur-pause-guard";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=ui-blur-pause-guard";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=ui-blur-pause-guard";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=ui-blur-pause-guard";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=ui-blur-pause-guard";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=ui-blur-pause-guard";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=ui-blur-pause-guard";
+import { PlayerController } from "./player/PlayerController.js?v=ui-blur-pause-guard";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=ui-blur-pause-guard";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=ui-blur-pause-guard";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=ui-blur-pause-guard";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=ui-blur-pause-guard";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=ui-blur-pause-guard";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=ui-blur-pause-guard";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=ui-blur-pause-guard";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=ui-blur-pause-guard";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=ui-blur-pause-guard";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=ui-blur-pause-guard";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=ui-blur-pause-guard";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=ui-blur-pause-guard";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=ui-blur-pause-guard";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=ui-blur-pause-guard";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=ui-blur-pause-guard";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=ui-blur-pause-guard";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=ui-blur-pause-guard";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=ui-blur-pause-guard";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=ui-blur-pause-guard";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=ui-blur-pause-guard";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=ui-blur-pause-guard";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=ui-blur-pause-guard";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=terminal-exit-presentation";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=ui-blur-pause-guard";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -774,6 +775,13 @@ const operatorViewRuntime = new OperatorViewRuntime({
   syncPlayerCapsule, loadLevelEnvironment, resetLevelDoors, updateActiveLevelEnvironment,
   setRoomLightsEnabled: (...args) => setRoomLightsEnabled(...args),
 });
+const menuCameraRuntime = new MenuCameraRuntime({
+  camera,
+  config: CONFIG,
+  getViewMode: () => operatorViewMode,
+  eventTarget: window,
+});
+menuCameraRuntime.wire();
 const levelBindingRuntime = new LevelBindingRuntime({
   config: CONFIG,
   levelPrefabInstances,
@@ -1327,6 +1335,7 @@ const animationLoop = new AnimationLoop({
     updateNarratorRadios,
     (dt) => physicsSystem?.step(dt),
     () => playerController.updateAfterPhysics(),
+    menuCameraRuntime.update,
     (dt) => photometricPointLightRuntime.updateUniforms(dt),
     updateRuntimeTextureLoading,
     updateDebugOverlay,

@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=terminal-exit-presentation";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=terminal-exit-presentation";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=terminal-exit-presentation";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=terminal-exit-presentation";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=ui-blur-pause-guard";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=ui-blur-pause-guard";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=ui-blur-pause-guard";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=ui-blur-pause-guard";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
@@ -34,6 +34,17 @@ export const LEVEL_DEFINITIONS = {
     mode: "tutorial",
     description: "The tutorial shift in the service corridor.",
     playable: true,
+    assignment: {
+      order: 1,
+      unlockAfter: [],
+      titleKey: "assignments.qualification.title",
+      documentTitleKey: "assignments.qualification.documentTitle",
+      summaryKey: "assignments.qualification.summary",
+      reference: "OP-QUAL/001",
+      facility: "SITE-12",
+      sectorKey: "assignments.localOperations",
+      clearanceKey: "assignments.assigned",
+    },
     environment: LEVEL_EXPLORING_AROUND_CONFIG,
   },
   "shift-coordination": {
@@ -51,6 +62,16 @@ export const LEVEL_DEFINITIONS = {
     mode: "unexpected",
     description: "Three-minute shift with instrument and control faults.",
     playable: true,
+    assignment: {
+      order: 2,
+      unlockAfter: ["exploring-around"],
+      titleKey: "assignments.reliability.title",
+      summaryKey: "assignments.reliability.summary",
+      reference: "OP-REL/002",
+      facility: "SITE-12",
+      sectorKey: "assignments.localOperations",
+      clearanceKey: "assignments.assigned",
+    },
     briefingImage: {
       en: ["assets/ui/briefings/Unexpected1-us.png"],
       ru: ["assets/ui/briefings/Unexpected1-ru.png"],
@@ -64,6 +85,16 @@ export const LEVEL_DEFINITIONS = {
     mode: "story",
     description: "Three-minute fuel blend economy trial.",
     playable: true,
+    assignment: {
+      order: 3,
+      unlockAfter: ["exploring-around"],
+      titleKey: "assignments.cost.title",
+      summaryKey: "assignments.cost.summary",
+      reference: "OP-COST/003",
+      facility: "SITE-12",
+      sectorKey: "assignments.localOperations",
+      clearanceKey: "assignments.assigned",
+    },
     briefingImage: {
       en: ["assets/ui/briefings/CostOfRunning1-us.svg"],
       ru: ["assets/ui/briefings/CostOfRunning1-ru.svg"],

@@ -28,6 +28,22 @@ test("deprecated elevator prototype is not a playable assignment", () => {
   assert.equal(getPlayableLevels().some((level) => level.id === "intro-elevator"), false);
 });
 
+test("registry owns the three-shift assignment progression", () => {
+  const assignments = Object.values(LEVEL_DEFINITIONS)
+    .filter((level) => level.assignment)
+    .sort((a, b) => a.assignment.order - b.assignment.order);
+  assert.deepEqual(assignments.map((level) => level.id), ["exploring-around", "unexpected-stuff", "fuel-problems"]);
+  assert.deepEqual(assignments[0].assignment.unlockAfter, []);
+  assert.deepEqual(assignments[1].assignment.unlockAfter, ["exploring-around"]);
+  assert.deepEqual(assignments[2].assignment.unlockAfter, ["exploring-around"]);
+  assignments.forEach((level) => {
+    assert.match(level.assignment.reference, /^OP-[A-Z]+\/\d{3}$/);
+    assert.equal(level.assignment.facility, "SITE-12");
+    assert.ok(level.assignment.sectorKey);
+    assert.ok(level.assignment.clearanceKey);
+  });
+});
+
 test("exploring around completes only after the shift and authored bulkhead exit", () => {
   const session = LEVEL_DEFINITIONS["exploring-around"].environment.session;
   assert.equal(session.completion, "all");

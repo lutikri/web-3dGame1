@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=terminal-exit-presentation";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=terminal-exit-presentation";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=terminal-exit-presentation";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=terminal-exit-presentation";
+import { createDebugHub } from "./DebugHub.js?v=ui-blur-pause-guard";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=ui-blur-pause-guard";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=ui-blur-pause-guard";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=ui-blur-pause-guard";
 
 export class DebugToolsRuntime {
   constructor(options) {

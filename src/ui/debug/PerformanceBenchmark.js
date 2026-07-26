@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
 
 const EFFECT_KEYS = [
   "bloom",

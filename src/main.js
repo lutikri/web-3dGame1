@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=terminal-exit-presentation";
-import { applyLocalization } from "./app/Localization.js?v=terminal-exit-presentation";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=terminal-exit-presentation";
+import { createPreflight } from "./app/Preflight.js?v=ui-blur-pause-guard";
+import { applyLocalization } from "./app/Localization.js?v=ui-blur-pause-guard";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=ui-blur-pause-guard";
 
-const APP_BUILD_REVISION = "terminal-exit-presentation";
+const APP_BUILD_REVISION = "ui-blur-pause-guard";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -21,7 +21,7 @@ window.operatorGameBootOptions = {
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=terminal-exit-presentation`);
+await import(`./OperatorGame.js?v=ui-blur-pause-guard`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -50,7 +50,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=terminal-exit-presentation`);
+const { createAppShell } = await import(`./app/AppShell.js?v=ui-blur-pause-guard`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +61,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=terminal-exit-presentation`
+    `./runtime/RuntimeSmoke.js?v=ui-blur-pause-guard`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

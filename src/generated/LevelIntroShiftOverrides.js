@@ -141,7 +141,7 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#fffdfa",
+        "color": "#fff7eb",
         "intensity": 1.98,
         "distance": 3.25,
         "decay": 0.33,
@@ -150,13 +150,19 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
           "y": -0.45930362303042627,
           "z": 0
         },
-        "castShadow": true,
+        "castShadow": false,
         "shadowMapSize": 512,
         "shadowBias": 0.00024,
         "shadowNormalBias": 0.012,
         "shadowRadius": 5.2,
         "shadowNear": 0.1,
         "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
         "fluorescentStartup": true,
         "roomLightControlled": true,
         "startupDelaySeconds": 3,
@@ -169,8 +175,8 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
         },
         "flicker": {
           "enabled": true,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
+          "minIntervalSeconds": 20,
+          "maxIntervalSeconds": 90,
           "retryChance": 0.35
         }
       },
@@ -194,6 +200,13 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
       }
     },
     {
+      "audio": {
+        "loopSoundKey": "Clock1_loop",
+        "volume": 0.22,
+        "refDistance": 0.35,
+        "maxDistance": 2.4,
+        "fadeSeconds": 0.25
+      },
       "name": "Clock1_Tutorial",
       "position": {
         "x": 2.7334644191980715,
@@ -216,8 +229,8 @@ export const LEVEL_INTRO_SHIFT_OVERRIDES = {
   ],
   "lighting": {
     "ambientSky": "#9fb6c7",
-    "ambientGround": "#101010",
-    "ambientIntensity": 0.01,
+    "ambientGround": "#6e6e6e",
+    "ambientIntensity": 0.8,
     "pointLights": {
       "fill": {
         "color": "#75bcff",

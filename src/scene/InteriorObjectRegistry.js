@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=terminal-exit-presentation";
+import { applyAxisRotation } from "./TransformUtils.js?v=ui-blur-pause-guard";
 
 export class InteriorObjectRegistry {
   constructor(options) {

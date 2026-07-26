@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=terminal-exit-presentation";
+} from "./FluorescentBehavior.js?v=ui-blur-pause-guard";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

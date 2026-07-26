@@ -38,38 +38,42 @@
       <button id="lockButton" type="button">Enter First Person</button>
       <canvas id="scene"></canvas>
       <div id="loadingOverlay" class="loading-overlay" aria-live="polite">
-        <div class="loading-panel">
-          <div class="loading-header">
-            <span data-i18n="loading.coreBoot">CORE BOOT</span>
-            <span id="loadingPercent">00%</span>
-          </div>
-          <div class="loading-body">
-            <div class="loading-spinner" aria-hidden="true"></div>
-            <div class="loading-copy">
-              <strong id="loadingStatus" data-i18n="loading.initializing">INITIALIZING OPERATOR CONSOLE</strong>
-              <span id="loadingShiftTitle" class="loading-shift-title" data-i18n="loading.firstShift">YOUR FIRST FUSION SHIFT</span>
+        <div class="loading-stage">
+          <div class="loading-panel">
+            <div class="loading-header">
+              <span data-i18n="loading.coreBoot">CORE BOOT</span>
+              <span id="loadingPercent">00%</span>
             </div>
-          </div>
-          <div class="loading-bar" aria-hidden="true">
-            <div id="loadingBarFill"></div>
+            <div class="loading-body">
+              <div class="loading-spinner" aria-hidden="true"></div>
+              <div class="loading-copy">
+                <strong id="loadingStatus" data-i18n="loading.initializing">INITIALIZING OPERATOR CONSOLE</strong>
+                <span id="loadingShiftTitle" class="loading-shift-title" data-i18n="loading.firstShift">YOUR FIRST FUSION SHIFT</span>
+              </div>
+            </div>
+            <div class="loading-bar" aria-hidden="true">
+              <div id="loadingBarFill"></div>
+            </div>
           </div>
         </div>
       </div>
       <div id="routeLoadingOverlay" class="loading-overlay route-loading-overlay" aria-live="polite" hidden>
-        <div class="loading-panel">
-          <div class="loading-header">
-            <span id="routeLoadingHeader" data-i18n="loading.shiftLoad">SHIFT LOAD</span>
-            <span id="routeLoadingPercent">00%</span>
-          </div>
-          <div class="loading-body">
-            <div class="loading-spinner" aria-hidden="true"></div>
-            <div class="loading-copy">
-              <strong id="routeLoadingStatus" data-i18n="loading.preparing">PREPARING OPERATOR CONSOLE</strong>
-              <span id="routeLoadingTitle" class="loading-shift-title" data-i18n="loading.shift">SHIFT</span>
+        <div class="loading-stage">
+          <div class="loading-panel">
+            <div class="loading-header">
+              <span id="routeLoadingHeader" data-i18n="loading.shiftLoad">SHIFT LOAD</span>
+              <span id="routeLoadingPercent">00%</span>
             </div>
-          </div>
-          <div class="loading-bar" aria-hidden="true">
-            <div id="routeLoadingBarFill"></div>
+            <div class="loading-body">
+              <div class="loading-spinner" aria-hidden="true"></div>
+              <div class="loading-copy">
+                <strong id="routeLoadingStatus" data-i18n="loading.preparing">PREPARING OPERATOR CONSOLE</strong>
+                <span id="routeLoadingTitle" class="loading-shift-title" data-i18n="loading.shift">SHIFT</span>
+              </div>
+            </div>
+            <div class="loading-bar" aria-hidden="true">
+              <div id="routeLoadingBarFill"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,98 +104,81 @@
       </div>
       <div id="appOverlay" class="app-overlay" hidden>
         <section id="mainMenuPanel" class="app-panel main-menu-panel" data-app-panel="main-menu" hidden>
-          <div class="brand-lockup">
-            <span>OperatorGame</span>
-            <strong data-i18n="menu.subtitle">FUSION CORE SHIFT CONSOLE</strong>
-          </div>
-          <div class="menu-actions">
-            <button data-app-action="level-select" type="button" data-i18n="actions.play">PLAY</button>
-            <button data-app-action="profile" type="button" data-i18n="actions.profile">PROFILE</button>
-            <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
+          <div class="main-menu-content">
+            <header class="main-menu-brand">
+              <h1>BASE LOAD</h1>
+              <p>SITE-12 / TERM 04</p>
+            </header>
+            <div class="main-menu-rule" aria-hidden="true"></div>
+            <nav class="menu-actions" aria-label="Main menu">
+              <button data-app-action="level-select" type="button" data-i18n="actions.startWork">START WORK</button>
+              <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
+              <button data-app-action="credits" type="button" data-i18n="actions.credits">CREDITS</button>
+            </nav>
+            <div class="main-menu-rule" aria-hidden="true"></div>
+            <dl class="main-menu-record">
+              <dt>OPERATOR RECORD</dt><dd>ACTIVE</dd>
+              <dt>FACILITY</dt><dd>SITE-12</dd>
+              <dt>LAST SESSION</dt><dd data-main-menu-last-session>26.07.2026 06:42</dd>
+            </dl>
           </div>
         </section>
-        <section id="levelSelectPanel" class="app-panel level-panel" data-app-panel="level-select" hidden>
-          <div class="panel-header">
-            <span data-i18n="levels.route">LEVEL ROUTE</span>
-            <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
+        <section id="levelSelectPanel" class="app-panel level-panel operations-mail" data-app-panel="level-select" hidden>
+          <header class="operations-mail-header">
+            <span>TERRAGEN SYSTEMS / OPERATIONS MAIL</span>
+            <span>SITE-12 / TERM 04</span>
+          </header>
+          <div class="operations-mail-body">
+            <aside class="operations-inbox">
+              <div class="operations-inbox-heading">
+                <strong>INBOX</strong>
+                <span data-mail-inbox-count>01</span>
+              </div>
+              <div class="assignment-list" aria-label="Assigned shifts">
+              <button class="assignment-card" data-level-id="exploring-around" type="button">
+                <span class="mail-subject"><i></i><span data-i18n="assignments.applicationApproved">APPLICATION APPROVED</span></span>
+                <strong data-i18n="assignments.qualification.cardTitle">FIRST OPERATOR QUALIFICATION SHIFT</strong>
+                <span class="mail-date">26.07.2026 / 06:42</span>
+                <span data-assignment-status hidden>ASSIGNED</span>
+              </button>
+              <button class="assignment-card is-locked" data-level-id="unexpected-stuff" type="button" disabled>
+                <span class="mail-subject"><i></i><span>TERRAGEN SYSTEMS / OPERATIONS</span></span>
+                <strong data-i18n="assignments.reliability.title">INSTRUMENT RELIABILITY CHECK</strong>
+                <span class="mail-date">ASSIGNMENT 002</span>
+                <span data-assignment-status hidden>- NOT ASSIGNED -</span>
+              </button>
+              <button class="assignment-card is-locked" data-level-id="fuel-problems" type="button" disabled>
+                <span class="mail-subject"><i></i><span>TERRAGEN SYSTEMS / OPERATIONS</span></span>
+                <strong data-i18n="assignments.cost.title">COST OF RUNNING TRIAL</strong>
+                <span class="mail-date">ASSIGNMENT 003</span>
+                <span data-assignment-status hidden>- NOT ASSIGNED -</span>
+              </button>
+              </div>
+              <div class="operations-inbox-empty"><span>—</span><span data-i18n="assignments.noMore">NO MORE ASSIGNMENTS</span></div>
+            </aside>
+            <article class="assignment-detail">
+              <p class="assignment-empty" data-assignment-empty data-i18n="assignments.nothingSelected">- NOTHING SELECTED -</p>
+              <div class="mail-letter" data-assignment-details hidden>
+                <p class="mail-letterhead">TERRAGEN SYSTEMS<br>OPERATIONS DIVISION</p>
+                <p class="mail-reference">REF: <span data-assignment-detail-reference></span><br>STATUS: <span data-assignment-detail-status></span></p>
+                <hr>
+                <p class="mail-kicker" data-i18n="assignments.applicationApproved">APPLICATION APPROVED</p>
+                <h2 data-assignment-detail-title></h2>
+                <p class="mail-copy" data-assignment-detail-summary></p>
+                <dl class="mail-facts">
+                  <dt data-i18n="assignments.facility">FACILITY</dt><dd data-assignment-detail-facility></dd>
+                  <dt data-i18n="assignments.sector">SECTOR</dt><dd data-assignment-detail-sector></dd>
+                  <dt data-i18n="assignments.clearance">CLEARANCE</dt><dd data-assignment-detail-clearance></dd>
+                </dl>
+              </div>
+              <button class="assignment-start" data-start-selected-shift type="button" disabled><span data-i18n="assignments.arrive">ARRIVE AT FACILITY</span><span>›</span></button>
+            </article>
           </div>
-          <div class="level-route-scroll">
-            <div class="level-route-canvas">
-              <svg class="route-links-svg" aria-hidden="true"></svg>
-              <section class="route-section route-section-qualification" data-route-section="qualification">
-                <h2 data-i18n="levelGroups.operatorQualification">OPERATOR QUALIFICATION</h2>
-                <div class="route-node-grid route-node-grid-qualification">
-                  <button class="level-node is-active route-node-wide" data-level-id="intro-shift" type="button">
-                    <strong data-i18n="levels.intro.title">INTRO SHIFT</strong>
-                    <span data-i18n="levels.intro.description">First supervised fusion operation</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="unexpected-stuff" type="button" disabled>
-                    <strong data-i18n="levels.unexpected.title">UNEXPECTED STUFF</strong>
-                    <span data-i18n="levels.unexpected.description">Instrument faults route</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="fuel-problems" type="button" disabled>
-                    <strong data-i18n="levels.fuel.title">COST OF RUNNING</strong>
-                    <span data-i18n="levels.fuel.description">Fuel mix economy route</span>
-                  </button>
-                  <button class="level-node is-locked route-node-wide" data-level-id="shift-coordination" type="button" disabled>
-                    <strong data-i18n="levels.coordination.title">SHIFT COORDINATION</strong>
-                    <span data-i18n="levels.coordination.description">Same console, clock-start shift</span>
-                  </button>
-                </div>
-              </section>
-              <section class="route-section route-section-modes" data-route-section="modes">
-                <h2 data-i18n="levelGroups.additionalModes">ADDITIONAL MODES</h2>
-                <div class="route-node-grid">
-                  <button class="level-node is-active" data-level-id="freeplay" type="button">
-                    <strong data-i18n="levels.freeplay.title">FREEPLAY</strong>
-                    <span data-i18n="levels.freeplay.description">Same console, loose targets</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="competitive" type="button" disabled>
-                    <strong data-i18n="levels.competitive.title">COMPETITIVE</strong>
-                    <span data-i18n="levels.competitive.description">Score route placeholder</span>
-                  </button>
-                </div>
-              </section>
-              <section class="route-section route-section-tests" data-route-section="tests">
-                <h2 data-i18n="levelGroups.additionalTests">ADDITIONAL TESTS</h2>
-                <div class="route-node-grid">
-                  <button class="level-node is-locked" data-level-id="broken-lamp" type="button" disabled>
-                    <strong data-i18n="levels.brokenLamp.title">BROKEN LAMP</strong>
-                    <span data-i18n="levels.brokenLamp.description">Unreliable warning indicator</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="low-fuel" type="button" disabled>
-                    <strong data-i18n="levels.lowFuel.title">LOW FUEL</strong>
-                    <span data-i18n="levels.lowFuel.description">Low reserve economy test</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="low-heat-sink" type="button" disabled>
-                    <strong data-i18n="levels.lowHeatSink.title">LOW HEAT SINK</strong>
-                    <span data-i18n="levels.lowHeatSink.description">Reduced thermal margin</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="maximum-load" type="button" disabled>
-                    <strong data-i18n="levels.maximumLoad.title">MAX LOAD</strong>
-                    <span data-i18n="levels.maximumLoad.description">Work near the red zone</span>
-                  </button>
-                </div>
-              </section>
-              <section class="route-section route-section-facility" data-route-section="facility">
-                <h2 data-i18n="levelGroups.facilityAccess">FACILITY ACCESS</h2>
-                <div class="route-node-grid">
-                  <button class="level-node is-locked" data-level-id="exploring-around" type="button" disabled>
-                    <strong data-i18n="levels.exploring.title">EXPLORING AROUND</strong>
-                    <span data-i18n="levels.exploring.description">The tutorial shift in the service corridor</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="power-bus-training" type="button" disabled>
-                    <strong data-i18n="levels.powerBus.title">POWER BUS TRAINING</strong>
-                    <span data-i18n="levels.powerBus.description">Switchgear and routing</span>
-                  </button>
-                  <button class="level-node is-locked" data-level-id="longer-shifts" type="button" disabled>
-                    <strong data-i18n="levels.longerShifts.title">LONGER SHIFTS</strong>
-                    <span data-i18n="levels.longerShifts.description">Ten minutes and operator effects</span>
-                  </button>
-                </div>
-              </section>
-            </div>
-          </div>
+          <footer class="operations-mail-footer">
+            <button class="operations-mail-key-action" data-app-action="main-menu" type="button"><kbd>ESC</kbd><span data-i18n="actions.mainMenu">MAIN MENU</span></button>
+            <span>OPERATIONS MAIL / INBOX 01</span>
+            <button class="operations-mail-key-action" data-start-selected-shift type="button" disabled><kbd>ENTER</kbd><span data-i18n="assignments.open">OPEN</span></button>
+          </footer>
         </section>
         <section id="profilePanel" class="app-panel dossier-panel" data-app-panel="profile" hidden>
           <div class="panel-header">
@@ -202,6 +189,17 @@
             <span data-i18n="profile.status">STATUS</span>
             <strong data-i18n="profile.provisional">PROVISIONAL SHIFT OPERATOR</strong>
             <p data-i18n="profile.placeholder">Performance history, route unlocks, incident tags, and operator notes will live here.</p>
+          </div>
+        </section>
+        <section id="creditsPanel" class="app-panel dossier-panel" data-app-panel="credits" hidden>
+          <div class="panel-header">
+            <span>BASE LOAD / <span data-i18n="credits.title">CREDITS</span></span>
+            <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
+          </div>
+          <div class="dossier-card">
+            <span>BASE LOAD</span>
+            <strong data-i18n="credits.development">DEVELOPMENT BUILD</strong>
+            <p data-i18n="credits.placeholder">Full credits will be added during production.</p>
           </div>
         </section>
         <section id="pausePanel" class="app-panel pause-panel" data-app-panel="pause" hidden>
@@ -260,6 +258,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=terminal-exit-presentation"></script>
+    <script type="module" src="src/main.js?v=ui-blur-pause-guard"></script>
   </body>
 </html>

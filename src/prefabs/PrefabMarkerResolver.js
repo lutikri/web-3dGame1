@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=terminal-exit-presentation";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=ui-blur-pause-guard";
 
 const MARKER_PREFIX = "PF_";
 

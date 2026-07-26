@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=terminal-exit-presentation";
+import { translateRequired } from "./Localization.js?v=ui-blur-pause-guard";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

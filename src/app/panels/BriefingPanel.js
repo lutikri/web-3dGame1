@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=terminal-exit-presentation";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=ui-blur-pause-guard";
 
 const DISMISS_MS = 300;
 

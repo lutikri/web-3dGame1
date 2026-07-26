@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=terminal-exit-presentation";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=terminal-exit-presentation";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=terminal-exit-presentation";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=terminal-exit-presentation";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=ui-blur-pause-guard";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=ui-blur-pause-guard";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=ui-blur-pause-guard";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=ui-blur-pause-guard";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -79,9 +79,16 @@ export const CONFIG = {
       wheelStep: 0.35,
     },
     menuView: {
-      position: new THREE.Vector3(0.48, 1.02, 0.34),
-      rotationDegrees: new THREE.Vector3(19.4, 62.8, 0),
+      position: new THREE.Vector3(4.4, 0.95, -1.85),
+      rotationDegrees: new THREE.Vector3(20.3, 55.9, 0),
+      fovDegrees: 55,
       roomLightsOn: false,
+      pointerLook: {
+        enabled: true,
+        yawDegrees: 1.5,
+        pitchDegrees: 0.8,
+        damping: 5,
+      },
     },
   },
   panel: {

@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-exit-presentation";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-exit-presentation";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-exit-presentation";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-exit-presentation";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-exit-presentation";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-exit-presentation";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-exit-presentation";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=ui-blur-pause-guard";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=ui-blur-pause-guard";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=ui-blur-pause-guard";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=ui-blur-pause-guard";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=ui-blur-pause-guard";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=ui-blur-pause-guard";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=ui-blur-pause-guard";
 
 export function createPrefabRuntimeFactory({
   config,

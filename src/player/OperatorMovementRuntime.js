@@ -117,6 +117,7 @@ export function createOperatorMovementRuntime({
   }
 
   function updateZoom(dt) {
+    if (getViewMode() === "menu") return;
     const baseFov = getBaseFov();
     const targetFov = getZoomActive() ? Math.min(config.camera.zoomFovDegrees, baseFov) : baseFov;
     camera.fov = THREE.MathUtils.damp(camera.fov, targetFov, config.camera.zoomDamping, dt);

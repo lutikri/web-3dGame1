@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=terminal-exit-presentation";
+import { LevelRuntime } from "./LevelRuntime.js?v=ui-blur-pause-guard";
 
 export class LevelEnvironmentLifecycle {
   constructor({
