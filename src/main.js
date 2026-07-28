@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=cinematic-screen-space-stability";
-import { applyLocalization } from "./app/Localization.js?v=cinematic-screen-space-stability";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
+import { createPreflight } from "./app/Preflight.js?v=preflight-audio-lifecycle";
+import { applyLocalization } from "./app/Localization.js?v=preflight-audio-lifecycle";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
 
-const APP_BUILD_REVISION = "cinematic-screen-space-stability";
+const APP_BUILD_REVISION = "preflight-audio-lifecycle";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -11,46 +11,34 @@ const bootChoice = runtimeSmokeMode
   ? { language: "en", profile: "low", displayGamma: 0.93, firstRun: false }
   : await preflight.prepare();
 applyLocalization(bootChoice.language);
-const bootQuality = getGraphicsQualityProfile(bootChoice.profile ?? "low");
+const selectedFirstRunProfile = bootChoice.firstRun ? await preflight.chooseProfile() : null;
+const bootProfile = selectedFirstRunProfile ?? bootChoice.profile ?? "low";
+const bootQuality = getGraphicsQualityProfile(bootProfile);
 
 window.operatorGameBootOptions = {
-  qualityProfile: bootChoice.profile ?? "low",
+  qualityProfile: bootProfile,
   displayGamma: bootChoice.displayGamma ?? 0.93,
   deferFullTextures: bootChoice.firstRun,
   disableFullTextures: !bootQuality.fullTextures && !bootChoice.firstRun,
   returnToMenuAfterPreflight,
 };
 
-await import(`./OperatorGame.js?v=cinematic-screen-space-stability`);
+if (bootChoice.firstRun) preflight.showBooting();
+await import(`./OperatorGame.js?v=preflight-audio-lifecycle`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
-  await waitForPreviewScene(window.operatorGameDebug);
-  let benchmark = { results: [] };
-  try {
-    benchmark = await window.operatorGameDebug.runPerformanceBenchmark({
-      quick: true,
-      skipTextureWait: true,
-      showReport: false,
-      warmupSeconds: 0.15,
-      sampleSeconds: 0.65,
-    });
-  } catch (error) {
-    console.warn("[Preflight] Performance calibration failed; using conservative defaults", error);
-  }
-  const profile = await preflight.chooseProfile(benchmark);
-  window.operatorGameDebug.applyQualityProfile(profile);
   const displayGamma = await preflight.calibrateBrightness(
     (gamma) => window.operatorGameDebug.setDisplayGamma(gamma),
     bootChoice.displayGamma,
   );
-  preflight.complete(profile, displayGamma, { removeOverlay: false });
+  preflight.complete(bootProfile, displayGamma, { removeOverlay: false });
   finishPreflightAfterShell = true;
 } else {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=cinematic-screen-space-stability`);
+const { createAppShell } = await import(`./app/AppShell.js?v=preflight-audio-lifecycle`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -61,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=cinematic-screen-space-stability`
+    `./runtime/RuntimeSmoke.js?v=preflight-audio-lifecycle`
   );
   await window.operatorGameApp.initialRouteReady;
   try {
@@ -70,14 +58,5 @@ if (runtimeSmokeMode) {
   } catch (error) {
     window.operatorGameRuntimeSmokeResult = { ok: false, error: error.message };
     console.error("[RuntimeSmoke] FAIL", error);
-  }
-}
-
-async function waitForPreviewScene(gameApi, timeoutMs = 15000) {
-  const startedAt = performance.now();
-  while (performance.now() - startedAt < timeoutMs) {
-    const state = gameApi.getState?.();
-    if (state?.modelLoaded && state?.interiorLoaded) return;
-    await new Promise((resolve) => window.setTimeout(resolve, 100));
   }
 }

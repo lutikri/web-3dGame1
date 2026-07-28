@@ -1,31 +1,48 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=preflight-audio-lifecycle";
+import {
+  createUiAudioInteractionRuntime,
+  resolveUiAudioControl,
+} from "./UiAudioInteractionRuntime.js?v=preflight-audio-lifecycle";
+import {
+  classifyGraphicsAdapter,
+  isHighEndGraphicsAdapter,
+} from "../config/GraphicsHardwareTiers.js?v=preflight-audio-lifecycle";
+
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=preflight-audio-lifecycle";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
+const QUALITY_PROFILE_REVISION = 2;
 const QUALITY_PREVIEWS = {
   low: "assets/ui/performance/set-min.jpg",
   medium: "assets/ui/performance/set-med.jpg",
   high: "assets/ui/performance/set-max.jpg",
 };
 
+const PREFLIGHT_DESIGN_WIDTH = 1920;
+const PREFLIGHT_DESIGN_HEIGHT = 1080;
+
 const COPY = {
   en: {
-    checking: "CHECKING GRAPHICS PERFORMANCE",
-    gpu: "BROWSER GPU",
-    integrated: "DO YOU HAVE AMD / NVIDIA GRAPHICS?",
-    guide: "HOW TO SWITCH GPU",
-    continue: "THIS IS FINE",
-    confirmed: "ALL GOOD",
-    testing: "TESTING PERFORMANCE",
-    testComplete: "PERFORMANCE TEST COMPLETE",
+    gpu: "GRAPHICS ADAPTER",
+    integrated: "The browser is using integrated or power-saving graphics. If this computer also has NVIDIA or AMD graphics, switch the browser to the high-performance adapter.",
+    software: "Hardware acceleration is unavailable. The browser is rendering through software, so LOW is the safe starting profile.",
+    unknown: "The browser did not disclose the adapter model. MEDIUM will be used as the balanced starting profile, but every profile remains available.",
+    guide: "I HAVE NVIDIA / AMD",
+    continue: "USE CURRENT ADAPTER",
+    confirmed: "ADAPTER CONFIRMED",
+    hardwareReady: "HARDWARE ACCELERATION CHECK COMPLETE",
     result: "GRAPHICS CALIBRATION COMPLETE",
     recommended: "RECOMMENDED",
-    measured: "Measured at the current window size",
+    measured: "Recommendation based on the adapter currently used by the browser",
     choose: "Choose a graphics profile",
     low: ["LOW", "FASTEST"],
     medium: ["MEDIUM", "BALANCED"],
     high: ["HIGH", "FULL EFFECTS"],
     apply: "APPLY",
+    applying: "INITIALIZING SELECTED GRAPHICS PROFILE",
+    loadingRuntime: "LOADING RUNTIME",
     brightnessTitle: "DISPLAY BRIGHTNESS",
     brightnessHint: "Move the slider until the left bar merges with the black frame. The second bar should be barely visible.",
     brightnessControl: "GAME BRIGHTNESS",
@@ -35,22 +52,24 @@ const COPY = {
     okay: "OK",
   },
   ru: {
-    checking: "ПРОВЕРКА ГРАФИЧЕСКОЙ ПРОИЗВОДИТЕЛЬНОСТИ",
-    gpu: "ВИДЕОКАРТА БРАУЗЕРА",
-    integrated: "У ВАС ЕСТЬ AMD / NVIDIA?",
-    guide: "КАК ПЕРЕКЛЮЧИТЬ ВИДЕОКАРТУ",
-    continue: "И ТАК СОЙДЁТ",
-    confirmed: "ВСЁ ВЕРНО",
-    testing: "ТЕСТИРУЕТСЯ ПРОИЗВОДИТЕЛЬНОСТЬ",
-    testComplete: "ТЕСТ ПРОИЗВОДИТЕЛЬНОСТИ ЗАВЕРШЁН",
+    gpu: "ГРАФИЧЕСКИЙ АДАПТЕР",
+    integrated: "Браузер использует встроенную или энергосберегающую графику. Если в компьютере также есть NVIDIA или AMD, переключите браузер на производительный адаптер.",
+    software: "Аппаратное ускорение недоступно. Браузер рисует сцену программно, поэтому безопасный стартовый профиль — LOW.",
+    unknown: "Браузер не сообщил модель адаптера. Стартовым сбалансированным профилем будет MEDIUM, но выбрать можно любой профиль.",
+    guide: "У МЕНЯ ЕСТЬ NVIDIA / AMD",
+    continue: "ИСПОЛЬЗОВАТЬ ТЕКУЩИЙ",
+    confirmed: "АДАПТЕР ВЕРНЫЙ",
+    hardwareReady: "ПРОВЕРКА АППАРАТНОГО УСКОРЕНИЯ ЗАВЕРШЕНА",
     result: "КАЛИБРОВКА ГРАФИКИ ЗАВЕРШЕНА",
     recommended: "РЕКОМЕНДУЕТСЯ",
-    measured: "Измерено при текущем размере окна",
+    measured: "Рекомендация основана на адаптере, который сейчас использует браузер",
     choose: "Выберите профиль графики",
     low: ["LOW", "МАКСИМУМ FPS"],
     medium: ["MEDIUM", "БАЛАНС"],
     high: ["HIGH", "ВСЕ ЭФФЕКТЫ"],
     apply: "ПРИМЕНИТЬ",
+    applying: "ИНИЦИАЛИЗАЦИЯ ВЫБРАННОГО ПРОФИЛЯ ГРАФИКИ",
+    loadingRuntime: "ЗАГРУЗКА СИСТЕМ",
     brightnessTitle: "ЯРКОСТЬ ЭКРАНА",
     brightnessHint: "Двигайте ползунок, пока левая полоса не сольётся с чёрной рамкой шкалы. Вторая полоса должна быть едва заметна.",
     brightnessControl: "ЯРКОСТЬ ИГРЫ",
@@ -69,10 +88,16 @@ export function createPreflight() {
   let selectedProfile = saved?.profile ?? "low";
   let gpuContinuePromise = null;
   let resolveGpuContinue = null;
-  let benchmarkComplete = false;
+  let resizeHandler = null;
+  let uiAudio = null;
 
   async function prepare() {
     if (saved?.profile) {
+      if ((saved.qualityProfileRevision ?? 0) < QUALITY_PROFILE_REVISION) {
+        saveAppQualitySettings(saved.profile);
+        saved.qualityProfileRevision = QUALITY_PROFILE_REVISION;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      }
       document.documentElement.lang = saved.language;
       return {
         firstRun: false,
@@ -83,7 +108,11 @@ export function createPreflight() {
     }
 
     overlay = createOverlay();
+    uiAudio = createPreflightUiAudio({ root: overlay });
     document.body.append(overlay);
+    resizeHandler = () => updatePreflightScale(overlay, window.innerWidth, window.innerHeight);
+    resizeHandler();
+    window.addEventListener("resize", resizeHandler);
     document.documentElement.classList.remove("preflight-boot");
     preloadFirstRunAssets();
     language = await chooseLanguage();
@@ -93,20 +122,24 @@ export function createPreflight() {
     return { firstRun: true, language, profile: "low", displayGamma: 0.93 };
   }
 
-  async function chooseProfile(benchmark) {
-    markGpuBenchmarkComplete();
+  async function chooseProfile() {
     await gpuContinuePromise;
-    const mediumFps = getStableFps(findResult(benchmark, "PROFILE MEDIUM"), 30);
-    const highFps = getStableFps(findResult(benchmark, "PROFILE HIGH"), 20);
-    const recommendation = highFps >= 45 ? "high" : mediumFps >= 38 ? "medium" : "low";
+    const recommendation = recommendGraphicsProfile({ gpuInfo });
     selectedProfile = recommendation;
-    return new Promise((resolve) => showProfileChoice({ benchmark, recommendation, resolve }));
+    return new Promise((resolve) => showProfileChoice({ benchmark: null, recommendation, resolve }));
   }
 
   function complete(profile, displayGamma = 0.93, { removeOverlay = true } = {}) {
     const quality = getGraphicsQualityProfile(profile);
     selectedProfile = profile;
-    saved = { language, profile, displayGamma, gpu: gpuInfo?.renderer ?? "Unknown", measuredAt: Date.now() };
+    saved = {
+      language,
+      profile,
+      displayGamma,
+      gpu: gpuInfo?.renderer ?? "Unknown",
+      measuredAt: Date.now(),
+      qualityProfileRevision: QUALITY_PROFILE_REVISION,
+    };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     saveAppQualitySettings(profile);
     window.operatorGameBootOptions.qualityProfile = profile;
@@ -125,6 +158,7 @@ export function createPreflight() {
   function calibrateBrightness(onChange, initialGamma = 0.93) {
     const copy = COPY[language];
     const panel = getPanel();
+    setStep("display");
     panel.innerHTML = `
       <div class="preflight-kicker">DISPLAY CALIBRATION</div>
       <h1>${copy.brightnessTitle}</h1>
@@ -161,26 +195,77 @@ export function createPreflight() {
           <div class="preflight-kicker">OPERATOR CONSOLE</div>
           <h1>${copy.setupComplete}</h1>
           <p>${copy.setupAgain}</p>
-          <button type="button" data-setup-ok>${copy.okay}</button>`;
+          <button type="button" data-setup-ok data-ui-sound="setupComplete">${copy.okay}</button>`;
         panel.querySelector("[data-setup-ok]").addEventListener("click", () => resolve(gamma), { once: true });
       }, { once: true });
     });
   }
 
   function remove() {
+    if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+    resizeHandler = null;
+    uiAudio?.dispose();
+    uiAudio = null;
     overlay?.remove();
     overlay = null;
+  }
+
+  function showBooting() {
+    const copy = COPY[language];
+    const panel = getPanel();
+    panel.innerHTML = `
+      <div class="preflight-kicker">RENDERER / ${selectedProfile.toUpperCase()}</div>
+      <h1>${copy.applying}</h1>
+      <div class="preflight-test-status">
+        <span class="preflight-spinner"></span>
+        <strong>${copy.loadingRuntime}</strong>
+      </div>`;
   }
 
   function createOverlay() {
     const element = document.createElement("div");
     element.className = "preflight-overlay";
-    element.innerHTML = `<section class="preflight-panel" aria-live="polite"></section>`;
+    element.innerHTML = `
+      <section class="preflight-terminal">
+        <header class="preflight-header">
+          <span>TERRAGEN SYSTEMS / SYSTEM PREFLIGHT</span>
+          <span>SITE-12 / TERM 04</span>
+        </header>
+        <div class="preflight-body">
+          <aside class="preflight-index" aria-label="Setup progress">
+            <div class="preflight-index-heading"><span>PREFLIGHT</span><span>01</span></div>
+            <ol>
+              <li data-preflight-step="language"><b>01</b><span>LANGUAGE</span></li>
+              <li data-preflight-step="graphics"><b>02</b><span>GRAPHICS</span></li>
+              <li data-preflight-step="profile"><b>03</b><span>QUALITY PROFILE</span></li>
+              <li data-preflight-step="display"><b>04</b><span>DISPLAY</span></li>
+            </ol>
+            <p>FIRST-RUN TERMINAL CALIBRATION</p>
+          </aside>
+          <main class="preflight-panel" aria-live="polite"></main>
+        </div>
+        <footer class="preflight-footer">
+          <span>OPERATOR CONSOLE / INITIAL SETUP</span>
+          <span data-preflight-stage>SETUP 01 / 04</span>
+        </footer>
+      </section>`;
     return element;
+  }
+
+  function setStep(step) {
+    const steps = ["language", "graphics", "profile", "display"];
+    const activeIndex = Math.max(0, steps.indexOf(step));
+    overlay?.querySelectorAll("[data-preflight-step]").forEach((node, index) => {
+      node.classList.toggle("is-active", index === activeIndex);
+      node.classList.toggle("is-complete", index < activeIndex);
+    });
+    const stage = overlay?.querySelector("[data-preflight-stage]");
+    if (stage) stage.textContent = `SETUP ${String(activeIndex + 1).padStart(2, "0")} / 04`;
   }
 
   function chooseLanguage() {
     const panel = getPanel();
+    setStep("language");
     panel.innerHTML = `
       <h1>CHOOSE LANGUAGE / ВЫБЕРИТЕ ЯЗЫК</h1>
       <div class="preflight-language-actions">
@@ -196,45 +281,36 @@ export function createPreflight() {
 
   function showGpuCheck() {
     const copy = COPY[language];
-    const integrated = /intel|uhd|iris|radeon graphics|vega/i.test(gpuInfo.renderer);
+    const adapterClass = classifyGraphicsAdapter(gpuInfo.renderer);
+    const integrated = adapterClass === "integrated";
+    const adapterNotice = adapterClass === "software" ? copy.software : adapterClass === "unknown" ? copy.unknown : integrated ? copy.integrated : "";
     const gpuName = getShortGpuName(gpuInfo.renderer);
+    setStep("graphics");
+    if (!gpuContinuePromise) {
+      gpuContinuePromise = new Promise((resolve) => {
+        resolveGpuContinue = resolve;
+      });
+    }
     getPanel().innerHTML = `
+      <div class="preflight-kicker">HARDWARE / WEBGL ${gpuInfo.webgl2 ? "2" : "1"}</div>
       <h1>${copy.gpu}</h1>
       <strong class="preflight-gpu">${escapeHtml(gpuName)}</strong>
-      ${integrated ? `<p class="preflight-warning">${copy.integrated}</p>` : ""}
+      ${adapterNotice ? `<p class="preflight-warning is-${adapterClass}">${adapterNotice}</p>` : ""}
       <div class="preflight-test-status" data-test-status>
-        <span class="preflight-spinner"></span>
-        <strong>${copy.testing}</strong>
+        <strong>${copy.hardwareReady}</strong>
       </div>
       <div class="preflight-language-actions">
         ${integrated ? `<button type="button" data-gpu-guide>${copy.guide}</button>` : ""}
-        <button type="button" data-gpu-continue disabled>${integrated ? copy.continue : copy.confirmed}</button>
+        <button type="button" data-gpu-continue>${adapterClass === "software" || integrated ? copy.continue : copy.confirmed}</button>
       </div>`;
     getPanel().querySelector("[data-gpu-guide]")?.addEventListener("click", showGpuGuide);
-    gpuContinuePromise = new Promise((resolve) => {
-      resolveGpuContinue = resolve;
-    });
     getPanel().querySelector("[data-gpu-continue]").addEventListener("click", () => resolveGpuContinue?.(), { once: true });
-  }
-
-  function markGpuBenchmarkComplete() {
-    const copy = COPY[language];
-    benchmarkComplete = true;
-    const status = getPanel().querySelector("[data-test-status]");
-    if (status) status.innerHTML = `<strong>${copy.testComplete}</strong>`;
-    overlay.querySelectorAll("[data-gpu-continue], [data-guide-continue]").forEach((button) => {
-      button.disabled = false;
-    });
   }
 
   function showGpuGuide() {
     const copy = COPY[language];
-    const mainPanel = getPanel();
-    mainPanel.hidden = true;
-    overlay.querySelector(".preflight-guide-screen")?.remove();
-    const guide = document.createElement("section");
-    guide.className = "preflight-panel preflight-guide-screen";
-    guide.innerHTML = `
+    const panel = getPanel();
+    panel.innerHTML = `
       <div class="preflight-kicker">${copy.guide}</div>
       <h1>WINDOWS GPU SETUP</h1>
       <div class="preflight-os-tabs">
@@ -242,28 +318,19 @@ export function createPreflight() {
       </div>
       <div class="preflight-os-guide" data-os-guide></div>
       <div class="preflight-language-actions">
-        <button type="button" data-guide-continue ${benchmarkComplete ? "" : "disabled"}>${copy.continue}</button>
+        <button type="button" data-guide-back>${copy.continue}</button>
       </div>`;
-    overlay.append(guide);
 
     const showWindowsGuide = (version) => {
-      guide.querySelector("[data-os-guide]").innerHTML = getWindowsGuide(version, language);
-      guide.querySelectorAll("[data-windows]").forEach((button) => {
+      panel.querySelector("[data-os-guide]").innerHTML = getWindowsGuide(version, language);
+      panel.querySelectorAll("[data-windows]").forEach((button) => {
         button.classList.toggle("is-selected", button.dataset.windows === version);
       });
     };
-    guide.querySelectorAll("[data-windows]").forEach((button) => {
+    panel.querySelectorAll("[data-windows]").forEach((button) => {
       button.addEventListener("click", () => showWindowsGuide(button.dataset.windows));
     });
-    guide.querySelector("[data-guide-continue]").addEventListener(
-      "click",
-      () => {
-        guide.remove();
-        mainPanel.hidden = false;
-        resolveGpuContinue?.();
-      },
-      { once: true },
-    );
+    panel.querySelector("[data-guide-back]").addEventListener("click", showGpuCheck, { once: true });
     showWindowsGuide("11");
   }
 
@@ -273,15 +340,16 @@ export function createPreflight() {
     const mediumResult = findResult(benchmark, "PROFILE MEDIUM");
     const highResult = findResult(benchmark, "PROFILE HIGH");
     const estimates = {
-      low: estimateFps(lowResult, 30),
-      medium: estimateFps(mediumResult, 25),
-      high: estimateFps(highResult, 15),
+      low: estimateFps(lowResult),
+      medium: estimateFps(mediumResult),
+      high: estimateFps(highResult),
     };
     const panel = getPanel();
+    setStep("profile");
     panel.innerHTML = `
       <div class="preflight-kicker">${copy.result}</div>
       <h1>${copy.choose}</h1>
-      <p>${copy.measured}: ${window.innerWidth}×${window.innerHeight}</p>
+      <p>${copy.measured}.</p>
       <div class="preflight-quality-grid">
         ${["low", "medium", "high"].map((profile) => qualityCard(profile, recommendation, estimates[profile], copy)).join("")}
       </div>
@@ -317,7 +385,7 @@ export function createPreflight() {
     return overlay.querySelector(".preflight-panel");
   }
 
-  return { prepare, chooseProfile, calibrateBrightness, complete, finish, remove };
+  return { prepare, chooseProfile, showBooting, calibrateBrightness, complete, finish, remove };
 }
 
 function qualityCard(profile, recommendation, fps, copy) {
@@ -327,7 +395,7 @@ function qualityCard(profile, recommendation, fps, copy) {
     <span class="preflight-quality-preview is-${profile}" style="background-image:url('${preview}')"></span>
     <strong>${title}${profile === recommendation ? ` · ${copy.recommended}` : ""}</strong>
     <span>${description}</span>
-    <em>${fps} FPS</em>
+    ${fps ? `<em>${fps} FPS</em>` : ""}
   </button>`;
 }
 
@@ -354,13 +422,76 @@ function getStableFps(result, fallback) {
   return Math.min(average, p95Fps);
 }
 
-function estimateFps(result, fallback) {
-  const average = Number(result?.avgFps) || fallback;
-  const stable = getStableFps(result, fallback);
+function estimateFps(result) {
+  if (!result) return null;
+  const average = Number(result.avgFps) || 0;
+  const stable = getStableFps(result, 0);
   if (average >= 120 && stable >= 75) return "120+";
   if (stable >= 60) return "60+";
   const conservative = Math.max(5, Math.min(120, stable * 0.9));
   return `~${Math.max(5, Math.round(conservative / 5) * 5)}`;
+}
+
+export function recommendGraphicsProfile({ benchmark, gpuInfo } = {}) {
+  const adapterClass = classifyGraphicsAdapter(gpuInfo?.renderer);
+  if (adapterClass === "software" || gpuInfo?.webgl2 === false) return "low";
+  const mediumResult = findResult(benchmark, "PROFILE MEDIUM");
+  const highResult = findResult(benchmark, "PROFILE HIGH");
+  if (highResult && getStableFps(highResult, 0) >= 45) return "high";
+  if (mediumResult && getStableFps(mediumResult, 0) >= 36) return "medium";
+  if (mediumResult || highResult) return "low";
+  return isHighEndGraphicsAdapter(gpuInfo?.renderer) ? "high" : "medium";
+}
+
+export function getPreflightScale(viewportWidth, viewportHeight) {
+  const width = Number.isFinite(viewportWidth) ? Math.max(0, viewportWidth) : 0;
+  const height = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight) : 0;
+  return Math.min(width / PREFLIGHT_DESIGN_WIDTH, height / PREFLIGHT_DESIGN_HEIGHT);
+}
+
+export function createPreflightUiAudio({ root, AudioClass = globalThis.Audio } = {}) {
+  if (!root || !AudioClass) return { dispose() {} };
+  const clickAudio = new AudioClass(SOUND_REGISTRY.Menu_Click1.path);
+  const hoverAudio = new AudioClass(SOUND_REGISTRY.Menu_Hover1.path);
+  const setupCompleteAudio = new AudioClass(SOUND_REGISTRY.Menu_SetupComlete1.path);
+  clickAudio.volume = SOUND_REGISTRY.Menu_Click1.volume;
+  hoverAudio.volume = SOUND_REGISTRY.Menu_Hover1.volume;
+  setupCompleteAudio.volume = SOUND_REGISTRY.Menu_SetupComlete1.volume;
+  let unlocked = false;
+  const play = (audio) => {
+    audio.currentTime = 0;
+    audio.play()?.catch?.(() => {});
+  };
+  const interaction = createUiAudioInteractionRuntime({
+    root,
+    isAudioUnlocked: () => unlocked,
+    playClick: () => play(clickAudio),
+    playHover: () => play(hoverAudio),
+  });
+  const handleClick = (event) => {
+    unlocked = true;
+    const control = resolveUiAudioControl(root, event?.target);
+    if (control?.dataset?.uiSound === "setupComplete") {
+      play(setupCompleteAudio);
+      return;
+    }
+    interaction.handleClick(event);
+  };
+  const handleMouseMove = (event) => interaction.handlePointerMove(event);
+  root.addEventListener("click", handleClick, true);
+  root.addEventListener("mousemove", handleMouseMove);
+  return {
+    dispose() {
+      root.removeEventListener("click", handleClick, true);
+      root.removeEventListener("mousemove", handleMouseMove);
+      clickAudio.pause?.();
+      hoverAudio.pause?.();
+    },
+  };
+}
+
+function updatePreflightScale(overlay, viewportWidth, viewportHeight) {
+  overlay?.style.setProperty("--preflight-scale", String(getPreflightScale(viewportWidth, viewportHeight)));
 }
 
 function getShortGpuName(renderer) {

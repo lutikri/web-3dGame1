@@ -17,6 +17,21 @@ export const SOUND_REGISTRY = {
     volume: 0.42,
     fadeDistance: 1.8,
   },
+  Menu_Ambience1: {
+    path: "assets/sounds/ambience/Menu_Ambience1.ogg",
+    loop: true,
+    volume: 0.3,
+    fadeSeconds: 1.2,
+  },
+  Menu_Musical1: { path: "assets/sounds/ambience/Menu_Musical1.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Musical2: { path: "assets/sounds/ambience/Menu_Musical2.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Musical3_rare: { path: "assets/sounds/ambience/Menu_Musical3_rare.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Musical4: { path: "assets/sounds/ambience/Menu_Musical4.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Musical5: { path: "assets/sounds/ambience/Menu_Musical5.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Musical6: { path: "assets/sounds/ambience/Menu_Musical6.ogg", loop: true, volume: 0.34, fadeSeconds: 1.8 },
+  Menu_Click1: { path: "assets/sounds/ui/Menu_Click1.ogg", volume: 0.76 },
+  Menu_Hover1: { path: "assets/sounds/ui/Menu_Hover1.ogg", volume: 0.44 },
+  Menu_SetupComlete1: { path: "assets/sounds/ui/Menu_SetupComlete1.ogg", volume: 0.78 },
   Button_Light1: { path: "assets/sounds/interaction/Button_Light1.ogg", volume: 0.48 },
   Button_Light2: { path: "assets/sounds/interaction/Button_Light2.ogg", volume: 0.48 },
   Button_Light3: { path: "assets/sounds/interaction/Button_Light3.ogg", volume: 0.48 },
@@ -96,6 +111,8 @@ export const SOUND_REGISTRY = {
 };
 
 export const SOUND_GROUPS = {
+  menuClick: ["Menu_Click1"],
+  menuHover: ["Menu_Hover1"],
   panelButtonLight: ["Button_Light1", "Button_Light2", "Button_Light3"],
   mechanicalButton: ["ButtonMechanical1", "ButtonMechanical2", "ButtonMechanical3", "ButtonMechanical4"],
   lampConstantBuzz: ["LampConstantBuzz1", "LampConstantBuzz2"],

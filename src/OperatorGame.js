@@ -3,129 +3,134 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=cinematic-screen-space-stability";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=preflight-audio-lifecycle";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=cinematic-screen-space-stability";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=cinematic-screen-space-stability";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=cinematic-screen-space-stability";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=cinematic-screen-space-stability";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=cinematic-screen-space-stability";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=cinematic-screen-space-stability";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=cinematic-screen-space-stability";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=cinematic-screen-space-stability";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=cinematic-screen-space-stability";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=cinematic-screen-space-stability";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=cinematic-screen-space-stability";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=cinematic-screen-space-stability";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=cinematic-screen-space-stability";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=cinematic-screen-space-stability";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=cinematic-screen-space-stability";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=cinematic-screen-space-stability";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=cinematic-screen-space-stability";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=cinematic-screen-space-stability";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=cinematic-screen-space-stability";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=cinematic-screen-space-stability";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=cinematic-screen-space-stability";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=cinematic-screen-space-stability";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=cinematic-screen-space-stability";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=cinematic-screen-space-stability";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=cinematic-screen-space-stability";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=cinematic-screen-space-stability";
+} from "./game/ShiftReport.js?v=preflight-audio-lifecycle";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=preflight-audio-lifecycle";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=preflight-audio-lifecycle";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=preflight-audio-lifecycle";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=preflight-audio-lifecycle";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=preflight-audio-lifecycle";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=preflight-audio-lifecycle";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=preflight-audio-lifecycle";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=preflight-audio-lifecycle";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=preflight-audio-lifecycle";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=preflight-audio-lifecycle";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=preflight-audio-lifecycle";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=preflight-audio-lifecycle";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=preflight-audio-lifecycle";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=preflight-audio-lifecycle";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=preflight-audio-lifecycle";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=preflight-audio-lifecycle";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=preflight-audio-lifecycle";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=preflight-audio-lifecycle";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=preflight-audio-lifecycle";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=preflight-audio-lifecycle";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=preflight-audio-lifecycle";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=preflight-audio-lifecycle";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=preflight-audio-lifecycle";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=preflight-audio-lifecycle";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=preflight-audio-lifecycle";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=preflight-audio-lifecycle";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=preflight-audio-lifecycle";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=preflight-audio-lifecycle";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
-} from "./config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
+  resolveGraphicsPixelRatio,
+} from "./config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=cinematic-screen-space-stability";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=cinematic-screen-space-stability";
-import { createStatusScreen } from "./StatusScreen.js?v=cinematic-screen-space-stability";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=cinematic-screen-space-stability";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=cinematic-screen-space-stability";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=cinematic-screen-space-stability";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=cinematic-screen-space-stability";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=cinematic-screen-space-stability";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=cinematic-screen-space-stability";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=cinematic-screen-space-stability";
+} from "./scene/TextureStreaming.js?v=preflight-audio-lifecycle";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=preflight-audio-lifecycle";
+import { createStatusScreen } from "./StatusScreen.js?v=preflight-audio-lifecycle";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=preflight-audio-lifecycle";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=preflight-audio-lifecycle";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=preflight-audio-lifecycle";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=preflight-audio-lifecycle";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=preflight-audio-lifecycle";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=preflight-audio-lifecycle";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=preflight-audio-lifecycle";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=cinematic-screen-space-stability";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=cinematic-screen-space-stability";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=cinematic-screen-space-stability";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=preflight-audio-lifecycle";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=preflight-audio-lifecycle";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=preflight-audio-lifecycle";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=cinematic-screen-space-stability";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=cinematic-screen-space-stability";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=cinematic-screen-space-stability";
-import { AssetCache } from "./runtime/AssetCache.js?v=cinematic-screen-space-stability";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=cinematic-screen-space-stability";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=cinematic-screen-space-stability";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=cinematic-screen-space-stability";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=cinematic-screen-space-stability";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=cinematic-screen-space-stability";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=cinematic-screen-space-stability";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=cinematic-screen-space-stability";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=cinematic-screen-space-stability";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=cinematic-screen-space-stability";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=cinematic-screen-space-stability";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=cinematic-screen-space-stability";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=cinematic-screen-space-stability";
+} from "./lighting/FluorescentBehavior.js?v=preflight-audio-lifecycle";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=preflight-audio-lifecycle";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=preflight-audio-lifecycle";
+import { AssetCache } from "./runtime/AssetCache.js?v=preflight-audio-lifecycle";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=preflight-audio-lifecycle";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=preflight-audio-lifecycle";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=preflight-audio-lifecycle";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=preflight-audio-lifecycle";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=preflight-audio-lifecycle";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=preflight-audio-lifecycle";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=preflight-audio-lifecycle";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=preflight-audio-lifecycle";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=preflight-audio-lifecycle";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=preflight-audio-lifecycle";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=preflight-audio-lifecycle";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=preflight-audio-lifecycle";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=cinematic-screen-space-stability";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=cinematic-screen-space-stability";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=cinematic-screen-space-stability";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=cinematic-screen-space-stability";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=cinematic-screen-space-stability";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=cinematic-screen-space-stability";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=cinematic-screen-space-stability";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=cinematic-screen-space-stability";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=cinematic-screen-space-stability";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=cinematic-screen-space-stability";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=cinematic-screen-space-stability";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=cinematic-screen-space-stability";
-import { PlayerController } from "./player/PlayerController.js?v=cinematic-screen-space-stability";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=cinematic-screen-space-stability";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=cinematic-screen-space-stability";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=cinematic-screen-space-stability";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=cinematic-screen-space-stability";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=cinematic-screen-space-stability";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=cinematic-screen-space-stability";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=cinematic-screen-space-stability";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=cinematic-screen-space-stability";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=cinematic-screen-space-stability";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=cinematic-screen-space-stability";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=cinematic-screen-space-stability";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=cinematic-screen-space-stability";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=cinematic-screen-space-stability";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=cinematic-screen-space-stability";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=cinematic-screen-space-stability";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=cinematic-screen-space-stability";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=cinematic-screen-space-stability";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=cinematic-screen-space-stability";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=cinematic-screen-space-stability";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=cinematic-screen-space-stability";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=cinematic-screen-space-stability";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=cinematic-screen-space-stability";
+} from "./scene/InteriorObjectRegistry.js?v=preflight-audio-lifecycle";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=preflight-audio-lifecycle";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=preflight-audio-lifecycle";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=preflight-audio-lifecycle";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=preflight-audio-lifecycle";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=preflight-audio-lifecycle";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=preflight-audio-lifecycle";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=preflight-audio-lifecycle";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=preflight-audio-lifecycle";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=preflight-audio-lifecycle";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=preflight-audio-lifecycle";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=preflight-audio-lifecycle";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=preflight-audio-lifecycle";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=preflight-audio-lifecycle";
+import { PlayerController } from "./player/PlayerController.js?v=preflight-audio-lifecycle";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=preflight-audio-lifecycle";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=preflight-audio-lifecycle";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=preflight-audio-lifecycle";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=preflight-audio-lifecycle";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=preflight-audio-lifecycle";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=preflight-audio-lifecycle";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=preflight-audio-lifecycle";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=preflight-audio-lifecycle";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=preflight-audio-lifecycle";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=preflight-audio-lifecycle";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=preflight-audio-lifecycle";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=preflight-audio-lifecycle";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=preflight-audio-lifecycle";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=preflight-audio-lifecycle";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=preflight-audio-lifecycle";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=preflight-audio-lifecycle";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=preflight-audio-lifecycle";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=preflight-audio-lifecycle";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=preflight-audio-lifecycle";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=preflight-audio-lifecycle";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=preflight-audio-lifecycle";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=preflight-audio-lifecycle";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=cinematic-screen-space-stability";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=preflight-audio-lifecycle";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -143,7 +148,11 @@ function configureQualityProfile(profile) {
 }
 
 function getQualityProfilePixelRatio(profile) {
-  return getGraphicsQualityProfile(profile).pixelRatio;
+  return resolveGraphicsPixelRatio(
+    getGraphicsQualityProfile(profile),
+    window.innerWidth,
+    window.innerHeight,
+  );
 }
 
 function guardPointerCapture(element) {
@@ -258,15 +267,32 @@ dracoLoader.setDecoderPath(
 );
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
+const bootGraphicsQuality = getGraphicsQualityProfile(bootOptions.qualityProfile ?? "high");
 const photometricPointLightRuntime = createPhotometricPointLightRuntime({
   camera,
-  maxLights: getGraphicsQualityProfile(bootOptions.qualityProfile ?? "high").photometricLightSlots
+  maxLights: bootGraphicsQuality.photometricLightSlots
     ?? CONFIG.lighting.photometricPointLights?.maxLights
     ?? 4,
   maxProfiles: CONFIG.lighting.photometricPointLights?.maxProfiles ?? 2,
   selectionRadius: CONFIG.lighting.photometricPointLights?.selectionRadius ?? 15,
   selectionHysteresis: CONFIG.lighting.photometricPointLights?.selectionHysteresis ?? 2,
   transitionSeconds: CONFIG.lighting.photometricPointLights?.transitionSeconds ?? 0.6,
+});
+const lightingZoneRuntime = new LightingZoneRuntime({
+  adjacencyMargin: CONFIG.lighting.pointLightPool?.zoneAdjacencyMargin ?? 0.35,
+  exitPadding: CONFIG.lighting.pointLightPool?.zoneExitPadding ?? 0.6,
+});
+const pointLightPoolRuntime = createPointLightPoolRuntime({
+  scene,
+  camera,
+  photometricLights: photometricPointLightRuntime,
+  lightingZones: lightingZoneRuntime,
+  maxLights: bootGraphicsQuality.pointLightSlots ?? 6,
+  maxFixtureLights: bootGraphicsQuality.photometricLightSlots ?? 2,
+  fixtureRadius: CONFIG.lighting.pointLightPool?.fixtureRadius ?? 10,
+  simpleRadius: CONFIG.lighting.pointLightPool?.simpleRadius ?? 20,
+  selectionHysteresis: CONFIG.lighting.pointLightPool?.selectionHysteresis ?? 2,
+  transitionSeconds: CONFIG.lighting.pointLightPool?.transitionSeconds ?? 0.5,
 });
 
 const clock = new THREE.Clock();
@@ -363,6 +389,7 @@ const audioRuntime = new AudioRuntime({
   mix: SOUND_MIX,
   masterVolume: 1,
 });
+const menuAudioRuntime = new MenuAudioRuntime({ audio: audioRuntime });
 let activeShiftProfile = null;
 
 let panelModel = null;
@@ -425,6 +452,7 @@ const levelSceneBuilder = createLevelSceneBuilder({
   environmentModels: levelEnvironmentModels,
   collisionModels: levelCollisionModels,
   prefabInstances: levelPrefabInstances,
+  lightingZones: lightingZoneRuntime,
   getLanguage: () => document.documentElement.lang,
 });
 const levelAssetCache = new AssetCache({
@@ -467,6 +495,8 @@ const levelOwnedState = new LevelOwnedState({
   physics: physicsSystem,
   playerPosition,
   photometricLights: photometricPointLightRuntime,
+  pointLightPool: pointLightPoolRuntime,
+  lightingZones: lightingZoneRuntime,
   lighting: lightingRuntime,
   audio: audioRuntime,
   stopEditing: stopPositionGizmo,
@@ -503,6 +533,7 @@ const postProcessingAssets = new PostProcessingAssets();
 let debugHub = null;
 const fpsMeterRuntime = new FpsMeterRuntime(fpsMeter);
 const updateFpsMeter = fpsMeterRuntime.update;
+let adaptiveQualityRuntime = null;
 let latestSnapshot = fusionCore.getSnapshot();
 let zoomActive = false;
 
@@ -1148,6 +1179,7 @@ const prefabRuntimeFactory = createPrefabRuntimeFactory({
   materials,
   collisionDebugMaterial,
   photometricLights: photometricPointLightRuntime,
+  pointLightPool: pointLightPoolRuntime,
   isCollisionHelper: isCollisionHelperMesh,
   ensureSecondUvSet,
   getObjectMatchNames: getInteriorObjectMatchNames,
@@ -1209,6 +1241,18 @@ const levelTriggerSequenceRuntime = new LevelTriggerSequenceRuntime({
   emitEvent: (type, detail) => activeLevelSessionRuntime.emit(type, detail),
 });
 const frameSchedulingPolicy = new FrameSchedulingPolicy();
+adaptiveQualityRuntime = new AdaptiveQualityRuntime({
+  applyPixelRatio: (ratio) => {
+    renderer.setPixelRatio(ratio);
+    resizeRendererTargets();
+  },
+  shouldSample: () => Boolean(
+    loadingCoordinator.isComplete()
+      && !document.hidden
+      && document.hasFocus(),
+  ),
+});
+adaptiveQualityRuntime.configure(bootOptions.qualityProfile ?? "high");
 const renderWarmupRuntime = new RenderWarmupRuntime({
   renderer,
   scene,
@@ -1216,6 +1260,7 @@ const renderWarmupRuntime = new RenderWarmupRuntime({
   acquireForegroundLease: frameSchedulingPolicy.acquireForegroundLease,
   prepare: async () => {
     await photometricPointLightRuntime.prepare();
+    pointLightPoolRuntime.prepare();
     photometricPointLightRuntime.updateUniforms(1);
   },
   renderFrame: (dt) => {
@@ -1317,6 +1362,7 @@ const animationLoop = new AnimationLoop({
   steps: [
     updateLoadingOverlay,
     updateFpsMeter,
+    adaptiveQualityRuntime.update,
     (dt) => { testTime += dt; },
     updateLevelPrefabElevators,
     updateLevelPrefabBehaviors,
@@ -1330,6 +1376,7 @@ const animationLoop = new AnimationLoop({
     updateActiveLevelSession,
     updateFeedback,
     updateLevelPrefabLights,
+    (dt) => pointLightPoolRuntime.update(dt),
     updateLevelPrefabClocks,
     updateAudioState,
     updateNarratorRadios,
@@ -1891,7 +1938,11 @@ function resizeRendererTargets() {
   postProcessingRuntime.resize(window.innerWidth, window.innerHeight);
 }
 
-window.addEventListener("resize", resizeRendererTargets);
+function handleRendererResize() {
+  if (!adaptiveQualityRuntime?.resize()) resizeRendererTargets();
+}
+
+window.addEventListener("resize", handleRendererResize);
 
 const operatorInputRuntime = createOperatorInputRuntime({
   config: CONFIG,
@@ -1963,7 +2014,7 @@ function applyQualityProfile(profile = "low") {
   bootOptions.qualityProfile = normalized;
   bootOptions.deferFullTextures = false;
   bootOptions.disableFullTextures = !quality.fullTextures;
-  renderer.setPixelRatio(quality.pixelRatio);
+  adaptiveQualityRuntime?.configure(normalized);
   postProcessingPolicy.replace({
     gtao: quality.gtaoQuality,
     ssgi: "off",
@@ -2023,6 +2074,9 @@ const getRuntimeDebugState = () => createRuntimeDebugSnapshot(() => ({
   getObjectTransform,
   loadedRuntimeLevelId,
   photometricPointLights: photometricPointLightRuntime.getDebugState(),
+  pointLightPool: pointLightPoolRuntime.getDebugState(),
+  lightingZones: lightingZoneRuntime.getDebugState(),
+  adaptiveQuality: adaptiveQualityRuntime.snapshot(),
   interiorFans,
   customInteriorMaterials: getCustomInteriorMaterialDebugState(),
   screen: statusScreen.getState(),
@@ -2060,6 +2114,9 @@ installOperatorGameApi(window, {
   requestPointerLock,
   releasePointerLock: () => document.exitPointerLock?.(),
   setInputLocked,
+  unlockAudio: () => audioRuntime.unlock(),
+  isAudioUnlocked: () => audioRuntime.unlocked,
+  setMenuAudioActive: (active) => menuAudioRuntime.setActive(active),
   setBriefingSheetOpener: (callback) => {
     briefingSheetOpener = typeof callback === "function" ? callback : null;
   },
@@ -2199,6 +2256,7 @@ installOperatorGameApi(window, {
   },
   getPerformance: () => ({
     ...fpsMeterRuntime.snapshot(),
+    adaptiveQuality: adaptiveQualityRuntime.snapshot(),
     renderCalls: renderer.info.render.calls,
     triangles: renderer.info.render.triangles,
     points: renderer.info.render.points,

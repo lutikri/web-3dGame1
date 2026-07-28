@@ -183,6 +183,14 @@ Sound volume markers:
 SNDVOL_<soundKey>_<instanceName>
 ```
 
+Lighting zone volume meshes:
+
+```text
+LZONE_<stableZoneName>
+```
+
+Export each zone as a closed mesh covering one authored lighting area. The runtime hides these meshes, selects the smallest zone containing the player, keeps fixture lights in the active zone, and prelights directly adjacent zones with simple point lights. Zone names must be unique and must not rely on Blender numeric suffixes such as `.001`.
+
 Malformed markers, unknown prefab types, and duplicate stable names should fail loudly.
 
 ## Verification

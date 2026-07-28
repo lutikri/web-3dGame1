@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=cinematic-screen-space-stability";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=preflight-audio-lifecycle";
 
 const DISMISS_MS = 300;
 

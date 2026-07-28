@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=cinematic-screen-space-stability";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=cinematic-screen-space-stability";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=cinematic-screen-space-stability";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=cinematic-screen-space-stability";
+import { createDebugHub } from "./DebugHub.js?v=preflight-audio-lifecycle";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=preflight-audio-lifecycle";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=preflight-audio-lifecycle";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=preflight-audio-lifecycle";
 
 export class DebugToolsRuntime {
   constructor(options) {

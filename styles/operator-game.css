@@ -2062,125 +2062,263 @@ html.preflight-boot #app {
 }
 
 .preflight-overlay {
+  --preflight-scale: 1;
   position: fixed;
   inset: 0;
   z-index: 200000;
-  display: grid;
-  place-items: center;
-  overflow: auto;
-  padding: 24px;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(44, 115, 72, 0.16), transparent 42%),
-    #030705;
-  color: #dce8df;
-  font-family: "Cascadia Mono", Consolas, monospace;
+  overflow: hidden;
+  background: #000;
+  color: #a8c5a2;
+  font-family: "Cascadia Mono", "Segoe UI Mono", Consolas, "DejaVu Sans Mono", monospace;
 }
 
 .preflight-overlay.is-finishing {
   background: #000;
 }
 
-.preflight-overlay.is-finishing .preflight-panel {
+.preflight-overlay.is-finishing .preflight-terminal {
   visibility: hidden;
 }
 
+.preflight-terminal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-rows: 58px minmax(0, 1fr) 62px;
+  width: 1805px;
+  height: 983px;
+  border: 1px solid rgba(112, 154, 107, 0.42);
+  background: #020806;
+  transform: translate(-50%, -50%) scale(var(--preflight-scale));
+  transform-origin: center;
+}
+
+.preflight-header,
+.preflight-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 38px;
+  color: #7fac7a;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+}
+
+.preflight-body {
+  display: grid;
+  grid-template-columns: 32% 68%;
+  min-height: 0;
+  margin: 0 24px;
+  border: 1px solid rgba(112, 154, 107, 0.46);
+}
+
+.preflight-index {
+  display: grid;
+  grid-template-rows: 86px 1fr 70px;
+  border-right: 1px solid rgba(112, 154, 107, 0.46);
+}
+
+.preflight-index-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 22px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(112, 154, 107, 0.46);
+  color: #e7e9e3;
+  font-size: 20px;
+}
+
+.preflight-index ol {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  margin: 0;
+  padding: 22px;
+  list-style: none;
+}
+
+.preflight-index li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 55px 1fr;
+  align-items: center;
+  height: 61px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  color: #58735a;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.preflight-index li::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: #76bb70;
+  opacity: 0;
+}
+
+.preflight-index li.is-active {
+  border-color: rgba(112, 154, 107, 0.38);
+  background: rgba(22, 57, 32, 0.34);
+  color: #d8e2d4;
+}
+
+.preflight-index li.is-active::before {
+  opacity: 1;
+}
+
+.preflight-index li.is-complete {
+  color: #87a983;
+}
+
+.preflight-index li.is-complete b::after {
+  content: " /";
+  color: #76bb70;
+}
+
+.preflight-index b {
+  color: #7fac7a;
+  font-weight: 400;
+}
+
+.preflight-index > p {
+  align-self: center;
+  margin: 0 22px;
+  padding: 24px 14px 0;
+  border-top: 1px solid rgba(112, 154, 107, 0.4);
+  color: #73966f;
+  font-size: 12px;
+  letter-spacing: 0.07em;
+}
+
 .preflight-panel {
-  width: min(980px, 100%);
-  border: 1px solid rgba(103, 215, 135, 0.46);
-  background: rgba(4, 13, 9, 0.96);
-  box-shadow: 0 0 60px rgba(48, 179, 91, 0.12);
-  padding: clamp(22px, 4vw, 48px);
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: 70px 72px;
+  background: transparent;
 }
 
 .preflight-panel h1 {
-  margin: 10px 0;
-  color: #a8f4bc;
-  font-size: clamp(1.35rem, 3vw, 2.3rem);
+  max-width: 920px;
+  margin: 12px 0 24px;
+  color: #e8eae4;
+  font-family: "Bahnschrift Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
 }
 
 .preflight-panel p {
-  max-width: 760px;
-  color: #9baaa0;
+  max-width: 820px;
+  color: #9abb94;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 .preflight-panel button {
-  border: 1px solid rgba(103, 215, 135, 0.5);
-  background: rgba(44, 115, 72, 0.12);
-  color: #dff8e5;
-  padding: 13px 18px;
+  min-height: 48px;
+  border: 1px solid rgba(112, 154, 107, 0.52);
+  border-radius: 0;
+  background: rgba(12, 31, 16, 0.42);
+  color: #a9d2a3;
+  padding: 0 20px;
   font: inherit;
-  font-weight: 800;
+  letter-spacing: 0.045em;
   cursor: pointer;
+  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, transform 70ms linear;
 }
 
 .preflight-panel button:hover,
+.preflight-panel button:focus-visible,
 .preflight-panel button.is-selected {
-  border-color: #8ef0a8;
-  background: rgba(63, 173, 99, 0.25);
+  border-color: #92bd8c;
+  background: rgba(24, 61, 31, 0.62);
+  color: #dcebd8;
+  outline: none;
+}
+
+.preflight-panel button:active {
+  transform: translateY(1px);
 }
 
 .preflight-kicker {
-  color: #67d787;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  color: #7fac7a;
+  font-size: 13px;
+  letter-spacing: 0.08em;
 }
 
 .preflight-language-actions {
   display: flex;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 30px;
 }
 
 .preflight-spinner {
   display: inline-block;
-  width: 34px;
-  height: 34px;
-  border: 2px solid rgba(103, 215, 135, 0.18);
-  border-top-color: #67d787;
-  border-radius: 50%;
-  animation: loading-spin 0.85s linear infinite;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(112, 154, 107, 0.28);
+  border-top-color: #7fac7a;
+  animation: loading-spin 0.9s linear infinite;
 }
 
 .preflight-test-status {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 42px;
-  margin-top: 22px;
-  color: #8ef0a8;
-  font-size: 0.78rem;
+  min-height: 36px;
+  margin-top: 26px;
+  color: #7fac7a;
+  font-size: 12px;
+  letter-spacing: 0.06em;
 }
 
 .preflight-panel button:disabled {
-  cursor: wait;
-  opacity: 0.38;
+  cursor: default;
+  opacity: 0.28;
 }
 
 .preflight-gpu {
   display: block;
+  max-width: 900px;
   overflow-wrap: anywhere;
-  color: #eef8f1;
+  color: #e6e8e2;
+  font-family: "Bahnschrift Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  font-size: 25px;
+  font-weight: 500;
 }
 
 .preflight-warning {
-  margin: 22px 0;
-  border-left: 3px solid #d4ae55;
-  padding: 10px 14px;
-  background: rgba(212, 174, 85, 0.08);
+  margin: 28px 0 0;
+  border-left: 4px solid #8e9f66;
+  padding: 12px 18px;
+  background: rgba(72, 87, 47, 0.1);
+}
+
+.preflight-warning.is-software {
+  border-left-color: #b48362;
 }
 
 .preflight-quality-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin: 28px 0;
+  gap: 12px;
+  width: 1015px;
+  margin: 28px 0 24px;
 }
 
 .preflight-quality-card {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   gap: 8px;
-  min-height: 230px;
+  min-height: 265px;
+  padding: 14px;
   text-align: left;
 }
 
@@ -2194,67 +2332,64 @@ html.preflight-boot #app {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 0.76rem;
+  font-size: 12px;
 }
 
 .preflight-quality-card em {
-  color: #8ef0a8;
-  font-size: 1.05rem;
-  font-weight: 900;
+  color: #7fac7a;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .preflight-quality-preview {
-  height: 105px;
-  border: 1px solid rgba(103, 215, 135, 0.22);
-  background:
-    linear-gradient(180deg, transparent 0 58%, rgba(1, 4, 2, 0.75)),
-    radial-gradient(circle at 50% 60%, #57886b, #15241c 38%, #060b08 72%);
+  height: 150px;
+  border: 1px solid rgba(112, 154, 107, 0.32);
+  background: #020806;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 }
 
 .preflight-quality-preview.is-high {
-  box-shadow: inset 0 0 28px rgba(129, 238, 163, 0.16);
+  box-shadow: none;
 }
 
 .preflight-quality-zoom {
-  position: fixed;
+  position: absolute;
   z-index: 200010;
   top: 50%;
   left: 50%;
-  width: min(90vw, 1680px);
-  max-height: 88vh;
-  border: 1px solid rgba(142, 240, 168, 0.72);
-  background: #030705;
-  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.82);
+  width: 1040px;
+  max-height: 680px;
+  border: 1px solid rgba(112, 154, 107, 0.62);
+  background: #020806;
   opacity: 0;
-  transform: translate(-50%, -48%) scale(0.985);
-  transition: opacity 110ms ease, transform 140ms ease;
+  transform: translate(-50%, -50%);
+  transition: opacity 100ms linear;
   pointer-events: none;
   object-fit: contain;
 }
 
 .preflight-quality-zoom.is-visible {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
 }
 
 .preflight-apply {
-  min-width: 220px;
+  min-width: 270px;
 }
 
 .preflight-black-frame {
-  margin: 28px 0;
+  width: 980px;
+  margin: 30px 0;
   border: 12px solid #000;
   background: #000;
-  box-shadow: 0 0 0 1px rgba(103, 215, 135, 0.25);
+  outline: 1px solid rgba(112, 154, 107, 0.4);
 }
 
 .preflight-black-levels {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  height: clamp(150px, 24vh, 260px);
+  height: 250px;
   background: #000;
 }
 
@@ -2264,12 +2399,11 @@ html.preflight-boot #app {
 
 .preflight-gamma-control {
   display: grid;
-  grid-template-columns: auto minmax(180px, 1fr) 56px;
+  grid-template-columns: 220px 650px 72px;
   align-items: center;
   gap: 14px;
   margin-bottom: 24px;
-  color: #a8f4bc;
-  font-weight: 800;
+  color: #a8c5a2;
 }
 
 .preflight-gamma-control input {
@@ -2290,10 +2424,10 @@ html.preflight-boot #app {
   height: 18px;
   margin-top: -8px;
   appearance: none;
-  border: 2px solid #b7f7c8;
-  border-radius: 50%;
-  background: #43c976;
-  box-shadow: 0 0 12px rgba(67, 201, 118, 0.35);
+  border: 1px solid #96bd91;
+  border-radius: 0;
+  background: #102117;
+  box-shadow: none;
 }
 
 .preflight-gamma-control input::-moz-range-track {
@@ -2305,9 +2439,9 @@ html.preflight-boot #app {
 .preflight-gamma-control input::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  border: 2px solid #b7f7c8;
-  border-radius: 50%;
-  background: #43c976;
+  border: 1px solid #96bd91;
+  border-radius: 0;
+  background: #102117;
 }
 
 .preflight-os-tabs {
@@ -2318,23 +2452,15 @@ html.preflight-boot #app {
 }
 
 .preflight-os-guide {
-  min-height: 150px;
-  border: 1px solid rgba(103, 215, 135, 0.28);
-  background: rgba(103, 215, 135, 0.04);
+  width: 920px;
+  min-height: 210px;
+  border-top: 1px solid rgba(112, 154, 107, 0.4);
+  border-bottom: 1px solid rgba(112, 154, 107, 0.4);
+  background: transparent;
   padding: 18px 24px;
 }
 
 .preflight-os-guide li {
   margin: 10px 0;
-  color: #c5d4c9;
-}
-
-@media (max-width: 760px) {
-  .preflight-quality-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .preflight-quality-card {
-    min-height: 190px;
-  }
+  color: #a8c5a2;
 }

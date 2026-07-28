@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=cinematic-screen-space-stability";
+import { translateRequired } from "./Localization.js?v=preflight-audio-lifecycle";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

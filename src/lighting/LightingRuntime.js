@@ -129,7 +129,8 @@ export class LightingRuntime {
 }
 
 export function applyLightShadowSettings(light, lightConfig, shadowPreset) {
-  light.castShadow = Boolean(shadowPreset.enabled && lightConfig.castShadow);
+  const allowedByTier = !shadowPreset.heroOnly || lightConfig.heroShadow === true;
+  light.castShadow = Boolean(shadowPreset.enabled && allowedByTier && lightConfig.castShadow);
   if (!light.castShadow) return false;
   const mapSize = shadowPreset.mapSize ?? lightConfig.shadowMapSize ?? 512;
   light.shadow.mapSize.set(mapSize, mapSize);

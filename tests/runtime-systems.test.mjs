@@ -309,6 +309,18 @@ test("light shadow settings apply the selected quality preset", () => {
   assert.equal(light.shadow.camera.far, 8);
 });
 
+test("hero-only shadow tier keeps ordinary lights off and the authored hero light on", () => {
+  const ordinary = new THREE.PointLight();
+  const hero = new THREE.PointLight();
+  const preset = { enabled: true, heroOnly: true, mapSize: 512 };
+
+  assert.equal(applyLightShadowSettings(ordinary, { castShadow: true }, preset), false);
+  assert.equal(ordinary.castShadow, false);
+  assert.equal(applyLightShadowSettings(hero, { castShadow: true, heroShadow: true }, preset), true);
+  assert.equal(hero.castShadow, true);
+  assert.equal(hero.shadow.mapSize.width, 512);
+});
+
 test("scene builder waits for all branches before reporting a load failure", async () => {
   const scene = new THREE.Scene();
   const environmentModels = new Map();

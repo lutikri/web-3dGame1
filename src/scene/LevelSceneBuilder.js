@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=cinematic-screen-space-stability";
+} from "../prefabs/PrefabMarkerResolver.js?v=preflight-audio-lifecycle";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=cinematic-screen-space-stability";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=cinematic-screen-space-stability";
+} from "../levels/LevelConfigOverrides.js?v=preflight-audio-lifecycle";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=preflight-audio-lifecycle";
 
 export function createLevelSceneBuilder({
   scene,
@@ -24,6 +24,7 @@ export function createLevelSceneBuilder({
   environmentModels,
   collisionModels,
   prefabInstances,
+  lightingZones,
   getLanguage = () => "en",
 }) {
   return {
@@ -63,7 +64,7 @@ export function createLevelSceneBuilder({
     const excludedNameParts = config.render?.meshNameExcludes ?? [];
     const excludedMeshes = [];
     model.traverse((object) => {
-      if (object.name.startsWith("TRGVOL_")) {
+      if (object.name.startsWith("TRGVOL_") || object.name.startsWith("LZONE_")) {
         object.visible = false;
         return;
       }
@@ -79,6 +80,7 @@ export function createLevelSceneBuilder({
     excludedMeshes.forEach((object) => object.parent?.remove(object));
     environmentModels.set(levelId, model);
     scene.add(model);
+    lightingZones?.registerLevel(levelId, model);
     return [
       ...resolvePrefabMarkers(model),
       ...resolveBriefSocketPrefabs(model, config.physicalBriefing, getLanguage()),
@@ -134,6 +136,7 @@ export function createLevelSceneBuilder({
     const prefab = await loadSceneAsset(prefabConfig.assetPath);
     isolatePrefabRoot(prefab, prefabConfig.rootName, [prefabConfig.light?.markerName]);
     prefab.name = prefabConfig.name;
+    prefab.userData.levelId = levelId;
     prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
     prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
     prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));

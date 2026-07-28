@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=cinematic-screen-space-stability";
+import { LevelSession } from "./LevelSession.js?v=preflight-audio-lifecycle";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

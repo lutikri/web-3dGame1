@@ -25,6 +25,7 @@ export function createPhotometricPointLightRuntime({
   const cameraPositionScratch = new THREE.Vector3();
   const lightPositionScratch = new THREE.Vector3();
   let selectedEntries = [];
+  let activeEntries = [];
   let debugMode = false;
 
   function patchMaterial(material) {
@@ -74,12 +75,16 @@ export function createPhotometricPointLightRuntime({
     if (!runtime?.light || profileConfig?.enabled !== true || !profileConfig.path) return null;
     const entry = {
       light: runtime.light,
+      sourceLight: runtime.light,
       root: runtime.light.parent ?? runtime.root,
       path: profileConfig.path,
       strength: THREE.MathUtils.clamp(Number(profileConfig.strength ?? 1), 0, 2),
       flipY: Boolean(profileConfig.flipY),
       texture: null,
       blend: 0,
+      pooled: false,
+      pooledLight: null,
+      pooledBlend: 0,
     };
     entries.push(entry);
     entry.ready = loadTexture(profileConfig.path)
@@ -103,6 +108,13 @@ export function createPhotometricPointLightRuntime({
     const index = entries.indexOf(entry);
     if (index >= 0) entries.splice(index, 1);
     updateUniforms();
+  }
+
+  function setPooledAssignment(entry, light, blend = 0) {
+    if (!entry) return;
+    entry.pooled = true;
+    entry.pooledLight = light ?? null;
+    entry.pooledBlend = THREE.MathUtils.clamp(Number(blend) || 0, 0, 1);
   }
 
   async function loadTexture(path) {
@@ -132,7 +144,8 @@ export function createPhotometricPointLightRuntime({
   function updateUniforms(dt = 0) {
     camera?.updateMatrixWorld();
     camera?.getWorldPosition?.(cameraPositionScratch);
-    const candidates = entries
+    const legacyEntries = entries.filter((entry) => !entry.pooled);
+    const candidates = legacyEntries
       .filter((entry) => entry.light?.visible && entry.light.intensity > 0 && entry.texture)
       .map((entry) => {
         entry.root?.updateMatrixWorld?.(true);
@@ -150,7 +163,7 @@ export function createPhotometricPointLightRuntime({
       selectedEntries,
     });
     const selectedSet = new Set(selectedEntries);
-    entries.forEach((entry) => {
+    legacyEntries.forEach((entry) => {
       entry.blend = advancePhotometricBlend(
         entry.blend,
         selectedSet.has(entry),
@@ -158,7 +171,13 @@ export function createPhotometricPointLightRuntime({
         transitionSeconds,
       );
     });
-    const activeEntries = selectedEntries;
+    activeEntries = [
+      ...entries.filter((entry) => (
+        entry.pooled && entry.pooledLight?.visible && entry.pooledLight.intensity > 0
+        && entry.texture && entry.pooledBlend > 0
+      )),
+      ...selectedEntries,
+    ].slice(0, maxLights);
     const { profiles, profileIndices } = assignPhotometricProfileSlots(activeEntries, maxProfiles);
     if (camera?.matrixWorld && camera?.matrixWorldInverse) {
       camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
@@ -173,13 +192,15 @@ export function createPhotometricPointLightRuntime({
       uniforms.photometricPointLightCount.value = activeEntries.length;
       uniforms.photometricPointLightDebugMode.value = debugMode ? 1 : 0;
       activeEntries.forEach((entry, index) => {
+        const activeLight = entry.pooled ? entry.pooledLight : entry.light;
         uniforms.photometricPointLightViewPosition.value[index]
-          .setFromMatrixPosition(entry.light.matrixWorld)
+          .setFromMatrixPosition(activeLight.matrixWorld)
           .applyMatrix4(camera.matrixWorldInverse);
         entry.root.updateMatrixWorld(true);
         matrixScratch.copy(entry.root.matrixWorld).invert();
         uniforms.photometricPointLightWorldToLocal.value[index].copy(matrixScratch);
-        uniforms.photometricPointLightStrength.value[index] = entry.strength * entry.blend;
+        const blend = entry.pooled ? entry.pooledBlend : entry.blend;
+        uniforms.photometricPointLightStrength.value[index] = entry.strength * blend;
         uniforms.photometricPointLightFlipY.value[index] = entry.flipY ? 1 : 0;
         uniforms.photometricPointLightProfileIndex.value[index] = profileIndices[index];
       });
@@ -198,28 +219,31 @@ export function createPhotometricPointLightRuntime({
   function getDebugState() {
     return {
       registered: entries.length,
-      active: entries.filter((entry) => entry.light?.visible && entry.light.intensity > 0).length,
+      active: entries.filter((entry) => {
+        const light = entry.pooled ? entry.pooledLight : entry.light;
+        return light?.visible && light.intensity > 0;
+      }).length,
       loadedProfiles: new Set(entries.filter((entry) => entry.texture).map((entry) => entry.path)).size,
       maxLights,
       maxProfiles,
       selectionRadius,
       selectionHysteresis,
       transitionSeconds,
-      selected: selectedEntries.length,
+      selected: activeEntries.length,
       patchedMaterials: patchedMaterials.size,
       compiledMaterials: compiledMaterials.size,
       debugMode,
       entries: entries.map((entry) => ({
-        light: entry.light?.name ?? "",
+        light: (entry.pooled ? entry.pooledLight : entry.light)?.name ?? entry.sourceLight?.name ?? "",
         root: entry.root?.name ?? "",
         path: entry.path,
         loaded: Boolean(entry.texture),
-        visible: Boolean(entry.light?.visible),
-        intensity: Number((entry.light?.intensity ?? 0).toFixed(3)),
+        visible: Boolean((entry.pooled ? entry.pooledLight : entry.light)?.visible),
+        intensity: Number(((entry.pooled ? entry.pooledLight : entry.light)?.intensity ?? 0).toFixed(3)),
         strength: entry.strength,
         flipY: entry.flipY,
-        selected: selectedEntries.includes(entry),
-        blend: Number(entry.blend.toFixed(3)),
+        selected: entry.pooled ? Boolean(entry.pooledLight) : selectedEntries.includes(entry),
+        blend: Number((entry.pooled ? entry.pooledBlend : entry.blend).toFixed(3)),
       })),
     };
   }
@@ -333,6 +357,7 @@ vec3 samplePhotometricPointLightProfile( const in vec3 pointLightViewPosition, c
     prepare,
     register,
     resetClonedMaterial,
+    setPooledAssignment,
     setDebugMode,
     unregister,
     updateUniforms,

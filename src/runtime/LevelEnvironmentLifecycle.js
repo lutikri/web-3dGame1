@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=cinematic-screen-space-stability";
+import { LevelRuntime } from "./LevelRuntime.js?v=preflight-audio-lifecycle";
 
 export class LevelEnvironmentLifecycle {
   constructor({

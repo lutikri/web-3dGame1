@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=cinematic-screen-space-stability";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=preflight-audio-lifecycle";
 
 const MARKER_PREFIX = "PF_";
 

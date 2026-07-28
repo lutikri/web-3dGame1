@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=cinematic-screen-space-stability";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=cinematic-screen-space-stability";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=cinematic-screen-space-stability";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=cinematic-screen-space-stability";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=preflight-audio-lifecycle";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=preflight-audio-lifecycle";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=preflight-audio-lifecycle";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=preflight-audio-lifecycle";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -830,6 +830,14 @@ export const CONFIG = {
       selectionHysteresis: 2,
       transitionSeconds: 0.6,
     },
+    pointLightPool: {
+      fixtureRadius: 10,
+      simpleRadius: 20,
+      selectionHysteresis: 2,
+      transitionSeconds: 0.5,
+      zoneAdjacencyMargin: 0.35,
+      zoneExitPadding: 0.6,
+    },
     pointLights: {},
     fixtures: {},
   },
@@ -935,7 +943,7 @@ export const CONFIG = {
     castNeedleShadows: false,
     presets: {
       off: { enabled: false, mapSize: 0 },
-      min: { enabled: true, mapSize: 512 },
+      min: { enabled: true, heroOnly: true, mapSize: 512 },
       med: { enabled: true, mapSize: 1024 },
       max: { enabled: true, mapSize: 2048 },
     },

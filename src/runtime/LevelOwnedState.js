@@ -10,6 +10,8 @@ export class LevelOwnedState {
     physics,
     playerPosition,
     photometricLights,
+    pointLightPool,
+    lightingZones,
     lighting,
     audio,
     stopEditing,
@@ -20,7 +22,7 @@ export class LevelOwnedState {
     Object.assign(this, {
       scene, environmentModels, collisionModels, prefabInstances,
       interactive, roomLightButtons, interiorFans, physics, playerPosition,
-      photometricLights, lighting, audio, stopEditing, clearNarration,
+      photometricLights, pointLightPool, lightingZones, lighting, audio, stopEditing, clearNarration,
       clearLoadedLevel, resetCollision,
     });
   }
@@ -40,6 +42,7 @@ export class LevelOwnedState {
 
     for (const [key, runtime] of [...this.prefabInstances.entries()]) {
       if (!key.startsWith(`${levelId}:`)) continue;
+      this.pointLightPool?.unregister(runtime.pointLightPoolEntry);
       this.photometricLights.unregister(runtime.photometricPointLight);
       (runtime.materialClones ?? runtime.emissiveMaterials ?? []).forEach((material) => material.dispose());
       runtime.briefSheet?.dispose?.();
@@ -50,6 +53,7 @@ export class LevelOwnedState {
     removeLevelEntries(this.roomLightButtons, levelId);
     removeLevelEntries(this.interiorFans, levelId);
     this.lighting.disposeLevel(levelId);
+    this.lightingZones?.disposeLevel(levelId);
     this.audio.disposeLevel(levelId);
     this.clearLoadedLevel(levelId);
     this.resetCollision();

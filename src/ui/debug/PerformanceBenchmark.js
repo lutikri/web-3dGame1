@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=cinematic-screen-space-stability";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
 
 const EFFECT_KEYS = [
   "bloom",

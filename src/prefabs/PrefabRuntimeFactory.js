@@ -1,18 +1,19 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=cinematic-screen-space-stability";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=cinematic-screen-space-stability";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=cinematic-screen-space-stability";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=cinematic-screen-space-stability";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=cinematic-screen-space-stability";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=cinematic-screen-space-stability";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=preflight-audio-lifecycle";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=preflight-audio-lifecycle";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=preflight-audio-lifecycle";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=preflight-audio-lifecycle";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=preflight-audio-lifecycle";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=preflight-audio-lifecycle";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=preflight-audio-lifecycle";
 
 export function createPrefabRuntimeFactory({
   config,
   materials,
   collisionDebugMaterial,
   photometricLights,
+  pointLightPool,
   isCollisionHelper,
   ensureSecondUvSet,
   getObjectMatchNames,
@@ -68,6 +69,7 @@ export function createPrefabRuntimeFactory({
     const runtime = {
       root: prefab,
       light: null,
+      pointLightPoolEntry: null,
       emissiveMaterials,
       materialClones,
       materialCloneEntries,
@@ -146,6 +148,9 @@ export function createPrefabRuntimeFactory({
     applyShadowSettings(light, lightConfig);
     runtime.light = light;
     runtime.photometricPointLight = light.isPointLight ? photometricLights.register(runtime, lightConfig) : null;
+    runtime.pointLightPoolEntry = light.isPointLight
+      ? pointLightPool?.register(runtime, lightConfig, runtime.photometricPointLight) ?? null
+      : null;
   }
 
   function resolveMaterialKey(object, prefabConfig) {

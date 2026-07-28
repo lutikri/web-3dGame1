@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=cinematic-screen-space-stability";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=cinematic-screen-space-stability";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=cinematic-screen-space-stability";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=cinematic-screen-space-stability";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=preflight-audio-lifecycle";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=preflight-audio-lifecycle";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=preflight-audio-lifecycle";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=preflight-audio-lifecycle";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -251,6 +251,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         decay: 0.49,
         position: new THREE.Vector3(3.1715786524857754, 2.2591211289988005, -2.910675730137223),
         castShadow: true,
+        heroShadow: true,
         shadowMapSize: 512,
         shadowBias: -0.0006,
         shadowNormalBias: 0.035,

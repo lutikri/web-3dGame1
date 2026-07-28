@@ -20,6 +20,8 @@ test("level owned state removes only the disposed level resources", () => {
     roomLightButtons: [], interiorFans: [],
     physics: { resetWorld: () => calls.push("physics") }, playerPosition: {},
     photometricLights: { unregister: () => calls.push("photometric") },
+    pointLightPool: { unregister: () => calls.push("point-pool") },
+    lightingZones: { disposeLevel: () => calls.push("lighting-zones") },
     lighting: { disposeLevel: () => calls.push("lighting") },
     audio: { disposeLevel: () => calls.push("audio") },
     stopEditing: () => calls.push("editing"), clearNarration: () => calls.push("narration"),
@@ -32,6 +34,8 @@ test("level owned state removes only the disposed level resources", () => {
   assert.equal(prefabInstances.has("b:lamp"), true);
   assert.deepEqual(interactive.map((item) => item.userData.levelId), ["b"]);
   assert.ok(calls.includes("collision"));
+  assert.ok(calls.includes("point-pool"));
+  assert.ok(calls.includes("lighting-zones"));
 });
 
 test("removeLevelEntries preserves foreign entries", () => {

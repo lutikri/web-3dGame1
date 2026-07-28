@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=cinematic-screen-space-stability";
+} from "./FluorescentBehavior.js?v=preflight-audio-lifecycle";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

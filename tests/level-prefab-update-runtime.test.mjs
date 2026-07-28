@@ -43,3 +43,37 @@ test("level prefab update runtime owns light intensity and emissive feedback", (
   assert.equal(emissive.emissiveIntensity, 1);
   assert.equal(darkFixture.emissiveIntensity, 0);
 });
+
+test("pooled point emitters stay hidden while retaining their computed intensity", () => {
+  const placed = {
+    light: { intensity: 0, visible: true, userData: { pooledEmitter: true } },
+    startupElapsed: 0,
+    afterglowRemaining: 0,
+    faultyStarterElapsed: 0,
+    flickerTime: 0,
+    fixtureFlicker: {},
+    startupPattern: [],
+    emissiveMaterials: [],
+  };
+  const runtime = new LevelPrefabUpdateRuntime({
+    config: {
+      feedback: { roomLightSwitch: {} },
+      levelEnvironments: { room: { prefabs: [{ name: "Lamp", light: { enabled: true, intensity: 4 } }] } },
+    },
+    instances: new Map([["room:Lamp", placed]]),
+    getTime: () => 0,
+    getStarterFaultFactor: () => 1,
+    updateFlicker: () => {},
+    getFlickerFactor: () => 1,
+    getStartupDuration: () => 0,
+    getStartupFactor: () => 1,
+    getRoomLightVisualFactor: () => 1,
+    getRoomLightAfterglowFactor: () => 0,
+    getSceneLightFactor: () => 1,
+  });
+
+  runtime.updateLights(0.1);
+
+  assert.equal(placed.light.visible, false);
+  assert.equal(placed.light.intensity, 4);
+});

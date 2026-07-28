@@ -40,8 +40,8 @@ export class LevelBindingRuntime {
     }
     this.applyLevelPrefabConfig(levelId, prefabName, false);
     if (nextEnabled && !wasEnabled) this.resetStartup(runtime, lightConfig);
-    // Keep the light in Three.js' light layout so OFF/ON does not compile new NUM_*_LIGHTS shader variants.
-    runtime.light.visible = true;
+    // Pool slots stay in Three.js' layout; pooled prefab lights remain authored emitters only.
+    runtime.light.visible = runtime.light.userData?.pooledEmitter !== true;
     if (!nextEnabled) runtime.light.intensity = 0;
     this.updateControlTooltip();
     return true;

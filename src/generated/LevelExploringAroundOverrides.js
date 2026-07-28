@@ -766,24 +766,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "retryChance": 0
         }
       },
-      "name": "redBulkLamp_Exit1",
-      "position": {
-        "x": 1.0201932191848755,
-        "y": 2.5138936042785645,
-        "z": 9.726974487304688
-      },
-      "rotation": {
-        "isEuler": true,
-        "_x": 0,
-        "_y": 1.5707960232351643,
-        "_z": 0,
-        "_order": "XYZ"
-      },
-      "scale": {
-        "x": 1.200000006609485,
-        "y": 1.2000000476837158,
-        "z": 1.200000006609485
-      }
+      "name": "redBulkLamp_Exit1"
     },
     {
       "light": {

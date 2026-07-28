@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as THREE from "three";
 
 import {
   advancePhotometricBlend,
@@ -7,6 +8,11 @@ import {
   selectPhotometricLightEntries,
 } from "../src/lighting/PhotometricPointLightRuntime.js";
 import { getGraphicsQualityProfile } from "../src/config/GraphicsQualityProfiles.js";
+import {
+  advancePoolBlend,
+  createPointLightPoolRuntime,
+  selectPointLightPoolEntries,
+} from "../src/lighting/PointLightPoolRuntime.js";
 
 test("photometric lights retain the profile assigned to each fixture type", () => {
   const fluorescentTexture = { name: "fluorescent" };
@@ -79,7 +85,106 @@ test("photometric fixture strength fades in without changing shader slots", () =
 });
 
 test("graphics quality selects the photometric shader slot budget before startup", () => {
-  assert.equal(getGraphicsQualityProfile("low").photometricLightSlots, 1);
-  assert.equal(getGraphicsQualityProfile("medium").photometricLightSlots, 2);
-  assert.equal(getGraphicsQualityProfile("high").photometricLightSlots, 4);
+  assert.equal(getGraphicsQualityProfile("low").pointLightSlots, 5);
+  assert.equal(getGraphicsQualityProfile("medium").pointLightSlots, 8);
+  assert.equal(getGraphicsQualityProfile("high").pointLightSlots, 12);
+  assert.equal(getGraphicsQualityProfile("low").photometricLightSlots, 2);
+  assert.equal(getGraphicsQualityProfile("medium").photometricLightSlots, 4);
+  assert.equal(getGraphicsQualityProfile("high").photometricLightSlots, 6);
+  assert.equal(getGraphicsQualityProfile("low").shadowQuality, "off");
+  assert.equal(getGraphicsQualityProfile("medium").shadowQuality, "min");
+  assert.equal(getGraphicsQualityProfile("high").shadowQuality, "med");
+  assert.equal(getGraphicsQualityProfile("medium").gtaoQuality, "min");
+  assert.equal(getGraphicsQualityProfile("medium").effects.includes("lensEffects"), true);
+  assert.equal(getGraphicsQualityProfile("medium").maxRenderPixels, 1920 * 1080);
+});
+
+test("point light pool assigns fixture, simple, and off tiers by distance", () => {
+  const near = { name: "near" };
+  const mid = { name: "mid" };
+  const far = { name: "far" };
+  const selected = selectPointLightPoolEntries([
+    { entry: far, distanceSq: 21 ** 2, hasFixture: true },
+    { entry: mid, distanceSq: 14 ** 2, hasFixture: true },
+    { entry: near, distanceSq: 6 ** 2, hasFixture: true },
+  ], {
+    maxLights: 3,
+    maxFixtureLights: 1,
+    fixtureRadius: 10,
+    simpleRadius: 20,
+  });
+
+  assert.deepEqual(selected, [
+    { entry: near, tier: "fixture" },
+    { entry: mid, tier: "simple" },
+  ]);
+});
+
+test("point light pool hysteresis retains tiers and fades new slots in", () => {
+  const fixture = { name: "fixture" };
+  assert.deepEqual(selectPointLightPoolEntries([
+    { entry: fixture, distanceSq: 11.5 ** 2, hasFixture: true },
+  ], {
+    maxLights: 1,
+    maxFixtureLights: 1,
+    fixtureRadius: 10,
+    simpleRadius: 20,
+    hysteresis: 2,
+    previousTiers: new Map([[fixture, "fixture"]]),
+  }), [{ entry: fixture, tier: "fixture" }]);
+  assert.equal(advancePoolBlend(0, true, 0.25, 0.5), 0.5);
+});
+
+test("lighting zones outrank distance and preactivate adjacent emitters without fixtures", () => {
+  const active = { name: "active" };
+  const adjacent = { name: "adjacent" };
+  const outside = { name: "outside" };
+  assert.deepEqual(selectPointLightPoolEntries([
+    { entry: outside, distanceSq: 1, hasFixture: true, zoneTier: "off", priority: 2, zoneId: "Outside" },
+    { entry: adjacent, distanceSq: 100, hasFixture: true, zoneTier: "simple", priority: 1, zoneId: "Next" },
+    { entry: active, distanceSq: 144, hasFixture: true, zoneTier: "fixture", priority: 0, zoneId: "Here" },
+  ], {
+    maxLights: 2,
+    maxFixtureLights: 1,
+    fixtureRadius: 2,
+    simpleRadius: 2,
+  }), [
+    { entry: active, tier: "fixture", zoneId: "Here" },
+    { entry: adjacent, tier: "simple", zoneId: "Next" },
+  ]);
+});
+
+test("point light runtime keeps authored emitters hidden and copies them into fixed slots", () => {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera();
+  camera.position.set(0, 0, 0);
+  const root = new THREE.Group();
+  scene.add(root);
+  const source = new THREE.PointLight(0xff8800, 4, 12, 1.5);
+  source.position.set(0, 0, 5);
+  root.add(source);
+  let assignment = null;
+  const pool = createPointLightPoolRuntime({
+    scene,
+    camera,
+    photometricLights: { setPooledAssignment: (...args) => { assignment = args; } },
+    maxLights: 1,
+    maxFixtureLights: 1,
+    fixtureRadius: 10,
+    simpleRadius: 20,
+    transitionSeconds: 0,
+  });
+  const profile = {};
+  const entry = pool.register({ root, light: source }, {}, profile);
+
+  pool.update(1);
+
+  const slot = scene.children.find((object) => object.userData.pointLightPoolSlot === 0);
+  assert.equal(source.visible, false);
+  assert.equal(slot.intensity, 4);
+  assert.equal(slot.color.getHex(), 0xff8800);
+  assert.deepEqual(slot.position.toArray(), [0, 0, 5]);
+  assert.deepEqual(assignment, [profile, slot, 1]);
+  pool.unregister(entry);
+  assert.equal(slot.intensity, 0);
 });

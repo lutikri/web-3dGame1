@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=cinematic-screen-space-stability";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=cinematic-screen-space-stability";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=cinematic-screen-space-stability";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=cinematic-screen-space-stability";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=preflight-audio-lifecycle";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=preflight-audio-lifecycle";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=preflight-audio-lifecycle";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=preflight-audio-lifecycle";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
@@ -121,6 +121,7 @@ const LEVEL_INTRO_SHIFT_DEFAULTS = {
         decay: 1,
         position: new THREE.Vector3(-0.45, 2.33, -0.47),
         castShadow: true,
+        heroShadow: true,
         shadowMapSize: 512,
         shadowBias: -0.0006,
         shadowNormalBias: 0.035,

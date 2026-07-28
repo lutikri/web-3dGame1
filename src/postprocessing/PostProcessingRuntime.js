@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=cinematic-screen-space-stability";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=preflight-audio-lifecycle";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=cinematic-screen-space-stability";
+} from "./PostProcessingShaders.js?v=preflight-audio-lifecycle";
 
 export class PostProcessingRuntime {
   composer = null;
@@ -160,6 +160,7 @@ export class PostProcessingRuntime {
       this.composer.addPass(this.smaaPass);
     }
     this.setupRealism();
+    this.resize(window.innerWidth, window.innerHeight);
   }
 
   #setupLut(config, revision, add) {
@@ -176,18 +177,27 @@ export class PostProcessingRuntime {
   }
 
   resize(width, height) {
+    const pixelRatio = this.renderer.getPixelRatio();
+    this.composer?.setPixelRatio(pixelRatio);
     this.composer?.setSize(width, height);
+    const renderWidth = width * pixelRatio;
+    const renderHeight = height * pixelRatio;
     const quality = this.getQuality();
     if (this.gtaoPass) {
       const scale = this.presets.getGtao(quality.gtao).resolutionScale ?? 1;
-      this.gtaoPass.setSize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
+      this.gtaoPass.setSize(
+        Math.max(1, Math.round(renderWidth * scale)),
+        Math.max(1, Math.round(renderHeight * scale)),
+      );
     }
     if (this.ssrPass) {
       const scale = this.presets.getSsr(quality.ssr).resolutionScale ?? 1;
-      this.ssrPass.setSize(Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale)));
+      this.ssrPass.setSize(
+        Math.max(1, Math.round(renderWidth * scale)),
+        Math.max(1, Math.round(renderHeight * scale)),
+      );
     }
-    this.bloomPass?.setSize(width, height);
-    this.sharpenPass?.uniforms.resolution.value.set(width, height);
+    this.sharpenPass?.uniforms.resolution.value.set(renderWidth, renderHeight);
     this.#updateFxaa();
     this.resizeRealism(width, height);
   }

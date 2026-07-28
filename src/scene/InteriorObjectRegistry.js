@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=cinematic-screen-space-stability";
+import { applyAxisRotation } from "./TransformUtils.js?v=preflight-audio-lifecycle";
 
 export class InteriorObjectRegistry {
   constructor(options) {

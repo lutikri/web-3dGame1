@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=cinematic-screen-space-stability";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=preflight-audio-lifecycle";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

@@ -12,6 +12,7 @@ export const POST_PROCESSING_CONFIG = {
       },
       "min": {
         "enabled": true,
+        "resolutionScale": 0.5,
         "blendIntensity": 0.45,
         "radius": 0.28,
         "distanceExponent": 1.5,

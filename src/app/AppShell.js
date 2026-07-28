@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=cinematic-screen-space-stability";
-import { translate } from "./Localization.js?v=cinematic-screen-space-stability";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=cinematic-screen-space-stability";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=cinematic-screen-space-stability";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=cinematic-screen-space-stability";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=cinematic-screen-space-stability";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=cinematic-screen-space-stability";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=preflight-audio-lifecycle";
+import { translate } from "./Localization.js?v=preflight-audio-lifecycle";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=preflight-audio-lifecycle";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=preflight-audio-lifecycle";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=preflight-audio-lifecycle";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=preflight-audio-lifecycle";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=preflight-audio-lifecycle";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,12 +14,13 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=cinematic-screen-space-stability";
-import { createAppPanelController } from "./AppPanelController.js?v=cinematic-screen-space-stability";
-import { createAppRouter } from "./AppRouter.js?v=cinematic-screen-space-stability";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=cinematic-screen-space-stability";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=cinematic-screen-space-stability";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=cinematic-screen-space-stability";
+} from "./AppPersistence.js?v=preflight-audio-lifecycle";
+import { createAppPanelController } from "./AppPanelController.js?v=preflight-audio-lifecycle";
+import { createAppRouter } from "./AppRouter.js?v=preflight-audio-lifecycle";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=preflight-audio-lifecycle";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=preflight-audio-lifecycle";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=preflight-audio-lifecycle";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=preflight-audio-lifecycle";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -30,6 +31,12 @@ export function createAppShell({ gameApi }) {
   const routeLoadingTitle = document.querySelector("#routeLoadingTitle");
   const routeLoadingStatus = document.querySelector("#routeLoadingStatus");
   const routeLoadingBarFill = document.querySelector("#routeLoadingBarFill");
+  const uiAudio = createUiAudioInteractionRuntime({
+    root: overlay,
+    isAudioUnlocked: () => gameApi.isAudioUnlocked?.(),
+    playHover: () => gameApi.playSoundGroup?.("menuHover"),
+    playClick: () => gameApi.playSoundGroup?.("menuClick"),
+  });
   const subtitleQueue = createSubtitleQueue({ element: document.querySelector("#operatorSubtitle") });
   const tutorialHintQueue = createTutorialHintQueue({
     element: document.querySelector("#tutorialHint"),
@@ -167,6 +174,8 @@ export function createAppShell({ gameApi }) {
 
   function wireActions() {
     document.addEventListener("click", (event) => {
+      gameApi.unlockAudio?.();
+      uiAudio.handleClick(event);
       const actionTarget = event.target.closest("[data-app-action]");
       if (actionTarget) {
         runAction(actionTarget.dataset.appAction);
@@ -176,6 +185,7 @@ export function createAppShell({ gameApi }) {
     });
 
     document.addEventListener("keydown", (event) => {
+      gameApi.unlockAudio?.();
       if (briefingPanel.isActive() && event.code === "Enter" && !event.repeat) {
         event.preventDefault();
         dismissBriefingAndRestorePointerLock();
@@ -271,7 +281,10 @@ export function createAppShell({ gameApi }) {
   }
 
   function wireTutorialHints() {
-    document.addEventListener("mousemove", (event) => levelTutorialRuntime.handleMouseMove(event));
+    document.addEventListener("mousemove", (event) => {
+      uiAudio.handlePointerMove(event);
+      levelTutorialRuntime.handleMouseMove(event);
+    });
     window.addEventListener("operatorgame:hover-target", (event) => {
       introTutorialFlow.handleHover(event.detail);
       levelTutorialRuntime.handleHover(event.detail);
@@ -292,6 +305,7 @@ export function createAppShell({ gameApi }) {
 
   function startIntroShift() {
     if (transitionActive) return;
+    gameApi.setMenuAudioActive?.(false);
     transitionActive = true;
     hideOverlay();
     window.setTimeout(async () => {
@@ -385,6 +399,7 @@ export function createAppShell({ gameApi }) {
     if (transitionActive) return false;
     const level = LEVELS[levelId];
     if (!level?.playable || (!force && !isLevelUnlocked(levelId))) return false;
+    gameApi.setMenuAudioActive?.(false);
 
     const transition = runRouteTransition({
       title: getLevelTitle(levelId),
@@ -556,6 +571,7 @@ export function createAppShell({ gameApi }) {
   }
 
   function showPanel(panelName) {
+    gameApi.setMenuAudioActive?.(!activeGameplayLevelId);
     panelController.show(panelName);
   }
 

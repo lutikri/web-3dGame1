@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=cinematic-screen-space-stability";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=cinematic-screen-space-stability";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=cinematic-screen-space-stability";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=cinematic-screen-space-stability";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=preflight-audio-lifecycle";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=preflight-audio-lifecycle";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=preflight-audio-lifecycle";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=preflight-audio-lifecycle";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -82,8 +82,8 @@ export class LevelPrefabConfigRuntime {
       this.#refreshStructural(levelId, structural);
       return;
     }
-    // Disabled prefab lights stay registered with zero intensity to keep shader programs stable.
-    runtime.light.visible = true;
+    // Pooled point lights are authored emitters; only fixed pool slots enter Three's light layout.
+    runtime.light.visible = runtime.light.userData.pooledEmitter !== true;
     runtime.light.color.set(light.color);
     runtime.light.userData.baseIntensity = light.intensity;
     runtime.light.distance = light.distance;
