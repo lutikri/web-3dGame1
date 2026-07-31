@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=passive-flashlight-prefab";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=passive-flashlight-prefab";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=passive-flashlight-prefab";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=passive-flashlight-prefab";
+import { createDebugHub } from "./DebugHub.js?v=inventory-runtime";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=inventory-runtime";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=inventory-runtime";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=inventory-runtime";
 
 export class DebugToolsRuntime {
   constructor(options) {

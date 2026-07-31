@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=passive-flashlight-prefab";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=inventory-runtime";
 
 const MARKER_PREFIX = "PF_";
 

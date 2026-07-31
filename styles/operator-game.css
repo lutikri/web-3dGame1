@@ -2464,3 +2464,64 @@ html.preflight-boot #app {
   margin: 10px 0;
   color: #a8c5a2;
 }
+/* Inventory selector: gameplay HUD, visible only while Tab is held. */
+.inventory-selector {
+  position: fixed;
+  left: clamp(30px, 4vw, 76px);
+  top: 50%;
+  z-index: 42;
+  display: grid;
+  gap: 8px;
+  width: 190px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-family: var(--font-mono, monospace);
+  color: rgba(223, 238, 218, 0.68);
+}
+
+.inventory-selector[hidden] {
+  display: none;
+}
+
+.inventory-selector__slot {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgba(104, 164, 107, 0.2);
+  background: rgba(2, 12, 8, 0.72);
+  opacity: 0.58;
+  transition: min-height 90ms ease, opacity 90ms ease, border-color 90ms ease;
+}
+
+.inventory-selector__slot.is-selected {
+  min-height: 62px;
+  border-color: rgba(133, 205, 136, 0.72);
+  color: rgba(232, 243, 226, 0.96);
+  background: rgba(8, 31, 19, 0.86);
+  opacity: 1;
+}
+
+.inventory-selector__slot.is-empty {
+  opacity: 0.28;
+}
+
+.inventory-selector__icon {
+  font-size: 25px;
+  line-height: 1;
+  color: #81c486;
+}
+
+.inventory-selector__slot.is-selected .inventory-selector__icon {
+  font-size: 32px;
+}
+
+.inventory-selector__label {
+  overflow: hidden;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

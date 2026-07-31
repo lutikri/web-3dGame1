@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=passive-flashlight-prefab";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=passive-flashlight-prefab";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=passive-flashlight-prefab";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=passive-flashlight-prefab";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=inventory-runtime";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-runtime";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-runtime";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-runtime";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

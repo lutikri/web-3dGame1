@@ -3,134 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=passive-flashlight-prefab";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=inventory-runtime";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=passive-flashlight-prefab";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=passive-flashlight-prefab";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=passive-flashlight-prefab";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=passive-flashlight-prefab";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=passive-flashlight-prefab";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=passive-flashlight-prefab";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=passive-flashlight-prefab";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=passive-flashlight-prefab";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=passive-flashlight-prefab";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=passive-flashlight-prefab";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=passive-flashlight-prefab";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=passive-flashlight-prefab";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=passive-flashlight-prefab";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=passive-flashlight-prefab";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=passive-flashlight-prefab";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=passive-flashlight-prefab";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=passive-flashlight-prefab";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=passive-flashlight-prefab";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=passive-flashlight-prefab";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=passive-flashlight-prefab";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=passive-flashlight-prefab";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=passive-flashlight-prefab";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=passive-flashlight-prefab";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=passive-flashlight-prefab";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=passive-flashlight-prefab";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=passive-flashlight-prefab";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=passive-flashlight-prefab";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=passive-flashlight-prefab";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=passive-flashlight-prefab";
+} from "./game/ShiftReport.js?v=inventory-runtime";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=inventory-runtime";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=inventory-runtime";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=inventory-runtime";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=inventory-runtime";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=inventory-runtime";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=inventory-runtime";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=inventory-runtime";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=inventory-runtime";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=inventory-runtime";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=inventory-runtime";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=inventory-runtime";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=inventory-runtime";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=inventory-runtime";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=inventory-runtime";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=inventory-runtime";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=inventory-runtime";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=inventory-runtime";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=inventory-runtime";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=inventory-runtime";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=inventory-runtime";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=inventory-runtime";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=inventory-runtime";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=inventory-runtime";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=inventory-runtime";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=inventory-runtime";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=inventory-runtime";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=inventory-runtime";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=inventory-runtime";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=inventory-runtime";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=passive-flashlight-prefab";
+} from "./config/GraphicsQualityProfiles.js?v=inventory-runtime";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=passive-flashlight-prefab";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=passive-flashlight-prefab";
-import { createStatusScreen } from "./StatusScreen.js?v=passive-flashlight-prefab";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=passive-flashlight-prefab";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=passive-flashlight-prefab";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=passive-flashlight-prefab";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=passive-flashlight-prefab";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=passive-flashlight-prefab";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=passive-flashlight-prefab";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=passive-flashlight-prefab";
+} from "./scene/TextureStreaming.js?v=inventory-runtime";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=inventory-runtime";
+import { createStatusScreen } from "./StatusScreen.js?v=inventory-runtime";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=inventory-runtime";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=inventory-runtime";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=inventory-runtime";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=inventory-runtime";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=inventory-runtime";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=inventory-runtime";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=inventory-runtime";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=passive-flashlight-prefab";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=passive-flashlight-prefab";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=passive-flashlight-prefab";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=inventory-runtime";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=inventory-runtime";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=inventory-runtime";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=passive-flashlight-prefab";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=passive-flashlight-prefab";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=passive-flashlight-prefab";
-import { AssetCache } from "./runtime/AssetCache.js?v=passive-flashlight-prefab";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=passive-flashlight-prefab";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=passive-flashlight-prefab";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=passive-flashlight-prefab";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=passive-flashlight-prefab";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=passive-flashlight-prefab";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=passive-flashlight-prefab";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=passive-flashlight-prefab";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=passive-flashlight-prefab";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=passive-flashlight-prefab";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=passive-flashlight-prefab";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=passive-flashlight-prefab";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=passive-flashlight-prefab";
+} from "./lighting/FluorescentBehavior.js?v=inventory-runtime";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=inventory-runtime";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=inventory-runtime";
+import { AssetCache } from "./runtime/AssetCache.js?v=inventory-runtime";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=inventory-runtime";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=inventory-runtime";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=inventory-runtime";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=inventory-runtime";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=inventory-runtime";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=inventory-runtime";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=inventory-runtime";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=inventory-runtime";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=inventory-runtime";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=inventory-runtime";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=inventory-runtime";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=inventory-runtime";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=passive-flashlight-prefab";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=passive-flashlight-prefab";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=passive-flashlight-prefab";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=passive-flashlight-prefab";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=passive-flashlight-prefab";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=passive-flashlight-prefab";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=passive-flashlight-prefab";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=passive-flashlight-prefab";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=passive-flashlight-prefab";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=passive-flashlight-prefab";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=passive-flashlight-prefab";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=passive-flashlight-prefab";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=passive-flashlight-prefab";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=passive-flashlight-prefab";
-import { PlayerController } from "./player/PlayerController.js?v=passive-flashlight-prefab";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=passive-flashlight-prefab";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=passive-flashlight-prefab";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=passive-flashlight-prefab";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=passive-flashlight-prefab";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=passive-flashlight-prefab";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=passive-flashlight-prefab";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=passive-flashlight-prefab";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=passive-flashlight-prefab";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=passive-flashlight-prefab";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=passive-flashlight-prefab";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=passive-flashlight-prefab";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=passive-flashlight-prefab";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=passive-flashlight-prefab";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=passive-flashlight-prefab";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=passive-flashlight-prefab";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=passive-flashlight-prefab";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=passive-flashlight-prefab";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=passive-flashlight-prefab";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=passive-flashlight-prefab";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=passive-flashlight-prefab";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=passive-flashlight-prefab";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=passive-flashlight-prefab";
+} from "./scene/InteriorObjectRegistry.js?v=inventory-runtime";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=inventory-runtime";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=inventory-runtime";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=inventory-runtime";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=inventory-runtime";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=inventory-runtime";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=inventory-runtime";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=inventory-runtime";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=inventory-runtime";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=inventory-runtime";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=inventory-runtime";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=inventory-runtime";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=inventory-runtime";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=inventory-runtime";
+import { PlayerController } from "./player/PlayerController.js?v=inventory-runtime";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=inventory-runtime";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=inventory-runtime";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=inventory-runtime";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=inventory-runtime";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=inventory-runtime";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=inventory-runtime";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=inventory-runtime";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=inventory-runtime";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=inventory-runtime";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=inventory-runtime";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=inventory-runtime";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=inventory-runtime";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=inventory-runtime";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=inventory-runtime";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=inventory-runtime";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=inventory-runtime";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=inventory-runtime";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=inventory-runtime";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=inventory-runtime";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=inventory-runtime";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=inventory-runtime";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=inventory-runtime";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=passive-flashlight-prefab";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=inventory-runtime";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -512,7 +513,10 @@ const levelEnvironmentLifecycle = new LevelEnvironmentLifecycle({
   environments: CONFIG.levelEnvironments,
   lighting: lightingRuntime,
   sceneBuilder: levelSceneBuilder,
-  disposeOwned: (levelId) => levelOwnedState.disposeLevel(levelId),
+  disposeOwned: (levelId) => {
+    itemInteractionRuntime.unregisterLevel(levelId);
+    levelOwnedState.disposeLevel(levelId);
+  },
   rebuildStaticPhysics: rebuildLevelStaticPhysics,
   rebuildDebugPanels: rebuildSceneDebugPanels,
   updateActiveEnvironment: () => levelEnvironmentActivation.activate(),
@@ -741,13 +745,20 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   },
 });
 let briefingSheetOpener = null;
-const briefInteractionRuntime = new BriefInteractionRuntime({
+const inventorySelectorView = createInventorySelectorView();
+const itemInteractionRuntime = createItemInteractionRuntime({
   interactive,
-  getHoveredInteractive: interactionHoverRuntime.getHoveredInteractive,
+  physics: physicsSystem,
+  camera,
   openBriefingSheet: (request) => briefingSheetOpener?.(request),
-  onOpened: (detail) => activeLevelSessionRuntime.emit("briefOpened", {
+  onSpecialViewOpened: (item) => activeLevelSessionRuntime.emit("briefOpened", {
     target: "brief",
-    sheetIndex: detail.sheetIndex,
+    sheetIndex: item.briefingRequest?.sheetIndex ?? 0,
+  }),
+  presentSelector: inventorySelectorView.present,
+  onStored: (item, slotIndex) => activeLevelSessionRuntime.emit("itemStored", {
+    target: item.target?.userData.kind === "briefSheet" ? "brief" : item.icon,
+    slotIndex,
   }),
   setHoldProgress: (progress, active) => {
     document.body.style.setProperty("--hold-progress", String(progress * 100));
@@ -1369,7 +1380,7 @@ const animationLoop = new AnimationLoop({
     levelTriggerSequenceRuntime.update,
     (dt) => playerController.update(dt),
     updateHoverTarget,
-    (dt) => briefInteractionRuntime.update(dt),
+    (dt) => itemInteractionRuntime.update(dt),
     updateControlLabels,
     updateInterior,
     (dt) => operatorPanelRuntime.update(dt),
@@ -1614,7 +1625,7 @@ levelPrefabConfigRuntime = new LevelPrefabConfigRuntime({
 
 function registerPrefabInteraction(...args) {
   const physicsRuntime = prefabPhysicsRegistrar.register(...args);
-  briefInteractionRuntime.register(...args);
+  itemInteractionRuntime.register(...args);
   return physicsRuntime;
 }
 
@@ -1984,16 +1995,23 @@ const operatorInputRuntime = createOperatorInputRuntime({
   canLean: () => !interactionHoverRuntime.isViewObstructed(
     (CONFIG.camera.operatorMovement?.leanForward ?? 0.16) + (CONFIG.player?.collision?.cameraRadius ?? 0.12),
   ),
+  beginItemPrimary: (target) => itemInteractionRuntime.beginPrimary(target),
+  releaseItemPrimary: () => itemInteractionRuntime.releasePrimary(),
+  cancelItemPrimary: () => itemInteractionRuntime.cancelPrimary(),
+  activateRelevantItem: (target) => itemInteractionRuntime.activateRelevant(target),
+  dropHandledItem: (options) => itemInteractionRuntime.dropHandled(options),
+  beginInventorySelection: () => itemInteractionRuntime.beginSelection(),
+  moveInventorySelection: (direction) => itemInteractionRuntime.moveSelection(direction),
+  commitInventorySelection: () => itemInteractionRuntime.commitSelection(),
+  cancelInventorySelection: () => itemInteractionRuntime.cancelSelection(),
   activateInteractive: (target) => {
-    if (target?.userData.kind === "briefSheet") briefInteractionRuntime.begin(target);
-    else if (target?.userData.kind === "controlButton") setControlButtonPressed(target, true);
+    if (target?.userData.kind === "controlButton") setControlButtonPressed(target, true);
     else if (target?.userData.kind === "roomLightButton") setRoomLightButtonPressed(target, true);
     else if (target?.userData.kind === "bulkheadHandle") beginBulkheadHandleInteraction();
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
   },
   releasePrimaryInteractions: () => {
-    briefInteractionRuntime.release();
     bulkheadExitRuntime.release();
     releaseDoorLatchHandles();
     endHingedDoorDrag();
@@ -2076,6 +2094,7 @@ const getRuntimeDebugState = () => createRuntimeDebugSnapshot(() => ({
   photometricPointLights: photometricPointLightRuntime.getDebugState(),
   pointLightPool: pointLightPoolRuntime.getDebugState(),
   lightingZones: lightingZoneRuntime.getDebugState(),
+  inventory: itemInteractionRuntime.getSnapshot(),
   adaptiveQuality: adaptiveQualityRuntime.snapshot(),
   interiorFans,
   customInteriorMaterials: getCustomInteriorMaterialDebugState(),
@@ -2121,7 +2140,10 @@ installOperatorGameApi(window, {
     briefingSheetOpener = typeof callback === "function" ? callback : null;
   },
   playSoundGroup: (groupKey, options) => audioRuntime.playRandom(groupKey, options),
-  finishHoldInteraction: () => briefInteractionRuntime.release(),
+  finishHoldInteraction: () => itemInteractionRuntime.cancelPrimary(),
+  finishSpecialItemView: () => itemInteractionRuntime.closeSpecialView(),
+  dropSpecialItem: () => itemInteractionRuntime.closeSpecialView({ drop: true }),
+  getInventoryState: () => itemInteractionRuntime.getSnapshot(),
   emitThought: (id) => emitOperatorThought(id),
   getTutorialAnchor: ({ prefab, role } = {}) => {
     const environmentId = getLevelEnvironmentId(activeLevelId);

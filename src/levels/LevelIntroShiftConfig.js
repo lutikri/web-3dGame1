@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=passive-flashlight-prefab";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=passive-flashlight-prefab";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=passive-flashlight-prefab";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=passive-flashlight-prefab";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=inventory-runtime";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-runtime";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=inventory-runtime";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=inventory-runtime";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

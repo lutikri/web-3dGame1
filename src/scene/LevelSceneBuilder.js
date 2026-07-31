@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=passive-flashlight-prefab";
+} from "../prefabs/PrefabMarkerResolver.js?v=inventory-runtime";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=passive-flashlight-prefab";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=passive-flashlight-prefab";
+} from "../levels/LevelConfigOverrides.js?v=inventory-runtime";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=inventory-runtime";
 
 export function createLevelSceneBuilder({
   scene,

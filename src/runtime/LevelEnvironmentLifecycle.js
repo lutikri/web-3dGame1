@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=passive-flashlight-prefab";
+import { LevelRuntime } from "./LevelRuntime.js?v=inventory-runtime";
 
 export class LevelEnvironmentLifecycle {
   constructor({

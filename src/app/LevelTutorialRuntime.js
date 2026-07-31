@@ -93,6 +93,7 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
       else reconcile();
     }
     if (type === "briefOpened") complete("briefOpened");
+    if (type === "itemStored" && detail.target === "brief") complete("briefStored");
     if (type === "triggerEntered" && detail.target === state.config.welcomeTrigger) {
       ["moved", "lookedAround", "entryDoorOpened"].forEach((id) => state.milestones.add(id));
       present(null);
@@ -154,6 +155,12 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
     }
     if (!done("welcomeFinished")) return present(null);
     if (!done("briefOpened") && !done("mainCorridorEntered") && !done("controlBoothEntered")) {
+      if (done("briefStored")) {
+        return present("brief-select", "hints.exploringBriefInventory", {
+          key: { type: "key", label: "TAB" },
+          wheel: { type: "wheel", label: "Mouse wheel" },
+        });
+      }
       if (done("briefSeen")) {
         return present("brief-hold", "hints.exploringBriefHold", { button: mouseToken("Left mouse button", "left") });
       }

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=passive-flashlight-prefab";
+import { translateRequired } from "./Localization.js?v=inventory-runtime";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

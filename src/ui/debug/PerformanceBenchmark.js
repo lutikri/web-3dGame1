@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=passive-flashlight-prefab";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=inventory-runtime";
 
 const EFFECT_KEYS = [
   "bloom",

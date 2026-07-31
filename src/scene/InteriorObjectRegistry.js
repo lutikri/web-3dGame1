@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=passive-flashlight-prefab";
+import { applyAxisRotation } from "./TransformUtils.js?v=inventory-runtime";
 
 export class InteriorObjectRegistry {
   constructor(options) {

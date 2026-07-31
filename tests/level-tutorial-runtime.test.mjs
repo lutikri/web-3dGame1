@@ -114,6 +114,9 @@ test("level tutorial spaces hints, does not replay hover, and retires the door h
     runtime.handleHover({ levelId: "exploring-around", kind: "none" });
     assert.equal(hints.at(-1), "brief-hold");
     assert.equal(hints.length, briefPresentations);
+    runtime.handleEvent({ type: "itemStored", detail: { target: "brief" } });
+    timers.runNext();
+    assert.equal(hints.at(-1), "brief-select");
     runtime.handleEvent({ type: "briefOpened", detail: { target: "brief" } });
     assert.equal(hints.at(-1), "clear");
 

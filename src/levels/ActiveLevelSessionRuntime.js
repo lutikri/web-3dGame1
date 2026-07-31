@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=passive-flashlight-prefab";
+import { LevelSession } from "./LevelSession.js?v=inventory-runtime";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

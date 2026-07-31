@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=passive-flashlight-prefab";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=inventory-runtime";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

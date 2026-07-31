@@ -630,6 +630,48 @@ export async function createPhysicsSystem() {
     rigidPrefabs.delete(key);
   }
 
+  function setRigidPrefabMode(key, mode) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return false;
+    if (mode === "inventory") {
+      prefab.body.setEnabled(false);
+      return true;
+    }
+    const bodyType = mode === "world"
+      ? RAPIER.RigidBodyType.Dynamic
+      : RAPIER.RigidBodyType.KinematicPositionBased;
+    prefab.body.setBodyType(bodyType, true);
+    prefab.body.setEnabled(prefab.sceneKey === activeSceneKey);
+    prefab.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    prefab.body.wakeUp();
+    return true;
+  }
+
+  function setRigidPrefabPose(key, position, rotation, immediate = false) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab || !position || !rotation) return false;
+    const translation = { x: position.x, y: position.y, z: position.z };
+    const quaternion = { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w };
+    if (immediate) {
+      prefab.body.setTranslation(translation, true);
+      prefab.body.setRotation(quaternion, true);
+    } else {
+      prefab.body.setNextKinematicTranslation(translation);
+      prefab.body.setNextKinematicRotation(quaternion);
+    }
+    return true;
+  }
+
+  function dropRigidPrefab(key, position, rotation, linearVelocity = null) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return false;
+    setRigidPrefabMode(key, "world");
+    setRigidPrefabPose(key, position, rotation, true);
+    if (linearVelocity) prefab.body.setLinvel(linearVelocity, true);
+    return true;
+  }
+
   function resetRigidPrefab(key, root = null, updateInitial = false) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
@@ -797,6 +839,9 @@ export async function createPhysicsSystem() {
     setKinematicPrefabEnabled,
     removeKinematicPrefab,
     createRigidPrefab,
+    setRigidPrefabMode,
+    setRigidPrefabPose,
+    dropRigidPrefab,
     removeRigidPrefab,
     resetRigidPrefab,
     setDoorEnabled,

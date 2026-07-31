@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=passive-flashlight-prefab";
-import { translate } from "./Localization.js?v=passive-flashlight-prefab";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=passive-flashlight-prefab";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=passive-flashlight-prefab";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=passive-flashlight-prefab";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=passive-flashlight-prefab";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=passive-flashlight-prefab";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=inventory-runtime";
+import { translate } from "./Localization.js?v=inventory-runtime";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=inventory-runtime";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=inventory-runtime";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=inventory-runtime";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=inventory-runtime";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=inventory-runtime";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=passive-flashlight-prefab";
-import { createAppPanelController } from "./AppPanelController.js?v=passive-flashlight-prefab";
-import { createAppRouter } from "./AppRouter.js?v=passive-flashlight-prefab";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=passive-flashlight-prefab";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=passive-flashlight-prefab";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=passive-flashlight-prefab";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=passive-flashlight-prefab";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=passive-flashlight-prefab";
+} from "./AppPersistence.js?v=inventory-runtime";
+import { createAppPanelController } from "./AppPanelController.js?v=inventory-runtime";
+import { createAppRouter } from "./AppRouter.js?v=inventory-runtime";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=inventory-runtime";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=inventory-runtime";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=inventory-runtime";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=inventory-runtime";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=inventory-runtime";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -141,7 +141,10 @@ export function createAppShell({ gameApi }) {
   const dismissBriefing = briefingPanel.dismiss;
   function dismissBriefingAndRestorePointerLock() {
     const dismissed = dismissBriefing();
-    if (dismissed && !briefingPanel.isActive()) gameApi.requestPointerLock?.();
+    if (dismissed && !briefingPanel.isActive()) {
+      gameApi.finishSpecialItemView?.();
+      gameApi.requestPointerLock?.();
+    }
     return dismissed;
   }
   gameApi.setBriefingSheetOpener?.(({ levelId, sheetIndex }) =>
@@ -190,6 +193,13 @@ export function createAppShell({ gameApi }) {
 
     document.addEventListener("keydown", (event) => {
       gameApi.unlockAudio?.();
+      if (briefingPanel.isActive() && event.code === "KeyQ" && !event.repeat) {
+        event.preventDefault();
+        gameApi.dropSpecialItem?.();
+        briefingPanel.hide(true);
+        gameApi.requestPointerLock?.();
+        return;
+      }
       if (briefingPanel.isActive() && event.code === "Enter" && !event.repeat) {
         event.preventDefault();
         dismissBriefingAndRestorePointerLock();

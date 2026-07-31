@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=passive-flashlight-prefab";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=passive-flashlight-prefab";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=passive-flashlight-prefab";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=passive-flashlight-prefab";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=passive-flashlight-prefab";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=inventory-runtime";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-runtime";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-runtime";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-runtime";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=inventory-runtime";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

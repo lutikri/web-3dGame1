@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=passive-flashlight-prefab";
+} from "./FluorescentBehavior.js?v=inventory-runtime";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

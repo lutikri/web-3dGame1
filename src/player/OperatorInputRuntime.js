@@ -40,20 +40,31 @@ export function createOperatorInputRuntime({
   updateHoverTarget,
   getHoveredInteractive,
   canLean = () => true,
+  beginItemPrimary = () => false,
+  releaseItemPrimary = () => false,
+  cancelItemPrimary = () => false,
+  activateRelevantItem = () => false,
+  dropHandledItem = () => false,
+  beginInventorySelection = () => false,
+  moveInventorySelection = () => false,
+  commitInventorySelection = () => false,
+  cancelInventorySelection = () => false,
   activateInteractive,
   releasePrimaryInteractions,
   releaseAllControls,
   requestPointerLock,
   toggleDebugPanels,
+  now = () => performance.now() / 1000,
 }) {
   const removers = [];
   let debugToggleBuffer = "";
+  let dropPressedAt = null;
 
   function wire() {
     listen(document, "keydown", handleDebugToggle);
     listen(document, "pointerdown", unlockAudio);
     listen(document, "keydown", handleKeyDown);
-    listen(document, "keyup", (event) => keys.delete(event.code));
+    listen(document, "keyup", handleKeyUp);
     listen(document, "mousemove", handleMouseMove);
     listen(canvas, "wheel", handleWheel, { passive: false });
     listen(canvas, "mousedown", handleMouseDown);
@@ -69,6 +80,9 @@ export function createOperatorInputRuntime({
     while (removers.length) removers.pop()();
     keys.clear();
     setZoomActive(false);
+    cancelItemPrimary();
+    cancelInventorySelection();
+    dropPressedAt = null;
     releasePrimaryInteractions();
     releaseAllControls();
   }
@@ -91,6 +105,24 @@ export function createOperatorInputRuntime({
       return;
     }
     if (isMovementCode(event.code)) event.preventDefault();
+    if (event.code === "Tab") {
+      event.preventDefault();
+      if (!event.repeat) beginInventorySelection();
+      return;
+    }
+    if (event.code === "KeyE") {
+      event.preventDefault();
+      if (!event.repeat) {
+        updateHoverTarget();
+        activateRelevantItem(getHoveredInteractive());
+      }
+      return;
+    }
+    if (event.code === "KeyQ") {
+      event.preventDefault();
+      if (!event.repeat && dropPressedAt == null) dropPressedAt = now();
+      return;
+    }
     if (event.code === "KeyN" && !event.repeat) {
       const enabled = !getNoclipEnabled();
       setNoclipEnabled(enabled);
@@ -103,6 +135,25 @@ export function createOperatorInputRuntime({
       setJumpQueued(true);
     }
     keys.add(event.code);
+  }
+
+  function handleKeyUp(event) {
+    keys.delete(event.code);
+    if (event.code === "KeyQ" && dropPressedAt != null) {
+      event.preventDefault();
+      const heldSeconds = Math.max(0, now() - dropPressedAt);
+      dropPressedAt = null;
+      if (!isInputLocked()) {
+        dropHandledItem({
+          throwStrength: getThrowStrength(heldSeconds),
+        });
+      }
+      return;
+    }
+    if (event.code !== "Tab") return;
+    event.preventDefault();
+    if (isInputLocked()) cancelInventorySelection();
+    else commitInventorySelection();
   }
 
   function handleMouseMove(event) {
@@ -123,6 +174,10 @@ export function createOperatorInputRuntime({
 
   function handleWheel(event) {
     if (isInputLocked()) return;
+    if (moveInventorySelection(Math.sign(event.deltaY))) {
+      event.preventDefault();
+      return;
+    }
     if (isLookOnly()) {
       event.preventDefault();
       return;
@@ -183,17 +238,24 @@ export function createOperatorInputRuntime({
         prefabName: levelPrefabKey.split(":").slice(1).join(":"),
       },
     }));
+    if (beginItemPrimary(target)) return;
     activateInteractive(target);
   }
 
   function handleMouseUp(event) {
     if (event.button === 2) setZoomActive(false);
-    if (event.button === 0) releasePrimaryInteractions();
+    if (event.button === 0) {
+      releaseItemPrimary();
+      releasePrimaryInteractions();
+    }
     releaseAllControls();
   }
 
   function handleBlur() {
     setZoomActive(false);
+    cancelItemPrimary();
+    cancelInventorySelection();
+    dropPressedAt = null;
     releasePrimaryInteractions();
     releaseAllControls();
   }
@@ -208,6 +270,11 @@ export function createOperatorInputRuntime({
     lockButton.textContent = document.pointerLockElement === canvas ? "Pointer Locked" : "Enter First Person";
     if (document.pointerLockElement === canvas) pointer.set(0, 0);
     setZoomActive(false);
+    if (document.pointerLockElement !== canvas) {
+      cancelItemPrimary();
+      cancelInventorySelection();
+      dropPressedAt = null;
+    }
     releaseAllControls();
   }
 
@@ -228,6 +295,11 @@ export function createOperatorInputRuntime({
 
 export function isMovementCode(code) {
   return MOVEMENT_CODES.has(code);
+}
+
+export function getThrowStrength(heldSeconds) {
+  const duration = Math.max(0, Number(heldSeconds) || 0);
+  return duration < 0.35 ? 0 : Math.min(1, (duration - 0.35) / 0.65);
 }
 
 export function isTextEditingTarget(target) {

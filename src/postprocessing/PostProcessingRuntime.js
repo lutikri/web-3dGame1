@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=passive-flashlight-prefab";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=inventory-runtime";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=passive-flashlight-prefab";
+} from "./PostProcessingShaders.js?v=inventory-runtime";
 
 export class PostProcessingRuntime {
   composer = null;

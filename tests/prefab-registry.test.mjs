@@ -4,14 +4,17 @@ import * as THREE from "three";
 import { createPrefabInstance, getPrefabDefinition } from "../src/prefabs/PrefabRegistry.js";
 import { parsePrefabMarkerName, resolveNestedPrefabMarkers } from "../src/prefabs/PrefabMarkerResolver.js";
 
-test("flashlight marker resolves to a passive future prefab", () => {
+test("flashlight marker resolves to a portable physical equipment item", () => {
   const flashlight = createPrefabInstance("FlashLight", { name: "FlashLight1" });
   assert.equal(flashlight.assetPath, "assets/mesh/prefabs/SM_Flashligh1.glb");
   assert.equal(flashlight.behavior, "staticProp");
   assert.equal(flashlight.name, "FlashLight1");
   assert.equal(flashlight.light, undefined);
   assert.equal(flashlight.interaction, undefined);
-  assert.equal(flashlight.rigidBody, undefined);
+  assert.equal(flashlight.rigidBody.bodyType, "dynamic");
+  assert.deepEqual(flashlight.rigidBody.colliderNamePrefixes, ["UBX_SM_FlashLightBody1"]);
+  assert.equal(flashlight.item.portable, true);
+  assert.equal(flashlight.item.activationType, "toggleLight");
 });
 
 test("prefab instances clone registry-owned nested defaults", () => {

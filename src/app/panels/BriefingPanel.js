@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=passive-flashlight-prefab";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=inventory-runtime";
 
 const DISMISS_MS = 300;
 

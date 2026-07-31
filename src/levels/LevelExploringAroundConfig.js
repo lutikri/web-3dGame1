@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=passive-flashlight-prefab";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=passive-flashlight-prefab";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=passive-flashlight-prefab";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=passive-flashlight-prefab";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=inventory-runtime";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-runtime";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=inventory-runtime";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=inventory-runtime";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
