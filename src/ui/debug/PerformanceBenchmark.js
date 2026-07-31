@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=passive-flashlight-prefab";
 
 const EFFECT_KEYS = [
   "bloom",

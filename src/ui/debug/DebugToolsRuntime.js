@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=preflight-audio-lifecycle";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=preflight-audio-lifecycle";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=preflight-audio-lifecycle";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=preflight-audio-lifecycle";
+import { createDebugHub } from "./DebugHub.js?v=passive-flashlight-prefab";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=passive-flashlight-prefab";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=passive-flashlight-prefab";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=passive-flashlight-prefab";
 
 export class DebugToolsRuntime {
   constructor(options) {

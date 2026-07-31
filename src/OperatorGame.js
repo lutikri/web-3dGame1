@@ -3,134 +3,134 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=preflight-audio-lifecycle";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=passive-flashlight-prefab";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=preflight-audio-lifecycle";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=preflight-audio-lifecycle";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=preflight-audio-lifecycle";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=preflight-audio-lifecycle";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=preflight-audio-lifecycle";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=preflight-audio-lifecycle";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=preflight-audio-lifecycle";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=preflight-audio-lifecycle";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=preflight-audio-lifecycle";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=preflight-audio-lifecycle";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=preflight-audio-lifecycle";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=preflight-audio-lifecycle";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=preflight-audio-lifecycle";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=preflight-audio-lifecycle";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=preflight-audio-lifecycle";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=preflight-audio-lifecycle";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=preflight-audio-lifecycle";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=preflight-audio-lifecycle";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=preflight-audio-lifecycle";
-import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=preflight-audio-lifecycle";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=preflight-audio-lifecycle";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=preflight-audio-lifecycle";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=preflight-audio-lifecycle";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=preflight-audio-lifecycle";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=preflight-audio-lifecycle";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=preflight-audio-lifecycle";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=preflight-audio-lifecycle";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=preflight-audio-lifecycle";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=preflight-audio-lifecycle";
+} from "./game/ShiftReport.js?v=passive-flashlight-prefab";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=passive-flashlight-prefab";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=passive-flashlight-prefab";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=passive-flashlight-prefab";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=passive-flashlight-prefab";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=passive-flashlight-prefab";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=passive-flashlight-prefab";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=passive-flashlight-prefab";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=passive-flashlight-prefab";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=passive-flashlight-prefab";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=passive-flashlight-prefab";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=passive-flashlight-prefab";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=passive-flashlight-prefab";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=passive-flashlight-prefab";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=passive-flashlight-prefab";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=passive-flashlight-prefab";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=passive-flashlight-prefab";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=passive-flashlight-prefab";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=passive-flashlight-prefab";
+import { BriefInteractionRuntime } from "./interactions/BriefInteractionRuntime.js?v=passive-flashlight-prefab";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=passive-flashlight-prefab";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=passive-flashlight-prefab";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=passive-flashlight-prefab";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=passive-flashlight-prefab";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=passive-flashlight-prefab";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=passive-flashlight-prefab";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=passive-flashlight-prefab";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=passive-flashlight-prefab";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=passive-flashlight-prefab";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
+} from "./config/GraphicsQualityProfiles.js?v=passive-flashlight-prefab";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=preflight-audio-lifecycle";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=preflight-audio-lifecycle";
-import { createStatusScreen } from "./StatusScreen.js?v=preflight-audio-lifecycle";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=preflight-audio-lifecycle";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=preflight-audio-lifecycle";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=preflight-audio-lifecycle";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=preflight-audio-lifecycle";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=preflight-audio-lifecycle";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=preflight-audio-lifecycle";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=preflight-audio-lifecycle";
+} from "./scene/TextureStreaming.js?v=passive-flashlight-prefab";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=passive-flashlight-prefab";
+import { createStatusScreen } from "./StatusScreen.js?v=passive-flashlight-prefab";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=passive-flashlight-prefab";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=passive-flashlight-prefab";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=passive-flashlight-prefab";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=passive-flashlight-prefab";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=passive-flashlight-prefab";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=passive-flashlight-prefab";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=passive-flashlight-prefab";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=preflight-audio-lifecycle";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=preflight-audio-lifecycle";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=preflight-audio-lifecycle";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=passive-flashlight-prefab";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=passive-flashlight-prefab";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=passive-flashlight-prefab";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=preflight-audio-lifecycle";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=preflight-audio-lifecycle";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=preflight-audio-lifecycle";
-import { AssetCache } from "./runtime/AssetCache.js?v=preflight-audio-lifecycle";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=preflight-audio-lifecycle";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=preflight-audio-lifecycle";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=preflight-audio-lifecycle";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=preflight-audio-lifecycle";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=preflight-audio-lifecycle";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=preflight-audio-lifecycle";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=preflight-audio-lifecycle";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=preflight-audio-lifecycle";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=preflight-audio-lifecycle";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=preflight-audio-lifecycle";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=preflight-audio-lifecycle";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=preflight-audio-lifecycle";
+} from "./lighting/FluorescentBehavior.js?v=passive-flashlight-prefab";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=passive-flashlight-prefab";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=passive-flashlight-prefab";
+import { AssetCache } from "./runtime/AssetCache.js?v=passive-flashlight-prefab";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=passive-flashlight-prefab";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=passive-flashlight-prefab";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=passive-flashlight-prefab";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=passive-flashlight-prefab";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=passive-flashlight-prefab";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=passive-flashlight-prefab";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=passive-flashlight-prefab";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=passive-flashlight-prefab";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=passive-flashlight-prefab";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=passive-flashlight-prefab";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=passive-flashlight-prefab";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=passive-flashlight-prefab";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=preflight-audio-lifecycle";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=preflight-audio-lifecycle";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=preflight-audio-lifecycle";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=preflight-audio-lifecycle";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=preflight-audio-lifecycle";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=preflight-audio-lifecycle";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=preflight-audio-lifecycle";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=preflight-audio-lifecycle";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=preflight-audio-lifecycle";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=preflight-audio-lifecycle";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=preflight-audio-lifecycle";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=preflight-audio-lifecycle";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=preflight-audio-lifecycle";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=preflight-audio-lifecycle";
-import { PlayerController } from "./player/PlayerController.js?v=preflight-audio-lifecycle";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=preflight-audio-lifecycle";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=preflight-audio-lifecycle";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=preflight-audio-lifecycle";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=preflight-audio-lifecycle";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=preflight-audio-lifecycle";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=preflight-audio-lifecycle";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=preflight-audio-lifecycle";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=preflight-audio-lifecycle";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=preflight-audio-lifecycle";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=preflight-audio-lifecycle";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=preflight-audio-lifecycle";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=preflight-audio-lifecycle";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=preflight-audio-lifecycle";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=preflight-audio-lifecycle";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=preflight-audio-lifecycle";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=preflight-audio-lifecycle";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=preflight-audio-lifecycle";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=preflight-audio-lifecycle";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=preflight-audio-lifecycle";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=preflight-audio-lifecycle";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=preflight-audio-lifecycle";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=preflight-audio-lifecycle";
+} from "./scene/InteriorObjectRegistry.js?v=passive-flashlight-prefab";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=passive-flashlight-prefab";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=passive-flashlight-prefab";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=passive-flashlight-prefab";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=passive-flashlight-prefab";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=passive-flashlight-prefab";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=passive-flashlight-prefab";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=passive-flashlight-prefab";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=passive-flashlight-prefab";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=passive-flashlight-prefab";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=passive-flashlight-prefab";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=passive-flashlight-prefab";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=passive-flashlight-prefab";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=passive-flashlight-prefab";
+import { PlayerController } from "./player/PlayerController.js?v=passive-flashlight-prefab";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=passive-flashlight-prefab";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=passive-flashlight-prefab";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=passive-flashlight-prefab";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=passive-flashlight-prefab";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=passive-flashlight-prefab";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=passive-flashlight-prefab";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=passive-flashlight-prefab";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=passive-flashlight-prefab";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=passive-flashlight-prefab";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=passive-flashlight-prefab";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=passive-flashlight-prefab";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=passive-flashlight-prefab";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=passive-flashlight-prefab";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=passive-flashlight-prefab";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=passive-flashlight-prefab";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=passive-flashlight-prefab";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=passive-flashlight-prefab";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=passive-flashlight-prefab";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=passive-flashlight-prefab";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=passive-flashlight-prefab";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=passive-flashlight-prefab";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=passive-flashlight-prefab";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=preflight-audio-lifecycle";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=passive-flashlight-prefab";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1236,7 +1236,7 @@ const levelTriggerSequenceRuntime = new LevelTriggerSequenceRuntime({
   getLevelConfig: (levelId) => CONFIG.levelEnvironments?.[getLevelEnvironmentId(levelId)],
   getPlayerPosition: () => playerPosition,
   isLevelView: () => operatorViewMode === "level",
-  playNarration: (levelId, line) => line === "welcome" ? narrationRuntime.playWelcome(levelId) : null,
+  playNarration: (levelId, line) => narrationRuntime.playNarration(line, levelId),
   requestBarrierUnlock: requestBarrierGateUnlock,
   emitEvent: (type, detail) => activeLevelSessionRuntime.emit(type, detail),
 });

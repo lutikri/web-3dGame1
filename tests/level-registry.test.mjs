@@ -65,3 +65,24 @@ test("exploring around keeps the corridor trigger repeatable for the physical re
     ["MainCorridorEntrance"],
   );
 });
+
+test("exploring around starts localized panel guidance on first control booth entry", () => {
+  const environment = LEVEL_DEFINITIONS["exploring-around"].environment;
+  const sequence = environment.triggerSequences.find(({ name }) => name === "ControlBooth");
+  assert.equal(sequence.trigger.markerName, "TRGVOL_ControlBooth_1");
+  assert.equal(sequence.trigger.once, true);
+  assert.equal(sequence.narration, "panelTutorial");
+  assert.equal(environment.tutorial.controlBoothNarration, "panelTutorial");
+  assert.deepEqual(environment.narration.panelTutorial, {
+    en: {
+      soundKey: "MessageEN_WelcomePanelTutorial1",
+      subtitlePath: "assets/sounds/narration/MessageEN_WelcomePanelTutorial1.srt",
+      duration: 37.04,
+    },
+    ru: {
+      soundKey: "MessageRU_WelcomePanelTutorial1",
+      subtitlePath: "assets/sounds/narration/MessageRU_WelcomePanelTutorial1.srt",
+      duration: 33.36,
+    },
+  });
+});

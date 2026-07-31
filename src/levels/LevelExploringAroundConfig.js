@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=preflight-audio-lifecycle";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=preflight-audio-lifecycle";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=preflight-audio-lifecycle";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=preflight-audio-lifecycle";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=passive-flashlight-prefab";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=passive-flashlight-prefab";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=passive-flashlight-prefab";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=passive-flashlight-prefab";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {
@@ -91,6 +91,18 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         duration: 25.6,
       },
     },
+    panelTutorial: {
+      en: {
+        soundKey: "MessageEN_WelcomePanelTutorial1",
+        subtitlePath: "assets/sounds/narration/MessageEN_WelcomePanelTutorial1.srt",
+        duration: 37.04,
+      },
+      ru: {
+        soundKey: "MessageRU_WelcomePanelTutorial1",
+        subtitlePath: "assets/sounds/narration/MessageRU_WelcomePanelTutorial1.srt",
+        duration: 33.36,
+      },
+    },
     passed: {
       en: { soundKey: "MessageEN_WelcomePassed1", duration: 15.12 },
       ru: { soundKey: "MessageRU_WelcomePassed1", subtitlePath: "assets/sounds/narration/MessageRU_WelcomePassed1.srt", duration: 15.44 },
@@ -125,6 +137,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     {
       name: "ControlBooth",
       trigger: { markerName: "TRGVOL_ControlBooth_1", once: true },
+      narration: "panelTutorial",
     },
   ],
   repeatableTriggerSequences: ["MainCorridorEntrance"],
@@ -138,6 +151,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     welcomeTrigger: "WelcomeEntry",
     mainCorridorTrigger: "MainCorridorEntrance",
     controlBoothTrigger: "ControlBooth",
+    controlBoothNarration: "panelTutorial",
     mainCorridorThought: "tutorial-control-booth",
     startCoreThought: "tutorial-start-core",
   },

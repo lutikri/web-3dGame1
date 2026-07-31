@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=preflight-audio-lifecycle";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=passive-flashlight-prefab";
 
 const MARKER_PREFIX = "PF_";
 

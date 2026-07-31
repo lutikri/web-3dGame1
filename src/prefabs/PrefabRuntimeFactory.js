@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=preflight-audio-lifecycle";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=preflight-audio-lifecycle";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=preflight-audio-lifecycle";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=preflight-audio-lifecycle";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=preflight-audio-lifecycle";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=preflight-audio-lifecycle";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=preflight-audio-lifecycle";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=passive-flashlight-prefab";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=passive-flashlight-prefab";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=passive-flashlight-prefab";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=passive-flashlight-prefab";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=passive-flashlight-prefab";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=passive-flashlight-prefab";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=passive-flashlight-prefab";
 
 export function createPrefabRuntimeFactory({
   config,

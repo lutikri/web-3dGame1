@@ -80,15 +80,17 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
 
   function handleEvent({ type, detail = {} } = {}) {
     if (!state) return;
+    const isBlockingNarration = detail.line === "welcome" || detail.line === state.config.controlBoothNarration;
     if (type === "doorOpened" && detail.target === state.config.entryDoorTarget) complete("entryDoorOpened");
-    if (type === "narrationStarted" && detail.line === "welcome") {
+    if (type === "narrationStarted" && isBlockingNarration) {
       state.narrationActive = true;
-      state.milestones.add("entryDoorOpened");
+      if (detail.line === "welcome") state.milestones.add("entryDoorOpened");
       present(null);
     }
-    if (type === "narrationEnded" && detail.line === "welcome") {
+    if (type === "narrationEnded" && isBlockingNarration) {
       state.narrationActive = false;
-      complete("welcomeFinished");
+      if (detail.line === "welcome") complete("welcomeFinished");
+      else reconcile();
     }
     if (type === "briefOpened") complete("briefOpened");
     if (type === "triggerEntered" && detail.target === state.config.welcomeTrigger) {

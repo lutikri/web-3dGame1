@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=preflight-audio-lifecycle";
+import { LevelRuntime } from "./LevelRuntime.js?v=passive-flashlight-prefab";
 
 export class LevelEnvironmentLifecycle {
   constructor({

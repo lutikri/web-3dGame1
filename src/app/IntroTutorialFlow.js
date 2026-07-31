@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=preflight-audio-lifecycle";
+import { translateRequired } from "./Localization.js?v=passive-flashlight-prefab";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

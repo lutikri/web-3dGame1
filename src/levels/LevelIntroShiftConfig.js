@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=preflight-audio-lifecycle";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=preflight-audio-lifecycle";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=preflight-audio-lifecycle";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=preflight-audio-lifecycle";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=passive-flashlight-prefab";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=passive-flashlight-prefab";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=passive-flashlight-prefab";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=passive-flashlight-prefab";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

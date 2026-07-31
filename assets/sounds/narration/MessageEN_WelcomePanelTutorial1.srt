@@ -1,0 +1,47 @@
+1
+00:00:00,043 --> 00:00:01,519
+Your task is simple.
+
+2
+00:00:02,296 --> 00:00:05,873
+Maintain power output in accordance with grid demand.
+
+3
+00:00:06,349 --> 00:00:08,196
+If output is too low, the
+
+4
+00:00:08,208 --> 00:00:10,960
+"Under Demand" indicator will light up.
+
+5
+00:00:11,955 --> 00:00:13,865
+If output is too high, the
+
+6
+00:00:13,877 --> 00:00:16,540
+"Over Demand" indicator will light up.
+
+7
+00:00:17,620 --> 00:00:20,008
+Try to achieve the required output while
+
+8
+00:00:20,020 --> 00:00:22,120
+using as few resources as possible.
+
+9
+00:00:23,440 --> 00:00:25,000
+You'll figure out the rest on your own.
+
+10
+00:00:25,840 --> 00:00:28,121
+We hire people precisely for those
+
+11
+00:00:28,133 --> 00:00:31,901
+situations where automation can no longer handle the job.
+
+12
+00:00:33,314 --> 00:00:34,860
+Try not to prove it right.

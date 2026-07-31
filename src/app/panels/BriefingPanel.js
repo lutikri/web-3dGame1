@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=preflight-audio-lifecycle";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=passive-flashlight-prefab";
 
 const DISMISS_MS = 300;
 

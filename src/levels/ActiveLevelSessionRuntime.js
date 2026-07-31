@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=preflight-audio-lifecycle";
+import { LevelSession } from "./LevelSession.js?v=passive-flashlight-prefab";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

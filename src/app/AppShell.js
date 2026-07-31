@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=preflight-audio-lifecycle";
-import { translate } from "./Localization.js?v=preflight-audio-lifecycle";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=preflight-audio-lifecycle";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=preflight-audio-lifecycle";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=preflight-audio-lifecycle";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=preflight-audio-lifecycle";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=preflight-audio-lifecycle";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=passive-flashlight-prefab";
+import { translate } from "./Localization.js?v=passive-flashlight-prefab";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=passive-flashlight-prefab";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=passive-flashlight-prefab";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=passive-flashlight-prefab";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=passive-flashlight-prefab";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=passive-flashlight-prefab";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,13 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=preflight-audio-lifecycle";
-import { createAppPanelController } from "./AppPanelController.js?v=preflight-audio-lifecycle";
-import { createAppRouter } from "./AppRouter.js?v=preflight-audio-lifecycle";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=preflight-audio-lifecycle";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=preflight-audio-lifecycle";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=preflight-audio-lifecycle";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=preflight-audio-lifecycle";
+} from "./AppPersistence.js?v=passive-flashlight-prefab";
+import { createAppPanelController } from "./AppPanelController.js?v=passive-flashlight-prefab";
+import { createAppRouter } from "./AppRouter.js?v=passive-flashlight-prefab";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=passive-flashlight-prefab";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=passive-flashlight-prefab";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=passive-flashlight-prefab";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=passive-flashlight-prefab";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=passive-flashlight-prefab";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -54,6 +55,7 @@ export function createAppShell({ gameApi }) {
   const firstVisitEmulation = Boolean(gameApi?.config?.app?.firstVisitEmulation);
   const returnToMenuAfterPreflight = Boolean(window.operatorGameBootOptions?.returnToMenuAfterPreflight);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
+  const mainMenuPanel = createMainMenuPanel();
   const levelSelectPanel = createLevelSelectPanel({
     levels: LEVELS,
     progress,
@@ -81,6 +83,7 @@ export function createAppShell({ gameApi }) {
     onVisibilityChange: ({ open, panelName }) => {
       currentPanel = panelName;
       updateInputLock();
+      if (open && panelName === "main-menu") mainMenuPanel.updateScale();
       if (open && panelName === "level-select") levelSelectPanel.show();
     },
   });
@@ -150,6 +153,7 @@ export function createAppShell({ gameApi }) {
 
   settingsPanel.apply();
   wireActions();
+  mainMenuPanel.wire();
   levelSelectPanel.wire();
   briefingPanel.wire();
   settingsPanel.wire();

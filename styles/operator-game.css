@@ -646,7 +646,7 @@ body:not(.hold-interaction-active) .hold-indicator-progress {
 }
 
 .main-menu-panel {
-  --main-menu-scale: min(calc(100vw / 1920px), calc(100vh / 1080px));
+  --main-menu-scale: 1;
   position: absolute;
   top: 50%;
   left: 50%;

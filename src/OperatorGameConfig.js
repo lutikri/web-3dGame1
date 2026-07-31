@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=preflight-audio-lifecycle";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=preflight-audio-lifecycle";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=preflight-audio-lifecycle";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=preflight-audio-lifecycle";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=passive-flashlight-prefab";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=passive-flashlight-prefab";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=passive-flashlight-prefab";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=passive-flashlight-prefab";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

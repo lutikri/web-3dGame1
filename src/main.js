@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=preflight-audio-lifecycle";
-import { applyLocalization } from "./app/Localization.js?v=preflight-audio-lifecycle";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=preflight-audio-lifecycle";
+import { createPreflight } from "./app/Preflight.js?v=passive-flashlight-prefab";
+import { applyLocalization } from "./app/Localization.js?v=passive-flashlight-prefab";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=passive-flashlight-prefab";
 
-const APP_BUILD_REVISION = "preflight-audio-lifecycle";
+const APP_BUILD_REVISION = "passive-flashlight-prefab";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=preflight-audio-lifecycle`);
+await import(`./OperatorGame.js?v=passive-flashlight-prefab`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=preflight-audio-lifecycle`);
+const { createAppShell } = await import(`./app/AppShell.js?v=passive-flashlight-prefab`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=preflight-audio-lifecycle`
+    `./runtime/RuntimeSmoke.js?v=passive-flashlight-prefab`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=preflight-audio-lifecycle";
+} from "./FluorescentBehavior.js?v=passive-flashlight-prefab";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

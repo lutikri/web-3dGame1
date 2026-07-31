@@ -51,6 +51,7 @@ test("level tutorial spaces hints, does not replay hover, and retires the door h
     welcomeTrigger: "WelcomeEntry",
     mainCorridorTrigger: "MainCorridorEntrance",
     controlBoothTrigger: "ControlBooth",
+    controlBoothNarration: "panelTutorial",
     mainCorridorThought: "tutorial-control-booth",
     startCoreThought: "tutorial-start-core",
   };
@@ -119,7 +120,10 @@ test("level tutorial spaces hints, does not replay hover, and retires the door h
     runtime.handleEvent({ type: "triggerEntered", detail: { target: "MainCorridorEntrance" } });
     assert.deepEqual(thoughts, ["tutorial-control-booth"]);
     runtime.handleEvent({ type: "triggerEntered", detail: { target: "ControlBooth" } });
+    runtime.handleEvent({ type: "narrationStarted", detail: { line: "panelTutorial" } });
     timers.runNext();
+    assert.equal(hints.at(-1), "clear");
+    runtime.handleEvent({ type: "narrationEnded", detail: { line: "panelTutorial" } });
     assert.equal(hints.at(-1), "lean");
     runtime.handleHover({ levelId: "exploring-around", kind: "controlKnob" });
     assert.equal(hints.at(-1), "lean");

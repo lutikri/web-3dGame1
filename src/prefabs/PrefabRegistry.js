@@ -452,6 +452,10 @@ const PREFAB_DEFINITIONS = {
       },
     },
   },
+  FlashLight: {
+    assetPath: "assets/mesh/prefabs/SM_Flashligh1.glb",
+    behavior: "staticProp",
+  },
   analogClock: {
     assetPath: "assets/mesh/prefabs/SM_Clock1.glb",
     materialKey: "clock1",

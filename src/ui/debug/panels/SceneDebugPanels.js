@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=preflight-audio-lifecycle";
+} from "../../../levels/LevelConfigSerialization.js?v=passive-flashlight-prefab";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;
