@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=inventory-runtime";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=inventory-runtime";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=inventory-runtime";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=inventory-runtime";
+import { createDebugHub } from "./DebugHub.js?v=inventory-wheel-drop";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=inventory-wheel-drop";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=inventory-wheel-drop";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=inventory-wheel-drop";
 
 export class DebugToolsRuntime {
   constructor(options) {

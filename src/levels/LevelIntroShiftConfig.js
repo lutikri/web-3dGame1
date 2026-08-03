@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=inventory-runtime";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-runtime";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=inventory-runtime";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=inventory-runtime";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=inventory-wheel-drop";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-wheel-drop";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=inventory-wheel-drop";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=inventory-wheel-drop";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

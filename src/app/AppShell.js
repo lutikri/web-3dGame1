@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=inventory-runtime";
-import { translate } from "./Localization.js?v=inventory-runtime";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=inventory-runtime";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=inventory-runtime";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=inventory-runtime";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=inventory-runtime";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=inventory-runtime";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=inventory-wheel-drop";
+import { translate } from "./Localization.js?v=inventory-wheel-drop";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=inventory-wheel-drop";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=inventory-wheel-drop";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=inventory-wheel-drop";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=inventory-wheel-drop";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=inventory-wheel-drop";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=inventory-runtime";
-import { createAppPanelController } from "./AppPanelController.js?v=inventory-runtime";
-import { createAppRouter } from "./AppRouter.js?v=inventory-runtime";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=inventory-runtime";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=inventory-runtime";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=inventory-runtime";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=inventory-runtime";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=inventory-runtime";
+} from "./AppPersistence.js?v=inventory-wheel-drop";
+import { createAppPanelController } from "./AppPanelController.js?v=inventory-wheel-drop";
+import { createAppRouter } from "./AppRouter.js?v=inventory-wheel-drop";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=inventory-wheel-drop";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=inventory-wheel-drop";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=inventory-wheel-drop";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=inventory-wheel-drop";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=inventory-wheel-drop";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

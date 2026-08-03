@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=inventory-runtime";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=inventory-wheel-drop";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=inventory-runtime";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=inventory-runtime";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=inventory-runtime";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=inventory-runtime";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=inventory-runtime";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=inventory-runtime";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=inventory-runtime";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=inventory-runtime";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=inventory-runtime";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=inventory-runtime";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=inventory-runtime";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=inventory-runtime";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=inventory-runtime";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=inventory-runtime";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=inventory-runtime";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=inventory-runtime";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=inventory-runtime";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=inventory-runtime";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=inventory-runtime";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=inventory-runtime";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=inventory-runtime";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=inventory-runtime";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=inventory-runtime";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=inventory-runtime";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=inventory-runtime";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=inventory-runtime";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=inventory-runtime";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=inventory-runtime";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=inventory-runtime";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=inventory-runtime";
+} from "./game/ShiftReport.js?v=inventory-wheel-drop";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=inventory-wheel-drop";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=inventory-wheel-drop";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=inventory-wheel-drop";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=inventory-wheel-drop";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=inventory-wheel-drop";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=inventory-wheel-drop";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=inventory-wheel-drop";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=inventory-wheel-drop";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=inventory-wheel-drop";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=inventory-wheel-drop";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=inventory-wheel-drop";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=inventory-wheel-drop";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=inventory-wheel-drop";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=inventory-wheel-drop";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=inventory-wheel-drop";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=inventory-wheel-drop";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=inventory-wheel-drop";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=inventory-wheel-drop";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=inventory-wheel-drop";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=inventory-wheel-drop";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=inventory-wheel-drop";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=inventory-wheel-drop";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=inventory-wheel-drop";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=inventory-wheel-drop";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=inventory-wheel-drop";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=inventory-wheel-drop";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=inventory-wheel-drop";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=inventory-wheel-drop";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=inventory-runtime";
+} from "./config/GraphicsQualityProfiles.js?v=inventory-wheel-drop";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=inventory-runtime";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=inventory-runtime";
-import { createStatusScreen } from "./StatusScreen.js?v=inventory-runtime";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=inventory-runtime";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=inventory-runtime";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=inventory-runtime";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=inventory-runtime";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=inventory-runtime";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=inventory-runtime";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=inventory-runtime";
+} from "./scene/TextureStreaming.js?v=inventory-wheel-drop";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=inventory-wheel-drop";
+import { createStatusScreen } from "./StatusScreen.js?v=inventory-wheel-drop";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=inventory-wheel-drop";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=inventory-wheel-drop";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=inventory-wheel-drop";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=inventory-wheel-drop";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=inventory-wheel-drop";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=inventory-wheel-drop";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=inventory-wheel-drop";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=inventory-runtime";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=inventory-runtime";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=inventory-runtime";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=inventory-wheel-drop";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=inventory-wheel-drop";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=inventory-wheel-drop";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=inventory-runtime";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=inventory-runtime";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=inventory-runtime";
-import { AssetCache } from "./runtime/AssetCache.js?v=inventory-runtime";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=inventory-runtime";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=inventory-runtime";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=inventory-runtime";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=inventory-runtime";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=inventory-runtime";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=inventory-runtime";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=inventory-runtime";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=inventory-runtime";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=inventory-runtime";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=inventory-runtime";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=inventory-runtime";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=inventory-runtime";
+} from "./lighting/FluorescentBehavior.js?v=inventory-wheel-drop";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=inventory-wheel-drop";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=inventory-wheel-drop";
+import { AssetCache } from "./runtime/AssetCache.js?v=inventory-wheel-drop";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=inventory-wheel-drop";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=inventory-wheel-drop";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=inventory-wheel-drop";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=inventory-wheel-drop";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=inventory-wheel-drop";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=inventory-wheel-drop";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=inventory-wheel-drop";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=inventory-wheel-drop";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=inventory-wheel-drop";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=inventory-wheel-drop";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=inventory-wheel-drop";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=inventory-wheel-drop";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=inventory-runtime";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=inventory-runtime";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=inventory-runtime";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=inventory-runtime";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=inventory-runtime";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=inventory-runtime";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=inventory-runtime";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=inventory-runtime";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=inventory-runtime";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=inventory-runtime";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=inventory-runtime";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=inventory-runtime";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=inventory-runtime";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=inventory-runtime";
-import { PlayerController } from "./player/PlayerController.js?v=inventory-runtime";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=inventory-runtime";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=inventory-runtime";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=inventory-runtime";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=inventory-runtime";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=inventory-runtime";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=inventory-runtime";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=inventory-runtime";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=inventory-runtime";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=inventory-runtime";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=inventory-runtime";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=inventory-runtime";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=inventory-runtime";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=inventory-runtime";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=inventory-runtime";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=inventory-runtime";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=inventory-runtime";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=inventory-runtime";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=inventory-runtime";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=inventory-runtime";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=inventory-runtime";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=inventory-runtime";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=inventory-runtime";
+} from "./scene/InteriorObjectRegistry.js?v=inventory-wheel-drop";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=inventory-wheel-drop";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=inventory-wheel-drop";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=inventory-wheel-drop";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=inventory-wheel-drop";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=inventory-wheel-drop";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=inventory-wheel-drop";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=inventory-wheel-drop";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=inventory-wheel-drop";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=inventory-wheel-drop";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=inventory-wheel-drop";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=inventory-wheel-drop";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=inventory-wheel-drop";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=inventory-wheel-drop";
+import { PlayerController } from "./player/PlayerController.js?v=inventory-wheel-drop";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=inventory-wheel-drop";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=inventory-wheel-drop";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=inventory-wheel-drop";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=inventory-wheel-drop";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=inventory-wheel-drop";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=inventory-wheel-drop";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=inventory-wheel-drop";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=inventory-wheel-drop";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=inventory-wheel-drop";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=inventory-wheel-drop";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=inventory-wheel-drop";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=inventory-wheel-drop";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=inventory-wheel-drop";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=inventory-wheel-drop";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=inventory-wheel-drop";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=inventory-wheel-drop";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=inventory-wheel-drop";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=inventory-wheel-drop";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=inventory-wheel-drop";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=inventory-wheel-drop";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=inventory-wheel-drop";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=inventory-wheel-drop";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=inventory-runtime";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=inventory-wheel-drop";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -2001,6 +2001,7 @@ const operatorInputRuntime = createOperatorInputRuntime({
   activateRelevantItem: (target) => itemInteractionRuntime.activateRelevant(target),
   dropHandledItem: (options) => itemInteractionRuntime.dropHandled(options),
   beginInventorySelection: () => itemInteractionRuntime.beginSelection(),
+  isInventorySelectionOpen: () => itemInteractionRuntime.getSnapshot().selectorOpen,
   moveInventorySelection: (direction) => itemInteractionRuntime.moveSelection(direction),
   commitInventorySelection: () => itemInteractionRuntime.commitSelection(),
   cancelInventorySelection: () => itemInteractionRuntime.cancelSelection(),

@@ -41,3 +41,12 @@ test("rock and signs materials expose their authored PBR texture sets", () => {
   assert.match(signs1.maps.preview.emissive, /T_Signs1_Emissive/);
   assert.equal(signs1.emissiveIntensity, 1);
 });
+
+test("brief paper uses an opaque masked material with a restrained albedo", () => {
+  const { briefPaper } = CONFIG.interior.specialMaterials;
+
+  assert.equal(briefPaper.color, "#aaa69d");
+  assert.equal(briefPaper.transparent, undefined);
+  assert.equal(briefPaper.alphaTest, 0.5);
+  assert.equal(briefPaper.side, THREE.DoubleSide);
+});

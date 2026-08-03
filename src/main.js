@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=inventory-runtime";
-import { applyLocalization } from "./app/Localization.js?v=inventory-runtime";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=inventory-runtime";
+import { createPreflight } from "./app/Preflight.js?v=inventory-wheel-drop";
+import { applyLocalization } from "./app/Localization.js?v=inventory-wheel-drop";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=inventory-wheel-drop";
 
-const APP_BUILD_REVISION = "inventory-runtime";
+const APP_BUILD_REVISION = "inventory-wheel-drop";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=inventory-runtime`);
+await import(`./OperatorGame.js?v=inventory-wheel-drop`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=inventory-runtime`);
+const { createAppShell } = await import(`./app/AppShell.js?v=inventory-wheel-drop`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=inventory-runtime`
+    `./runtime/RuntimeSmoke.js?v=inventory-wheel-drop`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

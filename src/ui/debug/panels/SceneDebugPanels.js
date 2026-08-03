@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=inventory-runtime";
+} from "../../../levels/LevelConfigSerialization.js?v=inventory-wheel-drop";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

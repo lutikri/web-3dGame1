@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=inventory-runtime";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=inventory-wheel-drop";
 
 const DISMISS_MS = 300;
 

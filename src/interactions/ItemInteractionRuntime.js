@@ -1,10 +1,11 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=inventory-runtime";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=inventory-wheel-drop";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
 const cameraOffset = new THREE.Vector3();
+const rigidPosition = new THREE.Vector3();
 
 export function createItemInteractionRuntime({
   interactive,
@@ -56,6 +57,8 @@ export function createItemInteractionRuntime({
       grabOffset: toVector3(config.grabOffset),
       equippedOffset: toVector3(config.equippedOffset, [0.25, -0.2, -0.48]),
       rotationOffset: toEuler(config.rotationOffset),
+      equippedBreakDistance: Math.max(0.1, Number(config.equippedBreakDistance) || 1.25),
+      equippedBreakDelay: Math.max(0, Number(config.equippedBreakDelay) || 0.2),
       briefingRequest: kind === "briefSheet" ? {
         levelId: runtime.briefSheet?.briefingLevelId ?? prefabConfig.briefSheet?.briefingLevelId ?? levelId,
         sheetIndex: runtime.briefSheet?.sheetIndex ?? prefabConfig.briefSheet?.sheetIndex ?? 0,
@@ -76,33 +79,74 @@ export function createItemInteractionRuntime({
   }
 
   function applyItemState(item, state, context) {
+    item.data.equippedSeparationSeconds = 0;
     const hidden = state === ITEM_STATES.INVENTORY || state === ITEM_STATES.SPECIAL_VIEW;
     item.root.visible = !hidden;
     const rigidKey = item.runtime.rigidPrefabKey;
     if (!rigidKey) {
-      if (state === ITEM_STATES.WORLD && context.reason) applyDirectDropPose(item);
+      if (
+        state === ITEM_STATES.WORLD
+        && context.reason
+        && context.previousState !== ITEM_STATES.GRABBED
+      ) applyDirectDropPose(item);
       return;
     }
     if (hidden) {
       physics.setRigidPrefabMode(rigidKey, "inventory");
       return;
     }
-    if ([ITEM_STATES.GRABBED, ITEM_STATES.EQUIPPED].includes(state)) {
+    if (state === ITEM_STATES.GRABBED) {
+      physics.setRigidPrefabMode(rigidKey, state);
+      return;
+    }
+    if (state === ITEM_STATES.EQUIPPED) {
       physics.setRigidPrefabMode(rigidKey, state);
       updateHandledItem(item, state, 0, true);
+      return;
+    }
+    if (context.previousState === ITEM_STATES.GRABBED) {
+      physics.releaseRigidPrefab(rigidKey, getThrowVelocity(context.throwStrength));
+      return;
+    }
+    if (context.previousState === ITEM_STATES.EQUIPPED && context.releaseInPlace) {
+      physics.releaseRigidPrefab(rigidKey);
       return;
     }
     const pose = getDropPose(item);
     physics.dropRigidPrefab(rigidKey, pose.position, pose.quaternion, getThrowVelocity(context.throwStrength));
   }
 
-  function updateHandledItem(item, state, _dt, immediate = false) {
+  function updateHandledItem(item, state, dt, immediate = false) {
     const pose = getHandledPose(item, state);
     if (item.runtime.rigidPrefabKey) {
-      physics.setRigidPrefabPose(item.runtime.rigidPrefabKey, pose.position, pose.quaternion, immediate);
-    } else {
+      if (state === ITEM_STATES.GRABBED) {
+        physics.driveRigidPrefab(item.runtime.rigidPrefabKey, pose.position, pose.quaternion, { dt });
+      } else {
+        physics.setRigidPrefabPose(item.runtime.rigidPrefabKey, pose.position, pose.quaternion, immediate, {
+          sweep: state === ITEM_STATES.EQUIPPED,
+          sweepOrigin: immediate ? pose.sweepOrigin : null,
+        });
+        if (state === ITEM_STATES.EQUIPPED && !immediate) {
+          updateEquippedSeparation(item, pose.position, dt);
+        }
+      }
+    } else if (state !== ITEM_STATES.GRABBED) {
       setWorldTransform(item.root, pose.position, pose.quaternion);
     }
+  }
+
+  function updateEquippedSeparation(item, targetPosition, dt) {
+    const currentPosition = physics.getRigidPrefabPosition?.(item.runtime.rigidPrefabKey, rigidPosition);
+    if (!currentPosition) return;
+    const separated = currentPosition.distanceTo(targetPosition) > item.equippedBreakDistance;
+    item.data.equippedSeparationSeconds = separated
+      ? (item.data.equippedSeparationSeconds ?? 0) + Math.max(0, Number(dt) || 0)
+      : 0;
+    if (item.data.equippedSeparationSeconds < item.equippedBreakDelay) return;
+    inventory.dropHandled({
+      reason: "equipped-obstructed",
+      releaseInPlace: true,
+    });
   }
 
   function getHandledPose(item, state) {
@@ -116,7 +160,7 @@ export function createItemInteractionRuntime({
     }
     const position = worldPosition.clone().add(cameraOffset);
     const quaternion = worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
-    return { position, quaternion };
+    return { position, quaternion, sweepOrigin: worldPosition.clone() };
   }
 
   function getDropPose(item) {
@@ -152,6 +196,7 @@ export function createItemInteractionRuntime({
 
   function initializeLightState(item, configuredState) {
     const lights = collectLights(item.root);
+    lights.forEach(repairSpotLightTarget);
     item.data.isOn = configuredState == null ? lights.some((light) => light.visible) : Boolean(configuredState);
     lights.forEach((light) => {
       light.userData.itemBaseIntensity = light.intensity;
@@ -202,6 +247,12 @@ export function createItemInteractionRuntime({
     getSnapshot: () => inventory.getSnapshot(),
     dispose,
   };
+}
+
+function repairSpotLightTarget(light) {
+  if (!light.isSpotLight || !light.target || light.target.parent) return;
+  light.add(light.target);
+  light.target.updateMatrixWorld(true);
 }
 
 function collectLights(root) {

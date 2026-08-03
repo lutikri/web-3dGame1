@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=inventory-runtime";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=inventory-wheel-drop";
 
 const EFFECT_KEYS = [
   "bloom",

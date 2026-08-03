@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=inventory-runtime";
+import { LevelSession } from "./LevelSession.js?v=inventory-wheel-drop";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

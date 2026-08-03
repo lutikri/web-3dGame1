@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=inventory-runtime";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=inventory-wheel-drop";
 
 export class BulkheadExitRuntime {
   constructor({ config, interactive, playSound, getGameMode, emitThought, getResults, showResults, refreshTooltip }) {

@@ -15,6 +15,9 @@ test("flashlight marker resolves to a portable physical equipment item", () => {
   assert.deepEqual(flashlight.rigidBody.colliderNamePrefixes, ["UBX_SM_FlashLightBody1"]);
   assert.equal(flashlight.item.portable, true);
   assert.equal(flashlight.item.activationType, "toggleLight");
+  assert.deepEqual(flashlight.item.rotationOffset, [0, 270, 0]);
+  assert.equal(flashlight.item.grabDistance, 0.82);
+  assert.deepEqual(flashlight.item.grabOffset, [0, -0.22, 0]);
 });
 
 test("prefab instances clone registry-owned nested defaults", () => {

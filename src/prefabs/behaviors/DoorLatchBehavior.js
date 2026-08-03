@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=inventory-runtime";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=inventory-wheel-drop";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

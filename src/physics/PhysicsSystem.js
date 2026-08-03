@@ -1,5 +1,26 @@
 import * as THREE from "three";
 
+export function computeLimitedGrabAnchorPosition(current, target, dt, maxSpeed = 2.2) {
+  const next = new THREE.Vector3(current.x, current.y, current.z);
+  const offset = new THREE.Vector3(
+    target.x - current.x,
+    target.y - current.y,
+    target.z - current.z,
+  );
+  const maxStep = Math.max(0, Number(maxSpeed) || 0) * Math.max(0, Number(dt) || 0);
+  if (maxStep <= 0) return next;
+  return next.add(offset.clampLength(0, maxStep));
+}
+
+export function computeSweepLimitedPosition(start, target, timeOfImpact = 1) {
+  const toi = THREE.MathUtils.clamp(Number(timeOfImpact) || 0, 0, 1);
+  return new THREE.Vector3(
+    start.x + (target.x - start.x) * toi,
+    start.y + (target.y - start.y) * toi,
+    start.z + (target.z - start.z) * toi,
+  );
+}
+
 export async function createPhysicsSystem() {
   const { default: RAPIER } = await import("@dimforge/rapier3d-compat");
   const originalWarn = console.warn;
@@ -626,32 +647,162 @@ export async function createPhysicsSystem() {
   function removeRigidPrefab(key) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return;
+    removeRigidPrefabGrabConstraint(prefab);
     world.removeRigidBody(prefab.body);
     rigidPrefabs.delete(key);
+  }
+
+  function createRigidPrefabGrabConstraint(prefab) {
+    removeRigidPrefabGrabConstraint(prefab);
+    const position = prefab.body.translation();
+    const anchorBody = world.createRigidBody(
+      RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(position.x, position.y, position.z),
+    );
+    const mass = Math.max(0.05, prefab.body.mass());
+    const naturalFrequency = 7;
+    const stiffness = mass * naturalFrequency * naturalFrequency;
+    const damping = 8 * mass * naturalFrequency;
+    const priorLinearDamping = prefab.body.linearDamping();
+    const priorAngularDamping = prefab.body.angularDamping();
+    prefab.body.setLinearDamping(Math.max(4, priorLinearDamping));
+    prefab.body.setAngularDamping(Math.max(3, priorAngularDamping));
+    const zero = { x: 0, y: 0, z: 0 };
+    const joint = world.createImpulseJoint(
+      RAPIER.JointData.spring(0.08, stiffness, damping, zero, zero),
+      anchorBody,
+      prefab.body,
+      true,
+    );
+    prefab.grabConstraint = {
+      anchorBody,
+      joint,
+      priorLinearDamping,
+      priorAngularDamping,
+    };
+  }
+
+  function removeRigidPrefabGrabConstraint(prefab) {
+    const constraint = prefab?.grabConstraint;
+    if (!constraint) return;
+    prefab.body.setLinearDamping(constraint.priorLinearDamping);
+    prefab.body.setAngularDamping(constraint.priorAngularDamping);
+    if (constraint.joint?.isValid?.()) world.removeImpulseJoint(constraint.joint, true);
+    world.removeRigidBody(constraint.anchorBody);
+    prefab.grabConstraint = null;
   }
 
   function setRigidPrefabMode(key, mode) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
     if (mode === "inventory") {
+      removeRigidPrefabGrabConstraint(prefab);
       prefab.body.setEnabled(false);
       return true;
     }
-    const bodyType = mode === "world"
-      ? RAPIER.RigidBodyType.Dynamic
-      : RAPIER.RigidBodyType.KinematicPositionBased;
+    const bodyType = mode === "equipped"
+      ? RAPIER.RigidBodyType.KinematicPositionBased
+      : RAPIER.RigidBodyType.Dynamic;
     prefab.body.setBodyType(bodyType, true);
     prefab.body.setEnabled(prefab.sceneKey === activeSceneKey);
-    prefab.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-    prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    if (mode === "grabbed") {
+      prefab.body.enableCcd(true);
+      createRigidPrefabGrabConstraint(prefab);
+    } else {
+      removeRigidPrefabGrabConstraint(prefab);
+    }
+    if (mode === "equipped") {
+      prefab.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    }
     prefab.body.wakeUp();
     return true;
   }
 
-  function setRigidPrefabPose(key, position, rotation, immediate = false) {
+  function driveRigidPrefab(key, targetPosition, _targetRotation, options = {}) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab || !targetPosition || !prefab.body.isEnabled()) return false;
+    if (!prefab.grabConstraint) createRigidPrefabGrabConstraint(prefab);
+    const current = prefab.grabConstraint.anchorBody.translation();
+    const next = computeLimitedGrabAnchorPosition(
+      current,
+      targetPosition,
+      options.dt,
+      options.maxAnchorSpeed,
+    );
+    prefab.grabConstraint.anchorBody.setNextKinematicTranslation(next);
+    prefab.body.wakeUp();
+    return true;
+  }
+
+  function sweepRigidPrefabTranslation(prefab, targetPosition, targetRotation, sweepOrigin = null) {
+    const bodyPosition = prefab.body.translation();
+    const bodyRotation = prefab.body.rotation();
+    const start = sweepOrigin ?? bodyPosition;
+    const movement = new THREE.Vector3(
+      targetPosition.x - start.x,
+      targetPosition.y - start.y,
+      targetPosition.z - start.z,
+    );
+    if (movement.lengthSq() <= 1e-10) return new THREE.Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+
+    const currentBodyQuaternion = new THREE.Quaternion(
+      bodyRotation.x,
+      bodyRotation.y,
+      bodyRotation.z,
+      bodyRotation.w,
+    );
+    const inverseBodyQuaternion = currentBodyQuaternion.clone().invert();
+    const desiredQuaternion = new THREE.Quaternion(
+      targetRotation.x,
+      targetRotation.y,
+      targetRotation.z,
+      targetRotation.w,
+    );
+    let earliestToi = 1;
+    const excludesCharacter = (collider) => collider.handle !== character?.collider?.handle;
+    prefab.colliders.forEach((collider) => {
+      const colliderPosition = collider.translation();
+      const colliderRotation = collider.rotation();
+      const localOffset = new THREE.Vector3(
+        colliderPosition.x - bodyPosition.x,
+        colliderPosition.y - bodyPosition.y,
+        colliderPosition.z - bodyPosition.z,
+      ).applyQuaternion(inverseBodyQuaternion);
+      const localRotation = inverseBodyQuaternion.clone().multiply(new THREE.Quaternion(
+        colliderRotation.x,
+        colliderRotation.y,
+        colliderRotation.z,
+        colliderRotation.w,
+      ));
+      const castPosition = new THREE.Vector3(start.x, start.y, start.z)
+        .add(localOffset.applyQuaternion(desiredQuaternion));
+      const castRotation = desiredQuaternion.clone().multiply(localRotation);
+      const hit = world.castShape(
+        castPosition,
+        castRotation,
+        movement,
+        collider.shape,
+        0.025,
+        earliestToi,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        prefab.body,
+        excludesCharacter,
+      );
+      if (hit) earliestToi = Math.min(earliestToi, hit.time_of_impact);
+    });
+    return computeSweepLimitedPosition(start, targetPosition, earliestToi);
+  }
+
+  function setRigidPrefabPose(key, position, rotation, immediate = false, options = {}) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab || !position || !rotation) return false;
-    const translation = { x: position.x, y: position.y, z: position.z };
+    const resolvedPosition = options.sweep
+      ? sweepRigidPrefabTranslation(prefab, position, rotation, options.sweepOrigin)
+      : position;
+    const translation = { x: resolvedPosition.x, y: resolvedPosition.y, z: resolvedPosition.z };
     const quaternion = { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w };
     if (immediate) {
       prefab.body.setTranslation(translation, true);
@@ -663,11 +814,28 @@ export async function createPhysicsSystem() {
     return true;
   }
 
+  function getRigidPrefabPosition(key, target = null) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return null;
+    const position = prefab.body.translation();
+    if (target?.set) return target.set(position.x, position.y, position.z);
+    return new THREE.Vector3(position.x, position.y, position.z);
+  }
+
   function dropRigidPrefab(key, position, rotation, linearVelocity = null) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
     setRigidPrefabMode(key, "world");
     setRigidPrefabPose(key, position, rotation, true);
+    prefab.body.setLinvel(linearVelocity ?? { x: 0, y: 0, z: 0 }, true);
+    prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    return true;
+  }
+
+  function releaseRigidPrefab(key, linearVelocity = null) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return false;
+    setRigidPrefabMode(key, "world");
     if (linearVelocity) prefab.body.setLinvel(linearVelocity, true);
     return true;
   }
@@ -840,8 +1008,11 @@ export async function createPhysicsSystem() {
     removeKinematicPrefab,
     createRigidPrefab,
     setRigidPrefabMode,
+    driveRigidPrefab,
     setRigidPrefabPose,
+    getRigidPrefabPosition,
     dropRigidPrefab,
+    releaseRigidPrefab,
     removeRigidPrefab,
     resetRigidPrefab,
     setDoorEnabled,

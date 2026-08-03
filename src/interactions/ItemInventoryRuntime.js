@@ -314,8 +314,9 @@ export class ItemInventoryRuntime {
   }
 
   transition(item, state, context = {}) {
+    const previousState = item.state;
     item.state = state;
-    this.applyItemState(item, state, context);
+    this.applyItemState(item, state, { ...context, previousState });
   }
 
   resolveItem(itemOrId) {

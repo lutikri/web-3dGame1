@@ -30,7 +30,11 @@ export function createBriefSheetRuntime(parts, config = {}, loadTexture = loadBr
       texture.flipY = false;
       texture.needsUpdate = true;
       mesh.material.map = texture;
-      mesh.material.color.set("#ffffff");
+      mesh.material.transparent = false;
+      mesh.material.opacity = 1;
+      mesh.material.alphaTest = Math.max(0.5, Number(mesh.material.alphaTest) || 0);
+      mesh.material.depthWrite = true;
+      mesh.material.side = THREE.DoubleSide;
       mesh.material.needsUpdate = true;
       runtime.texture = texture;
       return texture;

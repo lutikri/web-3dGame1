@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=inventory-runtime";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=inventory-runtime";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=inventory-wheel-drop";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=inventory-wheel-drop";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=inventory-runtime";
+} from "./UiAudioInteractionRuntime.js?v=inventory-wheel-drop";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=inventory-runtime";
+} from "../config/GraphicsHardwareTiers.js?v=inventory-wheel-drop";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=inventory-runtime";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=inventory-wheel-drop";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

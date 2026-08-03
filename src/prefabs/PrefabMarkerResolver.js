@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=inventory-runtime";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=inventory-wheel-drop";
 
 const MARKER_PREFIX = "PF_";
 

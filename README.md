@@ -218,6 +218,33 @@ resetProgress()
 
 `goto` / `gotoLevel` bypass route unlocks, but still require the target level to be playable.
 
+#### Graphics commands
+
+Open the browser DevTools console while the game is running. The short commands below switch the cinematic post-processing bundle (SSGI, SSR, and screen-space shadows) together:
+
+```js
+og("cinematic off")
+og("cinematic min")
+og("cinematic med")
+og("cinematic max")
+og("quality cinematic med") // equivalent spelling
+og.cinematic("max")          // equivalent method form
+```
+
+Use the runtime debug API to change the complete graphics profile or an individual effect:
+
+```js
+operatorGameDebug.applyQualityProfile("low")    // low | medium | high
+operatorGameDebug.setShadowQuality("med")       // off | min | med | max
+operatorGameDebug.setGtaoQuality("max")         // off | min | med | max
+operatorGameDebug.setSsgiQuality("off")         // off | min | med | max
+operatorGameDebug.setSsrQuality("off")          // off | min | med | max
+operatorGameDebug.setScreenSpaceShadowQuality("off") // off | min | med | max
+operatorGameDebug.setCinematicPostProcessingQuality("max")
+```
+
+`applyQualityProfile` also changes render resolution, light budgets, texture policy, and the profile's standard effects. Console changes are temporary and last only for the current page session. For persistent player settings, use the in-game Settings panel or rerun its Setup Wizard.
+
 Runtime lifecycle smoke test:
 
 ```text

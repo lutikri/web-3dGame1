@@ -1,7 +1,22 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { PostProcessingRuntime } from "../src/postprocessing/PostProcessingRuntime.js";
+import * as THREE from "three";
+
+import {
+  configureGtaoGeometryCoverage,
+  PostProcessingRuntime,
+} from "../src/postprocessing/PostProcessingRuntime.js";
+
+test("GTAO depth and normal coverage includes two-sided thin geometry", () => {
+  const normalMaterial = new THREE.MeshNormalMaterial();
+  const initialVersion = normalMaterial.version;
+
+  assert.equal(configureGtaoGeometryCoverage({ normalMaterial }), true);
+  assert.equal(normalMaterial.side, THREE.DoubleSide);
+  assert.ok(normalMaterial.version > initialVersion);
+  assert.equal(configureGtaoGeometryCoverage(null), false);
+});
 
 test("post-processing runtime owns disabled fallback lifecycle", () => {
   const calls = [];

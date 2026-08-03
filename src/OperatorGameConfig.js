@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=inventory-runtime";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=inventory-runtime";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=inventory-runtime";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=inventory-runtime";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=inventory-wheel-drop";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=inventory-wheel-drop";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=inventory-wheel-drop";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=inventory-wheel-drop";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -123,7 +123,7 @@ export const CONFIG = {
       briefPaper: {
         materialNames: ["M_Brief", "M_Brief.001"],
         meshNames: ["SM_Brief1"],
-        color: "#ffffff",
+        color: "#aaa69d",
         roughness: 0.82,
         metalness: 0,
         normalScale: 1,

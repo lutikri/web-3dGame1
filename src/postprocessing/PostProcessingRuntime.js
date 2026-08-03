@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=inventory-runtime";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=inventory-wheel-drop";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=inventory-runtime";
+} from "./PostProcessingShaders.js?v=inventory-wheel-drop";
 
 export class PostProcessingRuntime {
   composer = null;
@@ -80,6 +80,7 @@ export class PostProcessingRuntime {
       this.gtaoPass = new GTAOPass(this.scene, this.camera,
         Math.max(1, Math.round(window.innerWidth * scale)),
         Math.max(1, Math.round(window.innerHeight * scale)));
+      configureGtaoGeometryCoverage(this.gtaoPass);
       this.gtaoPass.output = GTAOPass.OUTPUT.Default;
       applyGtaoPreset(this.gtaoPass, gtao);
       this.composer.addPass(this.gtaoPass);
@@ -243,4 +244,11 @@ export class PostProcessingRuntime {
       1 / Math.max(1, window.innerHeight * ratio));
   }
 
+}
+
+export function configureGtaoGeometryCoverage(pass) {
+  if (!pass?.normalMaterial) return false;
+  pass.normalMaterial.side = THREE.DoubleSide;
+  pass.normalMaterial.needsUpdate = true;
+  return true;
 }

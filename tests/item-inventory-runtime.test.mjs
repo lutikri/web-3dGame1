@@ -95,3 +95,19 @@ test("selecting equipment releases a physically grabbed item", () => {
   assert.equal(flashlight.state, ITEM_STATES.EQUIPPED);
   assert.equal(transitions.some((entry) => entry.id === "chair" && entry.reason === "inventory-selection"), true);
 });
+
+test("state transitions report the previous physical state to their owner", () => {
+  const transitions = [];
+  const runtime = new ItemInventoryRuntime({
+    applyItemState: (_item, state, context) => transitions.push({ state, previousState: context.previousState }),
+  });
+  const item = runtime.register({ id: "chair", target: {}, portable: true });
+
+  runtime.grab(item);
+  runtime.releaseGrabbed();
+
+  assert.deepEqual(transitions, [
+    { state: ITEM_STATES.GRABBED, previousState: ITEM_STATES.WORLD },
+    { state: ITEM_STATES.WORLD, previousState: ITEM_STATES.GRABBED },
+  ]);
+});

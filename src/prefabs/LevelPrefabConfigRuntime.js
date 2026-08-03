@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=inventory-runtime";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-runtime";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-runtime";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-runtime";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=inventory-wheel-drop";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-wheel-drop";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-wheel-drop";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-runtime";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=inventory-wheel-drop";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

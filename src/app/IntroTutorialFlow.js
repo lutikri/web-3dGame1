@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=inventory-runtime";
+import { translateRequired } from "./Localization.js?v=inventory-wheel-drop";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

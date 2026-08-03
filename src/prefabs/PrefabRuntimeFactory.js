@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=inventory-runtime";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-runtime";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=inventory-runtime";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-runtime";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-runtime";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=inventory-runtime";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=inventory-runtime";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=inventory-wheel-drop";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=inventory-wheel-drop";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-wheel-drop";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-wheel-drop";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=inventory-wheel-drop";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=inventory-wheel-drop";
 
 export function createPrefabRuntimeFactory({
   config,

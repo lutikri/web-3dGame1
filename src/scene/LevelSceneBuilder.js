@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=inventory-runtime";
+} from "../prefabs/PrefabMarkerResolver.js?v=inventory-wheel-drop";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=inventory-runtime";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=inventory-runtime";
+} from "../levels/LevelConfigOverrides.js?v=inventory-wheel-drop";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=inventory-wheel-drop";
 
 export function createLevelSceneBuilder({
   scene,

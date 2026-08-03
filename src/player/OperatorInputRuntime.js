@@ -46,6 +46,7 @@ export function createOperatorInputRuntime({
   activateRelevantItem = () => false,
   dropHandledItem = () => false,
   beginInventorySelection = () => false,
+  isInventorySelectionOpen = () => false,
   moveInventorySelection = () => false,
   commitInventorySelection = () => false,
   cancelInventorySelection = () => false,
@@ -59,6 +60,8 @@ export function createOperatorInputRuntime({
   const removers = [];
   let debugToggleBuffer = "";
   let dropPressedAt = null;
+  let lastInventoryWheelEventAt = Number.NEGATIVE_INFINITY;
+  const inventoryWheelGestureGapSeconds = 0.1;
 
   function wire() {
     listen(document, "keydown", handleDebugToggle);
@@ -107,7 +110,10 @@ export function createOperatorInputRuntime({
     if (isMovementCode(event.code)) event.preventDefault();
     if (event.code === "Tab") {
       event.preventDefault();
-      if (!event.repeat) beginInventorySelection();
+      if (!event.repeat) {
+        lastInventoryWheelEventAt = Number.NEGATIVE_INFINITY;
+        beginInventorySelection();
+      }
       return;
     }
     if (event.code === "KeyE") {
@@ -174,8 +180,18 @@ export function createOperatorInputRuntime({
 
   function handleWheel(event) {
     if (isInputLocked()) return;
-    if (moveInventorySelection(Math.sign(event.deltaY))) {
+    if (isInventorySelectionOpen()) {
       event.preventDefault();
+      const direction = Math.sign(event.deltaY);
+      if (!direction) return;
+      const wheelAt = now();
+      const acceptsStep = isNewInventoryWheelGesture(
+        wheelAt,
+        lastInventoryWheelEventAt,
+        inventoryWheelGestureGapSeconds,
+      );
+      lastInventoryWheelEventAt = wheelAt;
+      if (acceptsStep) moveInventorySelection(direction);
       return;
     }
     if (isLookOnly()) {
@@ -300,6 +316,10 @@ export function isMovementCode(code) {
 export function getThrowStrength(heldSeconds) {
   const duration = Math.max(0, Number(heldSeconds) || 0);
   return duration < 0.35 ? 0 : Math.min(1, (duration - 0.35) / 0.65);
+}
+
+export function isNewInventoryWheelGesture(eventTime, previousEventTime, gapSeconds = 0.1) {
+  return Number(eventTime) - Number(previousEventTime) >= Math.max(0, Number(gapSeconds) || 0);
 }
 
 export function isTextEditingTarget(target) {

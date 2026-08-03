@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=inventory-runtime";
+import { LevelRuntime } from "./LevelRuntime.js?v=inventory-wheel-drop";
 
 export class LevelEnvironmentLifecycle {
   constructor({
