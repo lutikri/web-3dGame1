@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=inventory-wheel-drop";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-wheel-drop";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-wheel-drop";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=grabbable-desk-lamp";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=grabbable-desk-lamp";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=grabbable-desk-lamp";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=grabbable-desk-lamp";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -89,7 +89,11 @@ export class LevelPrefabConfigRuntime {
     runtime.light.distance = light.distance;
     runtime.light.decay = light.decay;
     if (light.localOffset) runtime.light.position.copy(light.localOffset);
-    if (runtime.light.isSpotLight) applyPrefabSpotTarget(runtime.light, light, runtime.parts.get(light.markerName));
+    if (runtime.light.isSpotLight) {
+      runtime.light.angle = light.angle;
+      runtime.light.penumbra = light.penumbra;
+      applyPrefabSpotTarget(runtime.light, light, runtime.parts.get(light.markerName));
+    }
     if (light.enabled !== false && !runtime.wasLightEnabled && light.fluorescentStartup) {
       runtime.startupPattern = this.createStartupPattern();
       runtime.startupElapsed = 0;

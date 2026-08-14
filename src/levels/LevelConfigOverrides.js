@@ -77,8 +77,12 @@ export function applyPrefabStatePolicies(prefabs, policies = []) {
   prefabs.forEach((prefab) => {
     policies.forEach((policy) => {
       if (!policy?.prefabTypes?.includes(prefab?.prefabType)) return;
+      if (policy.prefabNames?.length && !policy.prefabNames.includes(prefab.name)) return;
       const state = policy.exceptions?.[prefab.name] ?? policy.state;
       if (state) applyLevelOverrides(prefab, { state }, `prefabs.${prefab.name}`);
+      if (policy.overrides) {
+        applyLevelOverrides(prefab, policy.overrides, `prefabs.${prefab.name}`);
+      }
     });
   });
   return prefabs;

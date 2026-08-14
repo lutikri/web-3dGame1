@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=inventory-wheel-drop";
+import { translateRequired } from "./Localization.js?v=grabbable-desk-lamp";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

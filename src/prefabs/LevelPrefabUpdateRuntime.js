@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=inventory-wheel-drop";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-wheel-drop";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-wheel-drop";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=inventory-wheel-drop";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=grabbable-desk-lamp";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=grabbable-desk-lamp";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=grabbable-desk-lamp";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=grabbable-desk-lamp";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=grabbable-desk-lamp";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -53,8 +53,11 @@ export class LevelPrefabUpdateRuntime {
       const roomEmissive = light.roomLightControlled
         ? Math.max(this.getRoomLightVisualFactor(), this.getRoomLightAfterglowFactor()) : 1;
       const sceneFactor = this.getSceneLightFactor();
+      const itemFactor = runtime.light.userData?.itemControlled
+        && runtime.light.userData?.itemEnabled === false ? 0 : 1;
       runtime.light.visible = runtime.light.userData?.pooledEmitter !== true;
-      runtime.light.intensity = light.intensity * (light.enabled === false ? 0 : factor) * roomPoint * sceneFactor;
+      runtime.light.intensity = light.intensity * (light.enabled === false ? 0 : factor)
+        * roomPoint * sceneFactor * itemFactor;
       runtime.emissiveMaterials.forEach((material) => {
         const base = material.userData.baseEmissiveIntensity ?? 1;
         material.emissiveIntensity = base * (light.enabled === false ? localAfterglow : factor) * roomEmissive * sceneFactor;

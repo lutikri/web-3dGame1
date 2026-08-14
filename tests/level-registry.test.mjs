@@ -86,3 +86,44 @@ test("exploring around starts localized panel guidance on first control booth en
     },
   });
 });
+
+test("instrument reliability shift reuses the facility with its own brief, intro and failed lights", () => {
+  const level = LEVEL_DEFINITIONS["unexpected-stuff"];
+  const environment = level.environment;
+  assert.equal(getLevelEnvironmentId(level.id), level.id);
+  assert.equal(environment.assetPath, LEVEL_DEFINITIONS["exploring-around"].environment.assetPath);
+  assert.deepEqual(level.briefingImage, {
+    en: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckEN.png"],
+    ru: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckRU.png"],
+  });
+  assert.equal(level.autoShowBriefing, false);
+  assert.deepEqual(environment.physicalBriefing.sheets, level.briefingImage);
+  assert.equal(environment.physicalBriefing.briefingLevelId, level.id);
+  assert.equal(environment.tutorial.enabled, false);
+  assert.equal(
+    environment.triggerSequences.find(({ name }) => name === "WelcomeEntry").narration,
+    "faultsIntro",
+  );
+  assert.equal(
+    environment.triggerSequences.find(({ name }) => name === "ControlBooth").narration,
+    undefined,
+  );
+  assert.deepEqual(environment.narration.faultsIntro, {
+    en: {
+      soundKey: "MessageEN_FaultsIntro1",
+      subtitlePath: "assets/sounds/narration/MessageEN_FaultsIntro1.srt",
+      duration: 24.16,
+    },
+    ru: {
+      soundKey: "MessageRU_FaultsIntro1",
+      subtitlePath: "assets/sounds/narration/MessageRU_FaultsIntro1.srt",
+      duration: 26.52,
+    },
+  });
+  const failedLights = environment.prefabStatePolicies.at(-1);
+  assert.equal(failedLights.overrides.light.enabled, false);
+  assert.deepEqual(failedLights.prefabTypes, ["fluorescentLamp"]);
+  assert.equal(environment.lighting.ambientIntensity, 0);
+  assert.equal(environment.lighting.pointLights.fill.intensity, 0);
+  assert.ok(environment.lighting.pointLights.LampFan.intensity > 0);
+});

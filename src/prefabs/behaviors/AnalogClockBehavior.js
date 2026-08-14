@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=inventory-wheel-drop";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=grabbable-desk-lamp";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

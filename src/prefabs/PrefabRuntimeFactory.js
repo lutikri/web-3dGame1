@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=inventory-wheel-drop";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=inventory-wheel-drop";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=inventory-wheel-drop";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=inventory-wheel-drop";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=inventory-wheel-drop";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=inventory-wheel-drop";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=inventory-wheel-drop";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=grabbable-desk-lamp";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=grabbable-desk-lamp";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=grabbable-desk-lamp";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=grabbable-desk-lamp";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=grabbable-desk-lamp";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=grabbable-desk-lamp";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=grabbable-desk-lamp";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -21,6 +21,7 @@ export function createPrefabRuntimeFactory({
   createStartupPattern,
   createFixtureFlickerState,
   applyShadowSettings,
+  loadRuntimeTexture,
 }) {
   function create(prefab, prefabConfig) {
     const emissiveMaterials = [];
@@ -90,7 +91,23 @@ export function createPrefabRuntimeFactory({
     };
     attachBehavior(runtime, prefabConfig);
     if (prefabConfig.light) createLight(prefab, prefabConfig, runtime);
+    runtime.ready = attachLightCookie(runtime, prefabConfig.light);
     return runtime;
+  }
+
+  function attachLightCookie(runtime, lightConfig) {
+    if (!runtime.light?.isSpotLight || !lightConfig?.cookiePath || !loadRuntimeTexture) {
+      return Promise.resolve(runtime);
+    }
+    return loadRuntimeTexture(lightConfig.cookiePath, { colorSpace: THREE.SRGBColorSpace })
+      .then((texture) => {
+        texture.name = `${runtime.root.name}_SpotCookie`;
+        runtime.light.map = texture;
+        runtime.light.userData.cookieTexture = texture;
+        runtime.light.userData.cookiePath = lightConfig.cookiePath;
+        runtime.light.needsUpdate = true;
+        return runtime;
+      });
   }
 
   function attachBehavior(runtime, prefabConfig) {
@@ -118,6 +135,7 @@ export function createPrefabRuntimeFactory({
     if (marker?.isLight) {
       marker.visible = false;
       marker.intensity = 0;
+      marker.userData.prefabLightMarker = true;
     }
     const type = lightConfig.type ?? (marker?.isSpotLight ? "spot" : "point");
     const light = type === "spot"
@@ -137,6 +155,7 @@ export function createPrefabRuntimeFactory({
     }
     light.userData.baseIntensity = lightConfig.intensity;
     light.userData.lightConfig = lightConfig;
+    light.userData.itemControlled = Boolean(lightConfig.itemControlled);
     light.userData.fixtureFlicker = runtime.fixtureFlicker;
     if (light.isSpotLight) {
       const target = new THREE.Object3D();
@@ -174,5 +193,16 @@ export function applyPrefabSpotTarget(light, lightConfig, marker = null) {
   } else {
     light.target.position.copy(light.position).add(targetOffset);
   }
+  applySpotCookieRotation(light, lightConfig.cookieRotationDegrees ?? 0);
   light.target.updateMatrixWorld(true);
+}
+
+export function applySpotCookieRotation(light, degrees = 0) {
+  if (!light?.isSpotLight) return;
+  const direction = light.target.position.clone().sub(light.position).normalize();
+  if (direction.lengthSq() < 0.5) return;
+  const baseUp = Math.abs(direction.y) > 0.98
+    ? new THREE.Vector3(1, 0, 0)
+    : new THREE.Vector3(0, 1, 0);
+  light.shadow.camera.up.copy(baseUp.applyAxisAngle(direction, THREE.MathUtils.degToRad(degrees)));
 }

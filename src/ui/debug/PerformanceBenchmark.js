@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=inventory-wheel-drop";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=grabbable-desk-lamp";
 
 const EFFECT_KEYS = [
   "bloom",

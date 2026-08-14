@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=inventory-wheel-drop";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=grabbable-desk-lamp";
 
 const DISMISS_MS = 300;
 

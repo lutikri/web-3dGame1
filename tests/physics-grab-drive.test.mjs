@@ -59,3 +59,37 @@ test("equipped rigid prefab sweep stops before static walls", async () => {
     0.325,
   ).toArray(), [0.325, 0, 0]);
 });
+
+test("prismatic prefab part remains dynamic and is limited to its authored travel", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const sceneRoot = new THREE.Group();
+  const desk = new THREE.Group();
+  const deskCollider = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
+  desk.add(deskCollider);
+  const drawer = new THREE.Group();
+  drawer.position.z = -0.5;
+  const drawerCollider = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.5));
+  drawer.add(drawerCollider);
+  desk.add(drawer);
+  sceneRoot.add(desk);
+  const deskBody = physics.createRigidPrefab({
+    key: "desk", sceneKey: "room", root: desk, colliderMeshes: [deskCollider], bodyType: "dynamic",
+  });
+  const part = physics.createPrismaticPrefabPart({
+    key: "drawer", sceneKey: "room", parentKey: "desk", root: drawer,
+    colliderMeshes: [drawerCollider], axis: [0, 0, -1], minPosition: 0, maxPosition: 0.45,
+  });
+
+  assert.equal(part.body.isDynamic(), true);
+  assert.equal(deskBody.body.isDynamic(), true);
+  deskBody.body.setGravityScale(0, true);
+  part.body.setGravityScale(0, true);
+  assert.equal(physics.setPrismaticPrefabPartTarget("drawer", 2), true);
+  for (let index = 0; index < 180; index += 1) physics.step(1 / 60);
+  const parentPosition = deskBody.body.translation();
+  const partPosition = part.body.translation();
+  const travel = Math.abs(partPosition.z - parentPosition.z) - 0.5;
+  assert.ok(travel > 0.3);
+  assert.ok(travel < 0.48);
+});

@@ -9,12 +9,19 @@ test("flashlight marker resolves to a portable physical equipment item", () => {
   assert.equal(flashlight.assetPath, "assets/mesh/prefabs/SM_Flashligh1.glb");
   assert.equal(flashlight.behavior, "staticProp");
   assert.equal(flashlight.name, "FlashLight1");
-  assert.equal(flashlight.light, undefined);
+  assert.equal(flashlight.light.type, "spot");
+  assert.equal(flashlight.light.markerName, "Spot");
+  assert.equal(flashlight.light.itemControlled, true);
+  assert.equal(flashlight.light.castShadow, false);
+  assert.equal(flashlight.light.shadowNear, 0.01);
+  assert.equal(flashlight.light.cookiePath,
+    "assets/runtime-textures/T_FlashLight1_Cookie_1024_ETC1S.ktx2");
   assert.equal(flashlight.interaction, undefined);
   assert.equal(flashlight.rigidBody.bodyType, "dynamic");
   assert.deepEqual(flashlight.rigidBody.colliderNamePrefixes, ["UBX_SM_FlashLightBody1"]);
   assert.equal(flashlight.item.portable, true);
   assert.equal(flashlight.item.activationType, "toggleLight");
+  assert.equal(flashlight.item.defaultOn, false);
   assert.deepEqual(flashlight.item.rotationOffset, [0, 270, 0]);
   assert.equal(flashlight.item.grabDistance, 0.82);
   assert.deepEqual(flashlight.item.grabOffset, [0, -0.22, 0]);
@@ -55,6 +62,24 @@ test("desk lamp owns its emissive bulb override and authored spotlight marker", 
   const lamp = createPrefabInstance("LampDesk1", { name: "DeskLamp" });
   assert.equal(lamp.materialOverrides.SM_LampDesk1_Bulb, "lampDesk1Bulb");
   assert.equal(lamp.light.markerName, "LGT_DeskLamp1");
+  assert.equal(lamp.light.enabled, true);
+  assert.equal(lamp.item.enabled, true);
+  assert.equal(lamp.item.portable, false);
+  assert.equal(lamp.rigidBody.bodyType, "dynamic");
+});
+
+test("desk owns three physical drawers and excludes their colliders from the desk body", () => {
+  const desk = getPrefabDefinition("Desk1");
+  assert.equal(desk.behavior, "deskDrawers");
+  assert.deepEqual(desk.drawers.drawerNames, [
+    "SM_Desk_Drawer1",
+    "SM_Desk_Drawer2",
+    "SM_Desk_Drawer3",
+  ]);
+  assert.equal(desk.drawers.closedPosition, 0.18349);
+  assert.equal(desk.drawers.openPosition, 0.632626);
+  assert.deepEqual(desk.drawers.axis, [0, 0, -1]);
+  assert.deepEqual(desk.rigidBody.colliderNamePrefixes, ["UBX_SM_Desk1_"]);
 });
 
 test("analog clock owns a reusable positional loop definition", () => {

@@ -39,6 +39,7 @@ export async function createPhysicsSystem() {
   const doors = new Map();
   const kinematicPrefabs = new Map();
   const rigidPrefabs = new Map();
+  const prismaticPrefabParts = new Map();
   let activeSceneKey = null;
   let character = null;
   let characterSpec = null;
@@ -94,6 +95,7 @@ export async function createPhysicsSystem() {
     });
     kinematicPrefabs.forEach((prefab) => prefab.body.setEnabled(prefab.sceneKey === key));
     rigidPrefabs.forEach((prefab) => prefab.body.setEnabled(prefab.sceneKey === key));
+    prismaticPrefabParts.forEach((part) => part.body.setEnabled(part.sceneKey === key));
   }
 
   function createCharacter({ eyePosition, eyeHeight, height, radius, config }) {
@@ -652,6 +654,107 @@ export async function createPhysicsSystem() {
     rigidPrefabs.delete(key);
   }
 
+  function createPrismaticPrefabPart({
+    key,
+    sceneKey,
+    parentKey,
+    root,
+    colliderMeshes = [],
+    axis = [0, 0, -1],
+    minPosition = 0,
+    maxPosition = 0.45,
+    density = 120,
+    linearDamping = 3.5,
+    angularDamping = 5,
+    motorStiffness = 38,
+    motorDamping = 9,
+    friction = 0.72,
+  }) {
+    removePrismaticPrefabPart(key);
+    const parent = rigidPrefabs.get(parentKey);
+    if (!parent) return null;
+    root.updateWorldMatrix(true, true);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    root.matrixWorld.decompose(position, quaternion, scale);
+    const body = world.createRigidBody(
+      RAPIER.RigidBodyDesc.dynamic()
+        .setTranslation(position.x, position.y, position.z)
+        .setRotation(quaternion)
+        .setLinearDamping(linearDamping)
+        .setAngularDamping(angularDamping)
+        .setCanSleep(true),
+    );
+    const inverseRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    colliderMeshes.forEach((mesh) => {
+      mesh.updateWorldMatrix(true, false);
+      const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
+      mesh.geometry?.computeBoundingBox();
+      const box = mesh.geometry?.boundingBox;
+      if (!box) return;
+      const center = box.getCenter(new THREE.Vector3()).applyMatrix4(colliderInRoot);
+      const size = box.getSize(new THREE.Vector3());
+      const relativePosition = new THREE.Vector3();
+      const relativeQuaternion = new THREE.Quaternion();
+      const relativeScale = new THREE.Vector3();
+      colliderInRoot.decompose(relativePosition, relativeQuaternion, relativeScale);
+      size.multiply(relativeScale).multiplyScalar(0.5);
+      world.createCollider(
+        RAPIER.ColliderDesc.cuboid(
+          Math.max(Math.abs(size.x), 0.01),
+          Math.max(Math.abs(size.y), 0.01),
+          Math.max(Math.abs(size.z), 0.01),
+        )
+          .setTranslation(center.x, center.y, center.z)
+          .setRotation(relativeQuaternion)
+          .setDensity(density)
+          .setFriction(friction)
+          .setRestitution(0),
+        body,
+      );
+    });
+    parent.root.updateWorldMatrix(true, true);
+    const anchor = position.clone().applyMatrix4(new THREE.Matrix4().copy(parent.root.matrixWorld).invert());
+    const localAxis = new THREE.Vector3(...axis).normalize();
+    const joint = world.createImpulseJoint(
+      RAPIER.JointData.prismatic(
+        { x: anchor.x, y: anchor.y, z: anchor.z },
+        { x: 0, y: 0, z: 0 },
+        { x: localAxis.x, y: localAxis.y, z: localAxis.z },
+      ),
+      parent.body,
+      body,
+      true,
+    );
+    joint.setContactsEnabled(false);
+    joint.setLimits(minPosition, maxPosition);
+    joint.configureMotorPosition(0, motorStiffness, motorDamping);
+    body.setEnabled(sceneKey === activeSceneKey);
+    const part = {
+      key, sceneKey, parentKey, root, body, joint,
+      minPosition, maxPosition, motorStiffness, motorDamping,
+    };
+    prismaticPrefabParts.set(key, part);
+    return part;
+  }
+
+  function setPrismaticPrefabPartTarget(key, position) {
+    const part = prismaticPrefabParts.get(key);
+    if (!part) return false;
+    const target = THREE.MathUtils.clamp(Number(position) || 0, part.minPosition, part.maxPosition);
+    part.joint.configureMotorPosition(target, part.motorStiffness, part.motorDamping);
+    part.body.wakeUp();
+    return true;
+  }
+
+  function removePrismaticPrefabPart(key) {
+    const part = prismaticPrefabParts.get(key);
+    if (!part) return;
+    world.removeRigidBody(part.body);
+    prismaticPrefabParts.delete(key);
+  }
+
   function createRigidPrefabGrabConstraint(prefab) {
     removeRigidPrefabGrabConstraint(prefab);
     const position = prefab.body.translation();
@@ -875,6 +978,9 @@ export async function createPhysicsSystem() {
     [...kinematicPrefabs.entries()].forEach(([prefabKey, prefab]) => {
       if (prefab.sceneKey === key) removeKinematicPrefab(prefabKey);
     });
+    [...prismaticPrefabParts.entries()].forEach(([partKey, part]) => {
+      if (part.sceneKey === key) removePrismaticPrefabPart(partKey);
+    });
     [...rigidPrefabs.entries()].forEach(([prefabKey, prefab]) => {
       if (prefab.sceneKey === key) removeRigidPrefab(prefabKey);
     });
@@ -895,6 +1001,7 @@ export async function createPhysicsSystem() {
     doors.clear();
     kinematicPrefabs.clear();
     rigidPrefabs.clear();
+    prismaticPrefabParts.clear();
     activeSceneKey = null;
     character = null;
     characterSpec = null;
@@ -987,6 +1094,21 @@ export async function createPhysicsSystem() {
       localMatrix.decompose(prefab.root.position, prefab.root.quaternion, prefab.root.scale);
       prefab.root.updateWorldMatrix(true, true);
     });
+    prismaticPrefabParts.forEach((part) => {
+      if (!part.body.isEnabled()) return;
+      const position = part.body.translation();
+      const rotation = part.body.rotation();
+      const worldMatrix = new THREE.Matrix4().compose(
+        new THREE.Vector3(position.x, position.y, position.z),
+        new THREE.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w),
+        new THREE.Vector3(1, 1, 1),
+      );
+      part.root.parent?.updateWorldMatrix(true, false);
+      const parentInverse = new THREE.Matrix4().copy(part.root.parent.matrixWorld).invert();
+      const localMatrix = new THREE.Matrix4().multiplyMatrices(parentInverse, worldMatrix);
+      localMatrix.decompose(part.root.position, part.root.quaternion, part.root.scale);
+      part.root.updateWorldMatrix(true, true);
+    });
   }
 
   return {
@@ -1007,6 +1129,8 @@ export async function createPhysicsSystem() {
     setKinematicPrefabEnabled,
     removeKinematicPrefab,
     createRigidPrefab,
+    createPrismaticPrefabPart,
+    setPrismaticPrefabPartTarget,
     setRigidPrefabMode,
     driveRigidPrefab,
     setRigidPrefabPose,
@@ -1037,6 +1161,7 @@ export async function createPhysicsSystem() {
       doorCount: doors.size,
       kinematicPrefabCount: kinematicPrefabs.size,
       rigidPrefabCount: rigidPrefabs.size,
+      prismaticPrefabPartCount: prismaticPrefabParts.size,
       hasCharacter: Boolean(character),
     }),
   };

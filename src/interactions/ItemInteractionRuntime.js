@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=inventory-wheel-drop";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=grabbable-desk-lamp";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -206,9 +206,17 @@ export function createItemInteractionRuntime({
 
   function setItemLights(item, enabled) {
     collectLights(item.root).forEach((light) => {
-      light.visible = enabled;
-      if (enabled && Number.isFinite(light.userData.itemBaseIntensity)) {
-        light.intensity = light.userData.itemBaseIntensity;
+      if (light.userData.itemControlled) {
+        light.visible = true;
+        light.userData.itemEnabled = enabled;
+        light.intensity = enabled && Number.isFinite(light.userData.itemBaseIntensity)
+          ? light.userData.itemBaseIntensity
+          : 0;
+      } else {
+        light.visible = enabled;
+        if (enabled && Number.isFinite(light.userData.itemBaseIntensity)) {
+          light.intensity = light.userData.itemBaseIntensity;
+        }
       }
     });
   }
@@ -258,7 +266,7 @@ function repairSpotLightTarget(light) {
 function collectLights(root) {
   const lights = [];
   root.traverse((object) => {
-    if (object.isLight) lights.push(object);
+    if (object.isLight && !object.userData.prefabLightMarker) lights.push(object);
   });
   return lights;
 }

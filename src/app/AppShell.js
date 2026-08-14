@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=inventory-wheel-drop";
-import { translate } from "./Localization.js?v=inventory-wheel-drop";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=inventory-wheel-drop";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=inventory-wheel-drop";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=inventory-wheel-drop";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=inventory-wheel-drop";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=inventory-wheel-drop";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=grabbable-desk-lamp";
+import { translate } from "./Localization.js?v=grabbable-desk-lamp";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=grabbable-desk-lamp";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=grabbable-desk-lamp";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=grabbable-desk-lamp";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=grabbable-desk-lamp";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=grabbable-desk-lamp";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=inventory-wheel-drop";
-import { createAppPanelController } from "./AppPanelController.js?v=inventory-wheel-drop";
-import { createAppRouter } from "./AppRouter.js?v=inventory-wheel-drop";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=inventory-wheel-drop";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=inventory-wheel-drop";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=inventory-wheel-drop";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=inventory-wheel-drop";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=inventory-wheel-drop";
+} from "./AppPersistence.js?v=grabbable-desk-lamp";
+import { createAppPanelController } from "./AppPanelController.js?v=grabbable-desk-lamp";
+import { createAppRouter } from "./AppRouter.js?v=grabbable-desk-lamp";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=grabbable-desk-lamp";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=grabbable-desk-lamp";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=grabbable-desk-lamp";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=grabbable-desk-lamp";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=grabbable-desk-lamp";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -271,7 +271,7 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       await gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
       activeGameplayLevelId = fastLoadLevelId;
-      if (!debugConfig.skipBriefing) {
+      if (!debugConfig.skipBriefing && shouldAutoShowLevelBriefing(LEVELS, fastLoadLevelId)) {
         await preloadLevelBriefing(fastLoadLevelId);
         showLevelBriefing(fastLoadLevelId);
       }
@@ -382,8 +382,10 @@ export function createAppShell({ gameApi }) {
           hideOverlay();
           await gameApi.restartGame?.({ onProgress: setProgress });
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
-          await preloadLevelBriefing(activeGameplayLevelId);
-          showLevelBriefing(activeGameplayLevelId);
+          if (shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)) {
+            await preloadLevelBriefing(activeGameplayLevelId);
+            showLevelBriefing(activeGameplayLevelId);
+          }
         },
       });
       transition.then((restarted) => {
@@ -423,8 +425,10 @@ export function createAppShell({ gameApi }) {
         hideOverlay();
         await gameApi.startLevel?.({ levelId, mode: level.mode, onProgress: setProgress });
         activeGameplayLevelId = levelId;
-        await preloadLevelBriefing(levelId);
-        showLevelBriefing(levelId);
+        if (shouldAutoShowLevelBriefing(LEVELS, levelId)) {
+          await preloadLevelBriefing(levelId);
+          showLevelBriefing(levelId);
+        }
       },
     });
     transition.then((entered) => {
@@ -656,5 +660,9 @@ export function resolvePauseShortcutAction({ panelOpen, currentPanel, previousPa
     return null;
   }
   return activeGameplayLevelId ? "pause" : null;
+}
+
+export function shouldAutoShowLevelBriefing(levels, levelId) {
+  return levels?.[levelId]?.autoShowBriefing !== false;
 }
 

@@ -1,4 +1,17 @@
-export function createPrefabPhysicsRegistrar({ physics, normalizeName, getMatchNames, doorInteractions = null }) {
+import {
+  createDeskDrawerRuntimes,
+  toggleDeskDrawerRuntime,
+} from "./behaviors/DeskDrawerBehavior.js?v=grabbable-desk-lamp";
+
+export function createPrefabPhysicsRegistrar({
+  physics,
+  normalizeName,
+  getMatchNames,
+  doorInteractions = null,
+  interactive = [],
+}) {
+  const deskDrawersByTarget = new WeakMap();
+
   function findColliders(runtime, prefixes = []) {
     const normalizedPrefixes = prefixes.map(normalizeName);
     return (runtime.collisionMeshes ?? []).filter((mesh) => {
@@ -74,18 +87,20 @@ export function createPrefabPhysicsRegistrar({ physics, normalizeName, getMatchN
     physics.setDoorEnabled(runtime.barrierGatePhysicsKey, config.locked === false);
   }
 
-  function registerRigid(levelId, prefabConfig, runtime) {
+  function registerRigid(levelId, prefabConfig, runtime, { excludedRoots = [] } = {}) {
     const config = prefabConfig.rigidBody;
     if (!physics || !config?.enabled) return;
     const prefixes = config.colliderNamePrefixes ?? ["UBX_", "COLL", "Coll"];
-    const colliderMeshes = findColliders(runtime, prefixes);
+    const colliderMeshes = findColliders(runtime, prefixes).filter(
+      (mesh) => !excludedRoots.some((root) => mesh === root || isDescendantOf(mesh, root)),
+    );
     if (!colliderMeshes.length) {
       console.warn(`[RigidPrefab] No colliders found for prefab "${prefabConfig.name}"`, prefixes);
       return;
     }
     colliderMeshes.forEach((mesh) => runtime.dynamicColliderMeshes.add(mesh));
     runtime.rigidPrefabKey = `${levelId}:${prefabConfig.name}:rigid`;
-    physics.createRigidPrefab({
+    return physics.createRigidPrefab({
       key: runtime.rigidPrefabKey, sceneKey: levelId, root: runtime.root, colliderMeshes,
       bodyType: config.bodyType ?? "dynamic", density: config.density,
       linearDamping: config.linearDamping, angularDamping: config.angularDamping,
@@ -93,12 +108,83 @@ export function createPrefabPhysicsRegistrar({ physics, normalizeName, getMatchN
     });
   }
 
+  function registerDeskDrawers(levelId, prefabConfig, runtime) {
+    const config = prefabConfig.drawers ?? {};
+    runtime.deskDrawers = createDeskDrawerRuntimes(runtime.parts, config, prefabConfig.name);
+    const deskBody = registerRigid(levelId, prefabConfig, runtime, {
+      excludedRoots: runtime.deskDrawers.map((drawer) => drawer.mesh),
+    });
+    if (!physics || !deskBody) return null;
+    runtime.deskDrawers.forEach((drawer) => {
+      const colliderMeshes = (runtime.collisionMeshes ?? []).filter(
+        (mesh) => mesh !== drawer.mesh && isDescendantOf(mesh, drawer.mesh),
+      );
+      if (!colliderMeshes.length) {
+        console.warn(`[DeskDrawer] No colliders found below "${drawer.name}"`);
+        return;
+      }
+      colliderMeshes.forEach((mesh) => runtime.dynamicColliderMeshes.add(mesh));
+      drawer.physicsKey = `${levelId}:${prefabConfig.name}:drawer:${drawer.index + 1}`;
+      physics.createPrismaticPrefabPart({
+        key: drawer.physicsKey,
+        sceneKey: levelId,
+        parentKey: runtime.rigidPrefabKey,
+        root: drawer.mesh,
+        colliderMeshes,
+        axis: config.axis ?? [0, 0, -1],
+        minPosition: 0,
+        maxPosition: Math.max(0, drawer.openPosition - drawer.closedPosition),
+        density: config.density,
+        linearDamping: config.linearDamping,
+        angularDamping: config.angularDamping,
+        motorStiffness: config.motorStiffness,
+        motorDamping: config.motorDamping,
+        friction: config.friction,
+      });
+      drawer.mesh.userData.kind = "slidingDrawer";
+      drawer.mesh.userData.levelId = levelId;
+      drawer.mesh.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+      drawer.mesh.userData.controlLabel = "DRAWER";
+      drawer.mesh.userData.maxInteractionDistance = config.maxDistance ?? 1.85;
+      if (!interactive.includes(drawer.mesh)) interactive.push(drawer.mesh);
+      deskDrawersByTarget.set(drawer.mesh, drawer);
+    });
+    return deskBody;
+  }
+
+  function toggleDeskDrawer(target) {
+    const drawer = deskDrawersByTarget.get(target);
+    if (!drawer?.physicsKey) return false;
+    const targetPosition = toggleDeskDrawerRuntime(drawer);
+    if (targetPosition == null) return false;
+    physics.setPrismaticPrefabPartTarget(drawer.physicsKey, targetPosition);
+    return true;
+  }
+
   function register(levelId, prefabConfig, runtime) {
     if (prefabConfig.behavior === "elevator") return registerElevator(levelId, prefabConfig, runtime);
     if (prefabConfig.behavior === "barrierGate") return registerBarrierGate(levelId, prefabConfig, runtime);
+    if (prefabConfig.behavior === "deskDrawers") return registerDeskDrawers(levelId, prefabConfig, runtime);
     if (prefabConfig.rigidBody?.enabled) registerRigid(levelId, prefabConfig, runtime);
     return doorInteractions?.register(levelId, prefabConfig, runtime);
   }
 
-  return { findColliders, register, registerElevator, registerBarrierGate, registerRigid };
+  return {
+    findColliders,
+    register,
+    registerElevator,
+    registerBarrierGate,
+    registerRigid,
+    registerDeskDrawers,
+    toggleDeskDrawer,
+  };
+}
+
+function isDescendantOf(object, ancestor) {
+  let current = object?.parent;
+  while (current) {
+    if (current === ancestor) return true;
+    current = current.parent;
+  }
+  return false;
 }

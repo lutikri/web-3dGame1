@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=inventory-wheel-drop";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=inventory-wheel-drop";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=inventory-wheel-drop";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=inventory-wheel-drop";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=grabbable-desk-lamp";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=grabbable-desk-lamp";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=grabbable-desk-lamp";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=grabbable-desk-lamp";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
@@ -73,10 +73,10 @@ export const LEVEL_DEFINITIONS = {
       clearanceKey: "assignments.assigned",
     },
     briefingImage: {
-      en: ["assets/ui/briefings/Unexpected1-us.png"],
-      ru: ["assets/ui/briefings/Unexpected1-ru.png"],
+      en: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckEN.png"],
+      ru: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckRU.png"],
     },
-    environmentId: "intro-shift",
+    autoShowBriefing: false,
     environment: LEVEL_UNEXPECTED_STUFF_CONFIG,
   },
   "fuel-problems": {
@@ -207,22 +207,76 @@ function createEnvironmentLookup(definitions) {
 }
 
 function createUnexpectedStuffConfig() {
-  const baseConfig = cloneConfigValue(LEVEL_INTRO_SHIFT_CONFIG);
+  const baseConfig = cloneConfigValue(LEVEL_EXPLORING_AROUND_CONFIG);
   return {
     ...baseConfig,
     saveKind: "unexpectedStuff",
+    physicalBriefing: {
+      ...baseConfig.physicalBriefing,
+      briefingLevelId: "unexpected-stuff",
+      sheets: {
+        en: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckEN.png"],
+        ru: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckRU.png"],
+      },
+    },
     session: {
       completion: "all",
       objectives: [
         { id: "operate-core", type: "survive", seconds: 180 },
         {
-          id: "unlock-bulkhead",
+          id: "exit-complex",
           type: "event",
           event: "doorUnlocked",
-          target: "DoorBulk1_Tutorial",
+          target: "DoorBulk1_4",
+          blockedStopDegrees: 5,
         },
       ],
-      bindings: LEVEL_INTRO_SHIFT_CONFIG.session?.bindings ?? [],
+      bindings: baseConfig.session?.bindings ?? [],
+    },
+    narration: {
+      ...baseConfig.narration,
+      faultsIntro: {
+        en: {
+          soundKey: "MessageEN_FaultsIntro1",
+          subtitlePath: "assets/sounds/narration/MessageEN_FaultsIntro1.srt",
+          duration: 24.16,
+        },
+        ru: {
+          soundKey: "MessageRU_FaultsIntro1",
+          subtitlePath: "assets/sounds/narration/MessageRU_FaultsIntro1.srt",
+          duration: 26.52,
+        },
+      },
+    },
+    triggerSequences: (baseConfig.triggerSequences ?? []).map((sequence) => {
+      if (sequence.name === "WelcomeEntry") return { ...sequence, narration: "faultsIntro" };
+      if (sequence.name === "ControlBooth") {
+        const { narration: _tutorialNarration, ...withoutNarration } = sequence;
+        return withoutNarration;
+      }
+      return sequence;
+    }),
+    tutorial: {
+      ...baseConfig.tutorial,
+      enabled: false,
+    },
+    prefabStatePolicies: [
+      ...(baseConfig.prefabStatePolicies ?? []),
+      {
+        prefabTypes: ["fluorescentLamp"],
+        overrides: { light: { enabled: false } },
+      },
+    ],
+    lighting: {
+      ...baseConfig.lighting,
+      ambientIntensity: 0,
+      pointLights: {
+        ...baseConfig.lighting?.pointLights,
+        fill: {
+          ...baseConfig.lighting?.pointLights?.fill,
+          intensity: 0,
+        },
+      },
     },
     diagnostics: {
       selfTest: {
@@ -605,6 +659,17 @@ function createCostOfRunningConfig() {
 function cloneConfigValue(value) {
   if (value == null || typeof value !== "object") return value;
   if (typeof value.clone === "function") return value.clone();
-  if (Array.isArray(value)) return value.map((entry) => cloneConfigValue(entry));
-  return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, cloneConfigValue(entry)]));
+  if (Array.isArray(value)) {
+    const clone = value.map((entry) => cloneConfigValue(entry));
+    Reflect.ownKeys(value)
+      .filter((key) => typeof key === "symbol")
+      .forEach((key) => Object.defineProperty(clone, key, {
+        value: cloneConfigValue(value[key]),
+        configurable: true,
+      }));
+    return clone;
+  }
+  return Object.fromEntries(
+    Reflect.ownKeys(value).map((key) => [key, cloneConfigValue(value[key])]),
+  );
 }

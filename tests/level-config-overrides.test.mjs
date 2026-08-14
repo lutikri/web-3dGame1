@@ -75,3 +75,20 @@ test("level prefab state policies apply after saved marker overrides", () => {
   assert.equal(prefabs[1].state.latched, true);
   assert.equal(prefabs[2].state.latched, false);
 });
+
+test("level prefab policies apply stable named light overrides", () => {
+  const prefabs = [
+    { name: "Lamp_A", prefabType: "fluorescentLamp", light: { enabled: true, intensity: 2 } },
+    { name: "Lamp_B", prefabType: "fluorescentLamp", light: { enabled: true, intensity: 2 } },
+    { name: "Lamp_C", prefabType: "LampDome1", light: { enabled: true, intensity: 3 } },
+  ];
+  applyPrefabStatePolicies(prefabs, [{
+    prefabTypes: ["fluorescentLamp", "LampDome1"],
+    prefabNames: ["Lamp_B", "Lamp_C"],
+    overrides: { light: { enabled: false } },
+  }]);
+  assert.equal(prefabs[0].light.enabled, true);
+  assert.equal(prefabs[1].light.enabled, false);
+  assert.equal(prefabs[1].light.intensity, 2);
+  assert.equal(prefabs[2].light.enabled, false);
+});

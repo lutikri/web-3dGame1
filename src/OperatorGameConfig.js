@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=inventory-wheel-drop";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=inventory-wheel-drop";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=inventory-wheel-drop";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=inventory-wheel-drop";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=grabbable-desk-lamp";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=grabbable-desk-lamp";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=grabbable-desk-lamp";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=grabbable-desk-lamp";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

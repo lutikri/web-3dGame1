@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=inventory-wheel-drop";
+import { applyAxisRotation } from "./TransformUtils.js?v=grabbable-desk-lamp";
 
 export class InteriorObjectRegistry {
   constructor(options) {

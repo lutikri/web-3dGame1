@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=inventory-wheel-drop";
+} from "../prefabs/PrefabMarkerResolver.js?v=grabbable-desk-lamp";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=inventory-wheel-drop";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=inventory-wheel-drop";
+} from "../levels/LevelConfigOverrides.js?v=grabbable-desk-lamp";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=grabbable-desk-lamp";
 
 export function createLevelSceneBuilder({
   scene,
@@ -47,7 +47,8 @@ export function createLevelSceneBuilder({
         ...(environmentConfig.prefabs ?? [])
           .filter((prefabConfig) => prefabConfig.behavior !== "operatorPanel")
           .map((prefabConfig) =>
-            buildPrefab(levelId, environmentConfig, prefabConfig, prefabGroup, prefabGroup, pendingPrefabOverrides),
+            buildPrefab(levelRuntime, levelId, environmentConfig, prefabConfig,
+              prefabGroup, prefabGroup, pendingPrefabOverrides),
           ),
       ];
       const results = await Promise.allSettled(tasks);
@@ -126,6 +127,7 @@ export function createLevelSceneBuilder({
   }
 
   async function buildPrefab(
+    levelRuntime,
     levelId,
     environmentConfig,
     prefabConfig,
@@ -142,6 +144,10 @@ export function createLevelSceneBuilder({
     prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
 
     const runtime = createPrefabRuntime(prefab, prefabConfig);
+    await runtime.ready;
+    if (runtime.light?.userData?.cookieTexture) {
+      levelRuntime.own?.(() => runtime.light.userData.cookieTexture.dispose());
+    }
     prefabInstances.set(`${levelId}:${prefabConfig.name}`, runtime);
     registerPrefabInteraction(levelId, prefabConfig, runtime);
     parentObject.add(prefab);
@@ -157,7 +163,8 @@ export function createLevelSceneBuilder({
     const nestedTasks = nestedPrefabs
       .filter((nestedPrefabConfig) => nestedPrefabConfig.behavior !== "operatorPanel")
       .map((nestedPrefabConfig) =>
-        buildPrefab(levelId, environmentConfig, nestedPrefabConfig, prefabGroup, prefab, pendingPrefabOverrides),
+        buildPrefab(levelRuntime, levelId, environmentConfig, nestedPrefabConfig,
+          prefabGroup, prefab, pendingPrefabOverrides),
       );
     const results = await Promise.allSettled(nestedTasks);
     const failure = results.find((result) => result.status === "rejected");

@@ -12,8 +12,9 @@ function createFixture({ activationType = "none", rigidPosition = new THREE.Vect
   const camera = new THREE.PerspectiveCamera();
   camera.position.set(0, 1.6, 0);
   camera.updateMatrixWorld(true);
+  const interactive = [];
   const runtime = createItemInteractionRuntime({
-    interactive: [],
+    interactive,
     camera,
     physics: {
       setRigidPrefabMode: (...args) => calls.push(["mode", ...args]),
@@ -32,7 +33,7 @@ function createFixture({ activationType = "none", rigidPosition = new THREE.Vect
     parts: new Map([["Target", target]]),
     rigidPrefabKey: "level:Item1",
   });
-  return { runtime, root, target, calls };
+  return { runtime, root, target, calls, interactive };
 }
 
 test("physical grab drives a dynamic body and releases it without setting its pose", () => {
@@ -71,6 +72,29 @@ test("portable spotlight target remains parented to the moving flashlight", () =
   }, { root, parts: new Map([[target.name, target]]) });
 
   assert.equal(detachedTarget.parent, spot);
+});
+
+test("item-controlled spotlight toggles intensity while retaining the light layout", () => {
+  const { runtime, interactive } = createFixture();
+  const root = new THREE.Group();
+  const spot = new THREE.SpotLight(0xffffff, 6);
+  spot.userData.itemControlled = true;
+  root.add(spot);
+  runtime.register("room", {
+    name: "FlashLight",
+    item: {
+      enabled: true,
+      activationMode: "equipment",
+      activationType: "toggleLight",
+      defaultOn: false,
+    },
+  }, { root, parts: new Map(), light: spot });
+
+  assert.equal(spot.visible, true);
+  assert.equal(spot.intensity, 0);
+  assert.equal(runtime.activateRelevant(root), true);
+  assert.equal(spot.visible, true);
+  assert.equal(spot.intensity, 6);
 });
 
 test("equipped items request a swept kinematic pose", () => {

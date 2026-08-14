@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=inventory-wheel-drop";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=inventory-wheel-drop";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=inventory-wheel-drop";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=inventory-wheel-drop";
+import { createDebugHub } from "./DebugHub.js?v=grabbable-desk-lamp";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=grabbable-desk-lamp";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=grabbable-desk-lamp";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=grabbable-desk-lamp";
 
 export class DebugToolsRuntime {
   constructor(options) {

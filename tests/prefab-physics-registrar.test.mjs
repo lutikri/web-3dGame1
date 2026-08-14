@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as THREE from "three";
 
 import { createPrefabPhysicsRegistrar } from "../src/prefabs/PrefabPhysicsRegistrar.js";
 
@@ -11,7 +12,7 @@ test("prefab physics registrar registers rigid colliders by normalized prefixes"
   };
   const registrar = createPrefabPhysicsRegistrar({
     physics: { createRigidPrefab: (value) => calls.push(value) },
-    normalizeName: (value) => value.toLowerCase(),
+    normalizeName: (value) => value.replace(/[._\-\s]/g, "").toLowerCase(),
     getMatchNames: (mesh) => [mesh.name],
   });
   registrar.registerRigid("room", {
@@ -55,4 +56,62 @@ test("prefab physics registrar owns behavior routing and ordinary door registrat
   const runtime = { root: {} };
   registrar.register("room", config, runtime);
   assert.deepEqual(calls, [["room", config, runtime]]);
+});
+
+test("desk drawer registrar creates separate prismatic bodies and toggles their targets", () => {
+  const calls = [];
+  const interactive = [];
+  const root = new THREE.Group();
+  const drawer = new THREE.Mesh(new THREE.BoxGeometry());
+  drawer.name = "SM_Desk_Drawer1";
+  const drawerCollider = new THREE.Mesh(new THREE.BoxGeometry());
+  drawerCollider.name = "UBX_SM_Desk1.004_01";
+  drawer.add(drawerCollider);
+  const deskCollider = new THREE.Mesh(new THREE.BoxGeometry());
+  deskCollider.name = "UBX_SM_Desk1_01";
+  root.add(drawer, deskCollider);
+  const physics = {
+    createRigidPrefab: (value) => { calls.push(["desk", value]); return { body: {} }; },
+    createPrismaticPrefabPart: (value) => calls.push(["drawer", value]),
+    setPrismaticPrefabPartTarget: (...args) => calls.push(["target", args]),
+  };
+  const runtime = {
+    root,
+    parts: new Map([[drawer.name, drawer]]),
+    collisionMeshes: [drawerCollider, deskCollider],
+    dynamicColliderMeshes: new Set(),
+  };
+  const registrar = createPrefabPhysicsRegistrar({
+    physics,
+    interactive,
+    normalizeName: (value) => value.toLowerCase(),
+    getMatchNames: (mesh) => {
+      const names = [mesh.name, mesh.geometry?.name].filter(Boolean);
+      let current = mesh.parent;
+      while (current) {
+        if (current.name) names.push(current.name);
+        current = current.parent;
+      }
+      return names;
+    },
+  });
+  registrar.register("room", {
+    name: "Desk",
+    behavior: "deskDrawers",
+    rigidBody: { enabled: true, colliderNamePrefixes: ["UBX_SM_Desk1_"] },
+    drawers: {
+      drawerNames: [drawer.name], closedPosition: 0.18349, openPosition: 0.632626,
+      axis: [0, 0, -1],
+    },
+  }, runtime);
+
+  assert.deepEqual(calls[0][1].colliderMeshes, [deskCollider]);
+  assert.deepEqual(calls[1][1].colliderMeshes, [drawerCollider]);
+  assert.ok(Math.abs(calls[1][1].maxPosition - 0.449136) < 1e-9);
+  assert.equal(interactive[0], drawer);
+  assert.equal(drawer.userData.kind, "slidingDrawer");
+  assert.equal(registrar.toggleDeskDrawer(drawer), true);
+  assert.equal(calls.at(-1)[0], "target");
+  assert.equal(calls.at(-1)[1][0], "room:Desk:drawer:1");
+  assert.ok(Math.abs(calls.at(-1)[1][1] - 0.449136) < 1e-9);
 });

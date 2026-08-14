@@ -1,0 +1,40 @@
+﻿1
+00:00:00,000 --> 00:00:02,324
+The absence of standard lighting is
+
+2
+00:00:02,348 --> 00:00:04,752
+not grounds for delaying your shift.
+
+3
+00:00:05,179 --> 00:00:07,012
+Please use the Universal Emergency
+
+4
+00:00:07,024 --> 00:00:08,991
+Flashlight located in the top drawer
+
+5
+00:00:08,992 --> 00:00:10,540
+of the desk in the entrance area.
+
+6
+00:00:11,455 --> 00:00:12,855
+According to the inventory
+
+7
+00:00:12,867 --> 00:00:14,660
+records, it is fully operational.
+
+8
+00:00:18,430 --> 00:00:19,940
+Proceed to the control booth.
+
+9
+00:00:20,480 --> 00:00:22,012
+Terrigen Systems thanks you for
+
+10
+00:00:22,024 --> 00:00:23,520
+maintaining the work schedule.
+

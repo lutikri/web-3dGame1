@@ -85,3 +85,57 @@ test("level prefab config runtime routes operator panel changes", () => {
   assert.equal(panelUpdates, 1);
   assert.equal(activationUpdates, 1);
 });
+
+test("level prefab config runtime applies editable spotlight projection properties", () => {
+  const root = new THREE.Group();
+  const light = new THREE.SpotLight();
+  root.add(light, light.target);
+  const config = {
+    levelEnvironments: {
+      room: {
+        prefabs: [{
+          name: "FlashLight",
+          position: new THREE.Vector3(),
+          rotation: new THREE.Euler(),
+          scale: new THREE.Vector3(1, 1, 1),
+          light: {
+            enabled: true,
+            color: 0xfff1d2,
+            intensity: 6,
+            distance: 12,
+            decay: 2,
+            angle: 0.52,
+            penumbra: 0.35,
+            localOffset: new THREE.Vector3(-0.05, 0, 0),
+            targetLocalOffset: new THREE.Vector3(-4, 0, 0),
+            cookieRotationDegrees: 90,
+          },
+        }],
+      },
+    },
+  };
+  const runtime = new LevelPrefabConfigRuntime({
+    config,
+    instances: new Map([["room:FlashLight", {
+      root,
+      parts: new Map(),
+      light,
+      wasLightEnabled: true,
+    }]]),
+    getActiveLevelId: () => "room",
+    applyPanelTransform: () => {},
+    updateActivation: () => {},
+    rebuildStaticPhysics: () => {},
+    setDoorLatched: () => {},
+    applyDoorRotation: () => {},
+    applyShadowSettings: () => {},
+    createStartupPattern: () => [],
+  });
+
+  runtime.apply("room", "FlashLight");
+
+  assert.equal(light.angle, 0.52);
+  assert.equal(light.penumbra, 0.35);
+  assert.deepEqual(light.target.position.toArray(), [-4.05, 0, 0]);
+  assert.ok(Math.abs(light.shadow.camera.up.z + 1) < 1e-9);
+});

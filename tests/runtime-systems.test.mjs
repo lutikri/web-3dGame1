@@ -309,6 +309,20 @@ test("light shadow settings apply the selected quality preset", () => {
   assert.equal(light.shadow.camera.far, 8);
 });
 
+test("spotlight cookie projection near plane applies even when shadows are disabled", () => {
+  const light = new THREE.SpotLight();
+  light.map = new THREE.Texture();
+
+  assert.equal(applyLightShadowSettings(light, {
+    castShadow: false,
+    shadowNear: 0.01,
+    shadowFar: 12,
+  }, { enabled: false }), false);
+  assert.equal(light.castShadow, false);
+  assert.equal(light.shadow.camera.near, 0.01);
+  assert.equal(light.shadow.camera.far, 12);
+});
+
 test("hero-only shadow tier keeps ordinary lights off and the authored hero light on", () => {
   const ordinary = new THREE.PointLight();
   const hero = new THREE.PointLight();

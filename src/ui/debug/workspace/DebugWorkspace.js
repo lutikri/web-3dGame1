@@ -1,4 +1,4 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=inventory-wheel-drop";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=grabbable-desk-lamp";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -311,6 +311,10 @@ export function createDebugWorkspace({
         numberRow("Decay", light, "decay", 0, 4, 0.01, () => applyLevelPrefab?.(levelId, prefab.name)),
         light.type === "spot" ? numberRow("Spot angle", light, "angle", 0.05, 1.55, 0.001, () => applyLevelPrefab?.(levelId, prefab.name)) : null,
         light.type === "spot" ? numberRow("Spot penumbra", light, "penumbra", 0, 1, 0.01, () => applyLevelPrefab?.(levelId, prefab.name)) : null,
+        light.type === "spot" && light.cookiePath
+          ? numberRow("Cookie rotation", light, "cookieRotationDegrees", -180, 180, 1,
+            () => applyLevelPrefab?.(levelId, prefab.name))
+          : null,
       ]),
       group("Offset", [
         vectorRow("Local offset", light.localOffset, -3, 3, 0.001, () => applyLevelPrefab?.(levelId, prefab.name)),
@@ -325,6 +329,15 @@ export function createDebugWorkspace({
           })),
         ]),
       ]),
+      light.type === "spot" ? group("Spot target", [
+        vectorRow("Local target", light.targetLocalOffset, -20, 20, 0.001,
+          () => applyLevelPrefab?.(levelId, prefab.name)),
+        numberRow("Projection near", light, "shadowNear", 0.005, 1, 0.005,
+          () => applyLevelPrefab?.(levelId, prefab.name, true)),
+        numberRow("Projection far", light, "shadowFar", 0.5, 60, 0.05,
+          () => applyLevelPrefab?.(levelId, prefab.name, true)),
+        light.cookiePath ? paragraph(`Cookie: ${light.cookiePath}`) : paragraph("Cookie: none"),
+      ]) : null,
       group("Startup / flicker", [
         booleanRow("Starter on power-up", light, "fluorescentStartup", () => applyLevelPrefab?.(levelId, prefab.name)),
         numberRow("Startup delay", light, "startupDelaySeconds", 0, 30, 0.1, () => applyLevelPrefab?.(levelId, prefab.name)),
@@ -345,8 +358,10 @@ export function createDebugWorkspace({
         numberRow("Bias", light, "shadowBias", -0.01, 0.01, 0.00001, () => applyLevelPrefab?.(levelId, prefab.name, true)),
         numberRow("Normal bias", light, "shadowNormalBias", 0, 0.2, 0.0005, () => applyLevelPrefab?.(levelId, prefab.name, true)),
         numberRow("Radius", light, "shadowRadius", 0, 10, 0.1, () => applyLevelPrefab?.(levelId, prefab.name, true)),
-        numberRow("Near", light, "shadowNear", 0.01, 5, 0.01, () => applyLevelPrefab?.(levelId, prefab.name, true)),
-        numberRow("Far", light, "shadowFar", 0.5, 60, 0.05, () => applyLevelPrefab?.(levelId, prefab.name, true)),
+        light.type !== "spot" ? numberRow("Near", light, "shadowNear", 0.01, 5, 0.01,
+          () => applyLevelPrefab?.(levelId, prefab.name, true)) : null,
+        light.type !== "spot" ? numberRow("Far", light, "shadowFar", 0.5, 60, 0.05,
+          () => applyLevelPrefab?.(levelId, prefab.name, true)) : null,
       ]),
       group("Batch", [
         actionRow([

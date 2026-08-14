@@ -131,14 +131,16 @@ export class LightingRuntime {
 export function applyLightShadowSettings(light, lightConfig, shadowPreset) {
   const allowedByTier = !shadowPreset.heroOnly || lightConfig.heroShadow === true;
   light.castShadow = Boolean(shadowPreset.enabled && allowedByTier && lightConfig.castShadow);
+  if (light.shadow?.camera) {
+    light.shadow.camera.near = lightConfig.shadowNear ?? 0.1;
+    light.shadow.camera.far = lightConfig.shadowFar ?? lightConfig.distance ?? 10;
+    light.shadow.camera.updateProjectionMatrix();
+  }
   if (!light.castShadow) return false;
   const mapSize = shadowPreset.mapSize ?? lightConfig.shadowMapSize ?? 512;
   light.shadow.mapSize.set(mapSize, mapSize);
   light.shadow.bias = lightConfig.shadowBias ?? -0.0005;
   light.shadow.normalBias = lightConfig.shadowNormalBias ?? 0.03;
   light.shadow.radius = lightConfig.shadowRadius ?? 1;
-  light.shadow.camera.near = lightConfig.shadowNear ?? 0.1;
-  light.shadow.camera.far = lightConfig.shadowFar ?? lightConfig.distance ?? 10;
-  light.shadow.camera.updateProjectionMatrix();
   return true;
 }

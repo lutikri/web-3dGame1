@@ -75,6 +75,7 @@ export function createTextureStreaming({ renderer, transcoderPath, onProgress, o
   }
 
   return {
+    loadRuntimeTexture,
     loadTextureMaps,
     disposeTextureMaps,
   };

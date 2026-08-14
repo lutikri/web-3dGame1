@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=inventory-wheel-drop";
+} from "./FluorescentBehavior.js?v=grabbable-desk-lamp";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {
