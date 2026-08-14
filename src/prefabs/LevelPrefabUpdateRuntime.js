@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=locomotion-weight-pass";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=locomotion-weight-pass";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=locomotion-weight-pass";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=locomotion-weight-pass";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=soma-body-weight";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=soma-body-weight";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=soma-body-weight";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=soma-body-weight";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=soma-body-weight";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

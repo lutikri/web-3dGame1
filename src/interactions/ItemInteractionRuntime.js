@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=locomotion-weight-pass";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=soma-body-weight";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -162,6 +162,7 @@ export function createItemInteractionRuntime({
       if (sway > 0) {
         cameraOffset.x += (presentation.equipmentSide ?? 0) * sway;
         cameraOffset.y += (presentation.equipmentVertical ?? 0) * sway;
+        cameraOffset.z -= (presentation.equipmentForward ?? 0) * sway;
       }
       cameraOffset.applyQuaternion(worldQuaternion);
     } else {
@@ -173,7 +174,7 @@ export function createItemInteractionRuntime({
       const presentation = getLocomotionPresentation();
       targetQuaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(
         (presentation.equipmentPitch ?? 0) * (item.equippedMotion.rotationScale ?? 1),
-        0,
+        (presentation.equipmentYaw ?? 0) * (item.equippedMotion.rotationScale ?? 1),
         (presentation.equipmentRoll ?? 0) * (item.equippedMotion.rotationScale ?? 1),
         "YXZ",
       )));

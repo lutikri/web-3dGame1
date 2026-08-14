@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=locomotion-weight-pass";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=soma-body-weight";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=locomotion-weight-pass";
+} from "./PostProcessingShaders.js?v=soma-body-weight";
 
 export class PostProcessingRuntime {
   composer = null;

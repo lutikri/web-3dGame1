@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=locomotion-weight-pass";
+} from "./FluorescentBehavior.js?v=soma-body-weight";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=locomotion-weight-pass";
-import { applyLocalization } from "./app/Localization.js?v=locomotion-weight-pass";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=locomotion-weight-pass";
+import { createPreflight } from "./app/Preflight.js?v=soma-body-weight";
+import { applyLocalization } from "./app/Localization.js?v=soma-body-weight";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=soma-body-weight";
 
-const APP_BUILD_REVISION = "locomotion-weight-pass";
+const APP_BUILD_REVISION = "soma-body-weight";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=locomotion-weight-pass`);
+await import(`./OperatorGame.js?v=soma-body-weight`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=locomotion-weight-pass`);
+const { createAppShell } = await import(`./app/AppShell.js?v=soma-body-weight`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=locomotion-weight-pass`
+    `./runtime/RuntimeSmoke.js?v=soma-body-weight`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

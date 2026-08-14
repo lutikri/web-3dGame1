@@ -35,7 +35,6 @@ test("scene feedback runtime applies light, emergency post effects and camera sh
     getTime: () => 0.1, getZoomActive: () => true,
     getStartupAmount: () => 0, getIgnitionPulseAmount: () => 0,
     getEmergencyAmount: () => 1, getStartupLightFactor: () => 1,
-    getLocomotionPresentation: () => ({ chromaticAberration: 0.002, lensStretch: 0.01 }),
     getTerminalLightFactor: () => 1, getFixtureFactor: () => 1,
     flickerWave: () => 1, updateRoomMaterials: () => {},
     applyColorAdjustments: () => {},
@@ -47,8 +46,8 @@ test("scene feedback runtime applies light, emergency post effects and camera sh
   assert.equal(post.bloomPass.strength, 3);
   assert.ok(Math.abs(post.sharpenPass.uniforms.amount.value - 0.3) < 0.0001);
   assert.equal(emergencyApplied, 1);
-  assert.ok(Math.abs(post.chromaticAberrationPass.uniforms.amount.value - 0.112) < 0.0001);
-  assert.ok(Math.abs(post.lensDistortionPass.uniforms.fisheyeAmount.value - 0.11) < 0.0001);
+  assert.ok(Math.abs(post.chromaticAberrationPass.uniforms.amount.value - 0.11) < 0.0001);
+  assert.ok(Math.abs(post.lensDistortionPass.uniforms.fisheyeAmount.value - 0.1) < 0.0001);
   assert.notEqual(camera.rotation.z, 0);
 });
 

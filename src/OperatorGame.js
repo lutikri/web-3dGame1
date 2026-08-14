@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=locomotion-weight-pass";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=soma-body-weight";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=locomotion-weight-pass";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=locomotion-weight-pass";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=locomotion-weight-pass";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=locomotion-weight-pass";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=locomotion-weight-pass";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=locomotion-weight-pass";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=locomotion-weight-pass";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=locomotion-weight-pass";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=locomotion-weight-pass";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=locomotion-weight-pass";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=locomotion-weight-pass";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=locomotion-weight-pass";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=locomotion-weight-pass";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=locomotion-weight-pass";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=locomotion-weight-pass";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=locomotion-weight-pass";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=locomotion-weight-pass";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=locomotion-weight-pass";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=locomotion-weight-pass";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=locomotion-weight-pass";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=locomotion-weight-pass";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=locomotion-weight-pass";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=locomotion-weight-pass";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=locomotion-weight-pass";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=locomotion-weight-pass";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=locomotion-weight-pass";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=locomotion-weight-pass";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=locomotion-weight-pass";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=locomotion-weight-pass";
+} from "./game/ShiftReport.js?v=soma-body-weight";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=soma-body-weight";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=soma-body-weight";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=soma-body-weight";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=soma-body-weight";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=soma-body-weight";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=soma-body-weight";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=soma-body-weight";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=soma-body-weight";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=soma-body-weight";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=soma-body-weight";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=soma-body-weight";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=soma-body-weight";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=soma-body-weight";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=soma-body-weight";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=soma-body-weight";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=soma-body-weight";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=soma-body-weight";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=soma-body-weight";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=soma-body-weight";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=soma-body-weight";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=soma-body-weight";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=soma-body-weight";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=soma-body-weight";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=soma-body-weight";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=soma-body-weight";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=soma-body-weight";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=soma-body-weight";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=soma-body-weight";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=soma-body-weight";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=locomotion-weight-pass";
+} from "./config/GraphicsQualityProfiles.js?v=soma-body-weight";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=locomotion-weight-pass";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=locomotion-weight-pass";
-import { createStatusScreen } from "./StatusScreen.js?v=locomotion-weight-pass";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=locomotion-weight-pass";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=locomotion-weight-pass";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=locomotion-weight-pass";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=locomotion-weight-pass";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=locomotion-weight-pass";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=locomotion-weight-pass";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=locomotion-weight-pass";
+} from "./scene/TextureStreaming.js?v=soma-body-weight";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=soma-body-weight";
+import { createStatusScreen } from "./StatusScreen.js?v=soma-body-weight";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=soma-body-weight";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=soma-body-weight";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=soma-body-weight";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=soma-body-weight";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=soma-body-weight";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=soma-body-weight";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=soma-body-weight";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=locomotion-weight-pass";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=locomotion-weight-pass";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=locomotion-weight-pass";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=soma-body-weight";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=soma-body-weight";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=soma-body-weight";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=locomotion-weight-pass";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=locomotion-weight-pass";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=locomotion-weight-pass";
-import { AssetCache } from "./runtime/AssetCache.js?v=locomotion-weight-pass";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=locomotion-weight-pass";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=locomotion-weight-pass";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=locomotion-weight-pass";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=locomotion-weight-pass";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=locomotion-weight-pass";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=locomotion-weight-pass";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=locomotion-weight-pass";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=locomotion-weight-pass";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=locomotion-weight-pass";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=locomotion-weight-pass";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=locomotion-weight-pass";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=locomotion-weight-pass";
+} from "./lighting/FluorescentBehavior.js?v=soma-body-weight";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=soma-body-weight";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=soma-body-weight";
+import { AssetCache } from "./runtime/AssetCache.js?v=soma-body-weight";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=soma-body-weight";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=soma-body-weight";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=soma-body-weight";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=soma-body-weight";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=soma-body-weight";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=soma-body-weight";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=soma-body-weight";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=soma-body-weight";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=soma-body-weight";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=soma-body-weight";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=soma-body-weight";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=soma-body-weight";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=locomotion-weight-pass";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=locomotion-weight-pass";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=locomotion-weight-pass";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=locomotion-weight-pass";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=locomotion-weight-pass";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=locomotion-weight-pass";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=locomotion-weight-pass";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=locomotion-weight-pass";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=locomotion-weight-pass";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=locomotion-weight-pass";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=locomotion-weight-pass";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=locomotion-weight-pass";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=locomotion-weight-pass";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=locomotion-weight-pass";
-import { PlayerController } from "./player/PlayerController.js?v=locomotion-weight-pass";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=locomotion-weight-pass";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=locomotion-weight-pass";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=locomotion-weight-pass";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=locomotion-weight-pass";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=locomotion-weight-pass";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=locomotion-weight-pass";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=locomotion-weight-pass";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=locomotion-weight-pass";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=locomotion-weight-pass";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=locomotion-weight-pass";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=locomotion-weight-pass";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=locomotion-weight-pass";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=locomotion-weight-pass";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=locomotion-weight-pass";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=locomotion-weight-pass";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=locomotion-weight-pass";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=locomotion-weight-pass";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=locomotion-weight-pass";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=locomotion-weight-pass";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=locomotion-weight-pass";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=locomotion-weight-pass";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=locomotion-weight-pass";
+} from "./scene/InteriorObjectRegistry.js?v=soma-body-weight";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=soma-body-weight";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=soma-body-weight";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=soma-body-weight";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=soma-body-weight";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=soma-body-weight";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=soma-body-weight";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=soma-body-weight";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=soma-body-weight";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=soma-body-weight";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=soma-body-weight";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=soma-body-weight";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=soma-body-weight";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=soma-body-weight";
+import { PlayerController } from "./player/PlayerController.js?v=soma-body-weight";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=soma-body-weight";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=soma-body-weight";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=soma-body-weight";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=soma-body-weight";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=soma-body-weight";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=soma-body-weight";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=soma-body-weight";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=soma-body-weight";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=soma-body-weight";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=soma-body-weight";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=soma-body-weight";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=soma-body-weight";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=soma-body-weight";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=soma-body-weight";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=soma-body-weight";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=soma-body-weight";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=soma-body-weight";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=soma-body-weight";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=soma-body-weight";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=soma-body-weight";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=soma-body-weight";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=soma-body-weight";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=locomotion-weight-pass";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=soma-body-weight";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -992,7 +992,6 @@ const sceneFeedbackRuntime = new SceneFeedbackRuntime({
   getSnapshot: () => latestSnapshot,
   getTime: () => testTime,
   getZoomActive: () => zoomActive,
-  getLocomotionPresentation: operatorMovementRuntime.getLocomotionPresentation,
   getStartupAmount: getStartupFeedbackAmount,
   getIgnitionPulseAmount: getIgnitionPulseFeedbackAmount,
   getEmergencyAmount: getThermalEmergencyAmount,

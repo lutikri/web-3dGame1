@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=locomotion-weight-pass";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=soma-body-weight";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

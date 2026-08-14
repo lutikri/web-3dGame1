@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=locomotion-weight-pass";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=locomotion-weight-pass";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=locomotion-weight-pass";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=locomotion-weight-pass";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=locomotion-weight-pass";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=locomotion-weight-pass";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=soma-body-weight";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=soma-body-weight";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=soma-body-weight";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=soma-body-weight";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=soma-body-weight";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=soma-body-weight";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=soma-body-weight";
 
 export function createPrefabRuntimeFactory({
   config,

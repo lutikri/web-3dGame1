@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=locomotion-weight-pass";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=soma-body-weight";
 
 const DISMISS_MS = 300;
 

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=locomotion-weight-pass";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=locomotion-weight-pass";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=locomotion-weight-pass";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=soma-body-weight";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=soma-body-weight";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=soma-body-weight";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=soma-body-weight";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

@@ -141,11 +141,27 @@ A level is allowed to have no `Panel1`; if no prefab with `behavior: "operatorPa
 
 Briefings are level-driven through `src/levels/LevelRegistry.js`. While a briefing is visible, gameplay input is locked. After the final sheet is dismissed, tutorial hints become non-blocking.
 
+### Embodied first-person locomotion
+
+First-person presentation is a simulated body/head rig rather than a camera attached directly to the character capsule.
+
+- Rapier and the player-collision runtime own the physical capsule, grounded state, vertical velocity, stance resize, and resolved movement.
+- `OperatorMovementRuntime` owns direct 1:1 mouse look and passes actual capsule displacement to the body rig. Procedural motion is not driven from WASD state.
+- `FirstPersonBodyRigRuntime` owns body yaw, the free head-yaw range, stationary foot repositioning, alternating support legs, authored gait curves, acceleration weight, strafe lean, mouse-angular reaction, crouch settling, step stabilization, and landing recovery.
+- `ItemInteractionRuntime` consumes a stronger held-equipment version of the same body motion, so a flashlight moves more than the stabilized head.
+- Locomotion does not drive chromatic aberration, lens distortion, sprint FOV, or other post-processing effects.
+
+The body rig composes gait, strafe weight, forward/back acceleration, direct-look reaction, head/body yaw separation, steps, crouch, and landing. Do not replace this with a parallel head-bob loop or add locomotion effects in `OperatorGame.js`.
+
+Authoritative tuning lives under `CONFIG.camera.operatorMovement.bodyRig` in `src/OperatorGameConfig.js`. The regression contract is covered by `tests/first-person-body-rig-runtime.test.mjs` and `tests/operator-movement-runtime.test.mjs`; subjective weight and comfort still require pointer-lock playtesting.
+
 ## Runtime modules
 
 - `src/lighting/LightingRuntime.js` — level-owned ambient and point lights.
 - `src/interactions/DoorInteractionSystem.js` — shared physical door interaction.
-- `src/player/PlayerController.js` — movement, collision, step handling, jump, and debug collision display.
+- `src/player/OperatorMovementRuntime.js` — movement intent, direct mouse look, body-rig integration, crouch, zoom lean, and final camera composition.
+- `src/player/FirstPersonBodyRigRuntime.js` — physical head/torso presentation derived from resolved movement and look deltas.
+- `src/player/PlayerCollisionRuntime.js` — capsule dimensions, stance changes, collision-safe view offsets, and collision debug presentation.
 - `src/postprocessing/PostProcessingRuntime.js` — post-processing lifecycle.
 - `src/panels/OperatorPanelRuntime.js` — operator panel lifecycle and visibility.
 - `src/physics/PhysicsSystem.js` — Rapier physics, static collision, character controller, and physical doors.

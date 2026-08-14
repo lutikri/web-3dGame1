@@ -144,7 +144,13 @@ test("equipped motion applies locomotion sway and rotation lag without changing 
   const runtime = createItemInteractionRuntime({
     interactive: [],
     camera: new THREE.PerspectiveCamera(),
-    getLocomotionPresentation: () => ({ equipmentSide: 0.01, equipmentVertical: -0.01, equipmentRoll: 0.02 }),
+    getLocomotionPresentation: () => ({
+      equipmentSide: 0.01,
+      equipmentVertical: -0.01,
+      equipmentForward: 0.02,
+      equipmentRoll: 0.02,
+      equipmentYaw: 0.03,
+    }),
     physics: {
       setRigidPrefabMode() {},
       setRigidPrefabPose: (...args) => calls.push(args),
@@ -171,4 +177,5 @@ test("equipped motion applies locomotion sway and rotation lag without changing 
   const latestPosition = calls.at(-1)[1];
   assert.ok(latestPosition.x > 0.25);
   assert.ok(latestPosition.y < -0.2);
+  assert.ok(latestPosition.z < -0.48);
 });

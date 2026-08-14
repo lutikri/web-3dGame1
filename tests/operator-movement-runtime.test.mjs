@@ -22,7 +22,7 @@ function createRuntime(overrides = {}) {
         zoomDamping: 20,
         noclip: { speed: 4, minSpeed: 1, maxSpeed: 5, wheelStep: 0.5 },
         crouchSpeed: 1,
-        operatorMovement: { headBobFrequency: 4.5 },
+        operatorMovement: { bodyRig: {} },
       },
       playerEyeHeight: 1.6,
       player: { collision: { jumpSpeed: 3 } },
@@ -39,7 +39,11 @@ function createRuntime(overrides = {}) {
     getZoomActive: () => overrides.zoom ?? false,
     getJumpQueued: () => false,
     setJumpQueued: () => {},
-    getPhysicsSystem: () => overrides.physics ?? null,
+    getPhysicsSystem: () => overrides.physics ?? {
+      isCharacterGrounded: () => true,
+      getCharacterVerticalVelocity: () => 0,
+      jump: () => {},
+    },
     moveWithCollisions: (delta) => {
       if (overrides.blockMovement) return;
       playerPosition.add(delta);
@@ -66,6 +70,16 @@ test("operator movement runtime owns clamped mouse look", () => {
   runtime.updateLook(10, 1000);
   assert.equal(getYaw(), -0.1);
   assert.ok(Math.abs(getPitch() + Math.PI / 4) < 1e-9);
+});
+
+test("mouse look remains immediate while its physical reaction is secondary", () => {
+  const { runtime, getYaw } = createRuntime();
+  runtime.updateLook(20, -10);
+  assert.equal(getYaw(), -0.2);
+  assert.equal(runtime.getBodyRigSnapshot().camera.roll, 0);
+  runtime.update(1 / 60);
+  assert.notEqual(runtime.getBodyRigSnapshot().components.look.roll, 0);
+  assert.equal(getYaw(), -0.2);
 });
 
 test("operator movement runtime owns camera zoom presentation", () => {
@@ -100,7 +114,7 @@ test("operator movement runtime enters crouch and refuses to stand under an obst
   assert.equal(runtime.isCrouched(), true);
 });
 
-test("head bob advances from resolved movement rather than input velocity", () => {
+test("body rig advances from resolved movement rather than requested input", () => {
   const keys = new Set(["KeyW"]);
   const moving = createRuntime({ keys });
   moving.runtime.update(1 / 30);
@@ -111,26 +125,42 @@ test("head bob advances from resolved movement rather than input velocity", () =
   assert.deepEqual(blocked.camera.position.toArray(), [0, 1.6, 0]);
 });
 
-test("running presentation derives subtle lens effects from resolved movement", () => {
+test("running does not add lens effects or change the authored field of view", () => {
   const keys = new Set(["KeyW", "ShiftLeft"]);
-  const { runtime } = createRuntime({ keys });
+  const { runtime, camera } = createRuntime({ keys });
   for (let index = 0; index < 60; index += 1) runtime.update(1 / 60);
   const presentation = runtime.getLocomotionPresentation();
-  assert.ok(presentation.runBlend > 0.8);
-  assert.ok(presentation.lensStretch > 0);
-  assert.ok(presentation.chromaticAberration > 0);
-  keys.delete("KeyW");
-  keys.delete("ShiftLeft");
-  for (let index = 0; index < 60; index += 1) runtime.update(1 / 60);
-  assert.ok(runtime.getLocomotionPresentation().runBlend < 0.1);
+  runtime.updateZoom(1);
+  assert.equal("lensStretch" in presentation, false);
+  assert.equal("chromaticAberration" in presentation, false);
+  assert.ok(Math.abs(camera.fov - 70) < 0.001);
+});
+
+test("head yaw stays free before the physical body begins to follow", () => {
+  const { runtime } = createRuntime();
+  runtime.updateLook(-THREE.MathUtils.degToRad(20) / 0.01, 0);
+  for (let index = 0; index < 30; index += 1) runtime.update(1 / 60);
+  assert.ok(Math.abs(runtime.getBodyRigSnapshot().bodyYaw) < 0.001);
+
+  runtime.updateLook(-THREE.MathUtils.degToRad(25) / 0.01, 0);
+  for (let index = 0; index < 90; index += 1) runtime.update(1 / 60);
+  const snapshot = runtime.getBodyRigSnapshot();
+  assert.ok(snapshot.bodyYaw > THREE.MathUtils.degToRad(5));
+  assert.ok(snapshot.headRelativeYaw <= THREE.MathUtils.degToRad(35));
 });
 
 test("walking presentation transfers weight through camera tilt instead of floating", () => {
   const keys = new Set(["KeyW", "KeyA"]);
   const { runtime, camera, playerPosition } = createRuntime({ keys });
-  for (let index = 0; index < 24; index += 1) runtime.update(1 / 60);
-  assert.ok(Math.abs(camera.rotation.z) > THREE.MathUtils.degToRad(0.08));
-  assert.ok(Math.abs(camera.position.y - playerPosition.y) > 0.0005);
+  let maximumRoll = 0;
+  let maximumVertical = 0;
+  for (let index = 0; index < 48; index += 1) {
+    runtime.update(1 / 60);
+    maximumRoll = Math.max(maximumRoll, Math.abs(camera.rotation.z));
+    maximumVertical = Math.max(maximumVertical, Math.abs(camera.position.y - playerPosition.y));
+  }
+  assert.ok(maximumRoll > THREE.MathUtils.degToRad(0.05));
+  assert.ok(maximumVertical > 0.0005);
 });
 
 test("held equipment presentation retains a small idle hand tremor", () => {

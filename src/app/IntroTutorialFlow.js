@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=locomotion-weight-pass";
+import { translateRequired } from "./Localization.js?v=soma-body-weight";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

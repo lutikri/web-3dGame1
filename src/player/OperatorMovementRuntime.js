@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=soma-body-weight";
+
 export function createOperatorMovementRuntime({
   config,
   camera,
@@ -27,31 +29,25 @@ export function createOperatorMovementRuntime({
   setPitch,
   getBaseFov,
 }) {
-  let gaitPhase = 0;
-  let gaitStep = 0;
+  const movementConfig = config.camera.operatorMovement ?? {};
+  const bodyRig = new FirstPersonBodyRigRuntime({ config: movementConfig.bodyRig, initialYaw: getYaw() });
+  let rigSnapshot = bodyRig.snapshot;
   let leanAmount = 0;
   let crouched = false;
-  let stanceVisualOffset = 0;
-  let movementRoll = 0;
-  let movementPitch = 0;
-  let stepOffset = 0;
-  let stepVelocity = 0;
-  let inertiaSide = 0;
-  let inertiaForward = 0;
-  let previousLocalSideSpeed = 0;
-  let previousLocalForwardSpeed = 0;
-  let movementAmount = 0;
-  let presentationTime = 0;
-  let landingOffset = 0;
-  let landingVelocity = 0;
-  let runBlend = 0;
   let noclipSpeed = config.camera.noclip?.speed ?? config.camera.walkSpeed;
+  let noclipWasActive = false;
   const previousPosition = new THREE.Vector3();
+  const forward = new THREE.Vector3();
+  const right = new THREE.Vector3();
+  const move = new THREE.Vector3();
+  const frameDelta = new THREE.Vector3();
+  const actualDelta = new THREE.Vector3();
+  const cameraOffset = new THREE.Vector3();
+  const bodyForward = new THREE.Vector3();
+  const bodyRight = new THREE.Vector3();
 
   function update(dt) {
     if (getViewMode() === "menu") return;
-    presentationTime += dt;
-    const movementConfig = config.camera.operatorMovement ?? {};
     const noclip = getNoclipEnabled();
     const crouchRequested = !noclip && (keys.has("ControlLeft") || keys.has("ControlRight"));
     updateStance(crouchRequested);
@@ -61,21 +57,19 @@ export function createOperatorMovementRuntime({
       : crouched
         ? config.camera.crouchSpeed ?? config.camera.walkSpeed * 0.55
         : running
-        ? config.camera.runSpeed
-        : config.camera.walkSpeed;
+          ? config.camera.runSpeed
+          : config.camera.walkSpeed;
     const speed = baseSpeed * (getZoomActive() && !noclip ? movementConfig.zoomSpeedMultiplier ?? 0.62 : 1);
 
     camera.rotation.order = "YXZ";
-    camera.rotation.y = getYaw();
-    camera.rotation.x = getPitch();
-    const forward = new THREE.Vector3();
+    camera.rotation.set(getPitch(), getYaw(), 0);
     camera.getWorldDirection(forward);
     if (!noclip) {
       forward.y = 0;
       forward.normalize();
     }
-    const right = new THREE.Vector3().crossVectors(forward, worldUp).normalize();
-    const move = new THREE.Vector3();
+    right.crossVectors(forward, worldUp).normalize();
+    move.set(0, 0, 0);
     if (keys.has("KeyW")) move.add(forward);
     if (keys.has("KeyS")) move.sub(forward);
     if (keys.has("KeyD")) move.add(right);
@@ -83,53 +77,66 @@ export function createOperatorMovementRuntime({
     if (noclip && keys.has("Space")) move.y += 1;
     if (noclip && (keys.has("ControlLeft") || keys.has("ControlRight"))) move.y -= 1;
 
-    const targetVelocity = move.lengthSq() > 0 ? move.normalize().multiplyScalar(speed) : new THREE.Vector3();
-    const damping = targetVelocity.lengthSq() > 0 ? movementConfig.acceleration ?? 13 : movementConfig.deceleration ?? 18;
-    movementVelocity.x = THREE.MathUtils.damp(movementVelocity.x, targetVelocity.x, damping, dt);
-    movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, targetVelocity.y, damping, dt);
-    movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, targetVelocity.z, damping, dt);
+    const hasMove = move.lengthSq() > 0;
+    if (hasMove) move.normalize().multiplyScalar(speed);
+    const damping = hasMove ? movementConfig.acceleration ?? 7 : movementConfig.deceleration ?? 12;
+    movementVelocity.x = THREE.MathUtils.damp(movementVelocity.x, hasMove ? move.x : 0, damping, dt);
+    movementVelocity.y = THREE.MathUtils.damp(movementVelocity.y, hasMove ? move.y : 0, damping, dt);
+    movementVelocity.z = THREE.MathUtils.damp(movementVelocity.z, hasMove ? move.z : 0, damping, dt);
 
     if (getControlMode() === "lookOnlyUntilElevatorArrival") {
       movementVelocity.set(0, 0, 0);
+      previousPosition.copy(playerPosition);
       if (movingPlatformDelta.lengthSq() > 0) {
         playerPosition.add(movingPlatformDelta);
-        camera.position.add(movingPlatformDelta);
         getPhysicsSystem()?.teleportCharacter(playerPosition);
         syncCapsule();
         movingPlatformDelta.set(0, 0, 0);
       }
-      applyCameraPresentation(forward, right, dt, new THREE.Vector3(), false);
+      actualDelta.copy(playerPosition).sub(previousPosition);
+      updateBodyRig(dt, actualDelta, false, false, 0);
+      applyCameraRig(dt);
       return;
     }
-    if (!noclip) {
-      if (getJumpQueued()) getPhysicsSystem()?.jump(config.player?.collision?.jumpSpeed ?? 3.2);
-      setJumpQueued(false);
-      previousPosition.copy(playerPosition);
-      const groundedBeforeMove = Boolean(getPhysicsSystem()?.isCharacterGrounded?.());
-      const verticalVelocityBeforeMove = getPhysicsSystem()?.getCharacterVerticalVelocity?.() ?? 0;
-      const frameDelta = movementVelocity.clone().multiplyScalar(dt).add(movingPlatformDelta);
-      movingPlatformDelta.set(0, 0, 0);
-      moveWithCollisions(frameDelta, dt);
-      syncCapsule();
-      const actualDelta = new THREE.Vector3(
-        playerPosition.x - previousPosition.x,
-        0,
-        playerPosition.z - previousPosition.z,
-      );
-      const groundedAfterMove = Boolean(getPhysicsSystem()?.isCharacterGrounded?.());
-      if (!groundedBeforeMove && groundedAfterMove && verticalVelocityBeforeMove < -0.8) {
-        landingVelocity = Math.min(
-          landingVelocity,
-          -Math.min(0.16, Math.abs(verticalVelocityBeforeMove) * 0.025),
-        );
-      }
-      applyCameraPresentation(forward, right, dt, actualDelta, running);
-      return;
-    } else {
+
+    if (noclip) {
+      if (!noclipWasActive) bodyRig.reset(getYaw());
+      noclipWasActive = true;
       movingPlatformDelta.set(0, 0, 0);
       playerPosition.addScaledVector(movementVelocity, dt);
+      camera.position.copy(playerPosition);
+      camera.rotation.set(getPitch(), getYaw(), 0);
+      updateLean(dt, forward);
+      return;
     }
-    applyCameraPresentation(forward, right, dt, movementVelocity.clone().multiplyScalar(dt), running);
+    if (noclipWasActive) bodyRig.reset(getYaw());
+    noclipWasActive = false;
+
+    if (getJumpQueued()) getPhysicsSystem()?.jump(config.player?.collision?.jumpSpeed ?? 3.2);
+    setJumpQueued(false);
+    previousPosition.copy(playerPosition);
+    const groundedBefore = Boolean(getPhysicsSystem()?.isCharacterGrounded?.());
+    const verticalVelocityBefore = getPhysicsSystem()?.getCharacterVerticalVelocity?.() ?? 0;
+    frameDelta.copy(movementVelocity).multiplyScalar(dt).add(movingPlatformDelta);
+    movingPlatformDelta.set(0, 0, 0);
+    moveWithCollisions(frameDelta, dt);
+    syncCapsule();
+    actualDelta.copy(playerPosition).sub(previousPosition);
+    const groundedAfter = Boolean(getPhysicsSystem()?.isCharacterGrounded?.());
+    updateBodyRig(dt, actualDelta, groundedBefore, groundedAfter, verticalVelocityBefore);
+    applyCameraRig(dt);
+  }
+
+  function updateBodyRig(dt, displacement, groundedBefore, groundedAfter, verticalVelocityBefore) {
+    rigSnapshot = bodyRig.update({
+      dt,
+      headYaw: getYaw(),
+      actualDelta: displacement,
+      groundedBefore,
+      groundedAfter,
+      verticalVelocityBefore,
+      crouched,
+    });
   }
 
   function updateStance(requested) {
@@ -137,183 +144,81 @@ export function createOperatorMovementRuntime({
     const previousEyeHeight = getPlayerEyeHeight();
     if (!setCrouched(requested)) return;
     const nextEyeHeight = getPlayerEyeHeight();
-    stanceVisualOffset += previousEyeHeight - nextEyeHeight;
     crouched = requested;
+    bodyRig.onStanceChanged({
+      eyeHeightDelta: previousEyeHeight - nextEyeHeight,
+      crouched,
+    });
   }
 
-  function applyCameraPresentation(forward, right, dt, actualDelta, running) {
-    const movementConfig = config.camera.operatorMovement ?? {};
+  function applyCameraRig(dt) {
     camera.position.copy(playerPosition);
-    if (getNoclipEnabled()) {
-      leanAmount = THREE.MathUtils.damp(leanAmount, 0, movementConfig.leanDamping ?? 11, dt);
-      movementRoll = THREE.MathUtils.damp(movementRoll, 0, movementConfig.movementTiltDamping ?? 6.5, dt);
-      movementPitch = THREE.MathUtils.damp(movementPitch, 0, movementConfig.movementTiltDamping ?? 6.5, dt);
-      camera.rotation.x = getPitch() + movementPitch;
-      camera.rotation.z = movementRoll;
-      return;
-    }
-    const actualDistance = actualDelta.length();
-    const horizontalSpeed = dt > 0 ? actualDistance / dt : 0;
-    const speedRatio = THREE.MathUtils.clamp(horizontalSpeed / Math.max(config.camera.runSpeed, 0.001), 0, 1);
-    movementAmount = THREE.MathUtils.damp(
-      movementAmount,
-      THREE.MathUtils.smoothstep(speedRatio, 0.02, 0.3),
-      10,
-      dt,
-    );
-    const strideLength = crouched
-      ? movementConfig.crouchStrideLength ?? 0.9
-      : running
-        ? movementConfig.runStrideLength ?? 1.62
-        : movementConfig.walkStrideLength ?? 1.25;
-    const stepImpulse = crouched
-      ? movementConfig.crouchStepImpulse ?? 0.003
-      : running
-        ? movementConfig.runStepImpulse ?? 0.17
-        : movementConfig.walkStepImpulse ?? 0.11;
-    const weightShift = crouched
-      ? movementConfig.crouchWeightShift ?? 0.0015
-      : running
-        ? movementConfig.runWeightShift ?? 0.011
-        : movementConfig.walkWeightShift ?? 0.006;
-    const gaitLift = crouched
-      ? movementConfig.crouchGaitLift ?? 0.003
-      : running
-        ? movementConfig.runGaitLift ?? 0.012
-        : movementConfig.walkGaitLift ?? 0.007;
-    if (actualDistance > 0.00001) {
-      gaitPhase += actualDistance / Math.max(strideLength, 0.01) * Math.PI * 2;
-      const nextStep = Math.floor(gaitPhase / Math.PI);
-      if (nextStep !== gaitStep) {
-        stepVelocity -= stepImpulse * THREE.MathUtils.lerp(0.55, 1, speedRatio);
-        gaitStep = nextStep;
-      }
-    }
-    stanceVisualOffset = THREE.MathUtils.damp(
-      stanceVisualOffset,
-      0,
-      movementConfig.stanceDamping ?? 11,
-      dt,
-    );
-    updateStepSpring(dt, movementConfig);
-    updateLandingSpring(dt, movementConfig);
-    const midStepLift = Math.pow(Math.abs(Math.sin(gaitPhase)), 4) * gaitLift * movementAmount;
-    camera.position.y += stanceVisualOffset + stepOffset + landingOffset + midStepLift;
-    camera.position.addScaledVector(right, Math.sin(gaitPhase) * weightShift * movementAmount);
-
-    const localSideSpeed = dt > 0 ? actualDelta.dot(right) / dt : 0;
-    const localForwardSpeed = dt > 0 ? actualDelta.dot(forward) / dt : 0;
-    const sideAcceleration = THREE.MathUtils.clamp((localSideSpeed - previousLocalSideSpeed) / Math.max(dt, 1 / 120), -18, 18);
-    const forwardAcceleration = THREE.MathUtils.clamp((localForwardSpeed - previousLocalForwardSpeed) / Math.max(dt, 1 / 120), -18, 18);
-    previousLocalSideSpeed = localSideSpeed;
-    previousLocalForwardSpeed = localForwardSpeed;
-    const inertiaLimit = movementConfig.inertiaMaxOffset ?? 0.012;
-    inertiaSide = THREE.MathUtils.damp(
-      inertiaSide,
-      THREE.MathUtils.clamp(-sideAcceleration * (movementConfig.inertiaSideScale ?? 0.0011), -inertiaLimit, inertiaLimit),
-      movementConfig.inertiaDamping ?? 7.5,
-      dt,
-    );
-    inertiaForward = THREE.MathUtils.damp(
-      inertiaForward,
-      THREE.MathUtils.clamp(-forwardAcceleration * (movementConfig.inertiaForwardScale ?? 0.0008), -inertiaLimit, inertiaLimit),
-      movementConfig.inertiaDamping ?? 7.5,
-      dt,
-    );
-    const targetRoll = THREE.MathUtils.degToRad(movementConfig.movementRollDegrees ?? 0.78)
-      * THREE.MathUtils.clamp(-localSideSpeed / Math.max(config.camera.runSpeed, 0.001), -1, 1)
-      + THREE.MathUtils.degToRad(movementConfig.gaitRollDegrees ?? 0.34) * Math.sin(gaitPhase) * movementAmount;
-    movementRoll = THREE.MathUtils.damp(
-      movementRoll,
-      targetRoll,
-      movementConfig.movementTiltDamping ?? 6.5,
-      dt,
-    );
-    const targetPitch = THREE.MathUtils.degToRad(movementConfig.accelerationPitchDegrees ?? 0.48)
-      * THREE.MathUtils.clamp(-forwardAcceleration / 12, -1, 1)
-      + THREE.MathUtils.degToRad(movementConfig.gaitPitchDegrees ?? 0.28)
-        * Math.sin(gaitPhase * 2) * movementAmount;
-    movementPitch = THREE.MathUtils.damp(
-      movementPitch,
-      targetPitch,
-      movementConfig.movementTiltDamping ?? 6.5,
-      dt,
-    );
-    camera.rotation.x = getPitch() + movementPitch;
-    camera.rotation.z = movementRoll;
-    runBlend = THREE.MathUtils.damp(runBlend, running && horizontalSpeed > 0.1 ? speedRatio : 0, 5.5, dt);
-    leanAmount = THREE.MathUtils.damp(leanAmount, getZoomActive() ? 1 : 0, movementConfig.leanDamping ?? 11, dt);
-    const leanOffset = forward.clone().multiplyScalar(
-      leanAmount * (movementConfig.leanForward ?? 0.16) + inertiaForward,
-    );
-    leanOffset.addScaledVector(right, inertiaSide);
-    leanOffset.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
+    bodyForward.set(-Math.sin(rigSnapshot.bodyYaw), 0, -Math.cos(rigSnapshot.bodyYaw));
+    bodyRight.set(Math.cos(rigSnapshot.bodyYaw), 0, -Math.sin(rigSnapshot.bodyYaw));
+    cameraOffset.set(0, rigSnapshot.camera.vertical, 0)
+      .addScaledVector(bodyRight, rigSnapshot.camera.side)
+      .addScaledVector(bodyForward, rigSnapshot.camera.forward);
     applyCameraOffset(limitCameraOffset(
       camera.position,
-      leanOffset,
+      cameraOffset,
       config.player?.collision?.cameraRadius ?? 0.12,
     ));
+    camera.rotation.set(
+      getPitch() + rigSnapshot.camera.pitch,
+      getYaw(),
+      rigSnapshot.camera.roll,
+      "YXZ",
+    );
+    camera.getWorldDirection(forward);
+    updateLean(dt, forward);
   }
 
-  function updateStepSpring(dt, movementConfig) {
-    const stiffness = movementConfig.stepSpring ?? 92;
-    const damping = movementConfig.stepDamping ?? 18;
-    stepVelocity += (-stepOffset * stiffness - stepVelocity * damping) * dt;
-    stepOffset += stepVelocity * dt;
-    const limit = movementConfig.stepMaxOffset ?? 0.022;
-    stepOffset = THREE.MathUtils.clamp(stepOffset, -limit, limit);
-  }
-
-  function updateLandingSpring(dt, movementConfig) {
-    const stiffness = movementConfig.landingSpring ?? 72;
-    const damping = movementConfig.landingDamping ?? 15;
-    landingVelocity += (-landingOffset * stiffness - landingVelocity * damping) * dt;
-    landingOffset += landingVelocity * dt;
-    const limit = movementConfig.landingMaxOffset ?? 0.035;
-    landingOffset = THREE.MathUtils.clamp(landingOffset, -limit, limit);
+  function updateLean(dt, viewForward) {
+    leanAmount = THREE.MathUtils.damp(
+      leanAmount,
+      getZoomActive() ? 1 : 0,
+      movementConfig.leanDamping ?? 4,
+      dt,
+    );
+    if (leanAmount <= 0.0001) return;
+    cameraOffset.copy(viewForward).multiplyScalar(leanAmount * (movementConfig.leanForward ?? 0.26));
+    cameraOffset.y -= leanAmount * (movementConfig.leanDown ?? 0.025);
+    applyCameraOffset(limitCameraOffset(
+      camera.position,
+      cameraOffset,
+      config.player?.collision?.cameraRadius ?? 0.12,
+    ));
   }
 
   function updateZoom(dt) {
     if (getViewMode() === "menu") return;
     const baseFov = getBaseFov();
-    const runFov = (config.camera.operatorMovement?.runFovDegrees ?? 2.2) * runBlend;
-    const targetFov = getZoomActive() ? Math.min(config.camera.zoomFovDegrees, baseFov) : baseFov + runFov;
-    const damping = getZoomActive()
-      ? config.camera.zoomDamping
-      : config.camera.operatorMovement?.runFovDamping ?? 5.5;
-    camera.fov = THREE.MathUtils.damp(camera.fov, targetFov, damping, dt);
+    const targetFov = getZoomActive() ? Math.min(config.camera.zoomFovDegrees, baseFov) : baseFov;
+    camera.fov = THREE.MathUtils.damp(camera.fov, targetFov, config.camera.zoomDamping, dt);
     camera.updateProjectionMatrix();
   }
 
   function updateLook(movementX, movementY) {
-    const movementConfig = config.camera.operatorMovement ?? {};
-    const sensitivity = config.camera.mouseSensitivity * (getZoomActive() ? movementConfig.zoomSensitivityMultiplier ?? 0.48 : 1);
-    setYaw(getYaw() - movementX * sensitivity);
+    const sensitivity = config.camera.mouseSensitivity
+      * (getZoomActive() ? movementConfig.zoomSensitivityMultiplier ?? 0.88 : 1);
+    const previousYaw = getYaw();
+    const previousPitch = getPitch();
+    setYaw(previousYaw - movementX * sensitivity);
     const pitchLimitDegrees = getZoomActive()
       ? config.camera.leanPitchLimitDegrees ?? config.camera.pitchLimitDegrees ?? 88
       : config.camera.pitchLimitDegrees ?? 72;
     const limit = THREE.MathUtils.degToRad(pitchLimitDegrees);
-    setPitch(THREE.MathUtils.clamp(getPitch() - movementY * sensitivity, -limit, limit));
+    setPitch(THREE.MathUtils.clamp(previousPitch - movementY * sensitivity, -limit, limit));
+    bodyRig.addLookDelta({
+      yaw: wrapAngle(getYaw() - previousYaw),
+      pitch: getPitch() - previousPitch,
+    });
   }
 
   function resetPresentation() {
-    gaitPhase = 0;
-    gaitStep = 0;
     leanAmount = 0;
-    stanceVisualOffset = 0;
-    movementRoll = 0;
-    movementPitch = 0;
-    stepOffset = 0;
-    stepVelocity = 0;
-    inertiaSide = 0;
-    inertiaForward = 0;
-    previousLocalSideSpeed = 0;
-    previousLocalForwardSpeed = 0;
-    movementAmount = 0;
-    presentationTime = 0;
-    landingOffset = 0;
-    landingVelocity = 0;
-    runBlend = 0;
+    bodyRig.reset(getYaw());
+    rigSnapshot = bodyRig.snapshot;
   }
 
   function setNoclipSpeed(value) {
@@ -331,29 +236,34 @@ export function createOperatorMovementRuntime({
     return setNoclipSpeed(noclipSpeed + direction * step);
   }
 
+  const getLocomotionPresentation = () => ({
+    bodyYaw: rigSnapshot.bodyYaw,
+    headRelativeYaw: rigSnapshot.headRelativeYaw,
+    supportLeg: rigSnapshot.supportLeg,
+    movementAmount: rigSnapshot.movementAmount,
+    equipmentSide: rigSnapshot.held.side,
+    equipmentVertical: rigSnapshot.held.vertical,
+    equipmentForward: rigSnapshot.held.forward,
+    equipmentRoll: rigSnapshot.held.roll,
+    equipmentPitch: rigSnapshot.held.pitch,
+    equipmentYaw: rigSnapshot.held.yaw,
+  });
+
   return {
-    update, updateZoom, updateLook, resetPresentation, setNoclipSpeed, adjustNoclipSpeed,
-    getNoclipSpeed: () => noclipSpeed, getLeanAmount: () => leanAmount,
-    getLocomotionPresentation: () => {
-      const idleSide = (Math.sin(presentationTime * 1.7) + Math.sin(presentationTime * 2.43 + 0.8) * 0.45) * 0.0011;
-      const idleVertical = (Math.sin(presentationTime * 1.31 + 0.4) + Math.sin(presentationTime * 2.07) * 0.35) * 0.00075;
-      const gaitSide = Math.sin(gaitPhase) * (0.008 + runBlend * 0.007) * movementAmount;
-      const gaitVertical = Math.sin(gaitPhase * 2) * (0.0045 + runBlend * 0.004) * movementAmount;
-      return {
-        runBlend,
-        movementAmount,
-        lensStretch: runBlend * (config.camera.operatorMovement?.runLensStretch ?? 0.008),
-        chromaticAberration: runBlend * (config.camera.operatorMovement?.runChromaticAberration ?? 0.00035),
-        equipmentSide: idleSide + gaitSide,
-        equipmentVertical: idleVertical + gaitVertical + stepOffset * (2.2 + runBlend),
-        equipmentRoll: movementRoll * 1.55
-          + THREE.MathUtils.degToRad(0.12) * Math.sin(presentationTime * 1.83)
-          + THREE.MathUtils.degToRad(0.72 + runBlend * 0.65) * Math.sin(gaitPhase) * movementAmount,
-        equipmentPitch: movementPitch * 1.4
-          + THREE.MathUtils.degToRad(0.09) * Math.sin(presentationTime * 1.17 + 1.1)
-          + THREE.MathUtils.degToRad(0.42 + runBlend * 0.48) * Math.sin(gaitPhase * 2) * movementAmount,
-      };
-    },
+    update,
+    updateZoom,
+    updateLook,
+    resetPresentation,
+    setNoclipSpeed,
+    adjustNoclipSpeed,
+    getNoclipSpeed: () => noclipSpeed,
+    getLeanAmount: () => leanAmount,
+    getLocomotionPresentation,
+    getBodyRigSnapshot: () => rigSnapshot,
     isCrouched: () => crouched,
   };
+}
+
+function wrapAngle(value) {
+  return Math.atan2(Math.sin(value), Math.cos(value));
 }

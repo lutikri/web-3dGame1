@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=locomotion-weight-pass";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=locomotion-weight-pass";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=locomotion-weight-pass";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=locomotion-weight-pass";
+import { createDebugHub } from "./DebugHub.js?v=soma-body-weight";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=soma-body-weight";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=soma-body-weight";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=soma-body-weight";
 
 export class DebugToolsRuntime {
   constructor(options) {

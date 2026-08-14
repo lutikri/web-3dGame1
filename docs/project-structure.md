@@ -61,7 +61,7 @@ src/
   materials/            Material construction, runtime clone synchronization, texture ownership and mask overlays
   panels/               Operator panel asset lifecycle, binding, simulation and presentation runtime code
   physics/              Rapier/character collision integration
-  player/               Movement, input, view transitions, collision resolution and collision-debug presentation
+  player/               Physical capsule integration, direct look, body/head rig, view transitions and collision-debug presentation
   postprocessing/       Post FX runtimes, quality ownership, live uniform policy and presets
   prefabs/
     PrefabRegistry.js   Shared prefab definitions
@@ -96,6 +96,28 @@ It must not own reusable update algorithms, UI state machines, gameplay classifi
 - `AppPanelController` owns panel visibility and internal menu navigation;
 - modules under `src/app/panels/` own panel-specific rendering and actions;
 - `AppShell` composes these pieces and coordinates gameplay input locking.
+
+## Player locomotion ownership
+
+The first-person controller is split into physical state, movement orchestration, and presentation state:
+
+```text
+input intent + direct mouse delta
+        -> OperatorMovementRuntime
+        -> PhysicsSystem / PlayerCollisionRuntime
+        -> resolved capsule displacement + grounded/vertical state
+        -> FirstPersonBodyRigRuntime
+        -> stabilized camera transform
+        -> stronger held-item transform
+```
+
+- `PhysicsSystem` and `PlayerCollisionRuntime` own the Rapier character, real capsule resize, collision resolution, grounded state, vertical velocity, and collision-safe camera offsets.
+- `OperatorMovementRuntime` owns movement velocity, direct unsmoothed yaw/pitch, crouch requests, and composition of the final camera transform. It passes actual resolved displacement to the body rig rather than key state.
+- `FirstPersonBodyRigRuntime` owns persistent body yaw, free head yaw, underdamped body-weight springs, alternating support legs, non-sinusoidal gait curves, stationary turn steps, crouch/step/landing recovery, and the camera/held-item presentation snapshots.
+- `ItemInteractionRuntime` consumes only the held-item snapshot. It must not reconstruct gait or query movement keys.
+- Post-processing runtimes do not consume locomotion state. Sprint FOV, lens stretch, and locomotion chromatic aberration are outside this system.
+
+New movement presentation belongs in the body rig and must be derived from physical displacement, velocity, acceleration, grounded state, vertical motion, or direct look deltas. Keep mouse rotation immediate; secondary angular reaction may lag, but the authoritative view angle may not.
 
 ## Prefab behavior modules
 

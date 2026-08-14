@@ -32,6 +32,7 @@ Shift scenario / objectives
 - Qualification unlocks are persistent progression state. Failed qualification does not unlock later assignments and returns the player to the same qualification assignment.
 - Exit-door interaction requests terminal completion and the following route transition; it does not directly construct the report.
 - Shift Report reads recorded metrics only after the runtime has entered a safe terminal state.
+- Player locomotion is split between physical capsule state and a procedural body/head rig. Gameplay systems may observe its snapshot, but must not directly rotate the camera, reconstruct gait, or add another movement loop.
 
 ## Current conflicts
 
@@ -63,7 +64,7 @@ Required contract: the reactor produces gross output; one power-bus system calcu
 
 Stress, fatigue, thirst, and caffeine can enrich long shifts but may make precise physical controls frustrating or inaccessible.
 
-Required contract: condition effects alter feedback and decision pressure before input accuracy. Preserve generous hit targets, configurable intensity, and an accessibility path that removes cursor interference without removing resource consequences.
+Required contract: condition effects alter feedback and decision pressure before input accuracy. Preserve generous hit targets, configurable intensity, and an accessibility path that removes cursor interference without removing resource consequences. Future fatigue, injury, or stress motion must enter the existing body-rig contract as bounded authored inputs; it must not smooth mouse look, mutate the physical capsule, or create a second camera-effects controller.
 
 ### App routing vs gameplay lifecycle
 

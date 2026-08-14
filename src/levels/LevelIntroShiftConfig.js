@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=locomotion-weight-pass";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=locomotion-weight-pass";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=locomotion-weight-pass";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=locomotion-weight-pass";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=soma-body-weight";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=soma-body-weight";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=soma-body-weight";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=soma-body-weight";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

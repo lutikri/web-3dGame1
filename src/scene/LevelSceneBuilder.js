@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=locomotion-weight-pass";
+} from "../prefabs/PrefabMarkerResolver.js?v=soma-body-weight";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=locomotion-weight-pass";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=locomotion-weight-pass";
+} from "../levels/LevelConfigOverrides.js?v=soma-body-weight";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=soma-body-weight";
 
 export function createLevelSceneBuilder({
   scene,

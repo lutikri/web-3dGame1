@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=locomotion-weight-pass";
-import { translate } from "./Localization.js?v=locomotion-weight-pass";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=locomotion-weight-pass";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=locomotion-weight-pass";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=locomotion-weight-pass";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=locomotion-weight-pass";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=locomotion-weight-pass";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=soma-body-weight";
+import { translate } from "./Localization.js?v=soma-body-weight";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=soma-body-weight";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=soma-body-weight";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=soma-body-weight";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=soma-body-weight";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=soma-body-weight";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=locomotion-weight-pass";
-import { createAppPanelController } from "./AppPanelController.js?v=locomotion-weight-pass";
-import { createAppRouter } from "./AppRouter.js?v=locomotion-weight-pass";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=locomotion-weight-pass";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=locomotion-weight-pass";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=locomotion-weight-pass";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=locomotion-weight-pass";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=locomotion-weight-pass";
+} from "./AppPersistence.js?v=soma-body-weight";
+import { createAppPanelController } from "./AppPanelController.js?v=soma-body-weight";
+import { createAppRouter } from "./AppRouter.js?v=soma-body-weight";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=soma-body-weight";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=soma-body-weight";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=soma-body-weight";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=soma-body-weight";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=soma-body-weight";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

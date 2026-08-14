@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=locomotion-weight-pass";
+} from "./behaviors/DeskDrawerBehavior.js?v=soma-body-weight";
 
 export function createPrefabPhysicsRegistrar({
   physics,

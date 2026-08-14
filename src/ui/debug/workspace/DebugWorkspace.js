@@ -1,4 +1,4 @@
-import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=locomotion-weight-pass";
+import { createLevelOverrideSnapshot } from "../../../levels/LevelConfigSerialization.js?v=soma-body-weight";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };

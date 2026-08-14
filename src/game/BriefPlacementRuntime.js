@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=locomotion-weight-pass";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=soma-body-weight";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=locomotion-weight-pass";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=locomotion-weight-pass";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=soma-body-weight";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=soma-body-weight";
 
 export class DoorStateRuntime {
   constructor(options) {

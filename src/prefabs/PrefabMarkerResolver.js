@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=locomotion-weight-pass";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=soma-body-weight";
 
 const MARKER_PREFIX = "PF_";
 
