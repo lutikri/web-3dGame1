@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=grabbable-desk-lamp";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=grabbable-desk-lamp";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=grabbable-desk-lamp";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=grabbable-desk-lamp";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=locomotion-weight-pass";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=locomotion-weight-pass";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=locomotion-weight-pass";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=locomotion-weight-pass";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

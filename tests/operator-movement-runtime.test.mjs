@@ -8,6 +8,9 @@ function createRuntime(overrides = {}) {
   let yaw = 0;
   let pitch = 0;
   const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 100);
+  const keys = overrides.keys ?? new Set();
+  const playerPosition = new THREE.Vector3(0, 1.6, 0);
+  let eyeHeight = 1.6;
   const runtime = createOperatorMovementRuntime({
     config: {
       camera: {
@@ -18,13 +21,15 @@ function createRuntime(overrides = {}) {
         zoomFovDegrees: 40,
         zoomDamping: 20,
         noclip: { speed: 4, minSpeed: 1, maxSpeed: 5, wheelStep: 0.5 },
-        operatorMovement: {},
+        crouchSpeed: 1,
+        operatorMovement: { headBobFrequency: 4.5 },
       },
+      playerEyeHeight: 1.6,
       player: { collision: { jumpSpeed: 3 } },
     },
     camera,
-    keys: new Set(),
-    playerPosition: new THREE.Vector3(),
+    keys,
+    playerPosition,
     movementVelocity: new THREE.Vector3(),
     movingPlatformDelta: new THREE.Vector3(),
     worldUp: new THREE.Vector3(0, 1, 0),
@@ -34,9 +39,18 @@ function createRuntime(overrides = {}) {
     getZoomActive: () => overrides.zoom ?? false,
     getJumpQueued: () => false,
     setJumpQueued: () => {},
-    getPhysicsSystem: () => null,
-    moveWithCollisions: () => {},
+    getPhysicsSystem: () => overrides.physics ?? null,
+    moveWithCollisions: (delta) => {
+      if (overrides.blockMovement) return;
+      playerPosition.add(delta);
+    },
     syncCapsule: () => {},
+    setCrouched: (value) => {
+      if (value === false && overrides.blockStanding) return false;
+      eyeHeight = value ? 0.92 : 1.6;
+      return true;
+    },
+    getPlayerEyeHeight: () => eyeHeight,
     applyCameraOffset: (offset) => camera.position.add(offset),
     getYaw: () => yaw,
     setYaw: (value) => { yaw = value; },
@@ -44,7 +58,7 @@ function createRuntime(overrides = {}) {
     setPitch: (value) => { pitch = value; },
     getBaseFov: () => 70,
   });
-  return { runtime, camera, getYaw: () => yaw, getPitch: () => pitch };
+  return { runtime, camera, keys, playerPosition, getYaw: () => yaw, getPitch: () => pitch };
 }
 
 test("operator movement runtime owns clamped mouse look", () => {
@@ -74,4 +88,55 @@ test("operator movement runtime owns clamped noclip speed", () => {
   assert.equal(runtime.adjustNoclipSpeed(1), 4.5);
   assert.equal(runtime.setNoclipSpeed(99), 5);
   assert.equal(runtime.adjustNoclipSpeed(-20), 1);
+});
+
+test("operator movement runtime enters crouch and refuses to stand under an obstruction", () => {
+  const keys = new Set(["ControlLeft"]);
+  const { runtime } = createRuntime({ keys, blockStanding: true });
+  runtime.update(1 / 60);
+  assert.equal(runtime.isCrouched(), true);
+  keys.delete("ControlLeft");
+  runtime.update(1 / 60);
+  assert.equal(runtime.isCrouched(), true);
+});
+
+test("head bob advances from resolved movement rather than input velocity", () => {
+  const keys = new Set(["KeyW"]);
+  const moving = createRuntime({ keys });
+  moving.runtime.update(1 / 30);
+  const movingCamera = moving.camera.position.clone();
+  const blocked = createRuntime({ keys: new Set(["KeyW"]), blockMovement: true });
+  blocked.runtime.update(1 / 30);
+  assert.notDeepEqual(movingCamera.toArray(), blocked.camera.position.toArray());
+  assert.deepEqual(blocked.camera.position.toArray(), [0, 1.6, 0]);
+});
+
+test("running presentation derives subtle lens effects from resolved movement", () => {
+  const keys = new Set(["KeyW", "ShiftLeft"]);
+  const { runtime } = createRuntime({ keys });
+  for (let index = 0; index < 60; index += 1) runtime.update(1 / 60);
+  const presentation = runtime.getLocomotionPresentation();
+  assert.ok(presentation.runBlend > 0.8);
+  assert.ok(presentation.lensStretch > 0);
+  assert.ok(presentation.chromaticAberration > 0);
+  keys.delete("KeyW");
+  keys.delete("ShiftLeft");
+  for (let index = 0; index < 60; index += 1) runtime.update(1 / 60);
+  assert.ok(runtime.getLocomotionPresentation().runBlend < 0.1);
+});
+
+test("walking presentation transfers weight through camera tilt instead of floating", () => {
+  const keys = new Set(["KeyW", "KeyA"]);
+  const { runtime, camera, playerPosition } = createRuntime({ keys });
+  for (let index = 0; index < 24; index += 1) runtime.update(1 / 60);
+  assert.ok(Math.abs(camera.rotation.z) > THREE.MathUtils.degToRad(0.08));
+  assert.ok(Math.abs(camera.position.y - playerPosition.y) > 0.0005);
+});
+
+test("held equipment presentation retains a small idle hand tremor", () => {
+  const { runtime } = createRuntime();
+  for (let index = 0; index < 30; index += 1) runtime.update(1 / 60);
+  const presentation = runtime.getLocomotionPresentation();
+  assert.notEqual(presentation.equipmentSide, 0);
+  assert.notEqual(presentation.equipmentRoll, 0);
 });

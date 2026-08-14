@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=grabbable-desk-lamp";
-import { applyLocalization } from "./app/Localization.js?v=grabbable-desk-lamp";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=grabbable-desk-lamp";
+import { createPreflight } from "./app/Preflight.js?v=locomotion-weight-pass";
+import { applyLocalization } from "./app/Localization.js?v=locomotion-weight-pass";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=locomotion-weight-pass";
 
-const APP_BUILD_REVISION = "grabbable-desk-lamp";
+const APP_BUILD_REVISION = "locomotion-weight-pass";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=grabbable-desk-lamp`);
+await import(`./OperatorGame.js?v=locomotion-weight-pass`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=grabbable-desk-lamp`);
+const { createAppShell } = await import(`./app/AppShell.js?v=locomotion-weight-pass`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=grabbable-desk-lamp`
+    `./runtime/RuntimeSmoke.js?v=locomotion-weight-pass`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

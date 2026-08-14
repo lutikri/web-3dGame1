@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=grabbable-desk-lamp";
+} from "../prefabs/PrefabMarkerResolver.js?v=locomotion-weight-pass";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=grabbable-desk-lamp";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=grabbable-desk-lamp";
+} from "../levels/LevelConfigOverrides.js?v=locomotion-weight-pass";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=locomotion-weight-pass";
 
 export function createLevelSceneBuilder({
   scene,

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=grabbable-desk-lamp";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=grabbable-desk-lamp";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=grabbable-desk-lamp";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=grabbable-desk-lamp";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=locomotion-weight-pass";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=locomotion-weight-pass";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=locomotion-weight-pass";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=locomotion-weight-pass";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {

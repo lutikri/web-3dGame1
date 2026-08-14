@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=grabbable-desk-lamp";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=grabbable-desk-lamp";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=grabbable-desk-lamp";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=grabbable-desk-lamp";
+import { createDebugHub } from "./DebugHub.js?v=locomotion-weight-pass";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=locomotion-weight-pass";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=locomotion-weight-pass";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=locomotion-weight-pass";
 
 export class DebugToolsRuntime {
   constructor(options) {

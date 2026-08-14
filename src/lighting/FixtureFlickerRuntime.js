@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=grabbable-desk-lamp";
+} from "./FluorescentBehavior.js?v=locomotion-weight-pass";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

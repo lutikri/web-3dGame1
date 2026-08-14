@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=grabbable-desk-lamp";
-import { translate } from "./Localization.js?v=grabbable-desk-lamp";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=grabbable-desk-lamp";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=grabbable-desk-lamp";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=grabbable-desk-lamp";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=grabbable-desk-lamp";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=grabbable-desk-lamp";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=locomotion-weight-pass";
+import { translate } from "./Localization.js?v=locomotion-weight-pass";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=locomotion-weight-pass";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=locomotion-weight-pass";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=locomotion-weight-pass";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=locomotion-weight-pass";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=locomotion-weight-pass";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=grabbable-desk-lamp";
-import { createAppPanelController } from "./AppPanelController.js?v=grabbable-desk-lamp";
-import { createAppRouter } from "./AppRouter.js?v=grabbable-desk-lamp";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=grabbable-desk-lamp";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=grabbable-desk-lamp";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=grabbable-desk-lamp";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=grabbable-desk-lamp";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=grabbable-desk-lamp";
+} from "./AppPersistence.js?v=locomotion-weight-pass";
+import { createAppPanelController } from "./AppPanelController.js?v=locomotion-weight-pass";
+import { createAppRouter } from "./AppRouter.js?v=locomotion-weight-pass";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=locomotion-weight-pass";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=locomotion-weight-pass";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=locomotion-weight-pass";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=locomotion-weight-pass";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=locomotion-weight-pass";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

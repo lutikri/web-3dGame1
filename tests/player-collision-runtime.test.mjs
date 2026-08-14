@@ -90,3 +90,42 @@ test("player collision runtime reapplies capsule and physics character dimension
   assert.equal(cameraCollisionCapsule.radius, 0.2);
   assert.equal(characterConfig.height, 1.9);
 });
+
+test("player collision runtime changes the real character stance while preserving feet position", () => {
+  const playerPosition = new THREE.Vector3(1, 1.6, 3);
+  const playerCapsule = createCapsule(0.25);
+  let dimensions = { radius: 0.25, height: 1.7, cameraRadius: 0.1, eyeHeight: 1.6 };
+  const stanceCalls = [];
+  const runtime = createPlayerCollisionRuntime({
+    config: {
+      playerEyeHeight: 1.6,
+      player: {
+        collisionHeight: 1.7,
+        stance: { crouchHeight: 1.12, crouchEyeHeight: 0.92 },
+        collision: {},
+      },
+    },
+    playerPosition,
+    playerCapsule,
+    camera: new THREE.PerspectiveCamera(),
+    cameraCollisionCapsule: createCapsule(0.1),
+    movementVelocity: new THREE.Vector3(),
+    getPhysicsSystem: () => ({
+      hasCharacter: () => true,
+      setCharacterDimensions: (value) => { stanceCalls.push(value); return true; },
+    }),
+    getPhysicsSceneKey: () => "room",
+    getCollisionOctree: () => ({ capsuleIntersect: () => null }),
+    isCollisionReady: () => false,
+    getPlayerRadius: () => dimensions.radius,
+    getPlayerHeight: () => dimensions.height,
+    getPlayerEyeHeight: () => dimensions.eyeHeight,
+    getCameraRadius: () => dimensions.cameraRadius,
+    setDimensions: (value) => { dimensions = value; },
+  });
+  runtime.syncCapsule();
+  assert.equal(runtime.setCrouched(true), true);
+  assert.deepEqual(stanceCalls[0], { height: 1.12, eyeHeight: 0.92 });
+  assert.ok(Math.abs(playerPosition.y - 0.92) < 1e-9);
+  assert.ok(Math.abs(playerCapsule.start.y - 0.25) < 1e-9);
+});

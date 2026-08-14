@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=grabbable-desk-lamp";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=locomotion-weight-pass";
 
 const EFFECT_KEYS = [
   "bloom",

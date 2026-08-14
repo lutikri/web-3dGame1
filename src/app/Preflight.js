@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=grabbable-desk-lamp";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=grabbable-desk-lamp";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=locomotion-weight-pass";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=locomotion-weight-pass";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=grabbable-desk-lamp";
+} from "./UiAudioInteractionRuntime.js?v=locomotion-weight-pass";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=grabbable-desk-lamp";
+} from "../config/GraphicsHardwareTiers.js?v=locomotion-weight-pass";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=grabbable-desk-lamp";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=locomotion-weight-pass";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

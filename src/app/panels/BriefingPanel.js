@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=grabbable-desk-lamp";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=locomotion-weight-pass";
 
 const DISMISS_MS = 300;
 

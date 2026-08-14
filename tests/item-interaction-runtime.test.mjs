@@ -134,3 +134,41 @@ test("equipment separated from its carry pose drops from inventory in place", ()
   assert.ok(calls.some(([type]) => type === "release"));
   assert.equal(calls.some(([type]) => type === "drop"), false);
 });
+
+test("equipped motion applies locomotion sway and rotation lag without changing inventory ownership", () => {
+  const calls = [];
+  const root = new THREE.Group();
+  const target = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1));
+  target.name = "Flashlight";
+  root.add(target);
+  const runtime = createItemInteractionRuntime({
+    interactive: [],
+    camera: new THREE.PerspectiveCamera(),
+    getLocomotionPresentation: () => ({ equipmentSide: 0.01, equipmentVertical: -0.01, equipmentRoll: 0.02 }),
+    physics: {
+      setRigidPrefabMode() {},
+      setRigidPrefabPose: (...args) => calls.push(args),
+      getRigidPrefabPosition: (_key, output) => output.set(0.25, -0.2, -0.48),
+    },
+  });
+  runtime.register("level", {
+    name: "Flashlight",
+    item: {
+      enabled: true,
+      portable: true,
+      targetName: "Flashlight",
+      equippedMotion: { rotationLag: 8, rotationScale: 1.5, swayScale: 2 },
+    },
+  }, { root, parts: new Map([[target.name, target]]), rigidPrefabKey: "level:flashlight" });
+  runtime.beginPrimary(target);
+  runtime.update(0.6);
+  runtime.releasePrimary();
+  runtime.beginSelection();
+  runtime.moveSelection(1);
+  runtime.commitSelection();
+  runtime.update(1 / 60);
+
+  const latestPosition = calls.at(-1)[1];
+  assert.ok(latestPosition.x > 0.25);
+  assert.ok(latestPosition.y < -0.2);
+});

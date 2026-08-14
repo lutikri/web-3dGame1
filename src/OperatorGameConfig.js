@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=grabbable-desk-lamp";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=grabbable-desk-lamp";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=grabbable-desk-lamp";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=grabbable-desk-lamp";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=locomotion-weight-pass";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=locomotion-weight-pass";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=locomotion-weight-pass";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=locomotion-weight-pass";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -20,6 +20,10 @@ export const CONFIG = {
     spawnPitchDegrees: 0,
     collisionRadius: 0.15,
     collisionHeight: 1.7,
+    stance: {
+      crouchHeight: 1.12,
+      crouchEyeHeight: 0.92,
+    },
     collision: {
       cameraRadius: 0.12,
       stepHeight: 0.22,
@@ -57,16 +61,46 @@ export const CONFIG = {
     mouseSensitivity: 0.0022,
     pitchLimitDegrees: 72,
     leanPitchLimitDegrees: 88,
-    walkSpeed: 1.8,
-    runSpeed: 4.2,
+    walkSpeed: 1.65,
+    runSpeed: 2.85,
+    crouchSpeed: 0.85,
     operatorMovement: {
       acceleration: 7,
       deceleration: 12,
+      runFovDegrees: 4,
+      runFovDamping: 4.5,
+      runLensStretch: 0.008,
+      runChromaticAberration: 0.00035,
+      stanceDamping: 11,
       zoomSpeedMultiplier: 0.22,
       zoomSensitivityMultiplier: 0.88,
-      headBobAmplitude: 0.018,
-      headBobSway: 0.009,
-      headBobFrequency: 4.5,
+      walkStrideLength: 1.25,
+      runStrideLength: 1.62,
+      crouchStrideLength: 0.9,
+      walkStepImpulse: 0.11,
+      runStepImpulse: 0.17,
+      crouchStepImpulse: 0.045,
+      walkGaitLift: 0.007,
+      runGaitLift: 0.012,
+      crouchGaitLift: 0.003,
+      walkWeightShift: 0.006,
+      runWeightShift: 0.011,
+      crouchWeightShift: 0.0025,
+      stepSpring: 92,
+      stepDamping: 18,
+      stepMaxOffset: 0.022,
+      movementRollDegrees: 0.78,
+      gaitRollDegrees: 0.34,
+      gaitPitchDegrees: 0.28,
+      accelerationPitchDegrees: 0.48,
+      movementTiltDamping: 6.5,
+      inertiaSideScale: 0.0011,
+      inertiaForwardScale: 0.0008,
+      inertiaMaxOffset: 0.012,
+      inertiaDamping: 7.5,
+      landingSpring: 72,
+      landingDamping: 15,
+      landingMaxOffset: 0.035,
       leanForward: 0.26,
       leanDown: 0.025,
       leanDamping: 4,

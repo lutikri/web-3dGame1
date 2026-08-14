@@ -154,6 +154,54 @@ export async function createPhysicsSystem() {
     return new THREE.Vector3(next.x, feetY + character.eyeHeight, next.z);
   }
 
+  function setCharacterDimensions({ height, eyeHeight }) {
+    if (!character) return false;
+    const nextHeight = Math.max(Number(height) || character.height, character.radius * 2 + 0.002);
+    const nextEyeHeight = THREE.MathUtils.clamp(
+      Number(eyeHeight) || character.eyeHeight,
+      character.radius,
+      nextHeight,
+    );
+    const current = character.collider.translation();
+    const feetY = current.y - character.height * 0.5;
+    const heightIncrease = nextHeight - character.height;
+    if (heightIncrease > 0.001) {
+      const clearance = new RAPIER.Cuboid(
+        character.radius * 0.92,
+        heightIncrease * 0.5,
+        character.radius * 0.92,
+      );
+      const clearanceCenter = {
+        x: current.x,
+        y: feetY + character.height + heightIncrease * 0.5,
+        z: current.z,
+      };
+      const obstruction = world.intersectionWithShape(
+        clearanceCenter,
+        { x: 0, y: 0, z: 0, w: 1 },
+        clearance,
+        undefined,
+        undefined,
+        character.collider,
+      );
+      if (obstruction) return false;
+    }
+    const halfSegment = Math.max(0.001, (nextHeight - character.radius * 2) * 0.5);
+    character.collider.setShape(new RAPIER.Capsule(halfSegment, character.radius));
+    character.collider.setTranslation({
+      x: current.x,
+      y: feetY + nextHeight * 0.5,
+      z: current.z,
+    });
+    character.height = nextHeight;
+    character.eyeHeight = nextEyeHeight;
+    if (characterSpec) {
+      characterSpec.height = nextHeight;
+      characterSpec.eyeHeight = nextEyeHeight;
+    }
+    return true;
+  }
+
   function teleportCharacter(eyePosition) {
     if (!character) return;
     const feetY = eyePosition.y - character.eyeHeight;
@@ -1120,6 +1168,7 @@ export async function createPhysicsSystem() {
     setActiveScene,
     createCharacter,
     configureCharacter,
+    setCharacterDimensions,
     moveCharacter,
     teleportCharacter,
     jump,
@@ -1150,6 +1199,8 @@ export async function createPhysicsSystem() {
     resetWorld,
     step,
     hasCharacter: () => Boolean(character),
+    isCharacterGrounded: () => Boolean(character?.grounded),
+    getCharacterVerticalVelocity: () => Number(character?.verticalVelocity) || 0,
     hasScene: (key) => sceneColliders.has(key),
     getCharacter: () => character,
     getStats: () => ({

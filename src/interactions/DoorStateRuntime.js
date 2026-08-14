@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=grabbable-desk-lamp";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=grabbable-desk-lamp";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=locomotion-weight-pass";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=locomotion-weight-pass";
 
 export class DoorStateRuntime {
   constructor(options) {

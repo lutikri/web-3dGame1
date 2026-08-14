@@ -539,6 +539,11 @@ const PREFAB_DEFINITIONS = {
       grabOffset: [0, -0.22, 0],
       equippedOffset: [0.25, -0.2, -0.48],
       rotationOffset: [0, 270, 0],
+      equippedMotion: {
+        rotationLag: 8,
+        rotationScale: 1.3,
+        swayScale: 1.65,
+      },
       equippedBreakDistance: 1.25,
       equippedBreakDelay: 0.2,
     },

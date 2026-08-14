@@ -93,3 +93,23 @@ test("prismatic prefab part remains dynamic and is limited to its authored trave
   assert.ok(travel > 0.3);
   assert.ok(travel < 0.48);
 });
+
+test("character stance resizes its Rapier capsule and refuses blocked standing", async () => {
+  const physics = await createPhysicsSystem();
+  physics.createCharacter({
+    eyePosition: new THREE.Vector3(0, 1.6, 0),
+    eyeHeight: 1.6,
+    height: 1.7,
+    radius: 0.25,
+    config: {},
+  });
+  assert.equal(physics.setCharacterDimensions({ height: 1.12, eyeHeight: 0.92 }), true);
+  const ceiling = new THREE.Mesh(new THREE.BoxGeometry(1, 0.1, 1));
+  ceiling.position.y = 1.35;
+  physics.addStaticScene("stance-room", ceiling);
+  physics.setActiveScene("stance-room");
+  physics.step(1 / 60);
+  assert.equal(physics.setCharacterDimensions({ height: 1.7, eyeHeight: 1.6 }), false);
+  physics.unloadScene("stance-room");
+  assert.equal(physics.setCharacterDimensions({ height: 1.7, eyeHeight: 1.6 }), true);
+});

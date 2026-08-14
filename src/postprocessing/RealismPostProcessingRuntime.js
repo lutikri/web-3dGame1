@@ -132,7 +132,7 @@ export class RealismPostProcessingRuntime {
     }
   }
 
-  applyEmergency(emergency, chromaFlicker = 1) {
+  applyEmergency(emergency, chromaFlicker = 1, locomotion = {}) {
     const post = this.config.postProcessing;
     if (this.bloomEffect) {
       this.bloomEffect.intensity = post.bloom.strength +
@@ -140,7 +140,8 @@ export class RealismPostProcessingRuntime {
     }
     if (this.chromaticAberrationEffect?.offset) {
       const amount = post.chromaticAberration.amount +
-        emergency * this.config.feedback.thermalEmergency.chromaticBoost * chromaFlicker;
+        emergency * this.config.feedback.thermalEmergency.chromaticBoost * chromaFlicker +
+        (locomotion.chromaticAberration ?? 0);
       this.chromaticAberrationEffect.offset.set(amount, amount);
     }
   }

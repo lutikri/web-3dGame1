@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=grabbable-desk-lamp";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=locomotion-weight-pass";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=grabbable-desk-lamp";
+} from "./PostProcessingShaders.js?v=locomotion-weight-pass";
 
 export class PostProcessingRuntime {
   composer = null;

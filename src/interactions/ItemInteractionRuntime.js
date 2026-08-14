@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=grabbable-desk-lamp";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=locomotion-weight-pass";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -16,6 +16,7 @@ export function createItemInteractionRuntime({
   presentSelector,
   onStored,
   onSpecialViewOpened,
+  getLocomotionPresentation = () => ({}),
 }) {
   const itemIdsByLevel = new Map();
   const inventory = new ItemInventoryRuntime({
@@ -57,6 +58,7 @@ export function createItemInteractionRuntime({
       grabOffset: toVector3(config.grabOffset),
       equippedOffset: toVector3(config.equippedOffset, [0.25, -0.2, -0.48]),
       rotationOffset: toEuler(config.rotationOffset),
+      equippedMotion: config.equippedMotion ? { ...config.equippedMotion } : null,
       equippedBreakDistance: Math.max(0.1, Number(config.equippedBreakDistance) || 1.25),
       equippedBreakDelay: Math.max(0, Number(config.equippedBreakDelay) || 0.2),
       briefingRequest: kind === "briefSheet" ? {
@@ -117,7 +119,7 @@ export function createItemInteractionRuntime({
   }
 
   function updateHandledItem(item, state, dt, immediate = false) {
-    const pose = getHandledPose(item, state);
+    const pose = getHandledPose(item, state, dt, immediate);
     if (item.runtime.rigidPrefabKey) {
       if (state === ITEM_STATES.GRABBED) {
         physics.driveRigidPrefab(item.runtime.rigidPrefabKey, pose.position, pose.quaternion, { dt });
@@ -149,17 +151,41 @@ export function createItemInteractionRuntime({
     });
   }
 
-  function getHandledPose(item, state) {
+  function getHandledPose(item, state, dt = 0, immediate = false) {
     camera.updateWorldMatrix(true, false);
     camera.getWorldPosition(worldPosition);
     camera.getWorldQuaternion(worldQuaternion);
     if (state === ITEM_STATES.EQUIPPED) {
-      cameraOffset.copy(item.equippedOffset).applyQuaternion(worldQuaternion);
+      cameraOffset.copy(item.equippedOffset);
+      const presentation = getLocomotionPresentation();
+      const sway = item.equippedMotion?.swayScale ?? 0;
+      if (sway > 0) {
+        cameraOffset.x += (presentation.equipmentSide ?? 0) * sway;
+        cameraOffset.y += (presentation.equipmentVertical ?? 0) * sway;
+      }
+      cameraOffset.applyQuaternion(worldQuaternion);
     } else {
       cameraOffset.set(item.grabOffset.x, item.grabOffset.y, -item.grabDistance).applyQuaternion(worldQuaternion);
     }
     const position = worldPosition.clone().add(cameraOffset);
-    const quaternion = worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
+    const targetQuaternion = worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
+    if (state === ITEM_STATES.EQUIPPED && item.equippedMotion) {
+      const presentation = getLocomotionPresentation();
+      targetQuaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(
+        (presentation.equipmentPitch ?? 0) * (item.equippedMotion.rotationScale ?? 1),
+        0,
+        (presentation.equipmentRoll ?? 0) * (item.equippedMotion.rotationScale ?? 1),
+        "YXZ",
+      )));
+    }
+    const lag = item.equippedMotion?.rotationLag ?? 0;
+    if (state === ITEM_STATES.EQUIPPED && lag > 0 && !immediate) {
+      item.data.handledQuaternion ??= targetQuaternion.clone();
+      item.data.handledQuaternion.slerp(targetQuaternion, 1 - Math.exp(-lag * Math.max(0, dt)));
+    } else {
+      item.data.handledQuaternion = targetQuaternion.clone();
+    }
+    const quaternion = item.data.handledQuaternion.clone();
     return { position, quaternion, sweepOrigin: worldPosition.clone() };
   }
 

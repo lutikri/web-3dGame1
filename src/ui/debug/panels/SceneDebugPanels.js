@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=grabbable-desk-lamp";
+} from "../../../levels/LevelConfigSerialization.js?v=locomotion-weight-pass";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

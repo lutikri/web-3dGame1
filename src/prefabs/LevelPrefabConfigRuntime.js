@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=grabbable-desk-lamp";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=grabbable-desk-lamp";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=grabbable-desk-lamp";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=grabbable-desk-lamp";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=locomotion-weight-pass";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=locomotion-weight-pass";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=locomotion-weight-pass";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

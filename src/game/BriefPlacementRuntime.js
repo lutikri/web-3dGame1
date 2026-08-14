@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=grabbable-desk-lamp";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=locomotion-weight-pass";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

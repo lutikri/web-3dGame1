@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=grabbable-desk-lamp";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=locomotion-weight-pass";
 
 const MARKER_PREFIX = "PF_";
 

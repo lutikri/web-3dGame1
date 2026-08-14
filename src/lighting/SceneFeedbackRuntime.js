@@ -6,6 +6,7 @@ export class SceneFeedbackRuntime {
     getSnapshot, getTime, getZoomActive, getStartupAmount, getIgnitionPulseAmount,
     getEmergencyAmount, getTerminalLightFactor, getFixtureFactor,
     flickerWave, getRoomMaterials = () => [], applyColorAdjustments, applyLensDistortion,
+    getLocomotionPresentation = () => ({}),
     createStartupPattern = () => [], getStartupPatternFactor = () => 1, updateFixtureFlicker = () => {},
   }) {
     Object.assign(this, {
@@ -13,6 +14,7 @@ export class SceneFeedbackRuntime {
       getSnapshot, getTime, getZoomActive, getStartupAmount, getIgnitionPulseAmount,
       getEmergencyAmount, getTerminalLightFactor, getFixtureFactor,
       flickerWave, getRoomMaterials, applyColorAdjustments, applyLensDistortion,
+      getLocomotionPresentation,
       createStartupPattern, getStartupPatternFactor, updateFixtureFlicker,
     });
     this.appliedCameraRoll = 0;
@@ -89,6 +91,7 @@ export class SceneFeedbackRuntime {
     const snapshot = this.getSnapshot();
     const outputLow = snapshot.mode === "running" && snapshot.warning?.outputLow ? 1 : 0;
     const emergency = this.getEmergencyAmount();
+    const locomotion = this.getLocomotionPresentation();
     const outputConfig = this.config.feedback.outputLow;
     const outputPulse = outputLow
       ? THREE.MathUtils.lerp(1 - outputConfig.lightFlicker, 1 - outputConfig.lightFlicker * 0.42, this.flickerWave(9, 0.4))
@@ -111,10 +114,11 @@ export class SceneFeedbackRuntime {
       post.bloomPass.strength = this.config.postProcessing.bloom.strength
         + emergency * this.config.feedback.thermalEmergency.bloomBoost;
     }
-    this.realism.applyEmergency(emergency, this.flickerWave(10, 1.1));
+    this.realism.applyEmergency(emergency, this.flickerWave(10, 1.1), locomotion);
     if (post.chromaticAberrationPass) {
       post.chromaticAberrationPass.uniforms.amount.value = this.config.postProcessing.chromaticAberration.amount
-        + emergency * this.config.feedback.thermalEmergency.chromaticBoost * this.flickerWave(10, 1.1);
+        + emergency * this.config.feedback.thermalEmergency.chromaticBoost * this.flickerWave(10, 1.1)
+        + (locomotion.chromaticAberration ?? 0);
     }
     if (post.lutPass) post.lutPass.intensity = this.config.postProcessing.lut?.intensity ?? 1;
     if (post.colorAdjustmentPass) this.applyColorAdjustments(post.colorAdjustmentPass, emergency);
@@ -122,7 +126,10 @@ export class SceneFeedbackRuntime {
       const sharpen = this.config.postProcessing.sharpen ?? {};
       post.sharpenPass.uniforms.amount.value = (sharpen.amount ?? 0) + (this.getZoomActive() ? sharpen.zoomBoost ?? 0 : 0);
     }
-    if (post.lensDistortionPass) this.applyLensDistortion(post.lensDistortionPass, emergency);
+    if (post.lensDistortionPass) {
+      this.applyLensDistortion(post.lensDistortionPass, emergency);
+      post.lensDistortionPass.uniforms.fisheyeAmount.value += locomotion.lensStretch ?? 0;
+    }
   };
 
   updateCamera = () => {

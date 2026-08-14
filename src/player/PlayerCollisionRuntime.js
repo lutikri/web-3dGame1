@@ -13,13 +13,14 @@ export function createPlayerCollisionRuntime({
   isCollisionReady,
   getPlayerRadius,
   getPlayerHeight,
+  getPlayerEyeHeight = () => config.playerEyeHeight,
   getCameraRadius,
   setDimensions = () => {},
   updateDebug = () => {},
 }) {
   function syncCapsule() {
     const radius = getPlayerRadius();
-    const feetY = playerPosition.y - config.playerEyeHeight;
+    const feetY = playerPosition.y - getPlayerEyeHeight();
     playerCapsule.start.set(playerPosition.x, feetY + radius, playerPosition.z);
     playerCapsule.end.set(
       playerPosition.x,
@@ -98,9 +99,38 @@ export function createPlayerCollisionRuntime({
 
     playerPosition.set(
       playerCapsule.start.x,
-      playerCapsule.start.y + config.playerEyeHeight - getPlayerRadius(),
+      playerCapsule.start.y + getPlayerEyeHeight() - getPlayerRadius(),
       playerCapsule.start.z,
     );
+  }
+
+  function setCrouched(crouched) {
+    const stance = config.player?.stance ?? {};
+    const radius = getPlayerRadius();
+    const targetHeight = crouched
+      ? Math.max(stance.crouchHeight ?? 1.12, radius * 2 + 0.002)
+      : Math.max(config.player?.collisionHeight ?? 1.7, radius * 2 + 0.002);
+    const targetEyeHeight = crouched
+      ? Math.min(stance.crouchEyeHeight ?? 0.92, targetHeight)
+      : config.playerEyeHeight;
+    const currentEyeHeight = getPlayerEyeHeight();
+    const physics = getPhysicsSystem();
+    if (physics?.hasCharacter() && physics.setCharacterDimensions?.({
+      height: targetHeight,
+      eyeHeight: targetEyeHeight,
+    }) === false) return false;
+    const feetY = playerPosition.y - currentEyeHeight;
+    setDimensions({
+      radius,
+      height: targetHeight,
+      cameraRadius: getCameraRadius(),
+      eyeHeight: targetEyeHeight,
+    });
+    playerPosition.y = feetY + targetEyeHeight;
+    playerCapsule.radius = radius;
+    syncCapsule();
+    updateDebug();
+    return true;
   }
 
   function restoreAttempt(start, end, velocity) {
@@ -150,7 +180,7 @@ export function createPlayerCollisionRuntime({
     const radius = config.player?.collisionRadius ?? 0.28;
     const height = Math.max(config.player?.collisionHeight ?? 1.7, radius * 2);
     const cameraRadius = config.player?.collision?.cameraRadius ?? 0.12;
-    setDimensions({ radius, height, cameraRadius });
+    setDimensions({ radius, height, cameraRadius, eyeHeight: config.playerEyeHeight });
     playerCapsule.radius = radius;
     cameraCollisionCapsule.radius = cameraRadius;
     syncCapsule();
@@ -166,5 +196,5 @@ export function createPlayerCollisionRuntime({
     return { radius, height, cameraRadius };
   }
 
-  return { move, resolveCollisions, syncCapsule, applyCameraOffset, applySettings };
+  return { move, resolveCollisions, syncCapsule, applyCameraOffset, applySettings, setCrouched };
 }

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=grabbable-desk-lamp";
+import { translateRequired } from "./Localization.js?v=locomotion-weight-pass";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

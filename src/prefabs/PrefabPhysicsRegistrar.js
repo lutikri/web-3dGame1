@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=grabbable-desk-lamp";
+} from "./behaviors/DeskDrawerBehavior.js?v=locomotion-weight-pass";
 
 export function createPrefabPhysicsRegistrar({
   physics,

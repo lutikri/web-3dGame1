@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=grabbable-desk-lamp";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=grabbable-desk-lamp";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=grabbable-desk-lamp";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=grabbable-desk-lamp";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=grabbable-desk-lamp";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=grabbable-desk-lamp";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=grabbable-desk-lamp";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=locomotion-weight-pass";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=locomotion-weight-pass";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=locomotion-weight-pass";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=locomotion-weight-pass";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=locomotion-weight-pass";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=locomotion-weight-pass";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=locomotion-weight-pass";
 
 export function createPrefabRuntimeFactory({
   config,

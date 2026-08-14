@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=grabbable-desk-lamp";
+import { LevelRuntime } from "./LevelRuntime.js?v=locomotion-weight-pass";
 
 export class LevelEnvironmentLifecycle {
   constructor({
