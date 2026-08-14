@@ -41,6 +41,13 @@ export const SOUND_REGISTRY = {
   ButtonMechanical4: { path: "assets/sounds/interaction/ButtonMechanical4.ogg", volume: 0.62 },
   BeepShortLight1: { path: "assets/sounds/interaction/BeepShortLight1.ogg", volume: 0.44, refDistance: 0.5, maxDistance: 2.8 },
   Beeps2ShortLight1: { path: "assets/sounds/interaction/Beeps2ShortLight1.ogg", volume: 0.44, refDistance: 0.5, maxDistance: 2.8 },
+  ButtonFlashlight1: { path: "assets/sounds/interaction/ButtonFlashlight1.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight2: { path: "assets/sounds/interaction/ButtonFlashlight2.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight3: { path: "assets/sounds/interaction/ButtonFlashlight3.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight4: { path: "assets/sounds/interaction/ButtonFlashlight4.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight5: { path: "assets/sounds/interaction/ButtonFlashlight5.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight6: { path: "assets/sounds/interaction/ButtonFlashlight6.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  ButtonFlashlight7: { path: "assets/sounds/interaction/ButtonFlashlight7.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
   ControlPostAlert1: { path: "assets/sounds/interaction/ControlPostAlert1.ogg", volume: 0.62, refDistance: 0.55, maxDistance: 2.4 },
   ControlPostBuzzLoop1: {
     path: "assets/sounds/machinery/ControlPostBuzzLoop1.ogg",
@@ -74,6 +81,8 @@ export const SOUND_REGISTRY = {
   DoorBulk1_Open1: { path: "assets/sounds/interaction/DoorBulk1_Open1.ogg", volume: 0.3 },
   DoorPushbar_Close1: { path: "assets/sounds/interaction/DoorPushbar_Close1.ogg", volume: 0.72 },
   DoorPushbar_Open1: { path: "assets/sounds/interaction/DoorPushbar_Open1.ogg", volume: 0.72 },
+  DrawerMetal_Close1: { path: "assets/sounds/interaction/DrawerMetal_Close1.ogg", volume: 0.58, refDistance: 0.5, maxDistance: 3.2 },
+  DrawerMetal_Open1: { path: "assets/sounds/interaction/DrawerMetal_Open1.ogg", volume: 0.58, refDistance: 0.5, maxDistance: 3.2 },
   Footsteps1_Walk1: { path: "assets/sounds/player/Footsteps1_Walk1.ogg", loop: true, volume: 0.44 },
   FusionCore_Ignite1: { path: "assets/sounds/machinery/FusionCore_Ignite1.ogg", volume: 0.86 },
   FusionCore_Pulse1: { path: "assets/sounds/machinery/FusionCore_Pulse1.ogg", volume: 0.7 },
@@ -123,6 +132,10 @@ export const SOUND_GROUPS = {
   paperSlide: ["UI_PaperSlide1", "UI_PaperSlide2", "UI_PaperSlide3", "UI_PaperSlide4"],
   tutorialHint: ["UI_Hint2"],
   panelKnobTick: ["Panel_KnobTick1", "Panel_KnobTick2", "Panel_KnobTick3"],
+  flashlightToggle: [
+    "ButtonFlashlight1", "ButtonFlashlight2", "ButtonFlashlight3", "ButtonFlashlight4",
+    "ButtonFlashlight5", "ButtonFlashlight6", "ButtonFlashlight7",
+  ],
 };
 
 export const SOUND_MIX = {

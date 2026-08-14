@@ -371,6 +371,10 @@ const PREFAB_DEFINITIONS = {
       motorStiffness: 38,
       motorDamping: 9,
       friction: 0.72,
+      openSoundKey: "DrawerMetal_Open1",
+      closeSoundKey: "DrawerMetal_Close1",
+      soundRefDistance: 0.5,
+      soundMaxDistance: 3.2,
     },
     rigidBody: {
       enabled: true,

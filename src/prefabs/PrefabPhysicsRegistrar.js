@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=body-motion-debug";
+} from "./behaviors/DeskDrawerBehavior.js?v=drawer-flashlight-audio";
 
 export function createPrefabPhysicsRegistrar({
   physics,
@@ -9,6 +9,7 @@ export function createPrefabPhysicsRegistrar({
   getMatchNames,
   doorInteractions = null,
   interactive = [],
+  playSound = () => {},
 }) {
   const deskDrawersByTarget = new WeakMap();
 
@@ -158,6 +159,13 @@ export function createPrefabPhysicsRegistrar({
     const targetPosition = toggleDeskDrawerRuntime(drawer);
     if (targetPosition == null) return false;
     physics.setPrismaticPrefabPartTarget(drawer.physicsKey, targetPosition);
+    const soundKey = drawer.open ? drawer.openSoundKey : drawer.closeSoundKey;
+    if (soundKey) {
+      playSound(drawer.mesh, soundKey, {
+        refDistance: drawer.soundRefDistance,
+        maxDistance: drawer.soundMaxDistance,
+      });
+    }
     return true;
   }
 

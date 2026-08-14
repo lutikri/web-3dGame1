@@ -42,4 +42,7 @@ test("menu UI sounds resolve to converted UI assets", () => {
   assert.equal(SOUND_REGISTRY.Menu_SetupComlete1.path, "assets/sounds/ui/Menu_SetupComlete1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_Click1.volume, 0.76);
   assert.equal(SOUND_REGISTRY.Menu_Hover1.volume, 0.44);
+  assert.equal(SOUND_REGISTRY.DrawerMetal_Open1.path, "assets/sounds/interaction/DrawerMetal_Open1.ogg");
+  assert.equal(SOUND_GROUPS.flashlightToggle.length, 7);
+  assert.equal(SOUND_GROUPS.flashlightToggle[0], "ButtonFlashlight1");
 });

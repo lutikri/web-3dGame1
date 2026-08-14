@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=body-motion-debug";
+import { applyAxisRotation } from "./TransformUtils.js?v=drawer-flashlight-audio";
 
 export class InteriorObjectRegistry {
   constructor(options) {

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=body-motion-debug";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=body-motion-debug";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=body-motion-debug";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=body-motion-debug";
+import { createDebugHub } from "./DebugHub.js?v=drawer-flashlight-audio";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=drawer-flashlight-audio";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=drawer-flashlight-audio";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=drawer-flashlight-audio";
 
 export class DebugToolsRuntime {
   constructor(options) {

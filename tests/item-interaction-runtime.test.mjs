@@ -97,6 +97,27 @@ test("item-controlled spotlight toggles intensity while retaining the light layo
   assert.equal(spot.intensity, 6);
 });
 
+test("flashlight toggle requests a randomized positional switch sound", () => {
+  const sounds = [];
+  const root = new THREE.Group();
+  const spot = new THREE.SpotLight(0xffffff, 6);
+  spot.userData.itemControlled = true;
+  root.add(spot);
+  const runtime = createItemInteractionRuntime({
+    interactive: [],
+    camera: new THREE.PerspectiveCamera(),
+    physics: {},
+    playSoundGroup: (...args) => sounds.push(args),
+  });
+  runtime.register("room", {
+    name: "FlashLight",
+    item: { enabled: true, activationMode: "equipment", activationType: "toggleLight", defaultOn: false },
+  }, { root, parts: new Map(), light: spot });
+
+  assert.equal(runtime.activateRelevant(root), true);
+  assert.deepEqual(sounds, [[root, "flashlightToggle"]]);
+});
+
 test("equipped items request a swept kinematic pose", () => {
   const { runtime, target, calls } = createFixture();
 

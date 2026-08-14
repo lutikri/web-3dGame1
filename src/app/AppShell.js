@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=body-motion-debug";
-import { translate } from "./Localization.js?v=body-motion-debug";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=body-motion-debug";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=body-motion-debug";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=body-motion-debug";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=body-motion-debug";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=body-motion-debug";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=drawer-flashlight-audio";
+import { translate } from "./Localization.js?v=drawer-flashlight-audio";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=drawer-flashlight-audio";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=drawer-flashlight-audio";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=drawer-flashlight-audio";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=drawer-flashlight-audio";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=drawer-flashlight-audio";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=body-motion-debug";
-import { createAppPanelController } from "./AppPanelController.js?v=body-motion-debug";
-import { createAppRouter } from "./AppRouter.js?v=body-motion-debug";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=body-motion-debug";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=body-motion-debug";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=body-motion-debug";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=body-motion-debug";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=body-motion-debug";
+} from "./AppPersistence.js?v=drawer-flashlight-audio";
+import { createAppPanelController } from "./AppPanelController.js?v=drawer-flashlight-audio";
+import { createAppRouter } from "./AppRouter.js?v=drawer-flashlight-audio";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=drawer-flashlight-audio";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=drawer-flashlight-audio";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=drawer-flashlight-audio";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=drawer-flashlight-audio";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=drawer-flashlight-audio";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

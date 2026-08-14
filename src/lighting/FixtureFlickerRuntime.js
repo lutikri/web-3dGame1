@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=body-motion-debug";
+} from "./FluorescentBehavior.js?v=drawer-flashlight-audio";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

@@ -60,6 +60,7 @@ test("prefab physics registrar owns behavior routing and ordinary door registrat
 
 test("desk drawer registrar creates separate prismatic bodies and toggles their targets", () => {
   const calls = [];
+  const sounds = [];
   const interactive = [];
   const root = new THREE.Group();
   const drawer = new THREE.Mesh(new THREE.BoxGeometry());
@@ -94,6 +95,7 @@ test("desk drawer registrar creates separate prismatic bodies and toggles their 
       }
       return names;
     },
+    playSound: (...args) => sounds.push(args),
   });
   registrar.register("room", {
     name: "Desk",
@@ -102,6 +104,7 @@ test("desk drawer registrar creates separate prismatic bodies and toggles their 
     drawers: {
       drawerNames: [drawer.name], closedPosition: 0.18349, openPosition: 0.632626,
       axis: [0, 0, -1],
+      openSoundKey: "DrawerMetal_Open1", closeSoundKey: "DrawerMetal_Close1",
     },
   }, runtime);
 
@@ -114,4 +117,8 @@ test("desk drawer registrar creates separate prismatic bodies and toggles their 
   assert.equal(calls.at(-1)[0], "target");
   assert.equal(calls.at(-1)[1][0], "room:Desk:drawer:1");
   assert.ok(Math.abs(calls.at(-1)[1][1] - 0.449136) < 1e-9);
+  assert.equal(sounds.at(-1)[0], drawer);
+  assert.equal(sounds.at(-1)[1], "DrawerMetal_Open1");
+  assert.equal(registrar.toggleDeskDrawer(drawer), true);
+  assert.equal(sounds.at(-1)[1], "DrawerMetal_Close1");
 });

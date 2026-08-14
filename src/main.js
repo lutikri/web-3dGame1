@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=body-motion-debug";
-import { applyLocalization } from "./app/Localization.js?v=body-motion-debug";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=body-motion-debug";
+import { createPreflight } from "./app/Preflight.js?v=drawer-flashlight-audio";
+import { applyLocalization } from "./app/Localization.js?v=drawer-flashlight-audio";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
 
-const APP_BUILD_REVISION = "body-motion-debug";
+const APP_BUILD_REVISION = "drawer-flashlight-audio";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=body-motion-debug`);
+await import(`./OperatorGame.js?v=drawer-flashlight-audio`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=body-motion-debug`);
+const { createAppShell } = await import(`./app/AppShell.js?v=drawer-flashlight-audio`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=body-motion-debug`
+    `./runtime/RuntimeSmoke.js?v=drawer-flashlight-audio`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=body-motion-debug";
+import { LevelSession } from "./LevelSession.js?v=drawer-flashlight-audio";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

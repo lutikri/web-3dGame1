@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=body-motion-debug";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
 
 const EFFECT_KEYS = [
   "bloom",

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=body-motion-debug";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=drawer-flashlight-audio";
 
 const MARKER_PREFIX = "PF_";
 

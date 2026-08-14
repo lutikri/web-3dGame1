@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=body-motion-debug";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=drawer-flashlight-audio";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -17,6 +17,7 @@ export function createItemInteractionRuntime({
   onStored,
   onSpecialViewOpened,
   getLocomotionPresentation = () => ({}),
+  playSoundGroup = () => {},
 }) {
   const itemIdsByLevel = new Map();
   const inventory = new ItemInventoryRuntime({
@@ -218,6 +219,7 @@ export function createItemInteractionRuntime({
     if (item.activationType !== "toggleLight") return false;
     item.data.isOn = !item.data.isOn;
     setItemLights(item, item.data.isOn);
+    playSoundGroup(item.root, "flashlightToggle");
     return true;
   }
 

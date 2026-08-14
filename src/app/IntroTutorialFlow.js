@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=body-motion-debug";
+import { translateRequired } from "./Localization.js?v=drawer-flashlight-audio";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=body-motion-debug";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=drawer-flashlight-audio";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=body-motion-debug";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=body-motion-debug";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=body-motion-debug";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=body-motion-debug";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=body-motion-debug";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=body-motion-debug";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=body-motion-debug";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=body-motion-debug";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=body-motion-debug";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=body-motion-debug";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=body-motion-debug";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=body-motion-debug";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=body-motion-debug";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=body-motion-debug";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=body-motion-debug";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=body-motion-debug";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=body-motion-debug";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=body-motion-debug";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=body-motion-debug";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=body-motion-debug";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=body-motion-debug";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=body-motion-debug";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=body-motion-debug";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=body-motion-debug";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=body-motion-debug";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=body-motion-debug";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=body-motion-debug";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=body-motion-debug";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=body-motion-debug";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=body-motion-debug";
+} from "./game/ShiftReport.js?v=drawer-flashlight-audio";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=drawer-flashlight-audio";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=drawer-flashlight-audio";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=drawer-flashlight-audio";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=drawer-flashlight-audio";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=drawer-flashlight-audio";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=drawer-flashlight-audio";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=drawer-flashlight-audio";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=drawer-flashlight-audio";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=drawer-flashlight-audio";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=drawer-flashlight-audio";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=drawer-flashlight-audio";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=drawer-flashlight-audio";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=drawer-flashlight-audio";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=drawer-flashlight-audio";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=drawer-flashlight-audio";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=drawer-flashlight-audio";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=drawer-flashlight-audio";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=drawer-flashlight-audio";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=drawer-flashlight-audio";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=drawer-flashlight-audio";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=drawer-flashlight-audio";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=drawer-flashlight-audio";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=drawer-flashlight-audio";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=drawer-flashlight-audio";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=drawer-flashlight-audio";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=drawer-flashlight-audio";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=drawer-flashlight-audio";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=drawer-flashlight-audio";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=body-motion-debug";
+} from "./config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=body-motion-debug";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=body-motion-debug";
-import { createStatusScreen } from "./StatusScreen.js?v=body-motion-debug";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=body-motion-debug";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=body-motion-debug";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=body-motion-debug";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=body-motion-debug";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=body-motion-debug";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=body-motion-debug";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=body-motion-debug";
+} from "./scene/TextureStreaming.js?v=drawer-flashlight-audio";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=drawer-flashlight-audio";
+import { createStatusScreen } from "./StatusScreen.js?v=drawer-flashlight-audio";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=drawer-flashlight-audio";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=drawer-flashlight-audio";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=drawer-flashlight-audio";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=drawer-flashlight-audio";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=drawer-flashlight-audio";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=drawer-flashlight-audio";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=drawer-flashlight-audio";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=body-motion-debug";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=body-motion-debug";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=body-motion-debug";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=drawer-flashlight-audio";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=drawer-flashlight-audio";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=drawer-flashlight-audio";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=body-motion-debug";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=body-motion-debug";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=body-motion-debug";
-import { AssetCache } from "./runtime/AssetCache.js?v=body-motion-debug";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=body-motion-debug";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=body-motion-debug";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=body-motion-debug";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=body-motion-debug";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=body-motion-debug";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=body-motion-debug";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=body-motion-debug";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=body-motion-debug";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=body-motion-debug";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=body-motion-debug";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=body-motion-debug";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=body-motion-debug";
+} from "./lighting/FluorescentBehavior.js?v=drawer-flashlight-audio";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=drawer-flashlight-audio";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=drawer-flashlight-audio";
+import { AssetCache } from "./runtime/AssetCache.js?v=drawer-flashlight-audio";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=drawer-flashlight-audio";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=drawer-flashlight-audio";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=drawer-flashlight-audio";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=drawer-flashlight-audio";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=drawer-flashlight-audio";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=drawer-flashlight-audio";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=drawer-flashlight-audio";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=drawer-flashlight-audio";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=drawer-flashlight-audio";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=drawer-flashlight-audio";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=drawer-flashlight-audio";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=drawer-flashlight-audio";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=body-motion-debug";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=body-motion-debug";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=body-motion-debug";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=body-motion-debug";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=body-motion-debug";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=body-motion-debug";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=body-motion-debug";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=body-motion-debug";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=body-motion-debug";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=body-motion-debug";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=body-motion-debug";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=body-motion-debug";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=body-motion-debug";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=body-motion-debug";
-import { PlayerController } from "./player/PlayerController.js?v=body-motion-debug";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=body-motion-debug";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=body-motion-debug";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=body-motion-debug";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=body-motion-debug";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=body-motion-debug";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=body-motion-debug";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=body-motion-debug";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=body-motion-debug";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=body-motion-debug";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=body-motion-debug";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=body-motion-debug";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=body-motion-debug";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=body-motion-debug";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=body-motion-debug";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=body-motion-debug";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=body-motion-debug";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=body-motion-debug";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=body-motion-debug";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=body-motion-debug";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=body-motion-debug";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=body-motion-debug";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=body-motion-debug";
+} from "./scene/InteriorObjectRegistry.js?v=drawer-flashlight-audio";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=drawer-flashlight-audio";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=drawer-flashlight-audio";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=drawer-flashlight-audio";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=drawer-flashlight-audio";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=drawer-flashlight-audio";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=drawer-flashlight-audio";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=drawer-flashlight-audio";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=drawer-flashlight-audio";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=drawer-flashlight-audio";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=drawer-flashlight-audio";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=drawer-flashlight-audio";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=drawer-flashlight-audio";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=drawer-flashlight-audio";
+import { PlayerController } from "./player/PlayerController.js?v=drawer-flashlight-audio";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=drawer-flashlight-audio";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=drawer-flashlight-audio";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=drawer-flashlight-audio";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=drawer-flashlight-audio";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=drawer-flashlight-audio";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=drawer-flashlight-audio";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=drawer-flashlight-audio";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=drawer-flashlight-audio";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=drawer-flashlight-audio";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=drawer-flashlight-audio";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=drawer-flashlight-audio";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=drawer-flashlight-audio";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=drawer-flashlight-audio";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=drawer-flashlight-audio";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=drawer-flashlight-audio";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=drawer-flashlight-audio";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=drawer-flashlight-audio";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=drawer-flashlight-audio";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=drawer-flashlight-audio";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=drawer-flashlight-audio";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=drawer-flashlight-audio";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=drawer-flashlight-audio";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=body-motion-debug";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=drawer-flashlight-audio";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -766,6 +766,7 @@ const itemInteractionRuntime = createItemInteractionRuntime({
     target: item.target?.userData.kind === "briefSheet" ? "brief" : item.icon,
     slotIndex,
   }),
+  playSoundGroup: playSoundGroupAtObject,
   setHoldProgress: (progress, active) => {
     document.body.style.setProperty("--hold-progress", String(progress * 100));
     document.body.classList.toggle("hold-interaction-active", active);
@@ -1213,6 +1214,7 @@ const prefabPhysicsRegistrar = createPrefabPhysicsRegistrar({
   getMatchNames: getInteriorObjectMatchNames,
   doorInteractions: doorInteractionSystem,
   interactive,
+  playSound: playSoundAtObject,
 });
 const levelPrefabUpdateRuntime = new LevelPrefabUpdateRuntime({
   config: CONFIG,
@@ -1742,6 +1744,10 @@ function getLevelPanelConfig(levelId) {
 
 function playSoundAtObject(object, soundKey, options = {}) {
   return audioRuntime.playAttached(object, soundKey, camera.position, options);
+}
+
+function playSoundGroupAtObject(object, groupKey, options = {}) {
+  return audioRuntime.playRandomAttached(object, groupKey, camera.position, options);
 }
 
 function updateNarratorRadios(dt) {

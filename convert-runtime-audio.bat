@@ -29,7 +29,7 @@ function Get-AudioCategory($name) {
   if ($name -like "Message*" -or $name -like "Radio*") { return "narration" }
   if ($name -like "FusionCore_*" -or $name -like "Core1_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "ControlPostBuzz*" -or $name -like "Clock*") { return "machinery" }
   if ($name -like "Footsteps*") { return "player" }
-  if ($name -like "Button*" -or $name -like "Panel_Knob*" -or $name -like "Door*" -or $name -like "Motor*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*") { return "interaction" }
+  if ($name -like "Button*" -or $name -like "Panel_Knob*" -or $name -like "Door*" -or $name -like "Drawer*" -or $name -like "Motor*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*") { return "interaction" }
   return "misc"
 }
 

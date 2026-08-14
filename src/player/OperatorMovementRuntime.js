@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=body-motion-debug";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=drawer-flashlight-audio";
 
 export function createOperatorMovementRuntime({
   config,

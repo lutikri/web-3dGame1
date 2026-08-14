@@ -20,6 +20,10 @@ export function createDeskDrawerRuntimes(parts, config = {}, prefabName = "Desk"
       physicsKey: null,
       closedPosition: config.closedPosition ?? 0.18349,
       openPosition: config.openPosition ?? 0.632626,
+      openSoundKey: config.openSoundKey ?? null,
+      closeSoundKey: config.closeSoundKey ?? null,
+      soundRefDistance: config.soundRefDistance,
+      soundMaxDistance: config.soundMaxDistance,
     }];
   });
 }

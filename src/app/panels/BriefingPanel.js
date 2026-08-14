@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=body-motion-debug";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=drawer-flashlight-audio";
 
 const DISMISS_MS = 300;
 

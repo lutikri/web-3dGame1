@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=body-motion-debug";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=body-motion-debug";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=body-motion-debug";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=body-motion-debug";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=body-motion-debug";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=body-motion-debug";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=body-motion-debug";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=drawer-flashlight-audio";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=drawer-flashlight-audio";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=drawer-flashlight-audio";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=drawer-flashlight-audio";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=drawer-flashlight-audio";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=drawer-flashlight-audio";
 
 export function createPrefabRuntimeFactory({
   config,

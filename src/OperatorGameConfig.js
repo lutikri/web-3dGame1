@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=body-motion-debug";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=body-motion-debug";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=body-motion-debug";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=body-motion-debug";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=drawer-flashlight-audio";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=drawer-flashlight-audio";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=drawer-flashlight-audio";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=drawer-flashlight-audio";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

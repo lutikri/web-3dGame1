@@ -1713,7 +1713,7 @@ export const LEVEL_UNEXPECTED_STUFF_OVERRIDES = {
         "intensity": 3,
         "distance": 9,
         "decay": 1,
-        "angle": 0.793,
+        "angle": 0.85,
         "penumbra": 0.21,
         "localOffset": {
           "x": -0.053824,
@@ -1726,7 +1726,7 @@ export const LEVEL_UNEXPECTED_STUFF_OVERRIDES = {
           "z": 0
         },
         "cookiePath": "assets/runtime-textures/T_FlashLight1_Cookie_1024_ETC1S.ktx2",
-        "cookieRotationDegrees": 0,
+        "cookieRotationDegrees": -123,
         "itemControlled": true,
         "castShadow": true,
         "shadowMapSize": 128,
@@ -1763,6 +1763,11 @@ export const LEVEL_UNEXPECTED_STUFF_OVERRIDES = {
           270,
           0
         ],
+        "equippedMotion": {
+          "rotationLag": 8,
+          "rotationScale": 1.3,
+          "swayScale": 1.65
+        },
         "equippedBreakDistance": 1.25,
         "equippedBreakDelay": 0.2
       },
