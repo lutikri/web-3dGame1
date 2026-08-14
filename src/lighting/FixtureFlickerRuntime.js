@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=debug-lil-gui";
+} from "./FluorescentBehavior.js?v=body-motion-debug";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

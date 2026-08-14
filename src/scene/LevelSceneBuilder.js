@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=debug-lil-gui";
+} from "../prefabs/PrefabMarkerResolver.js?v=body-motion-debug";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=debug-lil-gui";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=debug-lil-gui";
+} from "../levels/LevelConfigOverrides.js?v=body-motion-debug";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=body-motion-debug";
 
 export function createLevelSceneBuilder({
   scene,

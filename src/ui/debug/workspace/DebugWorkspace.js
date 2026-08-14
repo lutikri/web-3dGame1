@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=debug-lil-gui";
+} from "../../../levels/LevelConfigSerialization.js?v=body-motion-debug";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -48,6 +48,7 @@ export function createDebugProjectSavePayload({
   materialConfigs,
   globalLightingConfig,
   decalConfig,
+  cameraConfig,
   postProcessingConfig,
 }) {
   const config = {
@@ -61,6 +62,7 @@ export function createDebugProjectSavePayload({
         return [key, tuning];
       })),
       lighting: cloneSerializable(globalLightingConfig ?? {}),
+      camera: cloneSerializable(cameraConfig ?? {}),
     },
     postProcessing: cloneSerializable(postProcessingConfig ?? {}),
   };
@@ -75,6 +77,7 @@ export function createDebugWorkspace({
   globalLightingConfig = {},
   decalConfig = null,
   gameConfig = {},
+  cameraConfig = {},
   postProcessingConfig = {},
   getPostProcessingQualities,
   setPostProcessingQuality,
@@ -385,10 +388,96 @@ export function createDebugWorkspace({
   function buildPlayerProperties() {
     propertiesGui.title("PROPERTIES — PLAYER");
     const collision = gameConfig.collision ?? {};
-    addNumber(propertiesGui, gameConfig, "collisionRadius", "BODY RADIUS", 0.1, 0.6, 0.01, applyPlayerCollisionSettings);
-    addNumber(propertiesGui, gameConfig, "collisionHeight", "BODY HEIGHT", 0.6, 2.2, 0.01, applyPlayerCollisionSettings);
-    addNumber(propertiesGui, collision, "stepHeight", "STEP HEIGHT", 0, 0.8, 0.01, applyPlayerCollisionSettings);
-    addNumber(propertiesGui, collision, "jumpSpeed", "JUMP SPEED", 0, 8, 0.1, applyPlayerCollisionSettings);
+    const movement = cameraConfig.operatorMovement ?? {};
+    const bodyRig = movement.bodyRig ?? {};
+
+    const movementFolder = propertiesGui.addFolder("MOVEMENT");
+    addNumber(movementFolder, cameraConfig, "walkSpeed", "WALK SPEED", 0.1, 5, 0.01);
+    addNumber(movementFolder, cameraConfig, "runSpeed", "RUN SPEED", 0.1, 8, 0.01);
+    addNumber(movementFolder, cameraConfig, "crouchSpeed", "CROUCH SPEED", 0.1, 4, 0.01);
+    addNumber(movementFolder, movement, "acceleration", "ACCELERATION", 0.1, 30, 0.1);
+    addNumber(movementFolder, movement, "deceleration", "DECELERATION", 0.1, 30, 0.1);
+    addNumber(movementFolder, movement, "leanForward", "RMB LEAN FORWARD", 0, 0.6, 0.005);
+    addNumber(movementFolder, movement, "leanDown", "RMB LEAN DOWN", 0, 0.2, 0.002);
+    addNumber(movementFolder, movement, "leanDamping", "RMB LEAN DAMPING", 0.1, 20, 0.1);
+
+    const bodyYaw = propertiesGui.addFolder("SOMA BODY YAW / HEAD");
+    addNumber(bodyYaw, bodyRig, "freeHeadYawDegrees", "FREE HEAD YAW", 0, 60, 0.5);
+    addNumber(bodyYaw, bodyRig, "stationaryBodyTurnFrequency", "STATIONARY FOLLOW", 0.1, 12, 0.1);
+    addNumber(bodyYaw, bodyRig, "movingBodyTurnFrequency", "MOVING FOLLOW", 0.1, 12, 0.1);
+    addNumber(bodyYaw, bodyRig, "fastBodyTurnFrequency", "FAST FOLLOW", 0.1, 16, 0.1);
+    addNumber(bodyYaw, bodyRig, "stationaryTurnStepDegrees", "TURN STEP ANGLE", 1, 60, 0.5);
+    addNumber(bodyYaw, bodyRig, "stationaryTurnStepInterval", "TURN STEP INTERVAL", 0.05, 2, 0.01);
+    addNumber(bodyYaw, bodyRig, "headYawTranslation", "HEAD SIDE OFFSET", 0, 0.04, 0.0001);
+    addNumber(bodyYaw, bodyRig, "headYawRollDegrees", "HEAD ROLL", 0, 4, 0.01);
+
+    const weight = propertiesGui.addFolder("STRAFE / BODY WEIGHT");
+    addNumber(weight, bodyRig, "strafeTranslation", "STRAFE SIDE OFFSET", 0, 0.06, 0.0005);
+    addNumber(weight, bodyRig, "strafeRollDegrees", "STRAFE ROLL", 0, 5, 0.05);
+    addNumber(weight, bodyRig, "strafeSpringFrequency", "STRAFE SPRING", 0.1, 20, 0.1);
+    addNumber(weight, bodyRig, "strafeSpringDamping", "STRAFE DAMPING", 0.05, 2, 0.01);
+    addNumber(weight, bodyRig, "forwardAccelerationScale", "FORWARD WEIGHT SCALE", 0, 0.02, 0.0001);
+    addNumber(weight, bodyRig, "forwardWeightLimit", "FORWARD WEIGHT LIMIT", 0, 0.08, 0.001);
+    addNumber(weight, bodyRig, "forwardWeightFrequency", "FORWARD SPRING", 0.1, 20, 0.1);
+    addNumber(weight, bodyRig, "forwardWeightDamping", "FORWARD DAMPING", 0.05, 2, 0.01);
+    addNumber(weight, bodyRig, "forwardWeightPitchDegreesPerMeter", "WEIGHT PITCH / M", 0, 80, 0.5);
+
+    const look = propertiesGui.addFolder("MOUSE TURN REACTION");
+    addNumber(look, bodyRig, "lookAngularVelocityLimit", "VELOCITY LIMIT", 0.1, 20, 0.1);
+    addNumber(look, bodyRig, "lookAngularVelocityForFullSway", "FULL SWAY VELOCITY", 0.1, 20, 0.1);
+    addNumber(look, bodyRig, "lookReactionFrequency", "REACTION SPRING", 0.1, 24, 0.1);
+    addNumber(look, bodyRig, "lookReactionDamping", "REACTION DAMPING", 0.05, 2, 0.01);
+    addNumber(look, bodyRig, "lookYawTranslation", "YAW SIDE OFFSET", 0, 0.05, 0.0005);
+    addNumber(look, bodyRig, "lookYawRollDegrees", "YAW ROLL", 0, 5, 0.05);
+    addNumber(look, bodyRig, "lookPitchReactionDegrees", "PITCH REACTION", 0, 4, 0.05);
+
+    const gait = propertiesGui.addFolder("AUTHORED GAIT");
+    addNumber(gait, bodyRig, "walkStrideLength", "WALK STRIDE", 0.2, 3, 0.01);
+    addNumber(gait, bodyRig, "runStrideLength", "RUN STRIDE", 0.2, 4, 0.01);
+    addNumber(gait, bodyRig, "crouchStrideLength", "CROUCH STRIDE", 0.2, 2, 0.01);
+    addNumber(gait, bodyRig, "walkReferenceSpeed", "REFERENCE SPEED", 0.1, 5, 0.01);
+    addNumber(gait, bodyRig, "bodyGaitSide", "BODY SIDE", 0, 0.06, 0.0005);
+    addNumber(gait, bodyRig, "bodyGaitVertical", "BODY VERTICAL", 0, 0.06, 0.0005);
+    addNumber(gait, bodyRig, "cameraGaitSide", "CAMERA SIDE", 0, 0.05, 0.0005);
+    addNumber(gait, bodyRig, "cameraGaitVertical", "CAMERA VERTICAL", 0, 0.05, 0.0005);
+    addNumber(gait, bodyRig, "cameraGaitRollDegrees", "CAMERA ROLL", 0, 4, 0.05);
+    addNumber(gait, bodyRig, "cameraGaitPitchDegrees", "CAMERA PITCH", 0, 4, 0.05);
+
+    const held = propertiesGui.addFolder("HELD ITEM / FLASHLIGHT");
+    addNumber(held, bodyRig, "heldMassScale", "BODY MOTION SCALE", 0, 4, 0.05);
+    addNumber(held, bodyRig, "heldGaitSide", "GAIT SIDE", 0, 0.08, 0.0005);
+    addNumber(held, bodyRig, "heldGaitVertical", "GAIT VERTICAL", 0, 0.08, 0.0005);
+    addNumber(held, bodyRig, "heldGaitRollDegrees", "GAIT ROLL", 0, 6, 0.05);
+    addNumber(held, bodyRig, "heldGaitPitchDegrees", "GAIT PITCH", 0, 6, 0.05);
+    addNumber(held, bodyRig, "heldTurnYawScale", "TURN INERTIA", 0, 0.08, 0.001);
+    addNumber(held, bodyRig, "heldIdleSideAmplitude", "IDLE SIDE", 0, 0.01, 0.0001);
+    addNumber(held, bodyRig, "heldIdleVerticalAmplitude", "IDLE VERTICAL", 0, 0.01, 0.0001);
+    addNumber(held, bodyRig, "heldIdleRollDegrees", "IDLE ROLL", 0, 1, 0.01);
+    addNumber(held, bodyRig, "heldIdlePitchDegrees", "IDLE PITCH", 0, 1, 0.01);
+    addNumber(held, bodyRig, "heldIdleSwayFrequencyHz", "IDLE SWAY HZ", 0.01, 3, 0.01);
+    addNumber(held, bodyRig, "heldIdleTremorTranslation", "TREMOR OFFSET", 0, 0.003, 0.00005);
+    addNumber(held, bodyRig, "heldIdleTremorDegrees", "TREMOR ROTATION", 0, 0.5, 0.005);
+    addNumber(held, bodyRig, "heldIdleTremorFrequencyHz", "TREMOR HZ", 0.1, 20, 0.1);
+
+    const recovery = propertiesGui.addFolder("STANCE / STEPS / LANDING");
+    addNumber(recovery, bodyRig, "walkHeelCompressionImpulse", "WALK HEEL IMPULSE", 0, 0.2, 0.001);
+    addNumber(recovery, bodyRig, "runHeelCompressionImpulse", "RUN HEEL IMPULSE", 0, 0.3, 0.001);
+    addNumber(recovery, bodyRig, "turnFootCompressionImpulse", "TURN FOOT IMPULSE", 0, 0.1, 0.001);
+    addNumber(recovery, bodyRig, "turnWeightImpulse", "TURN WEIGHT IMPULSE", 0, 0.1, 0.001);
+    addNumber(recovery, bodyRig, "heelSpringFrequency", "HEEL RECOVERY", 0.1, 20, 0.1);
+    addNumber(recovery, bodyRig, "turnWeightFrequency", "TURN RECOVERY", 0.1, 20, 0.1);
+    addNumber(recovery, bodyRig, "stanceSpringFrequency", "STANCE RECOVERY", 0.1, 20, 0.1);
+    addNumber(recovery, bodyRig, "stepVerticalStabilization", "STEP STABILIZATION", 0, 2, 0.01);
+    addNumber(recovery, bodyRig, "verticalRecoveryFrequency", "VERTICAL RECOVERY", 0.1, 20, 0.1);
+    addNumber(recovery, bodyRig, "landingImpulseScale", "LANDING SCALE", 0, 0.1, 0.001);
+    addNumber(recovery, bodyRig, "landingImpulseLimit", "LANDING LIMIT", 0, 0.5, 0.005);
+
+    const collisionFolder = propertiesGui.addFolder("COLLISION / CAPSULE");
+    addNumber(collisionFolder, gameConfig, "collisionRadius", "BODY RADIUS", 0.1, 0.6, 0.01, applyPlayerCollisionSettings);
+    addNumber(collisionFolder, gameConfig, "collisionHeight", "BODY HEIGHT", 0.6, 2.2, 0.01, applyPlayerCollisionSettings);
+    addNumber(collisionFolder, collision, "stepHeight", "STEP HEIGHT", 0, 0.8, 0.01, applyPlayerCollisionSettings);
+    addNumber(collisionFolder, collision, "jumpSpeed", "JUMP SPEED", 0, 8, 0.1, applyPlayerCollisionSettings);
+    action(propertiesGui, "SAVE CONFIGS TO PROJECT", saveProject);
   }
 
   function buildAudioProperties() {
@@ -462,6 +551,7 @@ export function createDebugWorkspace({
         materialConfigs,
         globalLightingConfig,
         decalConfig,
+        cameraConfig,
         postProcessingConfig,
       });
       const response = await fetch("/__save-config", {

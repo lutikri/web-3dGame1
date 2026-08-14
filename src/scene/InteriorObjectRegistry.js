@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=debug-lil-gui";
+import { applyAxisRotation } from "./TransformUtils.js?v=body-motion-debug";
 
 export class InteriorObjectRegistry {
   constructor(options) {

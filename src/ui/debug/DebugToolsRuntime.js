@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=debug-lil-gui";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=debug-lil-gui";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=debug-lil-gui";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=debug-lil-gui";
+import { createDebugHub } from "./DebugHub.js?v=body-motion-debug";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=body-motion-debug";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=body-motion-debug";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=body-motion-debug";
 
 export class DebugToolsRuntime {
   constructor(options) {
@@ -38,6 +38,7 @@ export class DebugToolsRuntime {
       globalLightingConfig: this.config.lighting,
       decalConfig: this.config.interior.decals,
       gameConfig: this.config.player,
+      cameraConfig: this.config.camera,
       postProcessingConfig: this.config.postProcessing,
       getPostProcessingQualities: this.getPostProcessingQualities,
       setPostProcessingQuality: this.setPostProcessingQuality,

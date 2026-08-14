@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=debug-lil-gui";
+import { LevelRuntime } from "./LevelRuntime.js?v=body-motion-debug";
 
 export class LevelEnvironmentLifecycle {
   constructor({

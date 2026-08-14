@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=debug-lil-gui";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=body-motion-debug";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

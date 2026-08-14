@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=debug-lil-gui";
-import { translate } from "./Localization.js?v=debug-lil-gui";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=debug-lil-gui";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=debug-lil-gui";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=debug-lil-gui";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=debug-lil-gui";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=debug-lil-gui";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=body-motion-debug";
+import { translate } from "./Localization.js?v=body-motion-debug";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=body-motion-debug";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=body-motion-debug";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=body-motion-debug";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=body-motion-debug";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=body-motion-debug";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=debug-lil-gui";
-import { createAppPanelController } from "./AppPanelController.js?v=debug-lil-gui";
-import { createAppRouter } from "./AppRouter.js?v=debug-lil-gui";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=debug-lil-gui";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=debug-lil-gui";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=debug-lil-gui";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=debug-lil-gui";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=debug-lil-gui";
+} from "./AppPersistence.js?v=body-motion-debug";
+import { createAppPanelController } from "./AppPanelController.js?v=body-motion-debug";
+import { createAppRouter } from "./AppRouter.js?v=body-motion-debug";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=body-motion-debug";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=body-motion-debug";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=body-motion-debug";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=body-motion-debug";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=body-motion-debug";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

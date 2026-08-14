@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=debug-lil-gui";
-import { applyLocalization } from "./app/Localization.js?v=debug-lil-gui";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=debug-lil-gui";
+import { createPreflight } from "./app/Preflight.js?v=body-motion-debug";
+import { applyLocalization } from "./app/Localization.js?v=body-motion-debug";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=body-motion-debug";
 
-const APP_BUILD_REVISION = "debug-lil-gui";
+const APP_BUILD_REVISION = "body-motion-debug";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=debug-lil-gui`);
+await import(`./OperatorGame.js?v=body-motion-debug`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=debug-lil-gui`);
+const { createAppShell } = await import(`./app/AppShell.js?v=body-motion-debug`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=debug-lil-gui`
+    `./runtime/RuntimeSmoke.js?v=body-motion-debug`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

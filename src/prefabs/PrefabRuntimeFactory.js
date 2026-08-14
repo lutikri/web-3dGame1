@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=debug-lil-gui";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-lil-gui";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=debug-lil-gui";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-lil-gui";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-lil-gui";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=debug-lil-gui";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=debug-lil-gui";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=body-motion-debug";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=body-motion-debug";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=body-motion-debug";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=body-motion-debug";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=body-motion-debug";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=body-motion-debug";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=body-motion-debug";
 
 export function createPrefabRuntimeFactory({
   config,

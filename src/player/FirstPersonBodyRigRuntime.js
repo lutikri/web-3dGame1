@@ -142,8 +142,20 @@ export class FirstPersonBodyRigRuntime {
 
     const progress = THREE.MathUtils.clamp(this.distanceIntoStep / halfStride, 0, 1);
     const gait = evaluateAuthoredGait(progress, this.supportSign, this.movementAmount, speed, crouched, this.config);
-    const idleSide = Math.sin(this.time * 1.37) * 0.00018;
-    const idleVertical = Math.sin(this.time * 1.11 + 0.8) * 0.00014;
+    const idleSwayPhase = this.time * Math.PI * 2 * (this.config.heldIdleSwayFrequencyHz ?? 0.22);
+    const idleTremorPhase = this.time * Math.PI * 2 * (this.config.heldIdleTremorFrequencyHz ?? 7.2);
+    const idleSide = Math.sin(idleSwayPhase) * (this.config.heldIdleSideAmplitude ?? 0.0012)
+      + Math.sin(idleTremorPhase + 0.35) * (this.config.heldIdleTremorTranslation ?? 0.00015);
+    const idleVertical = Math.sin(idleSwayPhase * 0.81 + 0.8) * (this.config.heldIdleVerticalAmplitude ?? 0.0008)
+      + Math.sin(idleTremorPhase * 1.07 + 1.2) * (this.config.heldIdleTremorTranslation ?? 0.00015) * 0.65;
+    const idleRoll = THREE.MathUtils.degToRad(
+      Math.sin(idleSwayPhase * 1.18 + 0.15) * (this.config.heldIdleRollDegrees ?? 0.12)
+      + Math.sin(idleTremorPhase) * (this.config.heldIdleTremorDegrees ?? 0.025),
+    );
+    const idlePitch = THREE.MathUtils.degToRad(
+      Math.sin(idleSwayPhase * 0.86 + 0.4) * (this.config.heldIdlePitchDegrees ?? 0.09)
+      + Math.sin(idleTremorPhase * 0.93 + 0.75) * (this.config.heldIdleTremorDegrees ?? 0.025),
+    );
     const heldMassScale = this.config.heldMassScale ?? 1.35;
     const freeYaw = THREE.MathUtils.degToRad(this.config.freeHeadYawDegrees ?? 28);
     const relativeYawAmount = THREE.MathUtils.clamp(bodyTurn.relativeYaw / Math.max(freeYaw, 0.001), -1, 1);
@@ -178,9 +190,9 @@ export class FirstPersonBodyRigRuntime {
         vertical: idleVertical + this.heelCompression.position * 0.9 + gait.heldVertical,
         forward: (this.forwardWeight.position + this.stanceWeight.position) * heldMassScale,
         roll: gait.heldRoll + (this.strafeRoll.position + this.turnRoll.position + yawDifferenceRoll) * heldMassScale
-          + THREE.MathUtils.degToRad(0.035) * Math.sin(this.time * 1.71),
+          + idleRoll,
         pitch: gait.heldPitch + (forwardWeightPitch + this.lookPitch.position) * heldMassScale
-          + THREE.MathUtils.degToRad(0.025) * Math.sin(this.time * 1.19 + 0.4),
+          + idlePitch,
         yaw: -this.bodyYawVelocity * (this.config.heldTurnYawScale ?? 0.018),
       },
       components: {

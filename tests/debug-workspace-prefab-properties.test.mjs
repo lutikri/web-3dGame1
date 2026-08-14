@@ -45,6 +45,7 @@ test("debug workspace project save batches level, materials, and post processing
     },
     globalLightingConfig: { ambientIntensity: 0.2 },
     decalConfig: { opacity: 0.8 },
+    cameraConfig: { walkSpeed: 1.65, operatorMovement: { bodyRig: { heldMassScale: 1.45 } } },
     postProcessingConfig: { enabled: true },
   });
 
@@ -53,6 +54,7 @@ test("debug workspace project save batches level, materials, and post processing
   assert.deepEqual(payload.config.globalScene, {
     materials: { metal: { color: "#ffffff", roughness: 0.5 } },
     lighting: { ambientIntensity: 0.2 },
+    camera: { walkSpeed: 1.65, operatorMovement: { bodyRig: { heldMassScale: 1.45 } } },
     decals: { opacity: 0.8 },
   });
   assert.deepEqual(payload.config.postProcessing, { enabled: true });

@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=debug-lil-gui";
+} from "./behaviors/DeskDrawerBehavior.js?v=body-motion-debug";
 
 export function createPrefabPhysicsRegistrar({
   physics,

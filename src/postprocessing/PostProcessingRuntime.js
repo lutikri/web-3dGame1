@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=debug-lil-gui";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=body-motion-debug";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=debug-lil-gui";
+} from "./PostProcessingShaders.js?v=body-motion-debug";
 
 export class PostProcessingRuntime {
   composer = null;

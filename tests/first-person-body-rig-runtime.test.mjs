@@ -40,6 +40,28 @@ test("the stabilized camera receives much less body motion than held equipment",
   assert.ok(heldMotion > cameraMotion * 1.5);
 });
 
+test("held equipment keeps configurable idle sway and high-frequency hand tremor while stationary", () => {
+  const rig = new FirstPersonBodyRigRuntime({
+    config: {
+      heldIdleSideAmplitude: 0.004,
+      heldIdleVerticalAmplitude: 0.003,
+      heldIdleRollDegrees: 0.4,
+      heldIdlePitchDegrees: 0.3,
+      heldIdleSwayFrequencyHz: 0.5,
+      heldIdleTremorTranslation: 0.001,
+      heldIdleTremorDegrees: 0.1,
+      heldIdleTremorFrequencyHz: 8,
+    },
+  });
+  const samples = [];
+  for (let index = 0; index < 30; index += 1) samples.push(advance(rig, 1, {}).held);
+
+  assert.ok(Math.max(...samples.map((sample) => Math.abs(sample.side))) > 0.003);
+  assert.ok(Math.max(...samples.map((sample) => Math.abs(sample.vertical))) > 0.002);
+  assert.ok(Math.max(...samples.map((sample) => Math.abs(sample.roll))) > THREE.MathUtils.degToRad(0.3));
+  assert.ok(Math.max(...samples.map((sample) => Math.abs(sample.pitch))) > THREE.MathUtils.degToRad(0.2));
+});
+
 test("a large stationary head turn causes body follow and a foot reposition", () => {
   const rig = new FirstPersonBodyRigRuntime();
   const snapshot = advance(rig, 90, { headYaw: THREE.MathUtils.degToRad(70) });

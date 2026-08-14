@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=debug-lil-gui";
+import { translateRequired } from "./Localization.js?v=body-motion-debug";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=debug-lil-gui";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=body-motion-debug";
 
 const DISMISS_MS = 300;
 

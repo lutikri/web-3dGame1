@@ -1,14 +1,28 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=debug-lil-gui";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=debug-lil-gui";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=debug-lil-gui";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=debug-lil-gui";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=body-motion-debug";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=body-motion-debug";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=body-motion-debug";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=body-motion-debug";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
     if (materials[key]) Object.assign(materials[key], values);
   });
   return materials;
+}
+
+function applyKnownConfigOverrides(target, overrides) {
+  if (!target || !overrides || typeof overrides !== "object") return target;
+  Object.entries(overrides).forEach(([key, value]) => {
+    if (!(key in target)) return;
+    if (value && typeof value === "object" && !Array.isArray(value)
+      && target[key] && typeof target[key] === "object" && !Array.isArray(target[key])) {
+      applyKnownConfigOverrides(target[key], value);
+    } else {
+      target[key] = value;
+    }
+  });
+  return target;
 }
 
 export const CONFIG = {
@@ -124,6 +138,14 @@ export const CONFIG = {
         landingImpulseScale: 0.018,
         landingImpulseLimit: 0.13,
         heldTurnYawScale: 0.018,
+        heldIdleSideAmplitude: 0.0012,
+        heldIdleVerticalAmplitude: 0.0008,
+        heldIdleRollDegrees: 0.12,
+        heldIdlePitchDegrees: 0.09,
+        heldIdleSwayFrequencyHz: 0.22,
+        heldIdleTremorTranslation: 0.00015,
+        heldIdleTremorDegrees: 0.025,
+        heldIdleTremorFrequencyHz: 7.2,
       },
     },
     noclip: {
@@ -1005,6 +1027,9 @@ export const CONFIG = {
   },
   postProcessing: POST_PROCESSING_CONFIG,
 };
+
+applyKnownConfigOverrides(CONFIG.camera, GLOBAL_SCENE_OVERRIDES.camera);
+applyKnownConfigOverrides(CONFIG.lighting, GLOBAL_SCENE_OVERRIDES.lighting);
 
 export const MATERIAL_COLORS = {
   wall: "#252d32",

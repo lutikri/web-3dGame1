@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=debug-lil-gui";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=body-motion-debug";
 
 const MARKER_PREFIX = "PF_";
 

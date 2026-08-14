@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=debug-lil-gui";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=body-motion-debug";
 
 const EFFECT_KEYS = [
   "bloom",

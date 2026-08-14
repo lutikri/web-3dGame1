@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=debug-lil-gui";
+import { LevelSession } from "./LevelSession.js?v=body-motion-debug";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {
