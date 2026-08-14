@@ -1,12 +1,12 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=soma-body-weight";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=soma-body-weight";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=soma-body-weight";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=soma-body-weight";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=soma-body-weight";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=soma-body-weight";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=soma-body-weight";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=debug-lil-gui";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-lil-gui";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=debug-lil-gui";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-lil-gui";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-lil-gui";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=debug-lil-gui";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=debug-lil-gui";
 
 export function createPrefabRuntimeFactory({
   config,

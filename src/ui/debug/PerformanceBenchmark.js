@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=soma-body-weight";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=debug-lil-gui";
 
 const EFFECT_KEYS = [
   "bloom",

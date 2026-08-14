@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=soma-body-weight";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=debug-lil-gui";
 
 export function createOperatorMovementRuntime({
   config,

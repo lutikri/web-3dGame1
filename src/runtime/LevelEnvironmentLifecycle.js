@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=soma-body-weight";
+import { LevelRuntime } from "./LevelRuntime.js?v=debug-lil-gui";
 
 export class LevelEnvironmentLifecycle {
   constructor({

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=soma-body-weight";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=debug-lil-gui";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=soma-body-weight";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=soma-body-weight";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=soma-body-weight";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=soma-body-weight";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=debug-lil-gui";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=debug-lil-gui";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=debug-lil-gui";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=debug-lil-gui";
 
 // Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
 function blenderPosition(x, y, z) {

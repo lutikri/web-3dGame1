@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=soma-body-weight";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=soma-body-weight";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=soma-body-weight";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=soma-body-weight";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=debug-lil-gui";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-lil-gui";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-lil-gui";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-lil-gui";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -15,10 +15,10 @@ export class LevelPrefabConfigRuntime {
     if (prefab?.behavior === "operatorPanel") {
       this.applyPanelTransform();
       this.#refreshStructural(levelId, structural);
-      return;
+      return true;
     }
     const runtime = this.instances.get(`${levelId}:${prefabName}`);
-    if (!prefab || !runtime) return;
+    if (!prefab || !runtime) return false;
     this.#applyTransform(runtime, prefab);
     if (runtime.rigidPrefabKey) this.physics?.resetRigidPrefab(runtime.rigidPrefabKey, runtime.root, true);
     resetElevatorRuntime(runtime.elevator);
@@ -36,6 +36,7 @@ export class LevelPrefabConfigRuntime {
       else this.applyDoorRotation(runtime);
     }
     this.#applyLight(runtime, prefab, levelId, structural);
+    return true;
   };
 
   #applyTransform(runtime, prefab) {

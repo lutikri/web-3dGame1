@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=soma-body-weight";
-import { translate } from "./Localization.js?v=soma-body-weight";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=soma-body-weight";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=soma-body-weight";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=soma-body-weight";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=soma-body-weight";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=soma-body-weight";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=debug-lil-gui";
+import { translate } from "./Localization.js?v=debug-lil-gui";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=debug-lil-gui";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=debug-lil-gui";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=debug-lil-gui";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=debug-lil-gui";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=debug-lil-gui";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=soma-body-weight";
-import { createAppPanelController } from "./AppPanelController.js?v=soma-body-weight";
-import { createAppRouter } from "./AppRouter.js?v=soma-body-weight";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=soma-body-weight";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=soma-body-weight";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=soma-body-weight";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=soma-body-weight";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=soma-body-weight";
+} from "./AppPersistence.js?v=debug-lil-gui";
+import { createAppPanelController } from "./AppPanelController.js?v=debug-lil-gui";
+import { createAppRouter } from "./AppRouter.js?v=debug-lil-gui";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=debug-lil-gui";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=debug-lil-gui";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=debug-lil-gui";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=debug-lil-gui";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=debug-lil-gui";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

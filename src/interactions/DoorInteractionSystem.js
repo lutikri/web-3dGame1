@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=soma-body-weight";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=debug-lil-gui";
 
 export class DoorInteractionSystem {
   constructor({

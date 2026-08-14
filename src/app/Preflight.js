@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=soma-body-weight";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=soma-body-weight";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=debug-lil-gui";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=debug-lil-gui";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=soma-body-weight";
+} from "./UiAudioInteractionRuntime.js?v=debug-lil-gui";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=soma-body-weight";
+} from "../config/GraphicsHardwareTiers.js?v=debug-lil-gui";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=soma-body-weight";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=debug-lil-gui";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

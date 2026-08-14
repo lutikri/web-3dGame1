@@ -53,7 +53,7 @@ test("level prefab config runtime applies transforms and light state", () => {
     createStartupPattern: () => [0.25, 1],
   });
 
-  runtime.apply("room", "Lamp", true);
+  assert.equal(runtime.apply("room", "Lamp", true), true);
 
   assert.deepEqual(root.position.toArray(), [1, 2, 3]);
   assert.deepEqual(root.scale.toArray(), [2, 2, 2]);
@@ -80,10 +80,21 @@ test("level prefab config runtime routes operator panel changes", () => {
     updateActivation: () => activationUpdates += 1,
   });
 
-  runtime.apply("room", "Panel", true);
+  assert.equal(runtime.apply("room", "Panel", true), true);
 
   assert.equal(panelUpdates, 1);
   assert.equal(activationUpdates, 1);
+});
+
+test("level prefab config runtime reports unloaded prefabs instead of pretending to apply them", () => {
+  const runtime = new LevelPrefabConfigRuntime({
+    config: { levelEnvironments: { room: { prefabs: [{ name: "Missing" }] } } },
+    instances: new Map(),
+    getActiveLevelId: () => "room",
+  });
+
+  assert.equal(runtime.apply("room", "Missing"), false);
+  assert.equal(runtime.apply("room", "Unknown"), false);
 });
 
 test("level prefab config runtime applies editable spotlight projection properties", () => {

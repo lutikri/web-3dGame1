@@ -106,6 +106,20 @@ export class LightingRuntime {
     return true;
   }
 
+  applyPointLight(levelId, key, config, structural = false) {
+    const light = this.pointLightsByKey.get(`${levelId}:${key}`);
+    if (!light || !config) return false;
+    light.color.set(config.color);
+    light.intensity = config.intensity;
+    light.userData.baseIntensity = config.intensity;
+    light.distance = config.distance;
+    light.decay = config.decay;
+    if (config.position) light.position.copy(config.position);
+    light.userData.roomLightControlled = Boolean(config.roomLightControlled);
+    if (structural) this.applyShadowSettings(light, config);
+    return true;
+  }
+
   disposeLevel(levelId) {
     const lights = this.levelLights.get(levelId) ?? [];
     lights.forEach((light) => {

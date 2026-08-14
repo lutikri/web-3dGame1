@@ -283,6 +283,18 @@ test("lighting runtime owns and disposes level lights", () => {
   });
   assert.equal(levels.get("level").length, 2);
   assert.equal(points.has("level:Fill"), true);
+  const fillConfig = {
+    color: "#ff8800",
+    intensity: 3.5,
+    distance: 12,
+    decay: 2,
+    position: new THREE.Vector3(1, 2, 3),
+    roomLightControlled: true,
+  };
+  assert.equal(runtime.applyPointLight("level", "Fill", fillConfig), true);
+  assert.equal(points.get("level:Fill").userData.baseIntensity, 3.5);
+  assert.deepEqual(points.get("level:Fill").position.toArray(), [1, 2, 3]);
+  assert.equal(runtime.applyPointLight("level", "Missing", fillConfig), false);
   runtime.disposeLevel("level");
   assert.equal(controlled.length, 0);
   assert.equal(points.size, 0);

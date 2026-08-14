@@ -135,14 +135,13 @@ If a new level needs the same behavior as an existing object, extract or reuse a
 
 Debug UI is routed through `src/ui/debug/DebugHub.js`.
 
-The hub is the only thing `OperatorGame.js` should talk to for debug panels. Existing lil-gui panels live under `src/ui/debug/panels/` and should gradually become workspaces:
+The hub is the only thing `OperatorGame.js` should talk to for debug panels. The active scene editor is the two-panel lil-gui workspace in `src/ui/debug/workspace/DebugWorkspace.js`:
 
-- Game / player
-- Level / prefabs
-- Materials
-- Lighting
-- Audio
-- Post FX
+- `LEVEL / OUTLINER` selects Player, Post FX, Audio, level settings, prefabs, lights, or materials.
+- `PROPERTIES` edits only the selected config and calls its owning runtime's public live-apply API.
+- `SAVE CONFIGS TO PROJECT` batches the active level overrides, global material tuning, and Post FX overrides through the local dev server.
+
+The older focused panels under `src/ui/debug/panels/` remain compatibility entry points; do not add new ownership there when the workspace already covers the system.
 
 Avoid adding another always-visible floating panel directly from gameplay code.
 

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=soma-body-weight";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=soma-body-weight";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=soma-body-weight";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=soma-body-weight";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=debug-lil-gui";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=debug-lil-gui";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=debug-lil-gui";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=debug-lil-gui";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

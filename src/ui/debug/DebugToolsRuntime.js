@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=soma-body-weight";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=soma-body-weight";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=soma-body-weight";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=soma-body-weight";
+import { createDebugHub } from "./DebugHub.js?v=debug-lil-gui";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=debug-lil-gui";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=debug-lil-gui";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=debug-lil-gui";
 
 export class DebugToolsRuntime {
   constructor(options) {
@@ -35,6 +35,8 @@ export class DebugToolsRuntime {
     const workspace = this.factories.createDebugWorkspace({
       levelEnvironmentConfigs: this.config.levelEnvironments,
       materialConfigs: this.config.interior.specialMaterials,
+      globalLightingConfig: this.config.lighting,
+      decalConfig: this.config.interior.decals,
       gameConfig: this.config.player,
       postProcessingConfig: this.config.postProcessing,
       getPostProcessingQualities: this.getPostProcessingQualities,
@@ -45,6 +47,7 @@ export class DebugToolsRuntime {
       getSceneSoundKeys: this.getSceneSoundKeys,
       applyLevelAmbient: this.applyLevelAmbient,
       applyLevelPrefab: this.applyLevelPrefab,
+      applyLevelPointLight: this.applyLevelPointLight,
       applyLevelWorld: this.applyLevelWorld,
       applyPlayerCollisionSettings: this.applyPlayerCollisionSettings,
       applyPostProcessing: this.applyPostProcessing,

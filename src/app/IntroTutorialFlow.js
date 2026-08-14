@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=soma-body-weight";
+import { translateRequired } from "./Localization.js?v=debug-lil-gui";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

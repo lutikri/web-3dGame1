@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=soma-body-weight";
+import { LevelSession } from "./LevelSession.js?v=debug-lil-gui";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

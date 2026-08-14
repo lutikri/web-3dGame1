@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=soma-body-weight";
+} from "./behaviors/DeskDrawerBehavior.js?v=debug-lil-gui";
 
 export function createPrefabPhysicsRegistrar({
   physics,

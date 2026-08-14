@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=soma-body-weight";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=debug-lil-gui";
 
 const DISMISS_MS = 300;
 

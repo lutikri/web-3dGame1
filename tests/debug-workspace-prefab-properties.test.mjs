@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   compareDebugPrefabs,
+  createDebugProjectSavePayload,
   getSuspendedLampDebugProperties,
 } from "../src/ui/debug/workspace/DebugWorkspace.js";
 
@@ -27,4 +28,32 @@ test("debug workspace groups Blender bulkhead aliases and uses natural name orde
     "DoorBulk1_2",
     "DoorBulk1_10",
   ]);
+});
+
+test("debug workspace project save batches level, materials, and post processing", () => {
+  const payload = createDebugProjectSavePayload({
+    environment: {
+      id: "room",
+      saveKind: "room",
+      prefabs: [],
+      lighting: {},
+      world: {},
+      player: {},
+    },
+    materialConfigs: {
+      metal: { color: "#ffffff", roughness: 0.5, assetPath: "ignored.png" },
+    },
+    globalLightingConfig: { ambientIntensity: 0.2 },
+    decalConfig: { opacity: 0.8 },
+    postProcessingConfig: { enabled: true },
+  });
+
+  assert.equal(payload.kind, "allConfigs");
+  assert.equal(payload.config.room.id, "room");
+  assert.deepEqual(payload.config.globalScene, {
+    materials: { metal: { color: "#ffffff", roughness: 0.5 } },
+    lighting: { ambientIntensity: 0.2 },
+    decals: { opacity: 0.8 },
+  });
+  assert.deepEqual(payload.config.postProcessing, { enabled: true });
 });

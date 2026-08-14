@@ -1291,6 +1291,16 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "rootName": "SM_LampDesk1",
+      "item": {
+        "enabled": true,
+        "kind": "physicalItem",
+        "label": "Desk lamp",
+        "icon": "item",
+        "portable": false,
+        "activationMode": "none",
+        "maxDistance": 1.65,
+        "grabDistance": 0.82
+      },
       "rigidBody": {
         "enabled": true,
         "bodyType": "dynamic",
@@ -1680,10 +1690,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "type": "spot",
         "markerName": "Spot",
         "color": 16773586,
-        "intensity": 8,
-        "distance": 5,
-        "decay": 0.23,
-        "angle": 0.39269908169872414,
+        "intensity": 3,
+        "distance": 9,
+        "decay": 1,
+        "angle": 0.85,
         "penumbra": 0.21,
         "localOffset": {
           "x": -0.053824,
@@ -1696,10 +1706,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "z": 0
         },
         "cookiePath": "assets/runtime-textures/T_FlashLight1_Cookie_1024_ETC1S.ktx2",
-        "cookieRotationDegrees": 0,
+        "cookieRotationDegrees": -123,
         "itemControlled": true,
-        "castShadow": false,
-        "shadowMapSize": 512,
+        "castShadow": true,
+        "shadowMapSize": 128,
         "shadowBias": -0.00015,
         "shadowNormalBias": 0.025,
         "shadowRadius": 1,
@@ -1714,6 +1724,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "portable": true,
         "activationMode": "equipment",
         "activationType": "toggleLight",
+        "defaultOn": false,
         "maxDistance": 1.65,
         "takeSeconds": 0.5,
         "grabDistance": 0.82,
@@ -1732,6 +1743,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           270,
           0
         ],
+        "equippedMotion": {
+          "rotationLag": 8,
+          "rotationScale": 1.3,
+          "swayScale": 1.65
+        },
         "equippedBreakDistance": 1.25,
         "equippedBreakDelay": 0.2
       },
@@ -1828,69 +1844,6 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "x": 1.0000000002559692,
         "y": 1,
         "z": 1.0000000002559692
-      }
-    },
-    {
-      "rootName": "SM_Brief1",
-      "briefSheet": {
-        "meshName": "SM_Brief1",
-        "texturePath": "assets/ui/briefings/Intro1_2-ru.png",
-        "sheetIndex": 1,
-        "briefingLevelId": "intro-shift",
-        "holdSeconds": 0.5,
-        "maxDistance": 1.65
-      },
-      "item": {
-        "enabled": true,
-        "kind": "briefSheet",
-        "label": "Brief",
-        "icon": "brief",
-        "portable": true,
-        "activationMode": "specialView",
-        "maxDistance": 1.65,
-        "takeSeconds": 0.5,
-        "grabDistance": 0.95,
-        "grabOffset": [
-          0,
-          -0.28,
-          0
-        ],
-        "rotationOffset": [
-          -72,
-          0,
-          0
-        ]
-      },
-      "rigidBody": {
-        "enabled": true,
-        "bodyType": "dynamic",
-        "colliderNamePrefixes": [
-          "UBX_SM_Brief1"
-        ],
-        "density": 80,
-        "linearDamping": 0.8,
-        "angularDamping": 1.4,
-        "friction": 0.72,
-        "restitution": 0,
-        "canSleep": true
-      },
-      "name": "Brief_02",
-      "position": {
-        "x": -2.838200092315674,
-        "y": 0.9720377922058105,
-        "z": 9.112358093261719
-      },
-      "rotation": {
-        "isEuler": true,
-        "_x": 0,
-        "_y": 0.10035192153932494,
-        "_z": 0,
-        "_order": "XYZ"
-      },
-      "scale": {
-        "x": 0.9999999999735899,
-        "y": 1,
-        "z": 0.9999999999735899
       }
     }
   ],

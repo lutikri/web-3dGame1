@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=soma-body-weight";
+import { applyAxisRotation } from "./TransformUtils.js?v=debug-lil-gui";
 
 export class InteriorObjectRegistry {
   constructor(options) {

@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=soma-body-weight";
+} from "../prefabs/PrefabMarkerResolver.js?v=debug-lil-gui";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=soma-body-weight";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=soma-body-weight";
+} from "../levels/LevelConfigOverrides.js?v=debug-lil-gui";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=debug-lil-gui";
 
 export function createLevelSceneBuilder({
   scene,

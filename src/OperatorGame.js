@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=soma-body-weight";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=debug-lil-gui";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=soma-body-weight";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=soma-body-weight";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=soma-body-weight";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=soma-body-weight";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=soma-body-weight";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=soma-body-weight";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=soma-body-weight";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=soma-body-weight";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=soma-body-weight";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=soma-body-weight";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=soma-body-weight";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=soma-body-weight";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=soma-body-weight";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=soma-body-weight";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=soma-body-weight";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=soma-body-weight";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=soma-body-weight";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=soma-body-weight";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=soma-body-weight";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=soma-body-weight";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=soma-body-weight";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=soma-body-weight";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=soma-body-weight";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=soma-body-weight";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=soma-body-weight";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=soma-body-weight";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=soma-body-weight";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=soma-body-weight";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=soma-body-weight";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=soma-body-weight";
+} from "./game/ShiftReport.js?v=debug-lil-gui";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=debug-lil-gui";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=debug-lil-gui";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=debug-lil-gui";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=debug-lil-gui";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=debug-lil-gui";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=debug-lil-gui";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=debug-lil-gui";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=debug-lil-gui";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=debug-lil-gui";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=debug-lil-gui";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=debug-lil-gui";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=debug-lil-gui";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=debug-lil-gui";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=debug-lil-gui";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=debug-lil-gui";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=debug-lil-gui";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=debug-lil-gui";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=debug-lil-gui";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=debug-lil-gui";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=debug-lil-gui";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=debug-lil-gui";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=debug-lil-gui";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=debug-lil-gui";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=debug-lil-gui";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=debug-lil-gui";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=debug-lil-gui";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=debug-lil-gui";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=debug-lil-gui";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=debug-lil-gui";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=soma-body-weight";
+} from "./config/GraphicsQualityProfiles.js?v=debug-lil-gui";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=soma-body-weight";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=soma-body-weight";
-import { createStatusScreen } from "./StatusScreen.js?v=soma-body-weight";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=soma-body-weight";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=soma-body-weight";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=soma-body-weight";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=soma-body-weight";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=soma-body-weight";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=soma-body-weight";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=soma-body-weight";
+} from "./scene/TextureStreaming.js?v=debug-lil-gui";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=debug-lil-gui";
+import { createStatusScreen } from "./StatusScreen.js?v=debug-lil-gui";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=debug-lil-gui";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=debug-lil-gui";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=debug-lil-gui";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=debug-lil-gui";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=debug-lil-gui";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=debug-lil-gui";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=debug-lil-gui";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=soma-body-weight";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=soma-body-weight";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=soma-body-weight";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=debug-lil-gui";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=debug-lil-gui";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=debug-lil-gui";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=soma-body-weight";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=soma-body-weight";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=soma-body-weight";
-import { AssetCache } from "./runtime/AssetCache.js?v=soma-body-weight";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=soma-body-weight";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=soma-body-weight";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=soma-body-weight";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=soma-body-weight";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=soma-body-weight";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=soma-body-weight";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=soma-body-weight";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=soma-body-weight";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=soma-body-weight";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=soma-body-weight";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=soma-body-weight";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=soma-body-weight";
+} from "./lighting/FluorescentBehavior.js?v=debug-lil-gui";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=debug-lil-gui";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=debug-lil-gui";
+import { AssetCache } from "./runtime/AssetCache.js?v=debug-lil-gui";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=debug-lil-gui";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=debug-lil-gui";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=debug-lil-gui";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=debug-lil-gui";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=debug-lil-gui";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=debug-lil-gui";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=debug-lil-gui";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=debug-lil-gui";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=debug-lil-gui";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=debug-lil-gui";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=debug-lil-gui";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=debug-lil-gui";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=soma-body-weight";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=soma-body-weight";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=soma-body-weight";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=soma-body-weight";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=soma-body-weight";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=soma-body-weight";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=soma-body-weight";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=soma-body-weight";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=soma-body-weight";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=soma-body-weight";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=soma-body-weight";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=soma-body-weight";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=soma-body-weight";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=soma-body-weight";
-import { PlayerController } from "./player/PlayerController.js?v=soma-body-weight";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=soma-body-weight";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=soma-body-weight";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=soma-body-weight";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=soma-body-weight";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=soma-body-weight";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=soma-body-weight";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=soma-body-weight";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=soma-body-weight";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=soma-body-weight";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=soma-body-weight";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=soma-body-weight";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=soma-body-weight";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=soma-body-weight";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=soma-body-weight";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=soma-body-weight";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=soma-body-weight";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=soma-body-weight";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=soma-body-weight";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=soma-body-weight";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=soma-body-weight";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=soma-body-weight";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=soma-body-weight";
+} from "./scene/InteriorObjectRegistry.js?v=debug-lil-gui";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=debug-lil-gui";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=debug-lil-gui";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=debug-lil-gui";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=debug-lil-gui";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=debug-lil-gui";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=debug-lil-gui";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=debug-lil-gui";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=debug-lil-gui";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=debug-lil-gui";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=debug-lil-gui";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=debug-lil-gui";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=debug-lil-gui";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=debug-lil-gui";
+import { PlayerController } from "./player/PlayerController.js?v=debug-lil-gui";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=debug-lil-gui";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=debug-lil-gui";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=debug-lil-gui";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=debug-lil-gui";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=debug-lil-gui";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=debug-lil-gui";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=debug-lil-gui";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=debug-lil-gui";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=debug-lil-gui";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=debug-lil-gui";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=debug-lil-gui";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=debug-lil-gui";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=debug-lil-gui";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=debug-lil-gui";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=debug-lil-gui";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=debug-lil-gui";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=debug-lil-gui";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=debug-lil-gui";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=debug-lil-gui";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=debug-lil-gui";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=debug-lil-gui";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=debug-lil-gui";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=soma-body-weight";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=debug-lil-gui";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1355,6 +1355,10 @@ const debugToolsRuntime = new DebugToolsRuntime({
   getSceneSoundKeys: (levelId) => getLevelSceneSoundKeys(levelId ?? getDisplayedLevelId()),
   applyLevelAmbient: applyLevelAmbientConfig,
   applyLevelPrefab: applyLevelPrefabConfig,
+  applyLevelPointLight: (levelId, key, structural = false) => {
+    const lightConfig = CONFIG.levelEnvironments?.[levelId]?.lighting?.pointLights?.[key];
+    return lightingRuntime.applyPointLight(levelId, key, lightConfig, structural);
+  },
   applyLevelWorld: (levelId) => levelEnvironmentActivation.applyWorldConfig(levelId),
   applyPlayerCollisionSettings,
   applyPostProcessing: applyLivePostProcessingConfig,
