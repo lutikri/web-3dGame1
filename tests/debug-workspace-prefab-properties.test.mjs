@@ -5,7 +5,19 @@ import {
   compareDebugPrefabs,
   createDebugProjectSavePayload,
   getSuspendedLampDebugProperties,
+  getPlasmaViewDebugProperties,
 } from "../src/ui/debug/workspace/DebugWorkspace.js";
+import {
+  isSocketGeneratedPrefab,
+  registerPrefabPlacement,
+} from "../src/prefabs/PrefabPlacementMetadata.js";
+
+test("socket-generated brief prefabs can be omitted from the authored prefab outliner", () => {
+  const prefab = {};
+  registerPrefabPlacement(prefab, { source: "socket", markerName: "SOCKET_Brief_01" });
+  assert.equal(isSocketGeneratedPrefab(prefab), true);
+  assert.equal(isSocketGeneratedPrefab({}), false);
+});
 
 test("debug workspace exposes suspended lamp config and shared bulb material", () => {
   const suspension = { maxAngleDegrees: 4 };
@@ -15,6 +27,16 @@ test("debug workspace exposes suspended lamp config and shared bulb material", (
     { lampDome1Bulb: bulbMaterial },
   ), { suspension, bulbMaterial });
   assert.equal(getSuspendedLampDebugProperties({ behavior: "radio" }, {}), null);
+});
+
+test("debug workspace exposes live plasma prefab tuning", () => {
+  const plasma = {
+    flowSpeed: 38, baseStrength: 0.8, coreOpacity: 0.52,
+    filamentDensity: 14, hotspotStrength: 2.4, colorVariation: 0.72,
+    stableColor: 0x3978d8,
+  };
+  assert.equal(getPlasmaViewDebugProperties({ behavior: "plasmaView", plasma }), plasma);
+  assert.equal(getPlasmaViewDebugProperties({ behavior: "radio", plasma }), null);
 });
 
 test("debug workspace groups Blender bulkhead aliases and uses natural name order", () => {

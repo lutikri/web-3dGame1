@@ -4,6 +4,25 @@ import * as THREE from "three";
 import { createPrefabInstance, getPrefabDefinition } from "../src/prefabs/PrefabRegistry.js";
 import { parsePrefabMarkerName, resolveNestedPrefabMarkers } from "../src/prefabs/PrefabMarkerResolver.js";
 
+test("plasma view marker resolves to the authored torus prefab and reactor behavior", () => {
+  const plasma = createPrefabInstance("plasmaView", { name: "Core1" });
+  assert.equal(plasma.assetPath, "assets/mesh/prefabs/PF_plasmaView_Core1.glb");
+  assert.equal(plasma.behavior, "plasmaView");
+  assert.equal(plasma.plasma.meshName, "Torus.003");
+  assert.equal(plasma.plasma.flowSpeed, 38);
+  assert.equal(plasma.plasma.baseFlowRatio, 0.055);
+  assert.equal(plasma.plasma.baseStrength, 0.8);
+  assert.equal(plasma.plasma.coreGain, 1.15);
+  assert.equal(plasma.plasma.haloGain, 0.14);
+  assert.equal(plasma.plasma.coreOpacity, 0.52);
+  assert.equal(plasma.plasma.colorVariation, 0.72);
+  assert.equal(plasma.plasma.stableColor, 0x3978d8);
+  assert.deepEqual(parsePrefabMarkerName("PF_plasmaView_Core1"), {
+    prefabType: "plasmaView",
+    instanceName: "Core1",
+  });
+});
+
 test("flashlight marker resolves to a portable physical equipment item", () => {
   const flashlight = createPrefabInstance("FlashLight", { name: "FlashLight1" });
   assert.equal(flashlight.assetPath, "assets/mesh/prefabs/SM_Flashligh1.glb");

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=drawer-flashlight-audio";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=drawer-flashlight-audio";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=drawer-flashlight-audio";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=drawer-flashlight-audio";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=prefab-marker-reset";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=prefab-marker-reset";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=prefab-marker-reset";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=prefab-marker-reset";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

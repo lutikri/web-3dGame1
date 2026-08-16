@@ -1,5 +1,22 @@
 import * as THREE from "three";
 
+const LOADING_STAGE_WIDTH = 1920;
+const LOADING_STAGE_HEIGHT = 1080;
+
+export function getLoadingStageScale(viewportWidth, viewportHeight) {
+  const width = Number.isFinite(viewportWidth) ? Math.max(0, viewportWidth) : 0;
+  const height = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight) : 0;
+  return Math.min(width / LOADING_STAGE_WIDTH, height / LOADING_STAGE_HEIGHT);
+}
+
+export function updateLoadingStageScale(overlay, view = globalThis.window) {
+  const stage = overlay?.querySelector?.(".loading-stage");
+  if (!stage || !view) return 0;
+  const scale = getLoadingStageScale(view.innerWidth, view.innerHeight);
+  stage.style.setProperty("--loading-stage-scale", String(scale));
+  return scale;
+}
+
 export function createLoadingOverlay({
   overlay,
   percent,
@@ -8,11 +25,13 @@ export function createLoadingOverlay({
   barFill,
   minimumVisibleMs = 2000,
   finishStatusText = "CORE INTERFACE ONLINE",
+  view = globalThis.window,
 } = {}) {
   let progress = 0;
   let displayedProgress = 0;
   let complete = false;
   let startedAt = performance.now();
+  updateLoadingStageScale(overlay, view);
 
   function setProgress(value) {
     progress = THREE.MathUtils.clamp(value, progress, 100);
@@ -32,6 +51,7 @@ export function createLoadingOverlay({
     statusText = "INITIALIZING OPERATOR CONSOLE",
     progressValue = 0,
   } = {}) {
+    updateLoadingStageScale(overlay, view);
     startedAt = performance.now();
     progress = THREE.MathUtils.clamp(progressValue, 0, 100);
     displayedProgress = progress;
@@ -64,6 +84,8 @@ export function createLoadingOverlay({
 
   function update(dt, waitingForPrimaryAsset = false) {
     if (!overlay || complete) return;
+
+    updateLoadingStageScale(overlay, view);
 
     if (waitingForPrimaryAsset) {
       setProgress(Math.min(progress + dt * 9, 68));

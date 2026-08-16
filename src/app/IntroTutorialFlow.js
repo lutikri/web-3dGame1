@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=drawer-flashlight-audio";
+import { translateRequired } from "./Localization.js?v=prefab-marker-reset";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

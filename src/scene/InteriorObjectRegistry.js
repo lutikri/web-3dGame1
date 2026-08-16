@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=drawer-flashlight-audio";
+import { applyAxisRotation } from "./TransformUtils.js?v=prefab-marker-reset";
 
 export class InteriorObjectRegistry {
   constructor(options) {

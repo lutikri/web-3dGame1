@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=drawer-flashlight-audio";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=drawer-flashlight-audio";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=drawer-flashlight-audio";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=prefab-marker-reset";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -27,6 +28,7 @@ export class LevelPrefabConfigRuntime {
       Object.assign(runtime.controlPost, prefab.controlPost ?? {});
       resetControlPostRuntime(runtime.controlPost);
     }
+    if (runtime.plasmaView) applyPlasmaViewConfig(runtime.plasmaView, prefab.plasma);
     runtime.elevatorCagePhysicsDisabled = false;
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorCagePhysicsKey, true);
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorDoorPhysicsKey, true);

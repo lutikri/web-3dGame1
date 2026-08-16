@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=drawer-flashlight-audio";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=prefab-marker-reset";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=prefab-marker-reset";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];
@@ -23,9 +24,10 @@ export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
     const position = new THREE.Vector3();
     const quaternion = new THREE.Quaternion();
     const scale = new THREE.Vector3();
-    sockets[sheetIndex].matrixWorld.decompose(position, quaternion, scale);
-    return createPrefabInstance(config.prefabType ?? "briefSheet", {
-      name: `Brief_${sockets[sheetIndex].name.slice(prefix.length)}`,
+    const socket = sockets[sheetIndex];
+    socket.matrixWorld.decompose(position, quaternion, scale);
+    const prefab = createPrefabInstance(config.prefabType ?? "briefSheet", {
+      name: `Brief_${socket.name.slice(prefix.length)}`,
       position,
       rotation: new THREE.Euler().setFromQuaternion(quaternion, "XYZ"),
       scale,
@@ -39,5 +41,6 @@ export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
         },
       },
     });
+    return registerPrefabPlacement(prefab, { source: "socket", markerName: socket.name });
   });
 }

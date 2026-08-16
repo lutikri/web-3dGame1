@@ -28,6 +28,7 @@ This is a static Three.js browser game. `index.html` boots `src/main.js`; `src/O
 - App routing owns major context transitions; panel navigation does not trigger route loading.
 - Debug UI calls public runtime/config APIs and does not contain gameplay logic.
 - Reusable placed-object behavior belongs in `src/prefabs/behaviors/`.
+- Artist-facing prefab behavior and material parameters must live in registry/config data, appear in the selected prefab's Debug Workspace `PROPERTIES`, apply live through a public runtime/config API, and save through the existing config pipeline. Do not leave iteration-critical tuning values only as runtime or shader constants.
 
 See `docs/project-structure.md` for the current module map and `docs/game/` for game design. Do not copy design rules back into this file.
 
@@ -38,5 +39,6 @@ See `docs/project-structure.md` for the current module map and `docs/game/` for 
 3. After JavaScript/module-path changes, run `npm run stamp-modules -- <short-revision-name>` and then `npm run check` again.
 4. For level ownership/lifecycle changes, run `http://localhost:5173/?runtimeSmoke=1` and require `[RuntimeSmoke] PASS`.
 5. Use manual browser testing only for visual feel, input comfort, timing, and presentation.
+6. Unless the user explicitly asks Codex to inspect the running visuals, give the user a short manual visual checklist instead of using browser automation for subjective visual acceptance. Automated checks still own syntax, regression, and lifecycle verification.
 
 At handoff, report changed systems, verification performed, and any unverified visual/runtime risk.

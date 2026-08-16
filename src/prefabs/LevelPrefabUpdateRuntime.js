@@ -1,9 +1,10 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=drawer-flashlight-audio";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=drawer-flashlight-audio";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=drawer-flashlight-audio";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=drawer-flashlight-audio";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prefab-marker-reset";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=prefab-marker-reset";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -101,6 +102,7 @@ export class LevelPrefabUpdateRuntime {
       const [levelId] = key.split(":");
       if (levelId !== displayed || !this.isLevelView()) return;
       updateSuspendedLampRuntime(runtime.suspendedLamp, dt);
+      updatePlasmaViewRuntime(runtime.plasmaView, this.getCoreSnapshot?.(), dt);
       updateBarrierGateRuntime(runtime.barrierGate, dt).forEach((event) => {
         if (event.type === "unlockGate") this.#unlockBarrier(runtime, levelId, event);
         else if (event.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);

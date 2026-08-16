@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=drawer-flashlight-audio";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=prefab-marker-reset";
 
 const DISMISS_MS = 300;
 

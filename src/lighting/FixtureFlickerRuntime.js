@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=drawer-flashlight-audio";
+} from "./FluorescentBehavior.js?v=prefab-marker-reset";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=drawer-flashlight-audio";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=prefab-marker-reset";
 
 export class DoorInteractionSystem {
   constructor({

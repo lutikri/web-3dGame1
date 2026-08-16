@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=drawer-flashlight-audio";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=drawer-flashlight-audio";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=drawer-flashlight-audio";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=drawer-flashlight-audio";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=prefab-marker-reset";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=prefab-marker-reset";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=prefab-marker-reset";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=prefab-marker-reset";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

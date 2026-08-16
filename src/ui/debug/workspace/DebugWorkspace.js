@@ -2,7 +2,11 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=drawer-flashlight-audio";
+} from "../../../levels/LevelConfigSerialization.js?v=prefab-marker-reset";
+import {
+  isSocketGeneratedPrefab,
+  resetPrefabToAuthoredPlacement,
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=prefab-marker-reset";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -41,6 +45,10 @@ export function getSuspendedLampDebugProperties(prefab, materialConfigs = {}) {
     suspension: prefab.suspension,
     bulbMaterial: materialConfigs.lampDome1Bulb ?? null,
   };
+}
+
+export function getPlasmaViewDebugProperties(prefab) {
+  return prefab?.behavior === "plasmaView" && prefab.plasma ? prefab.plasma : null;
 }
 
 export function createDebugProjectSavePayload({
@@ -191,12 +199,12 @@ export function createDebugWorkspace({
       .filter(matchesFilter)
       .sort(naturalCompare)
       .forEach((key) => selectionAction(lights, key, `level-light:${activeLevelId}:${key}`));
-    (env.prefabs ?? []).filter((prefab) => prefab.light && matchesFilter(prefab.name))
+    (env.prefabs ?? []).filter((prefab) => prefab.light && !isSocketGeneratedPrefab(prefab) && matchesFilter(prefab.name))
       .sort(compareDebugPrefabs)
       .forEach((prefab) => selectionAction(lights, getPrefabDisplayName(prefab), `prefab:${activeLevelId}:${prefab.name}`));
 
     const prefabs = masterGui.addFolder("PREFABS");
-    (env.prefabs ?? []).filter((prefab) => matchesFilter(prefab.name))
+    (env.prefabs ?? []).filter((prefab) => !isSocketGeneratedPrefab(prefab) && matchesFilter(prefab.name))
       .sort(compareDebugPrefabs)
       .forEach((prefab) => selectionAction(prefabs, getPrefabDisplayName(prefab), `prefab:${activeLevelId}:${prefab.name}`));
 
@@ -239,6 +247,15 @@ export function createDebugWorkspace({
       position: prefab.position,
       onChange: () => apply(true),
     }));
+    action(transform, "RESET OFFSETS TO MARKER", () => {
+      if (!resetPrefabToAuthoredPlacement(prefab)) {
+        setStatus(`${prefab.name} has no PF_* Blender marker`, "warning");
+        return;
+      }
+      apply(true);
+      setStatus(`reset ${prefab.name} to Blender marker`, "live");
+      rebuildProperties();
+    });
 
     if (prefab.light) addPrefabLightProperties(propertiesGui.addFolder("LIGHT"), prefab, apply);
     const suspended = getSuspendedLampDebugProperties(prefab, materialConfigs);
@@ -257,6 +274,38 @@ export function createDebugWorkspace({
       addNumber(radio, prefab.radio, "maxDistance", "MAX DISTANCE", 0.5, 20, 0.05, apply);
       addNumber(radio, prefab.radio, "refDistance", "REF DISTANCE", 0.05, 5, 0.05, apply);
       addNumber(radio, prefab.radio, "lampBlinkFrequency", "BLINK FREQUENCY", 0, 8, 0.05, apply);
+    }
+    const plasmaConfig = getPlasmaViewDebugProperties(prefab);
+    if (plasmaConfig) {
+      const plasma = propertiesGui.addFolder("PLASMA VIEW");
+      addNumber(plasma, plasmaConfig, "flowSpeed", "FLOW SPEED", 0, 80, 0.1, apply);
+      addNumber(plasma, plasmaConfig, "baseFlowRatio", "BASE SPEED RATIO", 0, 0.5, 0.001, apply);
+      addNumber(plasma, plasmaConfig, "baseStrength", "BASE PLASMA", 0, 2, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "coreGain", "CORE GAIN", 0, 3, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "coreOpacity", "CORE OPACITY", 0, 1, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "haloGain", "HALO GAIN", 0, 2, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "haloOpacity", "HALO OPACITY", 0, 1, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "haloScale", "HALO SCALE", 1, 1.3, 0.001, apply);
+      addNumber(plasma, plasmaConfig, "hazeStrength", "HAZE", 0, 1, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "filamentStrength", "FILAMENTS", 0, 3, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "filamentDensity", "LINE DENSITY", 2, 40, 0.1, apply);
+      addNumber(plasma, plasmaConfig, "filamentSharpness", "LINE SHARPNESS", 0.25, 0.95, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "filamentSegmentation", "LINE BREAKUP", 0, 1, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "hotspotStrength", "HOTSPOTS", 0, 3, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "hotspotThreshold", "HOTSPOT RARITY", 0.35, 0.95, 0.005, apply);
+      addNumber(plasma, plasmaConfig, "colorVariation", "COLOR VARIATION", 0, 1, 0.005, apply);
+      addColor(plasma, plasmaConfig, "baseColor", "BASE COLOR", apply);
+      addColor(plasma, plasmaConfig, "stableColor", "STABLE COLOR", apply);
+      addColor(plasma, plasmaConfig, "filamentColor", "FILAMENT COLOR", apply);
+      addColor(plasma, plasmaConfig, "hotspotColor", "HOTSPOT COLOR", apply);
+      addColor(plasma, plasmaConfig, "dangerColor", "DANGER COLOR", apply);
+      addColor(plasma, plasmaConfig, "impurityColor", "IMPURITY COLOR", apply);
+      addNumber(plasma, plasmaConfig, "displacementScale", "SURFACE MOTION", 0, 0.3, 0.001, apply);
+      addColor(plasma, plasmaConfig, "lightColor", "LIGHT COLOR", apply);
+      addNumber(plasma, plasmaConfig, "lightIntensity", "LIGHT INTENSITY", 0, 20, 0.01, apply);
+      addNumber(plasma, plasmaConfig, "lightDistance", "LIGHT DISTANCE", 0, 30, 0.05, apply);
+      addNumber(plasma, plasmaConfig, "lightDecay", "LIGHT DECAY", 0, 4, 0.01, apply);
+      addVector(plasma, "LIGHT OFFSET", plasmaConfig.lightLocalOffset, -10, 10, 0.001, apply);
     }
     const actions = propertiesGui.addFolder("ACTIONS");
     action(actions, "COPY PREFAB CONFIG", () => copyJson(prefab, `${prefab.name} copied`));

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=drawer-flashlight-audio";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=drawer-flashlight-audio";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=drawer-flashlight-audio";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=drawer-flashlight-audio";
+import { createDebugHub } from "./DebugHub.js?v=prefab-marker-reset";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=prefab-marker-reset";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=prefab-marker-reset";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=prefab-marker-reset";
 
 export class DebugToolsRuntime {
   constructor(options) {

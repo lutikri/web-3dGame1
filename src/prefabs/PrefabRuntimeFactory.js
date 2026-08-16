@@ -1,12 +1,13 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=drawer-flashlight-audio";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=drawer-flashlight-audio";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=drawer-flashlight-audio";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=drawer-flashlight-audio";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=drawer-flashlight-audio";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=drawer-flashlight-audio";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prefab-marker-reset";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=prefab-marker-reset";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=prefab-marker-reset";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=prefab-marker-reset";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -90,6 +91,9 @@ export function createPrefabRuntimeFactory({
       wasFlickerEnabled: Boolean(prefabConfig.light?.flicker?.enabled),
     };
     attachBehavior(runtime, prefabConfig);
+    if (runtime.plasmaView?.materials?.length) {
+      runtime.materialClones.push(...runtime.plasmaView.materials);
+    }
     if (prefabConfig.light) createLight(prefab, prefabConfig, runtime);
     runtime.ready = attachLightCookie(runtime, prefabConfig.light);
     return runtime;
@@ -126,6 +130,8 @@ export function createPrefabRuntimeFactory({
       runtime.suspendedLamp = createSuspendedLampRuntime(runtime.parts, prefabConfig.suspension, prefabConfig.name);
     } else if (prefabConfig.behavior === "briefSheet") {
       runtime.briefSheet = createBriefSheetRuntime(runtime.parts, prefabConfig.briefSheet);
+    } else if (prefabConfig.behavior === "plasmaView") {
+      runtime.plasmaView = createPlasmaViewRuntime(runtime.root, runtime.parts, prefabConfig.plasma, prefabConfig.name);
     }
   }
 

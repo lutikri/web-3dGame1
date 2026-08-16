@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=drawer-flashlight-audio";
+import { LevelRuntime } from "./LevelRuntime.js?v=prefab-marker-reset";
 
 export class LevelEnvironmentLifecycle {
   constructor({

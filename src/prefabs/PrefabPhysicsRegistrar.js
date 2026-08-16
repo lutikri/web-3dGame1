@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=drawer-flashlight-audio";
+} from "./behaviors/DeskDrawerBehavior.js?v=prefab-marker-reset";
 
 export function createPrefabPhysicsRegistrar({
   physics,

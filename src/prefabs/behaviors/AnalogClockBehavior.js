@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=drawer-flashlight-audio";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=prefab-marker-reset";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

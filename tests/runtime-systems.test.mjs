@@ -10,6 +10,10 @@ import {
   parsePrefabMarkerName,
   resolvePrefabMarkers,
 } from "../src/prefabs/PrefabMarkerResolver.js";
+import {
+  getPrefabPlacement,
+  resetPrefabToAuthoredPlacement,
+} from "../src/prefabs/PrefabPlacementMetadata.js";
 
 test("prefab markers resolve registry instances from Empty transforms", () => {
   const root = new THREE.Group();
@@ -22,6 +26,10 @@ test("prefab markers resolve registry instances from Empty transforms", () => {
   const [prefab] = resolvePrefabMarkers(root);
   assert.equal(prefab.prefabType, "fluorescentLamp");
   assert.equal(prefab.name, "fluorescentLamp_PowerHall1");
+  assert.deepEqual(prefab.position.toArray(), [11, 2, 3]);
+  assert.equal(getPrefabPlacement(prefab).markerName, "PF_fluorescentLamp_PowerHall1");
+  prefab.position.set(99, 98, 97);
+  assert.equal(resetPrefabToAuthoredPlacement(prefab), true);
   assert.deepEqual(prefab.position.toArray(), [11, 2, 3]);
 });
 

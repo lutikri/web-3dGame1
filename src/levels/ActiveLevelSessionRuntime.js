@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=drawer-flashlight-audio";
+import { LevelSession } from "./LevelSession.js?v=prefab-marker-reset";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

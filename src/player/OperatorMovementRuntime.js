@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=drawer-flashlight-audio";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=prefab-marker-reset";
 
 export function createOperatorMovementRuntime({
   config,

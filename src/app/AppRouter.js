@@ -1,3 +1,5 @@
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=prefab-marker-reset";
+
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;
 
@@ -26,6 +28,7 @@ export function createAppRouter({ overlay, percent, title, status, barFill, rele
 
   function showCurtain() {
     if (!overlay) return;
+    updateLoadingStageScale(overlay);
     overlay.classList.remove("is-loading");
     overlay.classList.remove("is-revealing", "is-scene-reveal");
     title?.classList.remove("is-visible");

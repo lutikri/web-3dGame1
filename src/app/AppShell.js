@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=drawer-flashlight-audio";
-import { translate } from "./Localization.js?v=drawer-flashlight-audio";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=drawer-flashlight-audio";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=drawer-flashlight-audio";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=drawer-flashlight-audio";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=drawer-flashlight-audio";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=drawer-flashlight-audio";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=prefab-marker-reset";
+import { translate } from "./Localization.js?v=prefab-marker-reset";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=prefab-marker-reset";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=prefab-marker-reset";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=prefab-marker-reset";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=prefab-marker-reset";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=prefab-marker-reset";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=drawer-flashlight-audio";
-import { createAppPanelController } from "./AppPanelController.js?v=drawer-flashlight-audio";
-import { createAppRouter } from "./AppRouter.js?v=drawer-flashlight-audio";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=drawer-flashlight-audio";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=drawer-flashlight-audio";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=drawer-flashlight-audio";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=drawer-flashlight-audio";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=drawer-flashlight-audio";
+} from "./AppPersistence.js?v=prefab-marker-reset";
+import { createAppPanelController } from "./AppPanelController.js?v=prefab-marker-reset";
+import { createAppRouter } from "./AppRouter.js?v=prefab-marker-reset";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=prefab-marker-reset";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=prefab-marker-reset";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=prefab-marker-reset";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=prefab-marker-reset";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=prefab-marker-reset";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

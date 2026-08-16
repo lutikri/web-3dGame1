@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=drawer-flashlight-audio";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=prefab-marker-reset";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=drawer-flashlight-audio";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=drawer-flashlight-audio";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=drawer-flashlight-audio";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=drawer-flashlight-audio";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=drawer-flashlight-audio";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=drawer-flashlight-audio";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=drawer-flashlight-audio";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=drawer-flashlight-audio";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=drawer-flashlight-audio";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=drawer-flashlight-audio";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=drawer-flashlight-audio";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=drawer-flashlight-audio";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=drawer-flashlight-audio";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=drawer-flashlight-audio";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=drawer-flashlight-audio";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=drawer-flashlight-audio";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=drawer-flashlight-audio";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=drawer-flashlight-audio";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=drawer-flashlight-audio";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=drawer-flashlight-audio";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=drawer-flashlight-audio";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=drawer-flashlight-audio";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=drawer-flashlight-audio";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=drawer-flashlight-audio";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=drawer-flashlight-audio";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=drawer-flashlight-audio";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=drawer-flashlight-audio";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=drawer-flashlight-audio";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=drawer-flashlight-audio";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=drawer-flashlight-audio";
+} from "./game/ShiftReport.js?v=prefab-marker-reset";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=prefab-marker-reset";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=prefab-marker-reset";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=prefab-marker-reset";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=prefab-marker-reset";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=prefab-marker-reset";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=prefab-marker-reset";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=prefab-marker-reset";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=prefab-marker-reset";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=prefab-marker-reset";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=prefab-marker-reset";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=prefab-marker-reset";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=prefab-marker-reset";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=prefab-marker-reset";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=prefab-marker-reset";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=prefab-marker-reset";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=prefab-marker-reset";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=prefab-marker-reset";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=prefab-marker-reset";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=prefab-marker-reset";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=prefab-marker-reset";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=prefab-marker-reset";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=prefab-marker-reset";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=prefab-marker-reset";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=prefab-marker-reset";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=prefab-marker-reset";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=prefab-marker-reset";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=prefab-marker-reset";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=prefab-marker-reset";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
+} from "./config/GraphicsQualityProfiles.js?v=prefab-marker-reset";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=drawer-flashlight-audio";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=drawer-flashlight-audio";
-import { createStatusScreen } from "./StatusScreen.js?v=drawer-flashlight-audio";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=drawer-flashlight-audio";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=drawer-flashlight-audio";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=drawer-flashlight-audio";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=drawer-flashlight-audio";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=drawer-flashlight-audio";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=drawer-flashlight-audio";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=drawer-flashlight-audio";
+} from "./scene/TextureStreaming.js?v=prefab-marker-reset";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=prefab-marker-reset";
+import { createStatusScreen } from "./StatusScreen.js?v=prefab-marker-reset";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=prefab-marker-reset";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=prefab-marker-reset";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=prefab-marker-reset";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=prefab-marker-reset";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=prefab-marker-reset";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=prefab-marker-reset";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=prefab-marker-reset";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=drawer-flashlight-audio";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=drawer-flashlight-audio";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=drawer-flashlight-audio";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=prefab-marker-reset";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=prefab-marker-reset";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=prefab-marker-reset";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=drawer-flashlight-audio";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=drawer-flashlight-audio";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=drawer-flashlight-audio";
-import { AssetCache } from "./runtime/AssetCache.js?v=drawer-flashlight-audio";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=drawer-flashlight-audio";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=drawer-flashlight-audio";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=drawer-flashlight-audio";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=drawer-flashlight-audio";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=drawer-flashlight-audio";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=drawer-flashlight-audio";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=drawer-flashlight-audio";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=drawer-flashlight-audio";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=drawer-flashlight-audio";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=drawer-flashlight-audio";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=drawer-flashlight-audio";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=drawer-flashlight-audio";
+} from "./lighting/FluorescentBehavior.js?v=prefab-marker-reset";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=prefab-marker-reset";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=prefab-marker-reset";
+import { AssetCache } from "./runtime/AssetCache.js?v=prefab-marker-reset";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=prefab-marker-reset";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=prefab-marker-reset";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=prefab-marker-reset";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=prefab-marker-reset";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=prefab-marker-reset";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=prefab-marker-reset";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=prefab-marker-reset";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=prefab-marker-reset";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=prefab-marker-reset";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=prefab-marker-reset";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=prefab-marker-reset";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=prefab-marker-reset";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=drawer-flashlight-audio";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=drawer-flashlight-audio";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=drawer-flashlight-audio";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=drawer-flashlight-audio";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=drawer-flashlight-audio";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=drawer-flashlight-audio";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=drawer-flashlight-audio";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=drawer-flashlight-audio";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=drawer-flashlight-audio";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=drawer-flashlight-audio";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=drawer-flashlight-audio";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=drawer-flashlight-audio";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=drawer-flashlight-audio";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=drawer-flashlight-audio";
-import { PlayerController } from "./player/PlayerController.js?v=drawer-flashlight-audio";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=drawer-flashlight-audio";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=drawer-flashlight-audio";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=drawer-flashlight-audio";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=drawer-flashlight-audio";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=drawer-flashlight-audio";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=drawer-flashlight-audio";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=drawer-flashlight-audio";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=drawer-flashlight-audio";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=drawer-flashlight-audio";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=drawer-flashlight-audio";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=drawer-flashlight-audio";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=drawer-flashlight-audio";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=drawer-flashlight-audio";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=drawer-flashlight-audio";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=drawer-flashlight-audio";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=drawer-flashlight-audio";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=drawer-flashlight-audio";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=drawer-flashlight-audio";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=drawer-flashlight-audio";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=drawer-flashlight-audio";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=drawer-flashlight-audio";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=drawer-flashlight-audio";
+} from "./scene/InteriorObjectRegistry.js?v=prefab-marker-reset";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=prefab-marker-reset";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=prefab-marker-reset";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=prefab-marker-reset";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=prefab-marker-reset";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=prefab-marker-reset";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=prefab-marker-reset";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=prefab-marker-reset";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=prefab-marker-reset";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=prefab-marker-reset";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=prefab-marker-reset";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=prefab-marker-reset";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=prefab-marker-reset";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=prefab-marker-reset";
+import { PlayerController } from "./player/PlayerController.js?v=prefab-marker-reset";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=prefab-marker-reset";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=prefab-marker-reset";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=prefab-marker-reset";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=prefab-marker-reset";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=prefab-marker-reset";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=prefab-marker-reset";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=prefab-marker-reset";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=prefab-marker-reset";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=prefab-marker-reset";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=prefab-marker-reset";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=prefab-marker-reset";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=prefab-marker-reset";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=prefab-marker-reset";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=prefab-marker-reset";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=prefab-marker-reset";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=prefab-marker-reset";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=prefab-marker-reset";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=prefab-marker-reset";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=prefab-marker-reset";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=prefab-marker-reset";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=prefab-marker-reset";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=prefab-marker-reset";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=drawer-flashlight-audio";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=prefab-marker-reset";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1244,6 +1244,7 @@ const levelPrefabUpdateRuntime = new LevelPrefabUpdateRuntime({
   addMovingPlatformDelta: (delta) => movingPlatformDelta.add(delta),
   rebuildStaticPhysics: rebuildLevelStaticPhysics,
   playSound: playSoundAtObject,
+  getCoreSnapshot: () => latestSnapshot,
 });
 const updateLevelPrefabLights = levelPrefabUpdateRuntime.updateLights;
 const updateLevelPrefabClocks = levelPrefabUpdateRuntime.updateClocks;

@@ -249,7 +249,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
-    "gamma": 1.2,
+    "gamma": 1.25,
     "temperature": -0.13,
     "tint": -0.05,
     "emergencyTint": "#c2c2c2",

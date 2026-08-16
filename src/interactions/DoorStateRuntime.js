@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=drawer-flashlight-audio";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=drawer-flashlight-audio";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=prefab-marker-reset";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=prefab-marker-reset";
 
 export class DoorStateRuntime {
   constructor(options) {

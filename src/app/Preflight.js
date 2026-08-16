@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=drawer-flashlight-audio";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=prefab-marker-reset";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=prefab-marker-reset";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=drawer-flashlight-audio";
+} from "./UiAudioInteractionRuntime.js?v=prefab-marker-reset";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=drawer-flashlight-audio";
+} from "../config/GraphicsHardwareTiers.js?v=prefab-marker-reset";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=drawer-flashlight-audio";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=prefab-marker-reset";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

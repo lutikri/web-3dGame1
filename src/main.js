@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=drawer-flashlight-audio";
-import { applyLocalization } from "./app/Localization.js?v=drawer-flashlight-audio";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=drawer-flashlight-audio";
+import { createPreflight } from "./app/Preflight.js?v=prefab-marker-reset";
+import { applyLocalization } from "./app/Localization.js?v=prefab-marker-reset";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=prefab-marker-reset";
 
-const APP_BUILD_REVISION = "drawer-flashlight-audio";
+const APP_BUILD_REVISION = "prefab-marker-reset";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=drawer-flashlight-audio`);
+await import(`./OperatorGame.js?v=prefab-marker-reset`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=drawer-flashlight-audio`);
+const { createAppShell } = await import(`./app/AppShell.js?v=prefab-marker-reset`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=drawer-flashlight-audio`
+    `./runtime/RuntimeSmoke.js?v=prefab-marker-reset`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

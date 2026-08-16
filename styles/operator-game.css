@@ -1950,7 +1950,7 @@ body.app-ui-open #lockButton {
 }
 
 .loading-stage {
-  --loading-stage-scale: min(calc(100vw / 1920px), calc(100vh / 1080px));
+  --loading-stage-scale: 1;
   position: absolute;
   top: 50%;
   left: 50%;

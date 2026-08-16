@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=drawer-flashlight-audio";
+} from "../prefabs/PrefabMarkerResolver.js?v=prefab-marker-reset";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=drawer-flashlight-audio";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=drawer-flashlight-audio";
+} from "../levels/LevelConfigOverrides.js?v=prefab-marker-reset";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=prefab-marker-reset";
 
 export function createLevelSceneBuilder({
   scene,
