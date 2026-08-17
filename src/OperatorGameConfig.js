@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=open-facility-bulkheads";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=open-facility-bulkheads";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=open-facility-bulkheads";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=open-facility-bulkheads";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=camera-return";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=camera-return";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=camera-return";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=camera-return";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -103,8 +103,8 @@ export const CONFIG = {
         strafeSpringDamping: 0.62,
         forwardAccelerationScale: 0.0021,
         forwardWeightLimit: 0.024,
-        forwardWeightFrequency: 6.2,
-        forwardWeightDamping: 0.72,
+        forwardWeightFrequency: 10,
+        forwardWeightDamping: 1,
         forwardWeightPitchDegreesPerMeter: 24,
         lookAngularVelocityLimit: 7,
         lookAngularVelocityForFullSway: 4.5,

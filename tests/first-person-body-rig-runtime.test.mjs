@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import * as THREE from "three";
 
+import { CONFIG } from "../src/OperatorGameConfig.js";
 import { FirstPersonBodyRigRuntime } from "../src/player/FirstPersonBodyRigRuntime.js";
 
 function advance(rig, frames, input) {
@@ -109,6 +110,19 @@ test("starting and stopping resolved forward motion moves head weight in opposit
   advance(rig, 45, { actualDelta: new THREE.Vector3(0, 0, -1.4 / 60) });
   snapshot = advance(rig, 3, { actualDelta: new THREE.Vector3() });
   assert.ok(snapshot.components.forwardWeight > 0);
+});
+
+test("authored forward camera weight settles promptly without crossing its rest position", () => {
+  const rig = new FirstPersonBodyRigRuntime({ config: CONFIG.camera.operatorMovement.bodyRig });
+  advance(rig, 90, { actualDelta: new THREE.Vector3(0, 0, -CONFIG.camera.runSpeed / 60) });
+  let snapshot = advance(rig, 1, { actualDelta: new THREE.Vector3() });
+  assert.ok(snapshot.components.forwardWeight > 0);
+
+  for (let index = 0; index < 59; index += 1) {
+    snapshot = advance(rig, 1, { actualDelta: new THREE.Vector3() });
+    assert.ok(snapshot.components.forwardWeight >= 0);
+  }
+  assert.ok(snapshot.components.forwardWeight < 0.000005);
 });
 
 test("direct look deltas drive a separate angular reaction with recovery overshoot", () => {

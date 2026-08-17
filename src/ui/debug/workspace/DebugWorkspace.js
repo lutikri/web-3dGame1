@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=open-facility-bulkheads";
+} from "../../../levels/LevelConfigSerialization.js?v=camera-return";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=camera-return";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -51,6 +51,10 @@ export function getSuspendedLampDebugProperties(prefab, materialConfigs = {}) {
 
 export function getPlasmaViewDebugProperties(prefab) {
   return prefab?.behavior === "plasmaView" && prefab.plasma ? prefab.plasma : null;
+}
+
+export function getOperatorPanelScreenDebugProperties(prefab) {
+  return prefab?.behavior === "operatorPanel" && prefab.screen ? prefab.screen : null;
 }
 
 export function createDebugProjectSavePayload({
@@ -287,6 +291,28 @@ export function createDebugWorkspace({
       addNumber(radio, prefab.radio, "maxDistance", "MAX DISTANCE", 0.5, 20, 0.05, apply);
       addNumber(radio, prefab.radio, "refDistance", "REF DISTANCE", 0.05, 5, 0.05, apply);
       addNumber(radio, prefab.radio, "lampBlinkFrequency", "BLINK FREQUENCY", 0, 8, 0.05, apply);
+    }
+    const screenConfig = getOperatorPanelScreenDebugProperties(prefab);
+    if (screenConfig) {
+      const screen = propertiesGui.addFolder("STATUS SCREEN");
+      const phosphor = screen.addFolder("PHOSPHOR");
+      addNumber(phosphor, screenConfig, "brightness", "BRIGHTNESS", 0, 4, 0.01, apply);
+
+      const tube = screen.addFolder("TUBE");
+      addNumber(tube, screenConfig, "scanlineStrength", "SCANLINES", 0, 0.25, 0.001, apply);
+      addNumber(tube, screenConfig, "scanlineDensity", "LINE DENSITY", 0.25, 3, 0.01, apply);
+      addNumber(tube, screenConfig, "edgeDarkening", "EDGE DARKENING", 0, 0.5, 0.005, apply);
+      addNumber(tube, screenConfig, "cornerDarkening", "CORNER DARKENING", 0, 1, 0.005, apply);
+      addNumber(tube, screenConfig, "centerBoost", "CENTER BOOST", 0, 1, 0.005, apply);
+
+      const instability = screen.addFolder("INSTABILITY");
+      addNumber(instability, screenConfig, "flickerStrength", "FLICKER", 0, 0.1, 0.001, apply);
+      addNumber(instability, screenConfig, "jitterStrength", "JITTER", 0, 2, 0.01, apply);
+      addNumber(instability, screenConfig, "jitterEventStrength", "JITTER EVENT", 0, 3, 0.01, apply);
+
+      const persistence = screen.addFolder("PERSISTENCE");
+      addNumber(persistence, screenConfig, "persistenceStrength", "STRENGTH", 0, 1, 0.005, apply);
+      addNumber(persistence, screenConfig, "persistenceDecay", "DECAY SECONDS", 0.01, 2, 0.01, apply);
     }
     const plasmaConfig = getPlasmaViewDebugProperties(prefab);
     if (plasmaConfig) {

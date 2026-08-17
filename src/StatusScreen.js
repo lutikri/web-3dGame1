@@ -1,35 +1,66 @@
 import * as THREE from "three";
+import {
+  applyStatusScreenMaterialConfig,
+  createStatusScreenMaterial,
+} from "./panels/StatusScreenMaterial.js?v=camera-return";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;
 const UPDATE_INTERVAL = 0.35;
+const TERMINAL_COLUMNS = 44;
+const TERMINAL_ROWS = 20;
+const TERMINAL_FONT_SIZE = 24;
+const TERMINAL_LINE_HEIGHT = 23.5;
+const TERMINAL_SCALE_X = 1.35;
+const TERMINAL_LEFT = 48;
+const TERMINAL_TOP = 39;
+const COLOR_NORMAL = "#45ff92";
+const COLOR_LABEL = "#2fbf70";
+const COLOR_VALUE = "#abffd0";
+const COLOR_WARNING = "#ffcf5a";
+const COLOR_FAULT = "#ff5d55";
+const COLOR_OFF = "#5f7769";
 
-export function createStatusScreen({ brightness = 1 } = {}) {
+export function createStatusScreen({ brightness = 1, config = null } = {}) {
   const canvas = document.createElement("canvas");
   canvas.width = SCREEN_W;
   canvas.height = SCREEN_H;
+  const previousCanvas = document.createElement("canvas");
+  previousCanvas.width = SCREEN_W;
+  previousCanvas.height = SCREEN_H;
 
   const ctx = canvas.getContext("2d");
+  const previousCtx = previousCanvas.getContext("2d");
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.flipY = false;
+  const previousTexture = new THREE.CanvasTexture(previousCanvas);
+  previousTexture.colorSpace = THREE.SRGBColorSpace;
+  previousTexture.flipY = false;
 
-  const material = new THREE.MeshBasicMaterial({
-    map: texture,
-    color: new THREE.Color().setRGB(brightness, brightness, brightness),
-    toneMapped: false,
+  const initialConfig = config ?? { brightness };
+  const material = createStatusScreenMaterial({
+    currentTexture: texture,
+    previousTexture,
+    width: SCREEN_W,
+    height: SCREEN_H,
+    config: initialConfig,
   });
 
   const state = {
     elapsed: UPDATE_INTERVAL,
+    persistenceAge: 1000,
     mesh: null,
     material,
     texture,
+    previousTexture,
     snapshot: null,
   };
 
   drawStandby(ctx);
+  previousCtx.drawImage(canvas, 0, 0);
   texture.needsUpdate = true;
+  previousTexture.needsUpdate = true;
 
   return {
     attachToMesh(mesh) {
@@ -46,26 +77,46 @@ export function createStatusScreen({ brightness = 1 } = {}) {
 
     setPowerFactor(factor = 1) {
       const safeFactor = THREE.MathUtils.clamp(Number(factor ?? 1), 0, 1);
-      material.color.setRGB(brightness * safeFactor, brightness * safeFactor, brightness * safeFactor);
+      material.uniforms.uPowerFactor.value = safeFactor;
+    },
+
+    applyConfig(nextConfig) {
+      return applyStatusScreenMaterialConfig(material, nextConfig);
     },
 
     update(dt) {
-      state.elapsed += dt;
+      const safeDt = Math.max(0, Number(dt) || 0);
+      material.uniforms.uTime.value += safeDt;
+      state.persistenceAge += safeDt;
+      material.uniforms.uPersistenceAge.value = state.persistenceAge;
+      state.elapsed += safeDt;
       if (state.elapsed < UPDATE_INTERVAL) return;
 
       state.elapsed = 0;
+      previousCtx.clearRect(0, 0, SCREEN_W, SCREEN_H);
+      previousCtx.drawImage(canvas, 0, 0);
       if (!state.snapshot || state.snapshot.mode === "standby") {
         drawStandby(ctx);
       } else {
         drawStatus(ctx, state.snapshot);
       }
+      state.persistenceAge = 0;
+      material.uniforms.uPersistenceAge.value = 0;
+      previousTexture.needsUpdate = true;
       texture.needsUpdate = true;
+    },
+
+    dispose() {
+      texture.dispose();
+      previousTexture.dispose();
+      material.dispose();
     },
 
     getState() {
       return {
         attached: Boolean(state.mesh),
         data: state.snapshot,
+        effects: { ...material.userData.statusScreenEffects },
       };
     },
   };
@@ -73,14 +124,23 @@ export function createStatusScreen({ brightness = 1 } = {}) {
 
 function drawStandby(ctx) {
   drawBackground(ctx);
-  ctx.fillStyle = "#16482e";
-  ctx.font = "700 40px Consolas, monospace";
-  ctx.fillText("FUSION CORE CONSOLE", 56, 86);
+  drawTerminalText(ctx, 0, 0, "FUSION CORE CONTROL", COLOR_NORMAL);
+  drawTerminalRule(ctx, 1, COLOR_LABEL);
+  drawTerminalText(ctx, 3, 0, "SYSTEM INITIALIZATION COMPLETE", COLOR_VALUE);
 
-  ctx.fillStyle = "#4f8067";
-  ctx.font = "700 30px Consolas, monospace";
-  ctx.fillText("STANDBY", 56, 168);
-  ctx.fillText("PRESS START", 56, 220);
+  drawTerminalText(ctx, 5, 0, "01 CONTROL BUS ..................", COLOR_LABEL);
+  drawTerminalText(ctx, 5, 37, "READY", COLOR_VALUE);
+  drawTerminalText(ctx, 6, 0, "02 FIELD SUPPLY .................", COLOR_LABEL);
+  drawTerminalText(ctx, 6, 37, "READY", COLOR_VALUE);
+  drawTerminalText(ctx, 7, 0, "03 COOLANT LOOP .................", COLOR_LABEL);
+  drawTerminalText(ctx, 7, 37, "READY", COLOR_VALUE);
+  drawTerminalText(ctx, 8, 0, "04 CONTAINMENT ..................", COLOR_LABEL);
+  drawTerminalText(ctx, 8, 37, "READY", COLOR_VALUE);
+
+  drawTerminalText(ctx, 11, 0, "SYSTEM STATUS ...................", COLOR_LABEL);
+  drawTerminalText(ctx, 11, 37, "STANDBY", COLOR_NORMAL, true);
+  drawTerminalRule(ctx, 16, COLOR_LABEL);
+  drawTerminalText(ctx, 18, 0, "PRESS START TO BEGIN CORE SEQUENCE _", COLOR_VALUE);
 }
 
 function drawStatus(ctx, data) {
@@ -100,42 +160,45 @@ function drawStatus(ctx, data) {
 
   const warning = data.mode === "failed";
   const complete = data.mode === "complete";
+  const stateWord = warning ? "FAULT" : complete ? "OFF" : "RUN";
 
-  ctx.fillStyle = warning ? "#ff5d55" : complete ? "#a8ffbf" : "#45ff92";
-  ctx.shadowColor = warning ? "#ff3428" : "#1cff79";
-  ctx.shadowBlur = 18;
-  ctx.font = "700 36px Consolas, monospace";
-  ctx.fillText("FUSION CORE STATUS", 48, 68);
+  drawTerminalText(ctx, 0, 0, "FUSION CORE CONTROL", warning ? COLOR_FAULT : COLOR_NORMAL);
+  drawTerminalText(ctx, 0, 39, formatTime(data.remaining), COLOR_VALUE);
+  drawTerminalRule(ctx, 1, COLOR_LABEL);
+  drawTerminalText(ctx, 2, 0, "MODE:", COLOR_LABEL);
+  drawTerminalText(ctx, 2, 6, String(data.phase.name).slice(0, 21), COLOR_VALUE);
+  drawTerminalText(ctx, 2, 30, "STATE:", COLOR_LABEL);
+  drawTerminalText(ctx, 2, 37, stateWord, warning ? COLOR_FAULT : complete ? COLOR_OFF : COLOR_NORMAL, warning);
 
-  ctx.shadowBlur = 8;
-  ctx.font = "700 34px Consolas, monospace";
-  ctx.fillText(`PHASE: ${data.phase.name}`, 48, 126);
-  ctx.fillText(`TIME: ${formatTime(data.remaining)}`, 704, 126);
-
-  if (data.fuelBlend?.label && data.fuelBlend.state !== "green") {
-    ctx.fillStyle = data.fuelBlend.state === "red" ? "#ff5d55" : data.fuelBlend.state === "off" ? "#5f7769" : "#ffcf5a";
-    ctx.font = "700 24px Consolas, monospace";
-    ctx.fillText(`FUEL MIX: ${data.fuelBlend.label}`, 48, 164);
+  if (data.fuelBlend?.label) {
+    const blendColor = data.fuelBlend.state === "red" ? COLOR_FAULT : data.fuelBlend.state === "off" ? COLOR_OFF : COLOR_LABEL;
+    drawTerminalText(ctx, 3, 0, "FUEL MIX:", COLOR_LABEL);
+    drawTerminalText(ctx, 3, 10, String(data.fuelBlend.label).slice(0, 24), blendColor);
   }
 
-  ctx.font = "700 28px Consolas, monospace";
-  drawRow(ctx, "TEMP", `${Math.round(data.plasmaTemp)} MK`, 190, data.warning.tempHigh);
-  drawRow(ctx, "CONTAIN", `${Math.round(data.containment)}%`, 242, data.warning.fieldWeak);
-  drawRow(ctx, "OUTPUT", `${Math.round(data.powerOutput)} / ${Math.round(data.targetOutput)} MW`, 294, data.warning.outputLow);
-  drawRow(ctx, "BURN", `${Math.round(data.burnRate * 100)}%`, 346, data.warning.coreStall);
-  const ignitionProgress = Math.round((data.ignitionHold / 0.5) * 100);
-  const stallReadout = data.reactionStalled
-    ? `${Math.round(data.coreStall)}%  IGN ${ignitionProgress}%`
-    : `${Math.round(data.coreStall)}%  PULSE ${Math.round(data.pulseCharge)}%`;
-  drawRow(ctx, "STALL", stallReadout, 398, data.warning.coreStall);
-  drawRow(ctx, "STRESS", `${Math.round(data.coreStress)}%`, 450, data.warning.coreStress);
+  drawTerminalMetric(ctx, 5, "PLASMA TEMP", `${Math.round(data.plasmaTemp)} MK`, data.warning.tempHigh ? "HIGH" : "NOM", data.warning.tempHigh);
+  drawTerminalMetric(ctx, 6, "TEMP LIMIT", "140 MK", data.warning.tempCritical ? "TRIP" : "SET", data.warning.tempCritical);
+  drawTerminalMetric(ctx, 7, "CONTAINMENT", `${Math.round(data.containment)} %`, data.warning.fieldWeak ? "LOW" : "OK", data.warning.fieldWeak);
+  drawTerminalMetric(ctx, 8, "CORE STRESS", `${Math.round(data.coreStress)} %`, data.warning.coreStress ? "HIGH" : "OK", data.warning.coreStress);
+  drawTerminalMetric(ctx, 9, "THERMAL SOAK", `${Math.round(data.thermalSoak)} %`, data.warning.thermalSoak ? "HIGH" : "OK", data.warning.thermalSoak);
+
+  drawTerminalMetric(ctx, 11, "OUTPUT", `${Math.round(data.powerOutput)} MW`, data.warning.outputLow ? "LOW" : "ON", data.warning.outputLow);
+  drawTerminalMetric(ctx, 12, "REQUEST", `${Math.round(data.targetOutput)} MW`, "SET", false);
+  drawTerminalMetric(ctx, 13, "BURN RATE", `${Math.round(data.burnRate * 100)} %`, data.warning.coreStall ? "LOW" : "ON", data.warning.coreStall);
+  drawTerminalMetric(ctx, 14, "CORE STALL", `${Math.round(data.coreStall)} %`, data.reactionStalled ? "FAULT" : "OK", data.reactionStalled);
+  drawTerminalMetric(ctx, 15, "PULSE CHARGE", `${Math.round(data.pulseCharge)} %`, data.pulseCooldown > 0 ? "WAIT" : "READY", false);
+
+  drawTerminalText(ctx, 16, 0, "FUEL RSV", COLOR_LABEL);
+  drawTerminalText(ctx, 16, 10, `${Math.round(data.fuelReserve)} %`, COLOR_VALUE);
+  drawTerminalText(ctx, 16, 23, "HEAT SINK", COLOR_LABEL);
+  drawTerminalText(ctx, 16, 35, `${Math.round(data.heatSinkCapacity)} %`, COLOR_VALUE);
+
+  drawTerminalRule(ctx, 18, warning ? COLOR_FAULT : COLOR_LABEL);
+  const statusColor = warning ? COLOR_FAULT : data.status.includes("STABLE") || complete ? COLOR_NORMAL : COLOR_WARNING;
+  drawTerminalText(ctx, 19, 0, warning ? "FAULT" : complete ? "STATUS" : "STATUS", statusColor, warning);
+  drawTerminalText(ctx, 19, 8, String(data.status).slice(0, 35), statusColor);
+
   drawEmergencyBanner(ctx, data);
-
-  ctx.fillStyle = warning ? "#ff5d55" : data.status.includes("STABLE") || complete ? "#45ff92" : "#ffcf5a";
-  ctx.font = "700 28px Consolas, monospace";
-  ctx.fillText(`STATUS: ${data.status}`, 48, 492);
-
-  ctx.shadowBlur = 0;
 }
 
 function drawSelfTest(ctx, data) {
@@ -143,33 +206,29 @@ function drawSelfTest(ctx, data) {
   const progress = Math.max(0, Math.min(1, data.selfTestProgress ?? 0));
   const remaining = Math.max(0, Math.ceil((data.selfTestDuration ?? 0) - (data.selfTestElapsed ?? 0)));
   const sweep = Math.floor(progress * 24);
+  drawTerminalText(ctx, 0, 0, "FUSION CORE CONTROL", COLOR_NORMAL);
+  drawTerminalText(ctx, 0, 37, `${remaining} SEC`, COLOR_VALUE);
+  drawTerminalRule(ctx, 1, COLOR_LABEL);
+  drawTerminalText(ctx, 2, 0, "MODE: SYSTEM SELF-TEST", COLOR_VALUE);
+  drawTerminalText(ctx, 2, 34, "STATE:", COLOR_LABEL);
+  drawTerminalText(ctx, 2, 41, "RUN", COLOR_NORMAL, true);
 
-  ctx.fillStyle = "#45ff92";
-  ctx.shadowColor = "#1cff79";
-  ctx.shadowBlur = 18;
-  ctx.font = "900 58px Consolas, monospace";
-  ctx.fillText("SELF-TEST", 48, 96);
+  drawTerminalText(ctx, 5, 0, "01 INDICATOR BUS .................", COLOR_LABEL);
+  drawTerminalText(ctx, 5, 37, progress < 0.34 ? "TEST" : "READY", COLOR_VALUE);
+  drawTerminalText(ctx, 6, 0, "02 PANEL LAMPS ..................", COLOR_LABEL);
+  drawTerminalText(ctx, 6, 37, progress < 0.34 ? "CYCLE" : "HOLD", COLOR_VALUE);
+  drawTerminalText(ctx, 7, 0, "03 GAUGE DRIVE ..................", COLOR_LABEL);
+  drawTerminalText(ctx, 7, 37, progress < 0.78 ? "SWEEP" : "READY", COLOR_VALUE);
+  drawTerminalText(ctx, 8, 0, "04 LOCAL CONTROLS ...............", COLOR_LABEL);
+  drawTerminalText(ctx, 8, 37, progress < 0.9 ? "TEST" : "READY", COLOR_VALUE);
 
-  ctx.shadowBlur = 8;
-  ctx.font = "700 30px Consolas, monospace";
-  ctx.fillText("INDICATOR BUS CHECK", 48, 158);
-  ctx.fillText(`TIME: ${remaining} SEC`, 704, 158);
-
-  ctx.strokeStyle = "rgba(69, 255, 146, 0.52)";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(48, 210, SCREEN_W - 96, 46);
-  ctx.fillStyle = "rgba(69, 255, 146, 0.28)";
-  ctx.fillRect(56, 218, (SCREEN_W - 112) * progress, 30);
-
-  ctx.font = "700 26px Consolas, monospace";
-  drawRow(ctx, "LAMPS", `${progress < 0.34 ? "COLOR CYCLE" : "HOLD"}`, 318, false);
-  drawRow(ctx, "GAUGES", `${progress < 0.78 ? "SWEEP " + String(sweep).padStart(2, "0") : "RETURN"}`, 370, false);
-  drawRow(ctx, "CONTROLS", "LOCAL RESPONSE", 422, false);
-
-  ctx.fillStyle = "#ffcf5a";
-  ctx.font = "700 25px Consolas, monospace";
-  ctx.fillText("WATCH PANEL RESPONSE", 48, 492);
-  ctx.shadowBlur = 0;
+  drawTerminalText(ctx, 11, 0, "GAUGE SWEEP INDEX", COLOR_LABEL);
+  drawTerminalText(ctx, 11, 22, String(sweep).padStart(2, "0"), COLOR_VALUE);
+  drawTerminalText(ctx, 12, 0, "TEST COMPLETION", COLOR_LABEL);
+  drawTerminalText(ctx, 12, 22, `${Math.round(progress * 100)} %`, COLOR_VALUE);
+  drawTerminalRule(ctx, 18, COLOR_LABEL);
+  drawTerminalText(ctx, 19, 0, "STATUS", COLOR_WARNING, true);
+  drawTerminalText(ctx, 19, 8, "WATCH PANEL RESPONSE", COLOR_WARNING);
 }
 
 function drawStartupFault(ctx, data) {
@@ -178,25 +237,22 @@ function drawStartupFault(ctx, data) {
   ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
   const blink = Math.floor(performance.now() / 140) % 2 === 0;
   const color = blink ? "#ff4b42" : "#8f1f1b";
-
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 6;
-  ctx.strokeRect(34, 32, SCREEN_W - 68, SCREEN_H - 64);
-  ctx.fillStyle = color;
-  ctx.shadowColor = "#ff241a";
-  ctx.shadowBlur = blink ? 26 : 8;
-  ctx.textAlign = "center";
-  ctx.font = "900 76px Consolas, monospace";
-  ctx.fillText("START-UP FAIL", SCREEN_W / 2, 164);
-  ctx.font = "800 38px Consolas, monospace";
-  ctx.fillText("COMMAND SEQUENCE CONFLICT", SCREEN_W / 2, 254);
-  ctx.shadowBlur = 8;
-  ctx.font = "800 42px Consolas, monospace";
-  ctx.fillText(`RESET PENDING  ${Math.ceil(data.resetPending)} SEC`, SCREEN_W / 2, 354);
-  ctx.font = "700 25px Consolas, monospace";
-  ctx.fillText("START INHIBIT ACTIVE", SCREEN_W / 2, 425);
-  ctx.textAlign = "start";
-  ctx.shadowBlur = 0;
+  drawTerminalText(ctx, 0, 0, "FUSION CORE CONTROL", color);
+  drawTerminalRule(ctx, 1, color);
+  drawTerminalText(ctx, 3, 0, "START-UP SEQUENCE ABORTED", color);
+  drawTerminalText(ctx, 5, 0, "01 COMMAND SEQUENCE .............", color);
+  drawTerminalText(ctx, 5, 37, "FAULT", color, blink);
+  drawTerminalText(ctx, 6, 0, "02 START PERMISSIVE .............", color);
+  drawTerminalText(ctx, 6, 37, "OFF", color);
+  drawTerminalText(ctx, 7, 0, "03 CONTROL LATCH ................", color);
+  drawTerminalText(ctx, 7, 37, "LOCK", color);
+  drawTerminalText(ctx, 10, 0, "RESET DELAY", color);
+  drawTerminalText(ctx, 10, 18, `${Math.ceil(data.resetPending)} SEC`, color);
+  drawTerminalText(ctx, 12, 0, "OPERATOR ACTION", color);
+  drawTerminalText(ctx, 12, 18, "WAIT FOR RESET", color);
+  drawTerminalRule(ctx, 18, color);
+  drawTerminalText(ctx, 19, 0, "FAULT", color, blink);
+  drawTerminalText(ctx, 19, 8, "START INHIBIT ACTIVE", color);
 }
 
 function drawTerminalStatus(ctx, data) {
@@ -208,25 +264,25 @@ function drawTerminalStatus(ctx, data) {
   const automaticTrip = data.mode === "failed" && data.failureType !== "qualityFailure";
   const color = automaticTrip ? "#ff4b42" : "#72ff9d";
   const lines = getTerminalStatusLines(data);
-
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 5;
-  ctx.strokeRect(34, 32, SCREEN_W - 68, SCREEN_H - 64);
-  ctx.fillStyle = color;
-  ctx.shadowColor = color;
-  ctx.shadowBlur = 22;
-  ctx.textAlign = "center";
-  ctx.font = "900 72px Consolas, monospace";
-  ctx.fillText(lines[0], SCREEN_W / 2, 154);
-  ctx.font = "900 56px Consolas, monospace";
-  ctx.fillText(lines[1], SCREEN_W / 2, 262);
-  ctx.shadowBlur = 8;
-  ctx.font = "700 34px Consolas, monospace";
-  ctx.fillText(lines[2], SCREEN_W / 2, 360);
-  ctx.font = "700 24px Consolas, monospace";
-  ctx.fillText(lines[3], SCREEN_W / 2, 430);
-  ctx.textAlign = "start";
-  ctx.shadowBlur = 0;
+  drawTerminalText(ctx, 0, 0, "FUSION CORE CONTROL", color);
+  drawTerminalText(ctx, 0, 39, "00:00", color);
+  drawTerminalRule(ctx, 1, color);
+  drawTerminalText(ctx, 2, 0, "MODE: SHUTDOWN", color);
+  drawTerminalText(ctx, 2, 30, "STATE:", color);
+  drawTerminalText(ctx, 2, 37, automaticTrip ? "TRIP" : "OFF", color, automaticTrip);
+  drawTerminalText(ctx, 5, 0, "01 REACTION .....................", color);
+  drawTerminalText(ctx, 5, 37, automaticTrip ? "TRIP" : "OFF", color);
+  drawTerminalText(ctx, 6, 0, "02 CORE OUTPUT ..................", color);
+  drawTerminalText(ctx, 6, 37, "OFF", color);
+  drawTerminalText(ctx, 7, 0, "03 CONTAINMENT ..................", color);
+  drawTerminalText(ctx, 7, 37, "HOLD", color);
+  drawTerminalText(ctx, 10, 0, "SYSTEM MESSAGE", color);
+  drawTerminalText(ctx, 11, 3, lines[0], color);
+  drawTerminalText(ctx, 12, 3, lines[1], color);
+  drawTerminalText(ctx, 13, 3, lines[2], color);
+  drawTerminalRule(ctx, 18, color);
+  drawTerminalText(ctx, 19, 0, automaticTrip ? "FAULT" : "STATUS", color, automaticTrip);
+  drawTerminalText(ctx, 19, 8, lines[3], color);
 }
 
 export function getTerminalStatusLines(data) {
@@ -253,32 +309,19 @@ function drawEmergencyBanner(ctx, data) {
 
   const blink = Math.floor(performance.now() / 160) % 2 === 0;
   if (!blink && data.mode !== "failed") return;
+  const color = meltdown ? COLOR_FAULT : COLOR_WARNING;
+  const alert = meltdown ? "MELTDOWN IMMINENT" : stall ? "CORE STALL" : "THERMAL RUNAWAY";
+  const detail = stall
+    ? data.reactionStalled
+      ? `FUEL >30  COOLANT <58  PULSE ${Math.round((data.ignitionHold / 0.5) * 100)}%`
+      : `BURN ${Math.round(data.burnRate * 100)}%  PULSE ${Math.round(data.pulseCharge)}%`
+    : `TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`;
 
-  ctx.save();
-  ctx.fillStyle = "rgba(8, 0, 0, 0.82)";
-  ctx.fillRect(32, 154, SCREEN_W - 64, 172);
-  ctx.strokeStyle = meltdown ? "#ff3428" : "#ffcf5a";
-  ctx.lineWidth = 6;
-  ctx.strokeRect(38, 160, SCREEN_W - 76, 160);
-
-  ctx.shadowColor = meltdown ? "#ff3428" : "#ffcf5a";
-  ctx.shadowBlur = 22;
-  ctx.fillStyle = meltdown ? "#ff5d55" : "#ffcf5a";
-  ctx.font = "900 64px Consolas, monospace";
-  ctx.textAlign = "center";
-  ctx.fillText(meltdown ? "MELTDOWN IMMINENT" : stall ? "CORE STALL" : "THERMAL RUNAWAY", SCREEN_W / 2, 236);
-
-  ctx.font = "700 30px Consolas, monospace";
-  ctx.fillText(
-    stall
-      ? data.reactionStalled
-        ? `FUEL >30  COOLANT <58  HOLD PULSE ${Math.round((data.ignitionHold / 0.5) * 100)}%`
-        : `BURN ${Math.round(data.burnRate * 100)}%  PULSE ${Math.round(data.pulseCharge)}%`
-      : `TEMP ${Math.round(data.plasmaTemp)} MK  STRESS ${Math.round(data.coreStress)}%`,
-    SCREEN_W / 2,
-    286,
-  );
-  ctx.restore();
+  clearTerminalRows(ctx, 17, 3);
+  drawTerminalRule(ctx, 17, color);
+  drawTerminalText(ctx, 18, 0, meltdown ? "FAULT" : "WARNING", color, true);
+  drawTerminalText(ctx, 18, 8, alert, color);
+  drawTerminalText(ctx, 19, 8, detail, color);
 }
 
 function drawBackground(ctx) {
@@ -301,17 +344,54 @@ function drawBackground(ctx) {
     ctx.stroke();
   }
 
-  ctx.fillStyle = "rgba(69, 255, 146, 0.04)";
-  for (let y = 0; y < SCREEN_H; y += 6) {
-    ctx.fillRect(0, y, SCREEN_W, 2);
-  }
 }
 
-function drawRow(ctx, label, value, y, warning = false) {
-  ctx.fillStyle = "#2fbf70";
-  ctx.fillText(`${label}:`, 64, y);
-  ctx.fillStyle = warning ? "#ff5d55" : "#abffd0";
-  ctx.fillText(value, 360, y);
+function drawTerminalMetric(ctx, row, label, value, state, warning) {
+  const stateColor = warning ? COLOR_FAULT : state === "SET" ? COLOR_LABEL : COLOR_VALUE;
+  drawTerminalText(ctx, row, 0, label, COLOR_LABEL);
+  drawTerminalText(ctx, row, 18, value, warning ? COLOR_WARNING : COLOR_VALUE);
+  drawTerminalText(ctx, row, 37, state, stateColor, warning);
+}
+
+function drawTerminalRule(ctx, row, color) {
+  drawTerminalText(ctx, row, 0, "-".repeat(TERMINAL_COLUMNS), color);
+}
+
+function drawTerminalText(ctx, row, column, text, color, reverse = false) {
+  if (row < 0 || row >= TERMINAL_ROWS || column >= TERMINAL_COLUMNS) return;
+  const safeText = String(text ?? "").slice(0, TERMINAL_COLUMNS - column);
+
+  ctx.save();
+  ctx.scale(TERMINAL_SCALE_X, 1);
+  ctx.font = `700 ${TERMINAL_FONT_SIZE}px Consolas, monospace`;
+  ctx.textAlign = "start";
+  ctx.textBaseline = "alphabetic";
+  const cellWidth = ctx.measureText("0").width;
+  const x = TERMINAL_LEFT / TERMINAL_SCALE_X + column * cellWidth;
+  const y = TERMINAL_TOP + row * TERMINAL_LINE_HEIGHT;
+
+  if (reverse) {
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = color;
+    ctx.fillRect(x - 2, y - TERMINAL_FONT_SIZE + 4, Math.max(cellWidth * safeText.length + 4, cellWidth), TERMINAL_FONT_SIZE + 3);
+    ctx.fillStyle = "#020504";
+  } else {
+    ctx.fillStyle = color;
+    ctx.shadowColor = color === COLOR_FAULT ? "#ff3428" : "#1cff79";
+    ctx.shadowBlur = 8;
+  }
+
+  ctx.fillText(safeText, x, y);
+  ctx.restore();
+}
+
+function clearTerminalRows(ctx, firstRow, rowCount) {
+  const y = TERMINAL_TOP + (firstRow - 1) * TERMINAL_LINE_HEIGHT + 5;
+  ctx.save();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#020504";
+  ctx.fillRect(0, y, SCREEN_W, rowCount * TERMINAL_LINE_HEIGHT + 4);
+  ctx.restore();
 }
 
 function formatTime(seconds) {

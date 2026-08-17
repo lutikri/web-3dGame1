@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=open-facility-bulkheads";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=camera-return";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=camera-return";
 
 const MARKER_PREFIX = "PF_";
 

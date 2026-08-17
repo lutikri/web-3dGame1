@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=open-facility-bulkheads";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=camera-return";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

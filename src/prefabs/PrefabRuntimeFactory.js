@@ -1,13 +1,13 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=open-facility-bulkheads";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=open-facility-bulkheads";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=open-facility-bulkheads";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=open-facility-bulkheads";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=open-facility-bulkheads";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=open-facility-bulkheads";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=open-facility-bulkheads";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=open-facility-bulkheads";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=camera-return";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=camera-return";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=camera-return";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=camera-return";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=camera-return";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=camera-return";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=camera-return";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=camera-return";
 
 export function createPrefabRuntimeFactory({
   config,

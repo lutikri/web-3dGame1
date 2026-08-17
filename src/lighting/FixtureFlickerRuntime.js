@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=open-facility-bulkheads";
+} from "./FluorescentBehavior.js?v=camera-return";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

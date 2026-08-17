@@ -187,6 +187,14 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       ],
       "state": {
         "latched": true
+      },
+      "exceptions": {
+        "DoorBulk1_DoorBulkLocalObservation": {
+          "latched": false
+        },
+        "DoorBulk1_DoorBulkControlBooth": {
+          "latched": false
+        }
       }
     }
   ],
@@ -1904,6 +1912,19 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "screen": {
+        "brightness": 0.56,
+        "scanlineStrength": 0.04,
+        "scanlineDensity": 1,
+        "edgeDarkening": 0.1,
+        "cornerDarkening": 0.935,
+        "centerBoost": 0.665,
+        "flickerStrength": 0.1,
+        "jitterStrength": 1.41,
+        "jitterEventStrength": 1.21,
+        "persistenceStrength": 0.14,
+        "persistenceDecay": 2
+      },
       "name": "operatorPanel_Panel1",
       "placementOffset": {
         "position": {
@@ -2002,7 +2023,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": true
+        "latched": false
       },
       "name": "DoorBulk1_DoorBulkControlBooth",
       "placementOffset": {
@@ -2027,7 +2048,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "state": {
-        "latched": true
+        "latched": false
       },
       "name": "DoorBulk1_DoorBulkLocalObservation",
       "placementOffset": {

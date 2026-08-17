@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=open-facility-bulkheads";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=camera-return";
 
 export function createOperatorMovementRuntime({
   config,

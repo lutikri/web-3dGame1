@@ -55,6 +55,14 @@ test("prefab instances clone registry-owned nested defaults", () => {
   assert.equal(second.position.x, 0);
 });
 
+test("operator panel owns independent status screen effect defaults", () => {
+  const first = createPrefabInstance("operatorPanel", { name: "FirstPanel" });
+  const second = createPrefabInstance("operatorPanel", { name: "SecondPanel" });
+  first.screen.brightness = 2;
+  assert.equal(second.screen.brightness, 1.4);
+  assert.equal(second.screen.persistenceDecay, 0.26);
+});
+
 test("service door registry uses the current authored GLB", () => {
   assert.equal(getPrefabDefinition("serviceDoor").assetPath, "assets/mesh/prefabs/SM_Door2.glb");
 });

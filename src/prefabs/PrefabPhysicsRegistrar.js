@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=open-facility-bulkheads";
+} from "./behaviors/DeskDrawerBehavior.js?v=camera-return";
 
 export function createPrefabPhysicsRegistrar({
   physics,

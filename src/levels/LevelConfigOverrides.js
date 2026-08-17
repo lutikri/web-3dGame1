@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=camera-return";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

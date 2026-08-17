@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=open-facility-bulkheads";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=camera-return";
 
 const DISMISS_MS = 300;
 

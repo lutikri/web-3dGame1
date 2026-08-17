@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=open-facility-bulkheads";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=open-facility-bulkheads";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=open-facility-bulkheads";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=open-facility-bulkheads";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=camera-return";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=camera-return";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=camera-return";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=camera-return";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

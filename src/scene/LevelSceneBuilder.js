@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=open-facility-bulkheads";
+} from "../prefabs/PrefabMarkerResolver.js?v=camera-return";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=open-facility-bulkheads";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=open-facility-bulkheads";
+} from "../levels/LevelConfigOverrides.js?v=camera-return";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=camera-return";
 
 export function createLevelSceneBuilder({
   scene,

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=open-facility-bulkheads";
+import { applyAxisRotation } from "./TransformUtils.js?v=camera-return";
 
 export class InteriorObjectRegistry {
   constructor(options) {

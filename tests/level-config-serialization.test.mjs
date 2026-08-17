@@ -38,3 +38,18 @@ test("saved level snapshots exclude registry-owned prefab fields", () => {
     },
   ]);
 });
+
+test("saved operator panel snapshots retain artist-tuned screen effects", () => {
+  const snapshot = createLevelOverrideSnapshot({
+    prefabs: [{
+      name: "Panel1",
+      prefabType: "operatorPanel",
+      assetPath: "panel.glb",
+      materialKey: "panel1",
+      behavior: "operatorPanel",
+      position: { x: 0, y: 0, z: 0 },
+      screen: { brightness: 1.7, persistenceDecay: 0.32 },
+    }],
+  });
+  assert.deepEqual(snapshot.prefabs[0].screen, { brightness: 1.7, persistenceDecay: 0.32 });
+});

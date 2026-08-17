@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=open-facility-bulkheads";
+import { translateRequired } from "./Localization.js?v=camera-return";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

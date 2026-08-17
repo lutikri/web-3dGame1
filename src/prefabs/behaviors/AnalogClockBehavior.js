@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=open-facility-bulkheads";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=camera-return";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

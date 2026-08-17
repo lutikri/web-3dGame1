@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=open-facility-bulkheads";
+import { LevelSession } from "./LevelSession.js?v=camera-return";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   compareDebugPrefabs,
   createDebugProjectSavePayload,
+  getOperatorPanelScreenDebugProperties,
   getSuspendedLampDebugProperties,
   getPlasmaViewDebugProperties,
 } from "../src/ui/debug/workspace/DebugWorkspace.js";
@@ -37,6 +38,12 @@ test("debug workspace exposes live plasma prefab tuning", () => {
   };
   assert.equal(getPlasmaViewDebugProperties({ behavior: "plasmaView", plasma }), plasma);
   assert.equal(getPlasmaViewDebugProperties({ behavior: "radio", plasma }), null);
+});
+
+test("debug workspace exposes operator panel status screen tuning", () => {
+  const screen = { brightness: 1.4, persistenceDecay: 0.26 };
+  assert.equal(getOperatorPanelScreenDebugProperties({ behavior: "operatorPanel", screen }), screen);
+  assert.equal(getOperatorPanelScreenDebugProperties({ behavior: "radio", screen }), null);
 });
 
 test("debug workspace groups Blender bulkhead aliases and uses natural name order", () => {

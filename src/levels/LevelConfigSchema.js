@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=open-facility-bulkheads";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=camera-return";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 
