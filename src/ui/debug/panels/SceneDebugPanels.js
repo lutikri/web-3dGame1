@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=prefab-marker-reset";
+} from "../../../levels/LevelConfigSerialization.js?v=open-facility-bulkheads";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

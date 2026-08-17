@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=prefab-marker-reset";
+import { translateRequired } from "./Localization.js?v=open-facility-bulkheads";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -127,3 +127,17 @@ test("instrument reliability shift reuses the facility with its own brief, intro
   assert.equal(environment.lighting.pointLights.fill.intensity, 0);
   assert.ok(environment.lighting.pointLights.LampFan.intensity > 0);
 });
+
+test("facility observation and control booth bulkheads start unlatched in both facility shifts", () => {
+  const doorNames = [
+    "DoorBulk1_DoorBulkLocalObservation",
+    "DoorBulk1_DoorBulkControlBooth",
+  ];
+  ["exploring-around", "unexpected-stuff"].forEach((levelId) => {
+    const policies = LEVEL_DEFINITIONS[levelId].environment.prefabStatePolicies;
+    const bulkheadPolicy = policies.find((policy) => policy.prefabTypes?.includes("DoorBulk1"));
+    doorNames.forEach((doorName) => {
+      assert.deepEqual(bulkheadPolicy.exceptions?.[doorName], { latched: false });
+    });
+  });
+});

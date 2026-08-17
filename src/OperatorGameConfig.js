@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=prefab-marker-reset";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=prefab-marker-reset";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=prefab-marker-reset";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=prefab-marker-reset";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=open-facility-bulkheads";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=open-facility-bulkheads";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=open-facility-bulkheads";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=open-facility-bulkheads";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

@@ -1,13 +1,13 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prefab-marker-reset";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=prefab-marker-reset";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=prefab-marker-reset";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=prefab-marker-reset";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=open-facility-bulkheads";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=open-facility-bulkheads";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=open-facility-bulkheads";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=open-facility-bulkheads";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=open-facility-bulkheads";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=open-facility-bulkheads";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=open-facility-bulkheads";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=open-facility-bulkheads";
 
 export function createPrefabRuntimeFactory({
   config,

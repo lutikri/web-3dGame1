@@ -4,13 +4,17 @@ import * as THREE from "three";
 import { DoorInteractionSystem } from "../src/interactions/DoorInteractionSystem.js";
 import { LightingRuntime, applyLightShadowSettings } from "../src/lighting/LightingRuntime.js";
 import { createLevelSceneBuilder, isolatePrefabRoot } from "../src/scene/LevelSceneBuilder.js";
-import { applyLevelOverrides } from "../src/levels/LevelConfigOverrides.js";
+import { applyLevelOverrides, applyPrefabOverrideEntries } from "../src/levels/LevelConfigOverrides.js";
+import { createLevelOverrideSnapshot } from "../src/levels/LevelConfigSerialization.js";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "../src/levels/LevelExploringAroundConfig.js";
 import {
   mergeMarkerPrefabs,
   parsePrefabMarkerName,
   resolvePrefabMarkers,
 } from "../src/prefabs/PrefabMarkerResolver.js";
 import {
+  applyPrefabPlacementOffset,
+  createPrefabPlacementOffset,
   getPrefabPlacement,
   resetPrefabToAuthoredPlacement,
 } from "../src/prefabs/PrefabPlacementMetadata.js";
@@ -31,6 +35,86 @@ test("prefab markers resolve registry instances from Empty transforms", () => {
   prefab.position.set(99, 98, 97);
   assert.equal(resetPrefabToAuthoredPlacement(prefab), true);
   assert.deepEqual(prefab.position.toArray(), [11, 2, 3]);
+});
+
+test("marker prefabs expose an additive debug offset without changing their authored transform", () => {
+  const root = new THREE.Group();
+  const marker = new THREE.Object3D();
+  marker.name = "PF_fluorescentLamp_OffsetTest";
+  marker.position.set(4, 5, 6);
+  root.add(marker);
+  const [prefab] = resolvePrefabMarkers(root);
+  const offset = createPrefabPlacementOffset(prefab);
+
+  offset.position.set(0.25, -0.5, 1);
+  offset.rotation.set(0, Math.PI / 2, 0);
+  offset.scale.set(2, 1, 0.5);
+  assert.equal(applyPrefabPlacementOffset(prefab, offset), true);
+  assert.deepEqual(prefab.position.toArray(), [4.25, 4.5, 7]);
+  assert.deepEqual(prefab.scale.toArray(), [2, 1, 0.5]);
+
+  const roundTrip = createPrefabPlacementOffset(prefab);
+  assert.deepEqual(roundTrip.position.toArray(), offset.position.toArray());
+  assert.ok(Math.abs(roundTrip.rotation.y - Math.PI / 2) < 1e-8);
+});
+
+test("marker prefab offsets persist separately and legacy absolute saves migrate", () => {
+  const root = new THREE.Group();
+  const marker = new THREE.Object3D();
+  marker.name = "PF_fluorescentLamp_PersistedOffset";
+  marker.position.set(3, 4, 5);
+  root.add(marker);
+  const [prefab] = resolvePrefabMarkers(root);
+
+  applyPrefabOverrideEntries([prefab], [{
+    name: prefab.name,
+    position: { x: 4, y: 6, z: 8 },
+  }]);
+  assert.deepEqual(prefab.position.toArray(), [4, 6, 8]);
+  assert.deepEqual(prefab.placementOffset.position.toArray(), [1, 2, 3]);
+
+  const snapshot = createLevelOverrideSnapshot({ prefabs: [prefab], session: {} });
+  assert.equal("position" in snapshot.prefabs[0], false);
+  assert.deepEqual(snapshot.prefabs[0].placementOffset.position, { x: 1, y: 2, z: 3 });
+});
+
+test("marker prefab offsets apply when the marker already exists during config merge", () => {
+  const root = new THREE.Group();
+  const marker = new THREE.Object3D();
+  marker.name = "PF_fluorescentLamp_KnownMarker";
+  marker.position.set(1, 2, 3);
+  root.add(marker);
+  const [prefab] = resolvePrefabMarkers(root);
+
+  applyLevelOverrides({ prefabs: [prefab] }, {
+    prefabs: [{
+      name: prefab.name,
+      placementOffset: {
+        position: { x: 2, y: -1, z: 0.5 },
+        rotation: { x: 0, y: 0, z: 0 },
+        scale: { x: 1, y: 1, z: 1 },
+      },
+    }],
+  });
+
+  assert.deepEqual(prefab.position.toArray(), [3, 1, 3.5]);
+  assert.deepEqual(prefab.placementOffset.position.toArray(), [2, -1, 0.5]);
+});
+
+test("exploring around relies on authored prefab markers instead of legacy manual placements", () => {
+  const legacyNames = new Set([
+    "Panel1", "DoorBulk1_A", "DoorBulk1_B", "Door2_ServiceA",
+    "Lamp1_Corridor_1", "Lamp1_Corridor_2", "Lamp1_Corridor_3", "Lamp1_Corridor_4",
+    "Lamp1_TutorialCabin", "LampBulkRed_Exploring", "Clock1_Exploring",
+  ]);
+  assert.equal(
+    LEVEL_EXPLORING_AROUND_CONFIG.prefabs.some((prefab) => legacyNames.has(prefab.name)),
+    false,
+  );
+  assert.equal(
+    LEVEL_EXPLORING_AROUND_CONFIG.session.bindings[0].target,
+    "fluorescentLamp_TutorialCabin",
+  );
 });
 
 test("manual prefab configs override markers with the same stable name", () => {

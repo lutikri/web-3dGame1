@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=prefab-marker-reset";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=open-facility-bulkheads";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=open-facility-bulkheads";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=open-facility-bulkheads";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=open-facility-bulkheads";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=open-facility-bulkheads";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

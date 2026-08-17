@@ -1,3 +1,5 @@
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",
   "materialKey",
@@ -18,10 +20,14 @@ export function cloneSerializable(value) {
 export function createLevelOverrideSnapshot(environmentConfig) {
   const snapshot = cloneSerializable(environmentConfig);
   delete snapshot.session;
-  snapshot.prefabs = (snapshot.prefabs ?? []).map((prefab) =>
-    Object.fromEntries(
-      Object.entries(prefab).filter(([key]) => !REGISTRY_OWNED_PREFAB_KEYS.has(key)),
-    ),
-  );
+  snapshot.prefabs = (snapshot.prefabs ?? []).map((prefab) => {
+    const sourcePrefab = environmentConfig.prefabs?.find((entry) => entry.name === prefab.name);
+    const markerPlaced = getPrefabPlacement(sourcePrefab)?.source === "marker";
+    return Object.fromEntries(
+      Object.entries(prefab).filter(([key]) =>
+        !REGISTRY_OWNED_PREFAB_KEYS.has(key)
+        && !(markerPlaced && ["position", "rotation", "scale"].includes(key))),
+    );
+  });
   return snapshot;
 }

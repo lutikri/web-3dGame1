@@ -1,3 +1,5 @@
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=open-facility-bulkheads";
+
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 
 export function migrateLevelOverrides(overrides) {
@@ -55,6 +57,16 @@ export function validateLevelEnvironmentConfig(levelId, config) {
     assertVector(prefab.scale, `${label}.scale`, fail);
     if (prefab.light?.localOffset) assertVector(prefab.light.localOffset, `${label}.light.localOffset`, fail);
   });
+  const markerReferences = new Map();
+  (config.prefabMarkerReferences ?? []).forEach((reference, index) => {
+    const label = `prefabMarkerReferences[${index}]`;
+    const definition = getPrefabDefinition(reference?.prefabType);
+    if (!reference?.name || !definition) fail(`${label} is incomplete or uses an unknown prefab type`);
+    if (names.has(reference.name) || markerReferences.has(reference.name)) {
+      fail(`duplicate prefab name "${reference.name}"`);
+    }
+    markerReferences.set(reference.name, definition);
+  });
 
   const objectiveIds = new Set();
   (config.session?.objectives ?? []).forEach((objective, index) => {
@@ -71,7 +83,8 @@ export function validateLevelEnvironmentConfig(levelId, config) {
     }
     if (
       binding.action === "togglePrefabLight" &&
-      !(config.prefabs ?? []).some((prefab) => prefab.name === binding.target && prefab.light)
+      !(config.prefabs ?? []).some((prefab) => prefab.name === binding.target && prefab.light) &&
+      !markerReferences.get(binding.target)?.light
     ) {
       fail(`session binding target "${binding.target}" is not a light prefab`);
     }

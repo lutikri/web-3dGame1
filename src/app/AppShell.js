@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=prefab-marker-reset";
-import { translate } from "./Localization.js?v=prefab-marker-reset";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=prefab-marker-reset";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=prefab-marker-reset";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=prefab-marker-reset";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=prefab-marker-reset";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=prefab-marker-reset";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=open-facility-bulkheads";
+import { translate } from "./Localization.js?v=open-facility-bulkheads";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=open-facility-bulkheads";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=open-facility-bulkheads";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=open-facility-bulkheads";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=open-facility-bulkheads";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=open-facility-bulkheads";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=prefab-marker-reset";
-import { createAppPanelController } from "./AppPanelController.js?v=prefab-marker-reset";
-import { createAppRouter } from "./AppRouter.js?v=prefab-marker-reset";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=prefab-marker-reset";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=prefab-marker-reset";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=prefab-marker-reset";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=prefab-marker-reset";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=prefab-marker-reset";
+} from "./AppPersistence.js?v=open-facility-bulkheads";
+import { createAppPanelController } from "./AppPanelController.js?v=open-facility-bulkheads";
+import { createAppRouter } from "./AppRouter.js?v=open-facility-bulkheads";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=open-facility-bulkheads";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=open-facility-bulkheads";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=open-facility-bulkheads";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=open-facility-bulkheads";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=open-facility-bulkheads";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

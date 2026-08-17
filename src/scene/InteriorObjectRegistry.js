@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=prefab-marker-reset";
+import { applyAxisRotation } from "./TransformUtils.js?v=open-facility-bulkheads";
 
 export class InteriorObjectRegistry {
   constructor(options) {

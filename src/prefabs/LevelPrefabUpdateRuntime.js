@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=prefab-marker-reset";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=prefab-marker-reset";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=prefab-marker-reset";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=prefab-marker-reset";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=prefab-marker-reset";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=prefab-marker-reset";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=open-facility-bulkheads";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=open-facility-bulkheads";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=open-facility-bulkheads";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=open-facility-bulkheads";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=open-facility-bulkheads";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=open-facility-bulkheads";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

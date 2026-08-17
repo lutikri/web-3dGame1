@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=prefab-marker-reset";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=prefab-marker-reset";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=prefab-marker-reset";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=prefab-marker-reset";
+import { createDebugHub } from "./DebugHub.js?v=open-facility-bulkheads";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=open-facility-bulkheads";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=open-facility-bulkheads";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=open-facility-bulkheads";
 
 export class DebugToolsRuntime {
   constructor(options) {

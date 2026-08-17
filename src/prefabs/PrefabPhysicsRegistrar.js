@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=prefab-marker-reset";
+} from "./behaviors/DeskDrawerBehavior.js?v=open-facility-bulkheads";
 
 export function createPrefabPhysicsRegistrar({
   physics,

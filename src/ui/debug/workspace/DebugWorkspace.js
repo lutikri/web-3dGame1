@@ -2,11 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=prefab-marker-reset";
+} from "../../../levels/LevelConfigSerialization.js?v=open-facility-bulkheads";
 import {
+  applyPrefabPlacementOffset,
+  createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=prefab-marker-reset";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -236,26 +238,37 @@ export function createDebugWorkspace({
       setStatus(applied === false ? `${prefab.name} is not loaded` : `applied ${prefab.name}`, applied === false ? "warning" : "live");
     };
     const transform = propertiesGui.addFolder("TRANSFORM");
-    addVector(transform, "POSITION", prefab.position, -50, 50, 0.001, () => apply(true));
-    addVector(transform, "ROTATION", prefab.rotation, -Math.PI * 2, Math.PI * 2, 0.001, () => apply(true), ["_x", "_y", "_z"]);
-    addVector(transform, "SCALE", prefab.scale, 0.01, 10, 0.001, () => apply(true));
-    action(transform, "EDIT POSITION GIZMO", () => togglePositionGizmo?.({
-      id: `prefab:${levelId}:${prefab.name}`,
-      type: "prefab",
-      levelId,
-      key: prefab.name,
-      position: prefab.position,
-      onChange: () => apply(true),
-    }));
-    action(transform, "RESET OFFSETS TO MARKER", () => {
-      if (!resetPrefabToAuthoredPlacement(prefab)) {
-        setStatus(`${prefab.name} has no PF_* Blender marker`, "warning");
-        return;
-      }
-      apply(true);
-      setStatus(`reset ${prefab.name} to Blender marker`, "live");
-      rebuildProperties();
-    });
+    const placementOffset = createPrefabPlacementOffset(prefab);
+    if (placementOffset) {
+      const offset = transform.addFolder("ADDITIONAL OFFSET");
+      const applyOffset = () => {
+        applyPrefabPlacementOffset(prefab, placementOffset);
+        apply(true);
+      };
+      addVector(offset, "POSITION", placementOffset.position, -20, 20, 0.001, applyOffset);
+      addVector(offset, "ROTATION", placementOffset.rotation, -Math.PI * 2, Math.PI * 2, 0.001, applyOffset, ["_x", "_y", "_z"]);
+      addVector(offset, "SCALE MULTIPLIER", placementOffset.scale, 0.01, 10, 0.001, applyOffset);
+      action(offset, "RESET OFFSETS", () => {
+        resetPrefabToAuthoredPlacement(prefab);
+        apply(true);
+        setStatus(`reset ${prefab.name} offsets`, "live");
+        rebuildProperties();
+      });
+    } else {
+      addVector(transform, "POSITION", prefab.position, -50, 50, 0.001, () => apply(true));
+      addVector(transform, "ROTATION", prefab.rotation, -Math.PI * 2, Math.PI * 2, 0.001, () => apply(true), ["_x", "_y", "_z"]);
+      addVector(transform, "SCALE", prefab.scale, 0.01, 10, 0.001, () => apply(true));
+    }
+    if (!placementOffset) {
+      action(transform, "EDIT POSITION GIZMO", () => togglePositionGizmo?.({
+        id: `prefab:${levelId}:${prefab.name}`,
+        type: "prefab",
+        levelId,
+        key: prefab.name,
+        position: prefab.position,
+        onChange: () => apply(true),
+      }));
+    }
 
     if (prefab.light) addPrefabLightProperties(propertiesGui.addFolder("LIGHT"), prefab, apply);
     const suspended = getSuspendedLampDebugProperties(prefab, materialConfigs);

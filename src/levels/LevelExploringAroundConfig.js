@@ -1,15 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=prefab-marker-reset";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=prefab-marker-reset";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=prefab-marker-reset";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=prefab-marker-reset";
-
-// Blender uses Z-up. glTF/Three.js uses Y-up: (x, y, z) -> (x, z, -y).
-function blenderPosition(x, y, z) {
-  return new THREE.Vector3(x, z, -y);
-}
-
-const corridorLampXs = [1.6, 5.10382, 8.60764, 12.11146];
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=open-facility-bulkheads";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=open-facility-bulkheads";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=open-facility-bulkheads";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -73,7 +65,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         source: "SM_Details_LightButton1",
         event: "press",
         action: "togglePrefabLight",
-        target: "Lamp1_TutorialCabin",
+        target: "fluorescentLamp_TutorialCabin",
       },
     ],
   },
@@ -160,85 +152,15 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
       prefabTypes: ["bulkheadDoor", "DoorBulk1"],
       state: { latched: true },
       exceptions: {
-        DoorBulk1_A: { latched: false },
+        DoorBulk1_DoorBulkLocalObservation: { latched: false },
+        DoorBulk1_DoorBulkControlBooth: { latched: false },
       },
     },
   ],
-  prefabs: [
-    createPrefabInstance("operatorPanel", {
-      name: "Panel1",
-      position: blenderPosition(3.6, 2.44, -0.055),
-    }),
-    createPrefabInstance("bulkheadDoor", {
-      name: "DoorBulk1_A",
-      position: new THREE.Vector3(3.6, 0.151831, -0.02457743734996512),
-    }),
-    createPrefabInstance("bulkheadDoor", {
-      name: "DoorBulk1_B",
-      position: blenderPosition(13.1869, 0.006729, 0.151831),
-    }),
-    createPrefabInstance("serviceDoor", {
-      name: "Door2_ServiceA",
-      position: new THREE.Vector3(0, 0, 0),
-    }),
-    ...corridorLampXs.map((x, index) =>
-      createPrefabInstance("fluorescentLamp", {
-        name: `Lamp1_Corridor_${index + 1}`,
-        position: blenderPosition(x, -1.23, 2.38),
-        rotation: new THREE.Euler(0, Math.PI / 2, 0),
-        overrides: {
-          light: {
-            intensity: 1.35,
-            castShadow: index === 1,
-            startupDelaySeconds: (index + 1) * 2,
-            faultyStarterLoop: index === 1,
-          },
-        },
-      }),
-    ),
-    createPrefabInstance("fluorescentLamp", {
-      name: "Lamp1_TutorialCabin",
-      position: new THREE.Vector3(3.5663008893845523, 2.39028, -1.7304095448416588),
-      overrides: {
-        light: {
-          color: "#fffdfa",
-          intensity: 1.98,
-          distance: 3.25,
-          decay: 0.33,
-          localOffset: new THREE.Vector3(0.060629, -0.45930362303042627, 0),
-          castShadow: true,
-          shadowBias: 0.00024,
-          shadowRadius: 5.2,
-          fluorescentStartup: true,
-          roomLightControlled: true,
-          startupDelaySeconds: 3,
-          flicker: {
-            enabled: true,
-            minIntervalSeconds: 35,
-            maxIntervalSeconds: 110,
-            retryChance: 0.35,
-          },
-        },
-      },
-    }),
-    createPrefabInstance("redBulkLamp", {
-      name: "LampBulkRed_Exploring",
-      position: blenderPosition(3.02204, 0.030289, 2.0058),
-      overrides: {
-        light: {
-          intensity: 3.17,
-          distance: 1.5,
-          decay: 0.4,
-          localOffset: new THREE.Vector3(0, 0, -0.12778707579195908),
-        },
-      },
-    }),
-    createPrefabInstance("analogClock", {
-      name: "Clock1_Exploring",
-      position: new THREE.Vector3(3.1, 2.0, -1.35),
-      rotation: new THREE.Euler(0, Math.PI, 0),
-    }),
+  prefabMarkerReferences: [
+    { name: "fluorescentLamp_TutorialCabin", prefabType: "fluorescentLamp" },
   ],
+  prefabs: [],
   lighting: {
     ambientSky: "#71808c",
     ambientGround: "#08090a",

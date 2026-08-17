@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=prefab-marker-reset";
+import { LevelRuntime } from "./LevelRuntime.js?v=open-facility-bulkheads";
 
 export class LevelEnvironmentLifecycle {
   constructor({

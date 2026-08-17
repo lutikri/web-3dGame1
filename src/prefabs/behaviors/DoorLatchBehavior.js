@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=prefab-marker-reset";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=open-facility-bulkheads";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

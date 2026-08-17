@@ -19,6 +19,12 @@ function validConfig() {
       spawnPosition: new THREE.Vector3(),
       rotationDegrees: new THREE.Vector3(),
     },
+    world: {
+      backgroundColor: "#000000",
+      fogColor: "#000000",
+      fogNear: 1,
+      fogFar: 10,
+    },
     prefabs: [],
     lighting: { pointLights: {} },
   };
@@ -34,6 +40,32 @@ test("level schema rejects malformed transforms", () => {
   const config = validConfig();
   config.player.spawnPosition.x = Number.NaN;
   assert.throws(() => validateLevelEnvironmentConfig("test", config), /spawnPosition/);
+});
+
+test("level schema accepts light bindings to declared authored prefab markers", () => {
+  const config = validConfig();
+  config.prefabMarkerReferences = [
+    { name: "fluorescentLamp_Room", prefabType: "fluorescentLamp" },
+  ];
+  config.session = {
+    bindings: [{
+      source: "Button",
+      action: "togglePrefabLight",
+      target: "fluorescentLamp_Room",
+    }],
+  };
+  assert.equal(validateLevelEnvironmentConfig("test", config), config);
+});
+
+test("level schema rejects undeclared or non-light marker binding targets", () => {
+  const config = validConfig();
+  config.prefabMarkerReferences = [
+    { name: "Desk", prefabType: "Desk1" },
+  ];
+  config.session = {
+    bindings: [{ source: "Button", action: "togglePrefabLight", target: "Desk" }],
+  };
+  assert.throws(() => validateLevelEnvironmentConfig("test", config), /not a light prefab/);
 });
 
 test("legacy generated overrides migrate to the current schema", () => {

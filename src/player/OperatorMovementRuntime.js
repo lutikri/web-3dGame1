@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=prefab-marker-reset";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=open-facility-bulkheads";
 
 export function createOperatorMovementRuntime({
   config,

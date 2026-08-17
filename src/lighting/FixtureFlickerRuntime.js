@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=prefab-marker-reset";
+} from "./FluorescentBehavior.js?v=open-facility-bulkheads";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

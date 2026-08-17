@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=prefab-marker-reset";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=prefab-marker-reset";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=open-facility-bulkheads";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

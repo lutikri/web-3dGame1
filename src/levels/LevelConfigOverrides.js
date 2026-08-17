@@ -1,3 +1,5 @@
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=open-facility-bulkheads";
+
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",
   "materialKey",
@@ -44,12 +46,11 @@ function mergeNamedArray(target, overrides, path) {
       }
       return;
     }
-    const safeEntry = Object.fromEntries(
-      Object.entries(entry).filter(
-        ([key]) => path !== "prefabs" || !REGISTRY_OWNED_PREFAB_KEYS.has(key),
-      ),
-    );
-    applyLevelOverrides(targetEntry, safeEntry, `${path}.${entry.name}`);
+    if (path === "prefabs") {
+      applyPrefabOverrideEntry(targetEntry, entry);
+      return;
+    }
+    applyLevelOverrides(targetEntry, entry, `${path}.${entry.name}`);
   });
 }
 
@@ -65,12 +66,19 @@ export function applyPrefabOverrideEntries(prefabs, entries = []) {
   entries.forEach((entry) => {
     const target = prefabs.find((prefab) => prefab?.name === entry.name);
     if (!target) return;
-    const safeEntry = Object.fromEntries(
-      Object.entries(entry).filter(([key]) => !REGISTRY_OWNED_PREFAB_KEYS.has(key)),
-    );
-    applyLevelOverrides(target, safeEntry, `prefabs.${entry.name}`);
+    applyPrefabOverrideEntry(target, entry);
   });
   return prefabs;
+}
+
+function applyPrefabOverrideEntry(target, entry) {
+  const hasAuthoredPlacement = applySavedPrefabPlacement(target, entry);
+  const safeEntry = Object.fromEntries(
+    Object.entries(entry).filter(([key]) =>
+      !REGISTRY_OWNED_PREFAB_KEYS.has(key)
+      && !(hasAuthoredPlacement && ["position", "rotation", "scale", "placementOffset"].includes(key))),
+  );
+  applyLevelOverrides(target, safeEntry, `prefabs.${entry.name}`);
 }
 
 export function applyPrefabStatePolicies(prefabs, policies = []) {

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=prefab-marker-reset";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=open-facility-bulkheads";
 
 const EFFECT_KEYS = [
   "bloom",

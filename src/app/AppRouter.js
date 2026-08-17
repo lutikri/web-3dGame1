@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=prefab-marker-reset";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=open-facility-bulkheads";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

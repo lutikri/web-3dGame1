@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=prefab-marker-reset";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=open-facility-bulkheads";
 
 const DISMISS_MS = 300;
 
