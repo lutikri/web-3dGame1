@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=camera-return";
+} from "./panels/StatusScreenMaterial.js?v=status-viewport-prefab";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

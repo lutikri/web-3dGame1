@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=camera-return";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=status-viewport-prefab";
 
 const DISMISS_MS = 300;
 

@@ -5,6 +5,7 @@ import {
   compareDebugPrefabs,
   createDebugProjectSavePayload,
   getOperatorPanelScreenDebugProperties,
+  getStatusViewportDebugProperties,
   getSuspendedLampDebugProperties,
   getPlasmaViewDebugProperties,
 } from "../src/ui/debug/workspace/DebugWorkspace.js";
@@ -44,6 +45,12 @@ test("debug workspace exposes operator panel status screen tuning", () => {
   const screen = { brightness: 1.4, persistenceDecay: 0.26 };
   assert.equal(getOperatorPanelScreenDebugProperties({ behavior: "operatorPanel", screen }), screen);
   assert.equal(getOperatorPanelScreenDebugProperties({ behavior: "radio", screen }), null);
+});
+
+test("debug workspace exposes master status viewport tuning", () => {
+  const statusViewport = { updateIntervalSeconds: 1, indicators: { Efficiency: { intensity: 2 } } };
+  assert.equal(getStatusViewportDebugProperties({ behavior: "statusViewport", statusViewport }), statusViewport);
+  assert.equal(getStatusViewportDebugProperties({ behavior: "radio", statusViewport }), null);
 });
 
 test("debug workspace groups Blender bulkhead aliases and uses natural name order", () => {

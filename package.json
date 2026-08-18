@@ -3,6 +3,8 @@
   "scripts": {
     "dev": "node dev-server.cjs",
     "check": "node scripts/check-project.mjs && node --test tests/*.test.mjs",
+    "textures": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/generate-runtime-textures.ps1",
+    "textures:all": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/generate-runtime-textures.ps1 -All",
     "stamp-modules": "node scripts/stamp-module-revision.mjs",
     "test": "node --test tests/*.test.mjs"
   },

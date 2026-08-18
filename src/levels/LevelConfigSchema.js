@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=camera-return";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=status-viewport-prefab";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

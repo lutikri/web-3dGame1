@@ -27,6 +27,11 @@ $jobs = @(
   @{ Source = "T_Panel1_Normal.png"; Prefix = "T_Panel1_Normal_Critical"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Panel1_OcclusionRoughnessMetallic.png"; Prefix = "T_Panel1_OcclusionRoughnessMetallic_Critical"; Preview = 1024; Mode = "linear"; Quality = 190 },
 
+  @{ Source = "T_PanelStatusView1_BaseColor.png"; Prefix = "T_PanelStatusView1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
+  @{ Source = "T_PanelStatusView1_Normal.png"; Prefix = "T_PanelStatusView1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_PanelStatusView1_OcclusionRoughnessMetallic.png"; Prefix = "T_PanelStatusView1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+  @{ Source = "T_PanelStatusView1_Emissive.png"; Prefix = "T_PanelStatusView1_Emissive_Interactive"; Preview = 512; Mode = "srgb"; Quality = 175 },
+
   @{ Source = "T_Interior1_Mask_Mask.png"; Prefix = "T_Interior1_Mask_Background"; Preview = 1024; Mode = "linear"; Quality = 190; KeepPreviewPng = $true },
 
   @{ Source = "T_Bricks1Old_BaseColor.png"; Prefix = "T_Bricks1Old_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },
@@ -207,7 +212,15 @@ function Get-CompactLabel($text, $maxLength) {
   return "$($text.Substring(0, $maxLength - 3))..."
 }
 
-function Write-FancyProgress($completedUnits, $totalUnits, $jobIndex, $jobTotal, $currentTexture, $stage) {
+function New-ProgressBar($percent, $width) {
+  $filled = [Math]::Min($width, [int][Math]::Floor(($percent / 100) * $width))
+  $empty = $width - $filled
+  if ($filled -le 0) { return "." * $width }
+  if ($filled -ge $width) { return "=" * $width }
+  return ("=" * ($filled - 1)) + ">" + ("." * $empty)
+}
+
+function Write-FancyProgress($completedUnits, $totalUnits, $jobIndex, $jobTotal, $currentTexture, $stage, $currentPercent) {
   if ($totalUnits -le 0) {
     return
   }
@@ -220,22 +233,18 @@ function Write-FancyProgress($completedUnits, $totalUnits, $jobIndex, $jobTotal,
     $consoleWidth = 100
   }
 
-  $barWidth = [Math]::Max(24, [Math]::Min(44, $consoleWidth - 70))
-  $filled = [Math]::Min($barWidth, [int][Math]::Floor(($percent / 100) * $barWidth))
-  $empty = $barWidth - $filled
-  $bar = ("=" * $filled) + ("." * $empty)
-  if ($filled -lt $barWidth -and $filled -gt 0) {
-    $bar = ("=" * ($filled - 1)) + ">" + ("." * $empty)
-  }
+  $barWidth = [Math]::Max(12, [Math]::Min(24, [int](($consoleWidth - 76) / 2)))
+  $bar = New-ProgressBar $percent $barWidth
+  $textureBar = New-ProgressBar $currentPercent $barWidth
 
   $textureLabel = Get-CompactLabel $currentTexture 38
   $stageLabel = Get-CompactLabel $stage 18
-  $plainLine = "[{0}] {1,3}%  {2}/{3} tex  {4}/{5} steps  {6} - {7}" -f $bar, $percent, $jobIndex, $jobTotal, $completedUnits, $totalUnits, $textureLabel, $stageLabel
+  $plainLine = "ALL [{0}] {1,3}%  TEX [{2}] {3,3}%  {4}/{5}  {6} - {7}" -f $bar, $percent, $textureBar, $currentPercent, $jobIndex, $jobTotal, $textureLabel, $stageLabel
 
   if ($script:UseAnsiProgress) {
     $esc = [char]27
     $barColor = if ($percent -ge 100) { "32" } elseif ($percent -ge 66) { "36" } elseif ($percent -ge 33) { "33" } else { "35" }
-    $line = "[${esc}[1;${barColor}m$bar${esc}[0m] ${esc}[1m$($percent.ToString().PadLeft(3))%${esc}[0m  $jobIndex/$jobTotal tex  $completedUnits/$totalUnits steps  ${esc}[36m$textureLabel${esc}[0m - $stageLabel"
+    $line = "ALL [${esc}[1;${barColor}m$bar${esc}[0m] ${esc}[1m$($percent.ToString().PadLeft(3))%${esc}[0m  TEX [${esc}[36m$textureBar${esc}[0m] $($currentPercent.ToString().PadLeft(3))%  $jobIndex/$jobTotal  ${esc}[36m$textureLabel${esc}[0m - $stageLabel"
   } else {
     $line = $plainLine
   }
@@ -256,15 +265,20 @@ function Complete-FancyProgressLine() {
   }
 }
 
+$requestedMode = [string]$env:TEXTURE_TOOL_MODE
+$convertAll = $requestedMode -eq "all"
+$textureFilter = if ([string]::IsNullOrWhiteSpace($env:TEXTURE_TOOL_FILTER)) { "*" } else { $env:TEXTURE_TOOL_FILTER }
+
 Write-Host ""
 Write-Host "Runtime texture generation"
-Write-Host "  [N] Only new/changed textures (default)"
-Write-Host "  [A] Convert all textures"
-$choice = Read-Host "Choose mode"
-$convertAll = $choice -match "^[Aa]"
+Write-Host "  mode:   $(if ($convertAll) { 'all textures' } else { 'new/changed only' })"
+Write-Host "  filter: $textureFilter"
 
 $selectedJobs = @()
 foreach ($job in $jobs) {
+  if ($job.Source -notlike $textureFilter) {
+    continue
+  }
   $paths = Get-JobPaths $job
   if (!(Test-Path -LiteralPath $paths.Source)) {
     Write-Warning "Skipping missing source: $($paths.Source)"
@@ -307,26 +321,29 @@ foreach ($job in $selectedJobs) {
 
   $percent = [int](($completedUnits / $totalUnits) * 100)
   Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Resize preview: $($job.Source)" -PercentComplete $percent
-  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "resize preview"
+  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "resize preview" 0
 
   if (Save-ResizedPng -sourcePath $source -targetPath $previewPng -maxSize $job.Preview) {
     $completedUnits++
-    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview ready"
+    $previewReadyPercent = if ($job.KeepPreviewPng) { 25 } else { 33 }
+    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview ready" $previewReadyPercent
 
     if ($job.KeepPreviewPng) {
       Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Copy preview PNG: $($job.Source)" -PercentComplete ([int](($completedUnits / $totalUnits) * 100))
-      Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "copy preview png"
+      Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "copy preview png" 25
       Copy-Item -LiteralPath $previewPng -Destination $paths.PreviewRuntimePng -Force
       $completedUnits++
-      Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview png copied"
+      Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview png copied" 50
     }
 
     Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Encode preview KTX2: $($job.Source)" -PercentComplete ([int](($completedUnits / $totalUnits) * 100))
-    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "encode preview"
+    $previewEncodePercent = if ($job.KeepPreviewPng) { 50 } else { 33 }
+    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "encode preview" $previewEncodePercent
     Invoke-BasisuKtx2 -inputPath $previewPng -outputPath $previewKtx2 -mode $job.Mode -quality $job.Quality
     Remove-Item -LiteralPath $previewPng -Force
     $completedUnits++
-    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview encoded"
+    $previewEncodedPercent = if ($job.KeepPreviewPng) { 75 } else { 67 }
+    Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "preview encoded" $previewEncodedPercent
   } else {
     $completedUnits += 2
     if ($job.KeepPreviewPng) {
@@ -335,10 +352,11 @@ foreach ($job in $selectedJobs) {
   }
 
   Write-Progress -Activity "Generating runtime textures" -Status "[$jobIndex/$($selectedJobs.Count)] Encode full KTX2: $($job.Source)" -PercentComplete ([int](($completedUnits / $totalUnits) * 100))
-  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "encode full"
+  $fullEncodePercent = if ($job.KeepPreviewPng) { 75 } else { 67 }
+  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "encode full" $fullEncodePercent
   Invoke-BasisuKtx2 -inputPath $source -outputPath $fullKtx2 -mode $job.Mode -quality $job.Quality
   $completedUnits++
-  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "done"
+  Write-FancyProgress $completedUnits $totalUnits $jobIndex $selectedJobs.Count $job.Source "done" 100
 }
 
 Write-Progress -Activity "Generating runtime textures" -Completed

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=camera-return";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=status-viewport-prefab";
 
 const EFFECT_KEYS = [
   "bloom",

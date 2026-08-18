@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=camera-return";
+} from "../../../levels/LevelConfigSerialization.js?v=status-viewport-prefab";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=camera-return";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=status-viewport-prefab";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -55,6 +55,10 @@ export function getPlasmaViewDebugProperties(prefab) {
 
 export function getOperatorPanelScreenDebugProperties(prefab) {
   return prefab?.behavior === "operatorPanel" && prefab.screen ? prefab.screen : null;
+}
+
+export function getStatusViewportDebugProperties(prefab) {
+  return prefab?.behavior === "statusViewport" && prefab.statusViewport ? prefab.statusViewport : null;
 }
 
 export function createDebugProjectSavePayload({
@@ -313,6 +317,37 @@ export function createDebugWorkspace({
       const persistence = screen.addFolder("PERSISTENCE");
       addNumber(persistence, screenConfig, "persistenceStrength", "STRENGTH", 0, 1, 0.005, apply);
       addNumber(persistence, screenConfig, "persistenceDecay", "DECAY SECONDS", 0.01, 2, 0.01, apply);
+    }
+    const statusViewport = getStatusViewportDebugProperties(prefab);
+    if (statusViewport) {
+      const viewport = propertiesGui.addFolder("MASTER STATUS VIEW");
+      addNumber(viewport, statusViewport, "updateIntervalSeconds", "UPDATE SECONDS", 0.1, 5, 0.1, apply);
+
+      const screen = viewport.addFolder("SCREEN");
+      addNumber(screen, statusViewport.screen, "brightness", "BRIGHTNESS", 0, 4, 0.01, apply);
+      addNumber(screen, statusViewport.screen, "scanlineStrength", "SCANLINES", 0, 0.25, 0.001, apply);
+      addNumber(screen, statusViewport.screen, "scanlineDensity", "LINE DENSITY", 0.25, 3, 0.01, apply);
+      addNumber(screen, statusViewport.screen, "edgeDarkening", "EDGE DARKENING", 0, 0.5, 0.005, apply);
+      addNumber(screen, statusViewport.screen, "cornerDarkening", "CORNER DARKENING", 0, 1, 0.005, apply);
+      addNumber(screen, statusViewport.screen, "centerBoost", "CENTER BOOST", 0, 1, 0.005, apply);
+      addNumber(screen, statusViewport.screen, "flickerStrength", "FLICKER", 0, 0.1, 0.001, apply);
+      addNumber(screen, statusViewport.screen, "jitterStrength", "JITTER", 0, 2, 0.01, apply);
+      addNumber(screen, statusViewport.screen, "jitterEventStrength", "JITTER EVENT", 0, 3, 0.01, apply);
+      addNumber(screen, statusViewport.screen, "persistenceStrength", "PERSISTENCE", 0, 1, 0.005, apply);
+      addNumber(screen, statusViewport.screen, "persistenceDecay", "DECAY SECONDS", 0.01, 2, 0.01, apply);
+
+      const palette = viewport.addFolder("STATE COLORS");
+      addColor(palette, statusViewport.palette, "off", "OFF", apply);
+      addColor(palette, statusViewport.palette, "green", "GREEN", apply);
+      addColor(palette, statusViewport.palette, "amber", "AMBER", apply);
+      addColor(palette, statusViewport.palette, "red", "RED", apply);
+
+      const indicators = viewport.addFolder("INDICATORS");
+      Object.entries(statusViewport.indicators ?? {}).forEach(([name, tuning]) => {
+        const indicator = indicators.addFolder(name.toUpperCase());
+        addColor(indicator, tuning, "tint", "TINT", apply);
+        addNumber(indicator, tuning, "intensity", "EMISSIVE", 0, 12, 0.05, apply);
+      });
     }
     const plasmaConfig = getPlasmaViewDebugProperties(prefab);
     if (plasmaConfig) {

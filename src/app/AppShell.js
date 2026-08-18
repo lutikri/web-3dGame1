@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=camera-return";
-import { translate } from "./Localization.js?v=camera-return";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=camera-return";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=camera-return";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=camera-return";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=camera-return";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=camera-return";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=status-viewport-prefab";
+import { translate } from "./Localization.js?v=status-viewport-prefab";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=status-viewport-prefab";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=status-viewport-prefab";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=status-viewport-prefab";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=status-viewport-prefab";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=status-viewport-prefab";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=camera-return";
-import { createAppPanelController } from "./AppPanelController.js?v=camera-return";
-import { createAppRouter } from "./AppRouter.js?v=camera-return";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=camera-return";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=camera-return";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=camera-return";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=camera-return";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=camera-return";
+} from "./AppPersistence.js?v=status-viewport-prefab";
+import { createAppPanelController } from "./AppPanelController.js?v=status-viewport-prefab";
+import { createAppRouter } from "./AppRouter.js?v=status-viewport-prefab";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=status-viewport-prefab";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=status-viewport-prefab";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=status-viewport-prefab";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=status-viewport-prefab";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=status-viewport-prefab";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

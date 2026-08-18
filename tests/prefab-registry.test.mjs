@@ -23,6 +23,19 @@ test("plasma view marker resolves to the authored torus prefab and reactor behav
   });
 });
 
+test("master status viewport marker resolves to the reusable panel behavior", () => {
+  const panel = createPrefabInstance("PanelStatusViewport1", { name: "PanelStatusViewport1" });
+  assert.equal(panel.assetPath, "assets/mesh/prefabs/SM_PanelStatusViewport1.glb");
+  assert.equal(panel.behavior, "statusViewport");
+  assert.equal(panel.materialKey, "panelStatusView1");
+  assert.equal(panel.statusViewport.screenMeshName, "SM_PanelViewStatus1_Screen");
+  assert.equal(panel.statusViewport.updateIntervalSeconds, 1);
+  assert.deepEqual(parsePrefabMarkerName("PF_PanelStatusViewport1_PanelStatusViewport1"), {
+    prefabType: "PanelStatusViewport1",
+    instanceName: "PanelStatusViewport1",
+  });
+});
+
 test("flashlight marker resolves to a portable physical equipment item", () => {
   const flashlight = createPrefabInstance("FlashLight", { name: "FlashLight1" });
   assert.equal(flashlight.assetPath, "assets/mesh/prefabs/SM_Flashligh1.glb");

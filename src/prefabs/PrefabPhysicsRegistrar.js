@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=camera-return";
+} from "./behaviors/DeskDrawerBehavior.js?v=status-viewport-prefab";
 
 export function createPrefabPhysicsRegistrar({
   physics,

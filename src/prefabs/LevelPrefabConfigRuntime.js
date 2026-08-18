@@ -1,9 +1,10 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=camera-return";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=camera-return";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=camera-return";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=camera-return";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=camera-return";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=status-viewport-prefab";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=status-viewport-prefab";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=status-viewport-prefab";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=status-viewport-prefab";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=status-viewport-prefab";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -29,6 +30,7 @@ export class LevelPrefabConfigRuntime {
       resetControlPostRuntime(runtime.controlPost);
     }
     if (runtime.plasmaView) applyPlasmaViewConfig(runtime.plasmaView, prefab.plasma);
+    if (runtime.statusViewport) applyStatusViewportConfig(runtime.statusViewport, prefab.statusViewport);
     runtime.elevatorCagePhysicsDisabled = false;
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorCagePhysicsKey, true);
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorDoorPhysicsKey, true);

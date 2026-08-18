@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=camera-return";
+import { LevelRuntime } from "./LevelRuntime.js?v=status-viewport-prefab";
 
 export class LevelEnvironmentLifecycle {
   constructor({

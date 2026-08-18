@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=camera-return";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=camera-return";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=camera-return";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=camera-return";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=status-viewport-prefab";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=status-viewport-prefab";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=status-viewport-prefab";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=status-viewport-prefab";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -604,6 +604,31 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#000000",
         emissiveIntensity: 0,
+      },
+      panelStatusView1: {
+        materialNames: ["MI_PanelStatusView1"],
+        namePrefixes: ["SM_PanelViewStatus1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_PanelStatusView1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_PanelStatusView1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_PanelStatusView1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_PanelStatusView1_Emissive_Interactive_Preview_512_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_PanelStatusView1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_PanelStatusView1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_PanelStatusView1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+            emissive: "assets/runtime-textures/T_PanelStatusView1_Emissive_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#ffffff",
+        emissiveIntensity: 0.04,
       },
       desk1: {
         materialNames: ["M_Desk1", "M_Desk1.001"],

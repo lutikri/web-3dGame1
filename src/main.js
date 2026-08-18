@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=camera-return";
-import { applyLocalization } from "./app/Localization.js?v=camera-return";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=camera-return";
+import { createPreflight } from "./app/Preflight.js?v=status-viewport-prefab";
+import { applyLocalization } from "./app/Localization.js?v=status-viewport-prefab";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=status-viewport-prefab";
 
-const APP_BUILD_REVISION = "camera-return";
+const APP_BUILD_REVISION = "status-viewport-prefab";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=camera-return`);
+await import(`./OperatorGame.js?v=status-viewport-prefab`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=camera-return`);
+const { createAppShell } = await import(`./app/AppShell.js?v=status-viewport-prefab`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=camera-return`
+    `./runtime/RuntimeSmoke.js?v=status-viewport-prefab`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

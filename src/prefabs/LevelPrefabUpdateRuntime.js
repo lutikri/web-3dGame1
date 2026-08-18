@@ -1,10 +1,11 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=camera-return";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=camera-return";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=camera-return";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=camera-return";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=camera-return";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=camera-return";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=status-viewport-prefab";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=status-viewport-prefab";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=status-viewport-prefab";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=status-viewport-prefab";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=status-viewport-prefab";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=status-viewport-prefab";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -103,6 +104,7 @@ export class LevelPrefabUpdateRuntime {
       if (levelId !== displayed || !this.isLevelView()) return;
       updateSuspendedLampRuntime(runtime.suspendedLamp, dt);
       updatePlasmaViewRuntime(runtime.plasmaView, this.getCoreSnapshot?.(), dt);
+      updateStatusViewportRuntime(runtime.statusViewport, this.getCoreSnapshot?.(), dt);
       updateBarrierGateRuntime(runtime.barrierGate, dt).forEach((event) => {
         if (event.type === "unlockGate") this.#unlockBarrier(runtime, levelId, event);
         else if (event.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);

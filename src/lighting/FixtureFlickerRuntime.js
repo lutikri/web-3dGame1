@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=camera-return";
+} from "./FluorescentBehavior.js?v=status-viewport-prefab";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

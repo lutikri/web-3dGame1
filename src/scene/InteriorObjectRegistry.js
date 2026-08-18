@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=camera-return";
+import { applyAxisRotation } from "./TransformUtils.js?v=status-viewport-prefab";
 
 export class InteriorObjectRegistry {
   constructor(options) {

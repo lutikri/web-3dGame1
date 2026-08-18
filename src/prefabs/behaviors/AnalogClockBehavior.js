@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=camera-return";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=status-viewport-prefab";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

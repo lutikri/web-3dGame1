@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=camera-return";
+import { translateRequired } from "./Localization.js?v=status-viewport-prefab";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

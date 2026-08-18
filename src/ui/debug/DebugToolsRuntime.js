@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=camera-return";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=camera-return";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=camera-return";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=camera-return";
+import { createDebugHub } from "./DebugHub.js?v=status-viewport-prefab";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=status-viewport-prefab";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=status-viewport-prefab";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=status-viewport-prefab";
 
 export class DebugToolsRuntime {
   constructor(options) {

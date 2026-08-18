@@ -149,7 +149,7 @@ Avoid adding another always-visible floating panel directly from gameplay code.
 
 - `source-assets/` contains editable or heavy source material: Blender, FBX, Substance, PSD, source textures, raw audio, bake files, and references.
 - `assets/` contains runtime assets shipped to the browser.
-- Use `generate-runtime-textures.bat` for texture compression.
+- Use `npm run textures` for incremental texture compression. Use `npm run textures:all` only when every registered texture must be rebuilt; the legacy BAT entrypoints delegate to the same pipeline.
 - Use `convert-runtime-audio.bat` for WAV to Ogg conversion.
 
 Do not reference `source-assets/` from game runtime code.

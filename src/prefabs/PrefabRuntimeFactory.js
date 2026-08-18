@@ -1,13 +1,14 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=camera-return";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=camera-return";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=camera-return";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=camera-return";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=camera-return";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=camera-return";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=camera-return";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=camera-return";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=status-viewport-prefab";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=status-viewport-prefab";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=status-viewport-prefab";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=status-viewport-prefab";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=status-viewport-prefab";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=status-viewport-prefab";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=status-viewport-prefab";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=status-viewport-prefab";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -94,6 +95,10 @@ export function createPrefabRuntimeFactory({
     if (runtime.plasmaView?.materials?.length) {
       runtime.materialClones.push(...runtime.plasmaView.materials);
     }
+    if (runtime.statusViewport?.materials?.length) {
+      runtime.materialClones.push(...runtime.statusViewport.materials);
+      runtime.materialCloneEntries.push(...runtime.statusViewport.materialCloneEntries);
+    }
     if (prefabConfig.light) createLight(prefab, prefabConfig, runtime);
     runtime.ready = attachLightCookie(runtime, prefabConfig.light);
     return runtime;
@@ -132,6 +137,13 @@ export function createPrefabRuntimeFactory({
       runtime.briefSheet = createBriefSheetRuntime(runtime.parts, prefabConfig.briefSheet);
     } else if (prefabConfig.behavior === "plasmaView") {
       runtime.plasmaView = createPlasmaViewRuntime(runtime.root, runtime.parts, prefabConfig.plasma, prefabConfig.name);
+    } else if (prefabConfig.behavior === "statusViewport") {
+      runtime.statusViewport = createStatusViewportRuntime(
+        runtime.root,
+        runtime.parts,
+        prefabConfig.statusViewport,
+        prefabConfig.name,
+      );
     }
   }
 
