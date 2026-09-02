@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=status-viewport-prefab";
+import { LevelRuntime } from "./LevelRuntime.js?v=pause-full-texture-upgrades";
 
 export class LevelEnvironmentLifecycle {
   constructor({
@@ -39,7 +39,13 @@ export class LevelEnvironmentLifecycle {
       if ((environment.prefabs?.length ?? 0) !== prefabCountBeforeBuild) this.rebuildDebugPanels();
       this.updateActiveEnvironment();
       console.log(`[LevelRuntime] Loaded only: ${levelId}`);
-      console.info(`[LevelLoadTiming] ${levelId}: total=${(nowMilliseconds() - loadStarted).toFixed(1)}ms build=${buildMs.toFixed(1)}ms physics=${physicsMs.toFixed(1)}ms`);
+      console.info(formatLevelLoadTiming(
+        levelId,
+        nowMilliseconds() - loadStarted,
+        buildMs,
+        physicsMs,
+        runtime.loadTimings,
+      ));
       return runtime.activate();
     } catch (error) {
       try {
@@ -54,6 +60,26 @@ export class LevelEnvironmentLifecycle {
   dispose(runtime) {
     return runtime.dispose();
   }
+}
+
+function formatLevelLoadTiming(levelId, totalMs, buildMs, physicsMs, timings = {}) {
+  const mb = (timings.assetBytes ?? 0) / (1024 * 1024);
+  return `[LevelLoadTiming] ${levelId}: total=${totalMs.toFixed(1)}ms build=${buildMs.toFixed(1)}ms`
+    + ` glbFetchSum=${(timings.glbFetchMs ?? 0).toFixed(1)}ms`
+    + ` glbParseDracoSum=${(timings.glbParseDracoMs ?? 0).toFixed(1)}ms`
+    + ` clone=${(timings.assetCloneMs ?? 0).toFixed(1)}ms`
+    + ` environmentSetup=${(timings.environmentSetupMs ?? 0).toFixed(1)}ms`
+    + ` collisionSetup=${(timings.collisionSetupMs ?? 0).toFixed(1)}ms`
+    + ` prefabCreate=${(timings.prefabCreateMs ?? 0).toFixed(1)}ms`
+    + ` prefabReady=${(timings.prefabReadyMs ?? 0).toFixed(1)}ms`
+    + ` prefabSetup=${(timings.prefabSetupMs ?? 0).toFixed(1)}ms`
+    + ` physics=${physicsMs.toFixed(1)}ms`
+    + ` assets=${timings.assetRequests ?? 0}`
+    + ` hits=${timings.assetCacheHits ?? 0}`
+    + ` misses=${timings.assetCacheMisses ?? 0}`
+    + ` fetched=${mb.toFixed(2)}MB`
+    + ` slowestAsset=${JSON.stringify(timings.slowestAssetName ?? "")}`
+    + ` slowestAssetTime=${(timings.slowestAssetMs ?? 0).toFixed(1)}ms`;
 }
 
 function nowMilliseconds() {

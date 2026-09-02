@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=status-viewport-prefab";
+import { LevelSession } from "./LevelSession.js?v=pause-full-texture-upgrades";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

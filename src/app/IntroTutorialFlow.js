@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=status-viewport-prefab";
+import { translateRequired } from "./Localization.js?v=pause-full-texture-upgrades";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

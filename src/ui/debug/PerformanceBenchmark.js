@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=status-viewport-prefab";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=pause-full-texture-upgrades";
 
 const EFFECT_KEYS = [
   "bloom",

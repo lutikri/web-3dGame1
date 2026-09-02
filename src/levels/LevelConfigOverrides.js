@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=status-viewport-prefab";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=pause-full-texture-upgrades";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

@@ -32,29 +32,47 @@ export class RenderWarmupRuntime {
   }
 
   warmup = async () => {
+    const totalStarted = nowMilliseconds();
     const releaseForegroundLease = this.acquireForegroundLease?.() ?? (() => {});
     try {
+      const prepareStarted = nowMilliseconds();
       await this.prepare?.();
       this.scene?.updateMatrixWorld?.(true);
       this.camera?.updateMatrixWorld?.(true);
+      const prepareMs = nowMilliseconds() - prepareStarted;
+      const shaderCompileStarted = nowMilliseconds();
       if (typeof this.renderer?.compileAsync === "function") {
         await this.renderer.compileAsync(this.scene, this.camera);
       } else {
         this.renderer?.compile?.(this.scene, this.camera);
       }
+      const shaderCompileMs = nowMilliseconds() - shaderCompileStarted;
 
+      const visibilityWaitStarted = nowMilliseconds();
       await this.#waitUntilVisible();
+      const visibilityWaitMs = nowMilliseconds() - visibilityWaitStarted;
+      const settleStarted = nowMilliseconds();
       const startedAt = await this.#nextFrame();
       let previousFrameAt = startedAt;
       let frameCount = 0;
+      let gpuWaitMs = 0;
       while (frameCount < this.minimumSettleFrames || previousFrameAt - startedAt < this.settleDurationMs) {
         const frameAt = await this.#nextFrame();
         const dt = Math.max(1 / 240, Math.min(0.1, (frameAt - previousFrameAt) / 1000));
         this.renderFrame?.(dt);
-        await this.#waitForGpu();
+        gpuWaitMs += await this.#waitForGpu();
         previousFrameAt = frameAt;
         frameCount += 1;
       }
+      return {
+        totalMs: nowMilliseconds() - totalStarted,
+        prepareMs,
+        shaderCompileMs,
+        visibilityWaitMs,
+        settleMs: nowMilliseconds() - settleStarted,
+        gpuWaitMs,
+        frameCount,
+      };
     } finally {
       releaseForegroundLease();
     }
@@ -75,21 +93,23 @@ export class RenderWarmupRuntime {
   async #waitForGpu() {
     const gl = this.renderer?.getContext?.();
     if (!gl?.fenceSync || !gl?.clientWaitSync || !gl?.deleteSync) {
+      const startedAt = nowMilliseconds();
       await this.#delay(this.settleDelayMs);
-      return;
+      return nowMilliseconds() - startedAt;
     }
 
     const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-    if (!sync) return;
+    if (!sync) return 0;
     gl.flush?.();
     const startedAt = nowMilliseconds();
     try {
       while (nowMilliseconds() - startedAt < this.gpuTimeoutMs) {
         const status = gl.clientWaitSync(sync, 0, 0);
-        if (status === gl.ALREADY_SIGNALED || status === gl.CONDITION_SATISFIED) return;
-        if (status === gl.WAIT_FAILED) return;
+        if (status === gl.ALREADY_SIGNALED || status === gl.CONDITION_SATISFIED) break;
+        if (status === gl.WAIT_FAILED) break;
         await this.#delay(8);
       }
+      return nowMilliseconds() - startedAt;
     } finally {
       gl.deleteSync(sync);
     }

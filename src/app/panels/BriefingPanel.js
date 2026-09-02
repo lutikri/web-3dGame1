@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=status-viewport-prefab";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=pause-full-texture-upgrades";
 
 const DISMISS_MS = 300;
 

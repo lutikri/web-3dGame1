@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=status-viewport-prefab";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=pause-full-texture-upgrades";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

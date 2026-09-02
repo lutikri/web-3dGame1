@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=status-viewport-prefab";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=status-viewport-prefab";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=status-viewport-prefab";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=status-viewport-prefab";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=status-viewport-prefab";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=status-viewport-prefab";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=pause-full-texture-upgrades";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=pause-full-texture-upgrades";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=pause-full-texture-upgrades";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=pause-full-texture-upgrades";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=pause-full-texture-upgrades";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=pause-full-texture-upgrades";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=pause-full-texture-upgrades";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

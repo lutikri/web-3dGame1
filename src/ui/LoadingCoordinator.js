@@ -1,9 +1,20 @@
 export class LoadingCoordinator {
-  constructor({ overlay, initialComplete = false, shouldSkipBoot, onBootComplete, dispatchTarget = window, isModelPending }) {
+  constructor({
+    overlay,
+    initialComplete = false,
+    shouldSkipBoot,
+    onBootComplete,
+    onRouteStart = () => {},
+    onRouteComplete = () => {},
+    dispatchTarget = window,
+    isModelPending,
+  }) {
     this.overlay = overlay;
     this.complete = initialComplete;
     this.shouldSkipBoot = shouldSkipBoot;
     this.onBootComplete = onBootComplete;
+    this.onRouteStart = onRouteStart;
+    this.onRouteComplete = onRouteComplete;
     this.dispatchTarget = dispatchTarget;
     this.isModelPending = isModelPending;
   }
@@ -32,6 +43,7 @@ export class LoadingCoordinator {
 
   showRoute = ({ title, status, progress = 0 } = {}) => {
     this.complete = false;
+    this.onRouteStart();
     this.overlay.show({ title, statusText: status, progressValue: progress });
   };
 
@@ -39,6 +51,7 @@ export class LoadingCoordinator {
     this.overlay.finish(() => {
       this.complete = true;
       onComplete?.();
+      this.onRouteComplete();
     });
   };
 
@@ -48,4 +61,3 @@ export class LoadingCoordinator {
     this.dispatchTarget.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
   }
 }
-

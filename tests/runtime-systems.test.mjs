@@ -152,7 +152,8 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
 
   const builder = createLevelSceneBuilder({
     scene,
-    loadSceneAsset: async (path) => {
+    loadSceneAsset: async (path, context) => {
+      context?.onTiming?.({ cacheHit: false, fetchMs: 2, parseMs: 3, cloneMs: 1, bytes: 1024 });
       const group = new THREE.Group();
       if (path === "room.glb") {
         const marker = new THREE.Object3D();
@@ -177,10 +178,16 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
     prefabInstances,
   });
 
-  await builder.build({ levelId: "level" }, "level", environmentConfig);
+  const levelRuntime = { levelId: "level" };
+  await builder.build(levelRuntime, "level", environmentConfig);
   const nested = environmentConfig.prefabs.find((prefab) => prefab.name === "Elevator1__fluorescentLamp_CabinCeiling");
   assert.equal(nested.light.intensity, 4.25);
   assert.deepEqual(nested.position.toArray(), [0.25, 1.5, -0.5]);
+  assert.equal(levelRuntime.loadTimings.assetRequests, 4);
+  assert.equal(levelRuntime.loadTimings.assetCacheMisses, 4);
+  assert.equal(levelRuntime.loadTimings.glbFetchMs, 8);
+  assert.equal(levelRuntime.loadTimings.glbParseDracoMs, 12);
+  assert.equal(levelRuntime.loadTimings.prefabCount, 2);
 });
 
 test("door interaction emits a level event and resets through shared physics", () => {

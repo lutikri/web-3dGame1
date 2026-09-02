@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=status-viewport-prefab";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=status-viewport-prefab";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=status-viewport-prefab";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=status-viewport-prefab";
+import { createDebugHub } from "./DebugHub.js?v=pause-full-texture-upgrades";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=pause-full-texture-upgrades";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=pause-full-texture-upgrades";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=pause-full-texture-upgrades";
 
 export class DebugToolsRuntime {
   constructor(options) {

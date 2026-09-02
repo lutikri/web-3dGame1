@@ -13,6 +13,8 @@ export class DeferredTextureUpgradeQueue {
     this.pollMs = pollMs;
     this.queue = [];
     this.active = false;
+    this.paused = false;
+    this.resumeRevision = 0;
   }
 
   schedule(task) {
@@ -32,11 +34,30 @@ export class DeferredTextureUpgradeQueue {
     this.#process();
   }
 
+  pause() {
+    this.paused = true;
+    this.resumeRevision += 1;
+  }
+
+  resume(delayMs = this.delayMs) {
+    const revision = ++this.resumeRevision;
+    this.window.setTimeout(() => {
+      if (revision !== this.resumeRevision) return;
+      this.paused = false;
+      this.#process();
+    }, Math.max(0, delayMs));
+  }
+
   #process() {
-    if (this.active || this.queue.length === 0) return;
+    if (this.paused || this.active || this.queue.length === 0) return;
     this.active = true;
     const task = this.queue.shift();
     const run = async () => {
+      if (this.paused) {
+        this.queue.unshift(task);
+        this.active = false;
+        return;
+      }
       try {
         await task();
       } finally {

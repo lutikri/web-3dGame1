@@ -38,9 +38,8 @@ export class LevelRouteCoordinator {
     const snapshot = this.getCoreSnapshot();
     this.resetCompletion(snapshot.mode);
     this.updateStatus(snapshot, true);
-    const warmupStarted = nowMilliseconds();
-    await this.warmupRendering?.(loadedLevelId);
-    console.info(`[RenderWarmup] ${loadedLevelId}: ${(nowMilliseconds() - warmupStarted).toFixed(1)}ms`);
+    const warmupTiming = await this.warmupRendering?.(loadedLevelId);
+    console.info(formatWarmupTiming(loadedLevelId, warmupTiming));
     onProgress?.(94);
     if (config.narration?.autoStart !== false) this.scheduleNarration(levelId);
     onProgress?.(98);
@@ -48,6 +47,12 @@ export class LevelRouteCoordinator {
   };
 }
 
-function nowMilliseconds() {
-  return globalThis.performance?.now?.() ?? Date.now();
+function formatWarmupTiming(levelId, timing = {}) {
+  return `[RenderWarmup] ${levelId}: total=${(timing?.totalMs ?? 0).toFixed(1)}ms`
+    + ` prepare=${(timing?.prepareMs ?? 0).toFixed(1)}ms`
+    + ` shaderCompile=${(timing?.shaderCompileMs ?? 0).toFixed(1)}ms`
+    + ` visibilityWait=${(timing?.visibilityWaitMs ?? 0).toFixed(1)}ms`
+    + ` settle=${(timing?.settleMs ?? 0).toFixed(1)}ms`
+    + ` gpuWait=${(timing?.gpuWaitMs ?? 0).toFixed(1)}ms`
+    + ` frames=${timing?.frameCount ?? 0}`;
 }

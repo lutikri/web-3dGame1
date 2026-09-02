@@ -1,14 +1,14 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=status-viewport-prefab";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=status-viewport-prefab";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=status-viewport-prefab";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=status-viewport-prefab";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=status-viewport-prefab";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=status-viewport-prefab";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=status-viewport-prefab";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=status-viewport-prefab";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=pause-full-texture-upgrades";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=pause-full-texture-upgrades";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=pause-full-texture-upgrades";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=pause-full-texture-upgrades";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=pause-full-texture-upgrades";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=pause-full-texture-upgrades";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=pause-full-texture-upgrades";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=pause-full-texture-upgrades";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=pause-full-texture-upgrades";
 
 export function createPrefabRuntimeFactory({
   config,

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=status-viewport-prefab";
+import { applyAxisRotation } from "./TransformUtils.js?v=pause-full-texture-upgrades";
 
 export class InteriorObjectRegistry {
   constructor(options) {

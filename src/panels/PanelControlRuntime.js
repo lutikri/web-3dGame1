@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=status-viewport-prefab";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=pause-full-texture-upgrades";
 
 export class PanelControlRuntime {
   constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, getTime = () => performance.now() / 1000, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {

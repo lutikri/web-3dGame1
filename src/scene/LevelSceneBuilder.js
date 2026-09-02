@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=status-viewport-prefab";
+} from "../prefabs/PrefabMarkerResolver.js?v=pause-full-texture-upgrades";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=status-viewport-prefab";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=status-viewport-prefab";
+} from "../levels/LevelConfigOverrides.js?v=pause-full-texture-upgrades";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=pause-full-texture-upgrades";
 
 export function createLevelSceneBuilder({
   scene,
@@ -29,12 +29,13 @@ export function createLevelSceneBuilder({
 }) {
   return {
     async build(levelRuntime, levelId, environmentConfig) {
+      const timings = createLevelBuildTimings();
       const prefabGroup = new THREE.Group();
       prefabGroup.name = `${levelId}_Prefabs`;
       environmentModels.set(`${levelId}:prefabs`, prefabGroup);
       scene.add(prefabGroup);
 
-      const markerPrefabs = await buildEnvironment(levelId, environmentConfig);
+      const markerPrefabs = await buildEnvironment(levelId, environmentConfig, timings);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
       const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);
       environmentConfig.prefabs = resolveLevelPrefabs(
@@ -43,23 +44,29 @@ export function createLevelSceneBuilder({
         environmentConfig.prefabStatePolicies,
       );
       const tasks = [
-        buildCollision(levelId, environmentConfig),
+        buildCollision(levelId, environmentConfig, timings),
         ...(environmentConfig.prefabs ?? [])
           .filter((prefabConfig) => prefabConfig.behavior !== "operatorPanel")
           .map((prefabConfig) =>
             buildPrefab(levelRuntime, levelId, environmentConfig, prefabConfig,
-              prefabGroup, prefabGroup, pendingPrefabOverrides),
+              prefabGroup, prefabGroup, pendingPrefabOverrides, timings),
           ),
       ];
       const results = await Promise.allSettled(tasks);
       const failure = results.find((result) => result.status === "rejected");
       if (failure) throw failure.reason;
+      levelRuntime.loadTimings = timings;
       return levelRuntime;
     },
   };
 
-  async function buildEnvironment(levelId, config) {
-    const model = await loadSceneAsset(config.assetPath);
+  async function buildEnvironment(levelId, config, timings) {
+    const model = await loadSceneAsset(config.assetPath, {
+      kind: "environment",
+      name: levelId,
+      onTiming: (entry) => recordAssetTiming(timings, entry),
+    });
+    const setupStarted = nowMilliseconds();
     model.name = `${levelId}_Environment`;
     applyTransform(model, config);
     const excludedNameParts = config.render?.meshNameExcludes ?? [];
@@ -82,14 +89,20 @@ export function createLevelSceneBuilder({
     environmentModels.set(levelId, model);
     scene.add(model);
     lightingZones?.registerLevel(levelId, model);
+    timings.environmentSetupMs += nowMilliseconds() - setupStarted;
     return [
       ...resolvePrefabMarkers(model),
       ...resolveBriefSocketPrefabs(model, config.physicalBriefing, getLanguage()),
     ];
   }
 
-  async function buildCollision(levelId, config) {
-    const model = await loadSceneAsset(config.collisionAssetPath);
+  async function buildCollision(levelId, config, timings) {
+    const model = await loadSceneAsset(config.collisionAssetPath, {
+      kind: "collision",
+      name: levelId,
+      onTiming: (entry) => recordAssetTiming(timings, entry),
+    });
+    const setupStarted = nowMilliseconds();
     model.name = `${levelId}_Collision`;
     applyTransform(model, config);
     const requiredNameParts = config.collision?.meshNameIncludes ?? [];
@@ -124,6 +137,7 @@ export function createLevelSceneBuilder({
     collisionModels.set(levelId, model);
     scene.add(model);
     appendPanelPhysics(levelId, model);
+    timings.collisionSetupMs += nowMilliseconds() - setupStarted;
   }
 
   async function buildPrefab(
@@ -134,17 +148,30 @@ export function createLevelSceneBuilder({
     prefabGroup,
     parentObject = prefabGroup,
     pendingPrefabOverrides = [],
+    timings,
   ) {
-    const prefab = await loadSceneAsset(prefabConfig.assetPath);
+    const prefab = await loadSceneAsset(prefabConfig.assetPath, {
+      kind: "prefab",
+      name: prefabConfig.name,
+      onTiming: (entry) => recordAssetTiming(timings, entry),
+    });
+    const setupStarted = nowMilliseconds();
     isolatePrefabRoot(prefab, prefabConfig.rootName, [prefabConfig.light?.markerName]);
     prefab.name = prefabConfig.name;
     prefab.userData.levelId = levelId;
     prefab.position.copy(prefabConfig.position ?? new THREE.Vector3());
     prefab.rotation.copy(prefabConfig.rotation ?? new THREE.Euler());
     prefab.scale.copy(prefabConfig.scale ?? new THREE.Vector3(1, 1, 1));
+    timings.prefabSetupMs += nowMilliseconds() - setupStarted;
 
+    const createStarted = nowMilliseconds();
     const runtime = createPrefabRuntime(prefab, prefabConfig);
+    timings.prefabCreateMs += nowMilliseconds() - createStarted;
+    const readyStarted = nowMilliseconds();
     await runtime.ready;
+    timings.prefabReadyMs += nowMilliseconds() - readyStarted;
+    timings.prefabCount += 1;
+    const registrationStarted = nowMilliseconds();
     if (runtime.light?.userData?.cookieTexture) {
       levelRuntime.own?.(() => runtime.light.userData.cookieTexture.dispose());
     }
@@ -152,6 +179,7 @@ export function createLevelSceneBuilder({
     registerPrefabInteraction(levelId, prefabConfig, runtime);
     parentObject.add(prefab);
     applyPrefabConfig(levelId, prefabConfig.name, true);
+    timings.prefabSetupMs += nowMilliseconds() - registrationStarted;
 
     const nestedPrefabs = resolveNestedPrefabMarkers(prefab, { parentName: prefabConfig.name });
     if (!nestedPrefabs.length) return;
@@ -164,12 +192,51 @@ export function createLevelSceneBuilder({
       .filter((nestedPrefabConfig) => nestedPrefabConfig.behavior !== "operatorPanel")
       .map((nestedPrefabConfig) =>
         buildPrefab(levelRuntime, levelId, environmentConfig, nestedPrefabConfig,
-          prefabGroup, prefab, pendingPrefabOverrides),
+          prefabGroup, prefab, pendingPrefabOverrides, timings),
       );
     const results = await Promise.allSettled(nestedTasks);
     const failure = results.find((result) => result.status === "rejected");
     if (failure) throw failure.reason;
   }
+}
+
+function createLevelBuildTimings() {
+  return {
+    assetRequests: 0,
+    assetCacheHits: 0,
+    assetCacheMisses: 0,
+    assetBytes: 0,
+    glbFetchMs: 0,
+    glbParseDracoMs: 0,
+    assetCloneMs: 0,
+    slowestAssetName: "",
+    slowestAssetMs: 0,
+    environmentSetupMs: 0,
+    collisionSetupMs: 0,
+    prefabCount: 0,
+    prefabCreateMs: 0,
+    prefabReadyMs: 0,
+    prefabSetupMs: 0,
+  };
+}
+
+function recordAssetTiming(timings, entry) {
+  timings.assetRequests += 1;
+  timings.assetCacheHits += entry.cacheHit ? 1 : 0;
+  timings.assetCacheMisses += entry.cacheHit ? 0 : 1;
+  timings.assetBytes += entry.bytes ?? 0;
+  timings.glbFetchMs += entry.fetchMs ?? 0;
+  timings.glbParseDracoMs += entry.parseMs ?? 0;
+  timings.assetCloneMs += entry.cloneMs ?? 0;
+  const totalMs = (entry.fetchMs ?? 0) + (entry.parseMs ?? 0) + (entry.cloneMs ?? 0);
+  if (totalMs > timings.slowestAssetMs) {
+    timings.slowestAssetMs = totalMs;
+    timings.slowestAssetName = entry.name ?? entry.key;
+  }
+}
+
+function nowMilliseconds() {
+  return globalThis.performance?.now?.() ?? Date.now();
 }
 
 function resolveLevelPrefabs(prefabs, pendingPrefabOverrides, statePolicies) {

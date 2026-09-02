@@ -12,6 +12,7 @@ export class MaterialTextureRuntime {
     updateRoomLightMaterials,
     createFixtureFlickerState,
     setLoadingStatus,
+    reportTextureTiming = () => {},
   }) {
     this.config = config;
     this.textureStreaming = textureStreaming;
@@ -25,6 +26,7 @@ export class MaterialTextureRuntime {
     this.updateRoomLightMaterials = updateRoomLightMaterials;
     this.createFixtureFlickerState = createFixtureFlickerState;
     this.setLoadingStatus = setLoadingStatus;
+    this.reportTextureTiming = reportTextureTiming;
     this.customMaps = {};
     this.panelMaps = null;
   }
@@ -39,7 +41,7 @@ export class MaterialTextureRuntime {
       const entries = await Promise.all(
         Object.entries(this.config.interior.specialMaterials ?? {}).map(async ([key, materialConfig]) => {
           const initialPaths = getInitialPaths(materialConfig.maps);
-          return [key, await this.#load(initialPaths), getDeferredPaths(materialConfig.maps), initialPaths];
+          return [key, await this.#load(initialPaths, false, `material:${key}:initial`), getDeferredPaths(materialConfig.maps), initialPaths];
         }),
       );
       entries.forEach(([key, maps, deferredPaths, initialPaths]) => {
@@ -67,7 +69,7 @@ export class MaterialTextureRuntime {
     const initialPaths = getInitialPaths(this.config.panel.maps);
     const deferredPaths = getDeferredPaths(this.config.panel.maps);
     try {
-      const maps = await this.#load(initialPaths);
+      const maps = await this.#load(initialPaths, false, "panel:initial");
       this.panelMaps = maps;
       this.#register("panel:Panel1_PBR", maps, initialPaths, deferredPaths ? "preview" : "full");
       const material = this.getMaterials().panel;
@@ -84,7 +86,7 @@ export class MaterialTextureRuntime {
   #scheduleCustomUpgrade(key, paths) {
     this.upgradeQueue.schedule(async () => {
       try {
-        const maps = await this.#load(paths, true);
+        const maps = await this.#load(paths, true, `material:${key}:full`);
         const previous = this.customMaps[key];
         this.customMaps[key] = maps;
         this.#register(`material:${key}`, maps, paths, "full");
@@ -102,7 +104,7 @@ export class MaterialTextureRuntime {
   #schedulePanelUpgrade(paths) {
     this.upgradeQueue.schedule(async () => {
       try {
-        const maps = await this.#load(paths, true);
+        const maps = await this.#load(paths, true, "panel:full");
         const previous = this.panelMaps;
         this.panelMaps = maps;
         this.#register("panel:Panel1_PBR", maps, paths, "full");
@@ -116,12 +118,15 @@ export class MaterialTextureRuntime {
     });
   }
 
-  #load(paths, tracked = false) {
+  #load(paths, tracked = false, label = "textures") {
     const options = tracked ? {
       onTextureStart: this.loadingIndicator.start,
       onTextureComplete: this.loadingIndicator.complete,
     } : {};
-    return this.textureStreaming.loadTextureMaps(paths, options);
+    return this.textureStreaming.loadTextureMaps(paths, {
+      ...options,
+      onBatchTiming: (timing) => this.reportTextureTiming(label, timing),
+    });
   }
 
   #register(label, maps, paths, tier) {

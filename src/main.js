@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=status-viewport-prefab";
-import { applyLocalization } from "./app/Localization.js?v=status-viewport-prefab";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=status-viewport-prefab";
+import { createPreflight } from "./app/Preflight.js?v=pause-full-texture-upgrades";
+import { applyLocalization } from "./app/Localization.js?v=pause-full-texture-upgrades";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=pause-full-texture-upgrades";
 
-const APP_BUILD_REVISION = "status-viewport-prefab";
+const APP_BUILD_REVISION = "pause-full-texture-upgrades";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=status-viewport-prefab`);
+await import(`./OperatorGame.js?v=pause-full-texture-upgrades`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=status-viewport-prefab`);
+const { createAppShell } = await import(`./app/AppShell.js?v=pause-full-texture-upgrades`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=status-viewport-prefab`
+    `./runtime/RuntimeSmoke.js?v=pause-full-texture-upgrades`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

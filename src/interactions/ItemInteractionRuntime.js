@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=status-viewport-prefab";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=pause-full-texture-upgrades";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();

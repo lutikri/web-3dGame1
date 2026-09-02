@@ -6,6 +6,7 @@ test("material texture runtime loads initial maps and schedules full upgrades", 
   const loadedPaths = [];
   const scheduled = [];
   const textureSets = new Map();
+  const timingLabels = [];
   const materials = {
     panel: { userData: {} },
     interiorCustom: { wall: { userData: {} } },
@@ -16,8 +17,15 @@ test("material texture runtime loads initial maps and schedules full upgrades", 
       interior: { specialMaterials: { wall: { maps: { baseColor: "wall" }, roomLightControlled: true } } },
     },
     textureStreaming: {
-      loadTextureMaps: async (paths) => {
+      loadTextureMaps: async (paths, options) => {
         loadedPaths.push(paths.baseColor);
+        options.onBatchTiming?.({
+          wallMs: 1,
+          textureCount: 1,
+          failedCount: 0,
+          sumTextureMs: 1,
+          slowestTextureMs: 1,
+        });
         return { map: { source: { data: { src: paths.baseColor } } } };
       },
       disposeTextureMaps: () => {},
@@ -32,6 +40,7 @@ test("material texture runtime loads initial maps and schedules full upgrades", 
     updateRoomLightMaterials: () => {},
     createFixtureFlickerState: () => ({ phase: "steady" }),
     setLoadingStatus: () => {},
+    reportTextureTiming: (label) => timingLabels.push(label),
   });
   runtime.start();
   await Promise.resolve();
@@ -42,4 +51,5 @@ test("material texture runtime loads initial maps and schedules full upgrades", 
   assert.equal(textureSets.get("panel:Panel1_PBR").tier, "preview");
   assert.equal(materials.interiorCustom.wall.userData.fixtureFlicker.phase, "steady");
   assert.equal(scheduled.length, 1);
+  assert.deepEqual(timingLabels.sort(), ["material:wall:initial", "panel:initial"]);
 });

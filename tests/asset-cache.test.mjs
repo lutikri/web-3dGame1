@@ -32,3 +32,31 @@ test("failed loads do not poison future retries", async () => {
   assert.deepEqual(await cache.instantiate("retry.glb"), { ok: true });
   assert.equal(attempts, 2);
 });
+
+test("asset cache reports source phases once and clone timing for every instance", async () => {
+  let clock = 0;
+  const timings = [];
+  const cache = new AssetCache({
+    now: () => ++clock,
+    load: async (_key, reportTiming) => {
+      reportTiming({ fetchMs: 12, bytes: 4096 });
+      reportTiming({ parseMs: 8 });
+      return { value: 1 };
+    },
+    instantiate: (source) => ({ ...source }),
+  });
+  const context = { kind: "prefab", name: "Lamp", onTiming: (entry) => timings.push(entry) };
+
+  await cache.instantiate("lamp.glb", context);
+  await cache.instantiate("lamp.glb", context);
+
+  assert.equal(timings[0].cacheHit, false);
+  assert.equal(timings[0].fetchMs, 12);
+  assert.equal(timings[0].parseMs, 8);
+  assert.equal(timings[0].bytes, 4096);
+  assert.equal(timings[0].cloneMs, 1);
+  assert.equal(timings[1].cacheHit, true);
+  assert.equal(timings[1].fetchMs, 0);
+  assert.equal(timings[1].parseMs, 0);
+  assert.equal(timings[1].cloneMs, 1);
+});

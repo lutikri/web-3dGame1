@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=status-viewport-prefab";
-import { translate } from "./Localization.js?v=status-viewport-prefab";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=status-viewport-prefab";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=status-viewport-prefab";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=status-viewport-prefab";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=status-viewport-prefab";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=status-viewport-prefab";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=pause-full-texture-upgrades";
+import { translate } from "./Localization.js?v=pause-full-texture-upgrades";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=pause-full-texture-upgrades";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=pause-full-texture-upgrades";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=pause-full-texture-upgrades";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=pause-full-texture-upgrades";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=pause-full-texture-upgrades";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=status-viewport-prefab";
-import { createAppPanelController } from "./AppPanelController.js?v=status-viewport-prefab";
-import { createAppRouter } from "./AppRouter.js?v=status-viewport-prefab";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=status-viewport-prefab";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=status-viewport-prefab";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=status-viewport-prefab";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=status-viewport-prefab";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=status-viewport-prefab";
+} from "./AppPersistence.js?v=pause-full-texture-upgrades";
+import { createAppPanelController } from "./AppPanelController.js?v=pause-full-texture-upgrades";
+import { createAppRouter } from "./AppRouter.js?v=pause-full-texture-upgrades";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=pause-full-texture-upgrades";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=pause-full-texture-upgrades";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=pause-full-texture-upgrades";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=pause-full-texture-upgrades";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=pause-full-texture-upgrades";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

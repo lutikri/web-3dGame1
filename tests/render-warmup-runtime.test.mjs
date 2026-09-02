@@ -48,10 +48,15 @@ test("render warmup waits for visibility and settles complete frames behind the 
   assert.equal(calls.includes("render"), false);
   documentRef.hidden = false;
   documentRef.dispatchEvent(new Event("visibilitychange"));
-  await pending;
+  const timing = await pending;
 
   assert.equal(calls.filter((call) => call === "render").length, 2);
   assert.equal(calls.filter((call) => call === "flush").length, 2);
   assert.equal(calls.filter((call) => call === "deleteSync").length, 2);
   assert.equal(foregroundLeases, 0);
+  assert.equal(timing.frameCount, 2);
+  assert.ok(timing.totalMs >= 0);
+  assert.ok(timing.shaderCompileMs >= 0);
+  assert.ok(timing.settleMs >= 0);
+  assert.ok(timing.gpuWaitMs >= 0);
 });

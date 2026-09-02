@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=status-viewport-prefab";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=status-viewport-prefab";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=status-viewport-prefab";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=status-viewport-prefab";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=pause-full-texture-upgrades";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=pause-full-texture-upgrades";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=pause-full-texture-upgrades";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=pause-full-texture-upgrades";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

@@ -3,135 +3,135 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=status-viewport-prefab";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=pause-full-texture-upgrades";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=status-viewport-prefab";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=status-viewport-prefab";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=status-viewport-prefab";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=status-viewport-prefab";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=status-viewport-prefab";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=status-viewport-prefab";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=status-viewport-prefab";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=status-viewport-prefab";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=status-viewport-prefab";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=status-viewport-prefab";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=status-viewport-prefab";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=status-viewport-prefab";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=status-viewport-prefab";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=status-viewport-prefab";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=status-viewport-prefab";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=status-viewport-prefab";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=status-viewport-prefab";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=status-viewport-prefab";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=status-viewport-prefab";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=status-viewport-prefab";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=status-viewport-prefab";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=status-viewport-prefab";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=status-viewport-prefab";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=status-viewport-prefab";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=status-viewport-prefab";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=status-viewport-prefab";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=status-viewport-prefab";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=status-viewport-prefab";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=status-viewport-prefab";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=status-viewport-prefab";
+} from "./game/ShiftReport.js?v=pause-full-texture-upgrades";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=pause-full-texture-upgrades";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=pause-full-texture-upgrades";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=pause-full-texture-upgrades";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=pause-full-texture-upgrades";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=pause-full-texture-upgrades";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=pause-full-texture-upgrades";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=pause-full-texture-upgrades";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=pause-full-texture-upgrades";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=pause-full-texture-upgrades";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=pause-full-texture-upgrades";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=pause-full-texture-upgrades";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=pause-full-texture-upgrades";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=pause-full-texture-upgrades";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=pause-full-texture-upgrades";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=pause-full-texture-upgrades";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=pause-full-texture-upgrades";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=pause-full-texture-upgrades";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=pause-full-texture-upgrades";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=pause-full-texture-upgrades";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=pause-full-texture-upgrades";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=pause-full-texture-upgrades";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=pause-full-texture-upgrades";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=pause-full-texture-upgrades";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=pause-full-texture-upgrades";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=pause-full-texture-upgrades";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=pause-full-texture-upgrades";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=pause-full-texture-upgrades";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=pause-full-texture-upgrades";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=pause-full-texture-upgrades";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=status-viewport-prefab";
+} from "./config/GraphicsQualityProfiles.js?v=pause-full-texture-upgrades";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=status-viewport-prefab";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=status-viewport-prefab";
-import { createStatusScreen } from "./StatusScreen.js?v=status-viewport-prefab";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=status-viewport-prefab";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=status-viewport-prefab";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=status-viewport-prefab";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=status-viewport-prefab";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=status-viewport-prefab";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=status-viewport-prefab";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=status-viewport-prefab";
+} from "./scene/TextureStreaming.js?v=pause-full-texture-upgrades";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=pause-full-texture-upgrades";
+import { createStatusScreen } from "./StatusScreen.js?v=pause-full-texture-upgrades";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=pause-full-texture-upgrades";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=pause-full-texture-upgrades";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=pause-full-texture-upgrades";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=pause-full-texture-upgrades";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=pause-full-texture-upgrades";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=pause-full-texture-upgrades";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=pause-full-texture-upgrades";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=status-viewport-prefab";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=status-viewport-prefab";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=status-viewport-prefab";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=pause-full-texture-upgrades";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=pause-full-texture-upgrades";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=pause-full-texture-upgrades";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=status-viewport-prefab";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=status-viewport-prefab";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=status-viewport-prefab";
-import { AssetCache } from "./runtime/AssetCache.js?v=status-viewport-prefab";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=status-viewport-prefab";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=status-viewport-prefab";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=status-viewport-prefab";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=status-viewport-prefab";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=status-viewport-prefab";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=status-viewport-prefab";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=status-viewport-prefab";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=status-viewport-prefab";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=status-viewport-prefab";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=status-viewport-prefab";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=status-viewport-prefab";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=status-viewport-prefab";
+} from "./lighting/FluorescentBehavior.js?v=pause-full-texture-upgrades";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=pause-full-texture-upgrades";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=pause-full-texture-upgrades";
+import { AssetCache } from "./runtime/AssetCache.js?v=pause-full-texture-upgrades";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=pause-full-texture-upgrades";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=pause-full-texture-upgrades";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=pause-full-texture-upgrades";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=pause-full-texture-upgrades";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=pause-full-texture-upgrades";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=pause-full-texture-upgrades";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=pause-full-texture-upgrades";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=pause-full-texture-upgrades";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=pause-full-texture-upgrades";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=pause-full-texture-upgrades";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=pause-full-texture-upgrades";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=pause-full-texture-upgrades";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=status-viewport-prefab";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=status-viewport-prefab";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=status-viewport-prefab";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=status-viewport-prefab";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=status-viewport-prefab";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=status-viewport-prefab";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=status-viewport-prefab";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=status-viewport-prefab";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=status-viewport-prefab";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=status-viewport-prefab";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=status-viewport-prefab";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=status-viewport-prefab";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=status-viewport-prefab";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=status-viewport-prefab";
-import { PlayerController } from "./player/PlayerController.js?v=status-viewport-prefab";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=status-viewport-prefab";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=status-viewport-prefab";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=status-viewport-prefab";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=status-viewport-prefab";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=status-viewport-prefab";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=status-viewport-prefab";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=status-viewport-prefab";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=status-viewport-prefab";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=status-viewport-prefab";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=status-viewport-prefab";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=status-viewport-prefab";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=status-viewport-prefab";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=status-viewport-prefab";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=status-viewport-prefab";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=status-viewport-prefab";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=status-viewport-prefab";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=status-viewport-prefab";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=status-viewport-prefab";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=status-viewport-prefab";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=status-viewport-prefab";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=status-viewport-prefab";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=status-viewport-prefab";
+} from "./scene/InteriorObjectRegistry.js?v=pause-full-texture-upgrades";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=pause-full-texture-upgrades";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=pause-full-texture-upgrades";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=pause-full-texture-upgrades";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=pause-full-texture-upgrades";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=pause-full-texture-upgrades";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=pause-full-texture-upgrades";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=pause-full-texture-upgrades";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=pause-full-texture-upgrades";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=pause-full-texture-upgrades";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=pause-full-texture-upgrades";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=pause-full-texture-upgrades";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=pause-full-texture-upgrades";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=pause-full-texture-upgrades";
+import { PlayerController } from "./player/PlayerController.js?v=pause-full-texture-upgrades";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=pause-full-texture-upgrades";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=pause-full-texture-upgrades";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=pause-full-texture-upgrades";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=pause-full-texture-upgrades";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=pause-full-texture-upgrades";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=pause-full-texture-upgrades";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=pause-full-texture-upgrades";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=pause-full-texture-upgrades";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=pause-full-texture-upgrades";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=pause-full-texture-upgrades";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=pause-full-texture-upgrades";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=pause-full-texture-upgrades";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=pause-full-texture-upgrades";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=pause-full-texture-upgrades";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=pause-full-texture-upgrades";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=pause-full-texture-upgrades";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=pause-full-texture-upgrades";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=pause-full-texture-upgrades";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=pause-full-texture-upgrades";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=pause-full-texture-upgrades";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=pause-full-texture-upgrades";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=pause-full-texture-upgrades";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=status-viewport-prefab";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=pause-full-texture-upgrades";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -461,7 +461,21 @@ const levelSceneBuilder = createLevelSceneBuilder({
   getLanguage: () => document.documentElement.lang,
 });
 const levelAssetCache = new AssetCache({
-  load: (assetPath) => gltfLoader.loadAsync(assetPath),
+  load: async (assetPath, reportTiming) => {
+    const sourceUrl = new URL(assetPath, document.baseURI).href;
+    const fetchStarted = performance.now();
+    const response = await fetch(sourceUrl);
+    if (!response.ok) throw new Error(`Failed to load GLB ${assetPath}: HTTP ${response.status}`);
+    const data = await response.arrayBuffer();
+    reportTiming?.({
+      fetchMs: performance.now() - fetchStarted,
+      bytes: data.byteLength,
+    });
+    const parseStarted = performance.now();
+    const gltf = await gltfLoader.parseAsync(data, THREE.LoaderUtils.extractUrlBase(response.url));
+    reportTiming?.({ parseMs: performance.now() - parseStarted });
+    return gltf;
+  },
   instantiate: (gltf) => gltf.scene.clone(true),
 });
 let loadedRuntimeLevelId = null;
@@ -619,6 +633,7 @@ const postProcessingPolicy = new PostProcessingPolicy({
   getTime: () => testTime,
 });
 const fastDebugBoot = Boolean(CONFIG.debug?.enabled && CONFIG.debug?.fastLoadLevel);
+let deferredTextureUpgradeQueue = null;
 const loadingCoordinator = new LoadingCoordinator({
   overlay: loadingOverlay,
   initialComplete: Boolean(CONFIG.loading?.skip || fastDebugBoot),
@@ -626,6 +641,8 @@ const loadingCoordinator = new LoadingCoordinator({
   onBootComplete: () => {
     if (operatorViewMode !== "menu") triggerRoomLightBoot();
   },
+  onRouteStart: () => deferredTextureUpgradeQueue?.pause(),
+  onRouteComplete: () => deferredTextureUpgradeQueue?.resume(),
   isModelPending: () => !panelModel,
 });
 const setLoadingProgress = loadingCoordinator.setProgress;
@@ -1017,7 +1034,7 @@ const runtimeTextureLoadingIndicator = new RuntimeTextureLoadingIndicator({
 const runtimeTextureLoading = runtimeTextureLoadingIndicator.state;
 const defaultPostProcessingConfig = JSON.parse(JSON.stringify(CONFIG.postProcessing));
 
-const deferredTextureUpgradeQueue = new DeferredTextureUpgradeQueue({
+deferredTextureUpgradeQueue = new DeferredTextureUpgradeQueue({
   canStart: () => !bootOptions.deferFullTextures && loadingCoordinator.isComplete(),
   isDisabled: () => Boolean(bootOptions.disableFullTextures),
   delayMs: (CONFIG.textureStreaming?.fullLoadDelaySeconds ?? 4) * 1000,
@@ -1178,6 +1195,14 @@ materialTextureRuntime = new MaterialTextureRuntime({
   updateRoomLightMaterials,
   createFixtureFlickerState,
   setLoadingStatus,
+  reportTextureTiming: (label, timing) => {
+    if (timing.textureCount === 0) return;
+    console.info(`[TextureLoadTiming] ${label}: total=${timing.wallMs.toFixed(1)}ms`
+      + ` textures=${timing.textureCount}`
+      + ` summed=${timing.sumTextureMs.toFixed(1)}ms`
+      + ` slowest=${timing.slowestTextureMs.toFixed(1)}ms`
+      + ` failed=${timing.failedCount}`);
+  },
 });
 const interiorCustomTextureMaps = materialTextureRuntime.customMaps;
 const interiorMaterialRuntime = new InteriorMaterialRuntime({
@@ -1573,8 +1598,8 @@ function updateInterior(dt) {
   updateDoorLatchHandles(dt);
 }
 
-async function loadSceneAsset(assetPath) {
-  return levelAssetCache.instantiate(assetPath);
+async function loadSceneAsset(assetPath, context) {
+  return levelAssetCache.instantiate(assetPath, context);
 }
 
 async function loadLevelEnvironment(requestedLevelId) {
