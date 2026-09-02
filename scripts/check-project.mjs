@@ -10,7 +10,7 @@ function listJavaScriptFiles(directory) {
   });
 }
 
-const files = [...listJavaScriptFiles("src"), "dev-server.cjs"];
+const files = [...listJavaScriptFiles("src"), "dev-server.cjs", "vite.config.js"];
 for (const file of files) {
   const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
   if (result.status === 0) continue;
