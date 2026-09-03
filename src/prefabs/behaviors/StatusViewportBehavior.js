@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=pause-full-texture-upgrades";
+} from "../../panels/StatusScreenMaterial.js?v=route-progress-reporting";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

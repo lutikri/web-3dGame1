@@ -179,7 +179,10 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
   });
 
   const levelRuntime = { levelId: "level" };
-  await builder.build(levelRuntime, "level", environmentConfig);
+  const buildProgress = [];
+  await builder.build(levelRuntime, "level", environmentConfig, {
+    onProgress: (value) => buildProgress.push(value),
+  });
   const nested = environmentConfig.prefabs.find((prefab) => prefab.name === "Elevator1__fluorescentLamp_CabinCeiling");
   assert.equal(nested.light.intensity, 4.25);
   assert.deepEqual(nested.position.toArray(), [0.25, 1.5, -0.5]);
@@ -188,6 +191,10 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
   assert.equal(levelRuntime.loadTimings.glbFetchMs, 8);
   assert.equal(levelRuntime.loadTimings.glbParseDracoMs, 12);
   assert.equal(levelRuntime.loadTimings.prefabCount, 2);
+  assert.equal(buildProgress[0], 0);
+  assert.equal(buildProgress.at(-1), 1);
+  assert.ok(buildProgress.some((value) => value > 0.2 && value < 1));
+  assert.ok(buildProgress.every((value, index) => index === 0 || value >= buildProgress[index - 1]));
 });
 
 test("door interaction emits a level event and resets through shared physics", () => {

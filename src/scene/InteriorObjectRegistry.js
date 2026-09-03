@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=pause-full-texture-upgrades";
+import { applyAxisRotation } from "./TransformUtils.js?v=route-progress-reporting";
 
 export class InteriorObjectRegistry {
   constructor(options) {

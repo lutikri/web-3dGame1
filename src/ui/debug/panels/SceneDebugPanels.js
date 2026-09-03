@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=pause-full-texture-upgrades";
+} from "../../../levels/LevelConfigSerialization.js?v=route-progress-reporting";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

@@ -5,16 +5,22 @@ import { LevelEnvironmentLifecycle } from "../src/runtime/LevelEnvironmentLifecy
 
 test("level environment lifecycle composes build, physics and ownership cleanup", async () => {
   const calls = [];
+  const onProgress = () => {};
   const lifecycle = new LevelEnvironmentLifecycle({
     environments: { room: { lighting: {}, prefabs: [] } },
     lighting: { createLevel: (id) => calls.push(`light:${id}`) },
-    sceneBuilder: { build: async () => calls.push("build") },
+    sceneBuilder: {
+      build: async (runtime, levelId, environment, options) => {
+        calls.push("build");
+        assert.equal(options.onProgress, onProgress);
+      },
+    },
     disposeOwned: (id) => calls.push(`dispose:${id}`),
     rebuildStaticPhysics: () => calls.push("physics"),
     rebuildDebugPanels: () => calls.push("debug"),
     updateActiveEnvironment: () => calls.push("active"),
   });
-  const runtime = await lifecycle.load("room");
+  const runtime = await lifecycle.load("room", { onProgress });
   assert.deepEqual(calls, ["light:room", "build", "physics", "active"]);
   await lifecycle.dispose(runtime);
   assert.equal(calls.at(-1), "dispose:room");

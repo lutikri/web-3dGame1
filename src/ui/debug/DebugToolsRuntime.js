@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=pause-full-texture-upgrades";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=pause-full-texture-upgrades";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=pause-full-texture-upgrades";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=pause-full-texture-upgrades";
+import { createDebugHub } from "./DebugHub.js?v=route-progress-reporting";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=route-progress-reporting";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=route-progress-reporting";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=route-progress-reporting";
 
 export class DebugToolsRuntime {
   constructor(options) {

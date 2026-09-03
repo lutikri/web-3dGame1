@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=pause-full-texture-upgrades";
+import { LevelRuntime } from "./LevelRuntime.js?v=route-progress-reporting";
 
 export class LevelEnvironmentLifecycle {
   constructor({
@@ -21,7 +21,7 @@ export class LevelEnvironmentLifecycle {
     });
   }
 
-  async load(levelId) {
+  async load(levelId, { onProgress } = {}) {
     const loadStarted = nowMilliseconds();
     const environment = this.environments?.[levelId];
     if (!environment) throw new Error(`[LevelRuntime] Unknown environment: ${levelId}`);
@@ -31,7 +31,7 @@ export class LevelEnvironmentLifecycle {
     try {
       const prefabCountBeforeBuild = environment.prefabs?.length ?? 0;
       const buildStarted = nowMilliseconds();
-      await this.sceneBuilder.build(runtime, levelId, environment);
+      await this.sceneBuilder.build(runtime, levelId, environment, { onProgress });
       const buildMs = nowMilliseconds() - buildStarted;
       const physicsStarted = nowMilliseconds();
       this.rebuildStaticPhysics(levelId);

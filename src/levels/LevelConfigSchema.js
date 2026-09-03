@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=pause-full-texture-upgrades";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=route-progress-reporting";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

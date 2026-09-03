@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=pause-full-texture-upgrades";
+} from "./behaviors/DeskDrawerBehavior.js?v=route-progress-reporting";
 
 export function createPrefabPhysicsRegistrar({
   physics,

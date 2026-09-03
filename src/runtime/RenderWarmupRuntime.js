@@ -31,15 +31,17 @@ export class RenderWarmupRuntime {
     });
   }
 
-  warmup = async () => {
+  warmup = async ({ onProgress } = {}) => {
     const totalStarted = nowMilliseconds();
     const releaseForegroundLease = this.acquireForegroundLease?.() ?? (() => {});
     try {
+      reportProgress(onProgress, 0);
       const prepareStarted = nowMilliseconds();
       await this.prepare?.();
       this.scene?.updateMatrixWorld?.(true);
       this.camera?.updateMatrixWorld?.(true);
       const prepareMs = nowMilliseconds() - prepareStarted;
+      reportProgress(onProgress, 0.05);
       const shaderCompileStarted = nowMilliseconds();
       if (typeof this.renderer?.compileAsync === "function") {
         await this.renderer.compileAsync(this.scene, this.camera);
@@ -47,10 +49,12 @@ export class RenderWarmupRuntime {
         this.renderer?.compile?.(this.scene, this.camera);
       }
       const shaderCompileMs = nowMilliseconds() - shaderCompileStarted;
+      reportProgress(onProgress, 0.75);
 
       const visibilityWaitStarted = nowMilliseconds();
       await this.#waitUntilVisible();
       const visibilityWaitMs = nowMilliseconds() - visibilityWaitStarted;
+      reportProgress(onProgress, 0.78);
       const settleStarted = nowMilliseconds();
       const startedAt = await this.#nextFrame();
       let previousFrameAt = startedAt;
@@ -63,7 +67,11 @@ export class RenderWarmupRuntime {
         gpuWaitMs += await this.#waitForGpu();
         previousFrameAt = frameAt;
         frameCount += 1;
+        const frameProgress = Math.min(1, frameCount / this.minimumSettleFrames);
+        const timeProgress = Math.min(1, (previousFrameAt - startedAt) / this.settleDurationMs);
+        reportProgress(onProgress, 0.78 + 0.22 * Math.min(frameProgress, timeProgress));
       }
+      reportProgress(onProgress, 1);
       return {
         totalMs: nowMilliseconds() - totalStarted,
         prepareMs,
@@ -122,6 +130,10 @@ export class RenderWarmupRuntime {
   #nextFrame() {
     return new Promise((resolve) => this.requestAnimationFrameFn(resolve));
   }
+}
+
+function reportProgress(onProgress, value) {
+  onProgress?.(Math.max(0, Math.min(1, value)));
 }
 
 function nowMilliseconds() {

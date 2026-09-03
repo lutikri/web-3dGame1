@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=pause-full-texture-upgrades";
+} from "./FluorescentBehavior.js?v=route-progress-reporting";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

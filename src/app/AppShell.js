@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=pause-full-texture-upgrades";
-import { translate } from "./Localization.js?v=pause-full-texture-upgrades";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=pause-full-texture-upgrades";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=pause-full-texture-upgrades";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=pause-full-texture-upgrades";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=pause-full-texture-upgrades";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=pause-full-texture-upgrades";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=route-progress-reporting";
+import { translate } from "./Localization.js?v=route-progress-reporting";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=route-progress-reporting";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=route-progress-reporting";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=route-progress-reporting";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=route-progress-reporting";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=route-progress-reporting";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=pause-full-texture-upgrades";
-import { createAppPanelController } from "./AppPanelController.js?v=pause-full-texture-upgrades";
-import { createAppRouter } from "./AppRouter.js?v=pause-full-texture-upgrades";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=pause-full-texture-upgrades";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=pause-full-texture-upgrades";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=pause-full-texture-upgrades";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=pause-full-texture-upgrades";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=pause-full-texture-upgrades";
+} from "./AppPersistence.js?v=route-progress-reporting";
+import { createAppPanelController } from "./AppPanelController.js?v=route-progress-reporting";
+import { createAppRouter } from "./AppRouter.js?v=route-progress-reporting";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=route-progress-reporting";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=route-progress-reporting";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=route-progress-reporting";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=route-progress-reporting";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=route-progress-reporting";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

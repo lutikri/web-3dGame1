@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=pause-full-texture-upgrades";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=route-progress-reporting";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

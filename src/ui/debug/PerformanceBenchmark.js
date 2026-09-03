@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=pause-full-texture-upgrades";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=route-progress-reporting";
 
 const EFFECT_KEYS = [
   "bloom",

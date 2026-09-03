@@ -5,6 +5,7 @@ import { RenderWarmupRuntime } from "../src/runtime/RenderWarmupRuntime.js";
 
 test("render warmup waits for visibility and settles complete frames behind the curtain", async () => {
   const calls = [];
+  const progress = [];
   const documentRef = new EventTarget();
   documentRef.hidden = true;
   let frameTime = 0;
@@ -42,7 +43,7 @@ test("render warmup waits for visibility and settles complete frames behind the 
     settleDurationMs: 200,
   });
 
-  const pending = runtime.warmup();
+  const pending = runtime.warmup({ onProgress: (value) => progress.push(value) });
   await Promise.resolve();
   assert.equal(foregroundLeases, 1);
   assert.equal(calls.includes("render"), false);
@@ -59,4 +60,9 @@ test("render warmup waits for visibility and settles complete frames behind the 
   assert.ok(timing.shaderCompileMs >= 0);
   assert.ok(timing.settleMs >= 0);
   assert.ok(timing.gpuWaitMs >= 0);
+  assert.equal(progress[0], 0);
+  assert.equal(progress.at(-1), 1);
+  assert.ok(progress.includes(0.05));
+  assert.ok(progress.includes(0.75));
+  assert.ok(progress.every((value, index) => index === 0 || value >= progress[index - 1]));
 });

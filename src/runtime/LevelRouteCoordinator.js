@@ -1,6 +1,8 @@
 export class LevelRouteCoordinator {
   constructor(options) {
     Object.assign(this, options);
+    this.setTimeoutFn ??= globalThis.setTimeout.bind(globalThis);
+    this.clearTimeoutFn ??= globalThis.clearTimeout.bind(globalThis);
   }
 
   resetForMenu = async () => {
@@ -12,11 +14,14 @@ export class LevelRouteCoordinator {
   };
 
   enterLevel = async ({ levelId, mode, onProgress }) => {
+    const reportProgress = createMonotonicProgressReporter(onProgress);
     this.stopEditing();
-    onProgress?.(8);
-    const loadedLevelId = await this.loadEnvironment(levelId);
+    reportProgress(8);
+    const loadedLevelId = await this.loadEnvironment(levelId, {
+      onProgress: (value) => reportProgress(mapProgress(value, 8, 68)),
+    });
     if (loadedLevelId !== this.resolveEnvironmentId(levelId)) return false;
-    onProgress?.(68);
+    reportProgress(68);
 
     const config = this.getLevelConfig(levelId, loadedLevelId);
     this.setActiveRoute(levelId, mode);
@@ -24,7 +29,7 @@ export class LevelRouteCoordinator {
     this.setLevelView();
     this.resetDoors(levelId);
     this.activateEnvironment();
-    onProgress?.(76);
+    reportProgress(76);
     this.restartPrefabLights(loadedLevelId);
     this.setRoomLights(true, { instant: false });
     this.resetDiagnostics({ levelId, config });
@@ -38,13 +43,66 @@ export class LevelRouteCoordinator {
     const snapshot = this.getCoreSnapshot();
     this.resetCompletion(snapshot.mode);
     this.updateStatus(snapshot, true);
-    const warmupTiming = await this.warmupRendering?.(loadedLevelId);
+    const warmupPromise = this.warmupRendering?.({
+      onProgress: (value) => reportProgress(mapProgress(value, 76, 94)),
+    });
+    const warmupTiming = await trackEstimatedProgress(warmupPromise, {
+      reportProgress,
+      setTimeoutFn: this.setTimeoutFn,
+      clearTimeoutFn: this.clearTimeoutFn,
+    });
     console.info(formatWarmupTiming(loadedLevelId, warmupTiming));
-    onProgress?.(94);
+    reportProgress(94);
     if (config.narration?.autoStart !== false) this.scheduleNarration(levelId);
-    onProgress?.(98);
+    reportProgress(98);
     return true;
   };
+}
+
+function createMonotonicProgressReporter(onProgress) {
+  let latest = -Infinity;
+  return (value) => {
+    const next = Math.max(0, Math.min(100, Number(value) || 0));
+    if (next <= latest) return;
+    latest = next;
+    onProgress?.(next);
+  };
+}
+
+function mapProgress(value, start, end) {
+  const ratio = Math.max(0, Math.min(1, Number(value) || 0));
+  return start + (end - start) * ratio;
+}
+
+async function trackEstimatedProgress(promise, {
+  reportProgress,
+  setTimeoutFn,
+  clearTimeoutFn,
+  intervalMs = 120,
+  timeConstantMs = 3500,
+} = {}) {
+  if (!promise || typeof promise.then !== "function") return promise;
+  const startedAt = nowMilliseconds();
+  let timer = null;
+  let complete = false;
+  const tick = () => {
+    if (complete) return;
+    const elapsed = nowMilliseconds() - startedAt;
+    const estimatedRatio = 0.72 * (1 - Math.exp(-elapsed / timeConstantMs));
+    reportProgress(mapProgress(estimatedRatio, 76, 94));
+    timer = setTimeoutFn(tick, intervalMs);
+  };
+  timer = setTimeoutFn(tick, intervalMs);
+  try {
+    return await promise;
+  } finally {
+    complete = true;
+    if (timer !== null) clearTimeoutFn(timer);
+  }
+}
+
+function nowMilliseconds() {
+  return globalThis.performance?.now?.() ?? Date.now();
 }
 
 function formatWarmupTiming(levelId, timing = {}) {

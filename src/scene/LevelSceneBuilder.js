@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=pause-full-texture-upgrades";
+} from "../prefabs/PrefabMarkerResolver.js?v=route-progress-reporting";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=pause-full-texture-upgrades";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=pause-full-texture-upgrades";
+} from "../levels/LevelConfigOverrides.js?v=route-progress-reporting";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=route-progress-reporting";
 
 export function createLevelSceneBuilder({
   scene,
@@ -28,14 +28,16 @@ export function createLevelSceneBuilder({
   getLanguage = () => "en",
 }) {
   return {
-    async build(levelRuntime, levelId, environmentConfig) {
+    async build(levelRuntime, levelId, environmentConfig, { onProgress } = {}) {
       const timings = createLevelBuildTimings();
+      reportProgress(onProgress, 0);
       const prefabGroup = new THREE.Group();
       prefabGroup.name = `${levelId}_Prefabs`;
       environmentModels.set(`${levelId}:prefabs`, prefabGroup);
       scene.add(prefabGroup);
 
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig, timings);
+      reportProgress(onProgress, 0.2);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
       const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);
       environmentConfig.prefabs = resolveLevelPrefabs(
@@ -52,7 +54,12 @@ export function createLevelSceneBuilder({
               prefabGroup, prefabGroup, pendingPrefabOverrides, timings),
           ),
       ];
-      const results = await Promise.allSettled(tasks);
+      let completedTasks = 0;
+      const trackedTasks = tasks.map((task) => Promise.resolve(task).finally(() => {
+        completedTasks += 1;
+        reportProgress(onProgress, 0.2 + (0.8 * completedTasks) / tasks.length);
+      }));
+      const results = await Promise.allSettled(trackedTasks);
       const failure = results.find((result) => result.status === "rejected");
       if (failure) throw failure.reason;
       levelRuntime.loadTimings = timings;
@@ -198,6 +205,10 @@ export function createLevelSceneBuilder({
     const failure = results.find((result) => result.status === "rejected");
     if (failure) throw failure.reason;
   }
+}
+
+function reportProgress(onProgress, value) {
+  onProgress?.(Math.max(0, Math.min(1, value)));
 }
 
 function createLevelBuildTimings() {

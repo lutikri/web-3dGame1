@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=pause-full-texture-upgrades";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=pause-full-texture-upgrades";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=route-progress-reporting";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=route-progress-reporting";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

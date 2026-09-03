@@ -11,7 +11,7 @@ export class LevelRuntimeManager {
     this.transitionTail = Promise.resolve();
   }
 
-  request(levelId) {
+  request(levelId, context) {
     if (!levelId) return Promise.reject(new TypeError("A level id is required"));
     const requestId = ++this.latestRequestId;
     const transition = async () => {
@@ -25,7 +25,7 @@ export class LevelRuntimeManager {
       }
       if (requestId !== this.latestRequestId) return this.snapshot("superseded");
 
-      const runtime = await this.loadRuntime(levelId);
+      const runtime = await this.loadRuntime(levelId, context);
       if (!runtime || runtime.levelId !== levelId) {
         if (runtime) await this.disposeRuntime(runtime);
         throw new Error(`Invalid runtime returned for level "${levelId}"`);

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=pause-full-texture-upgrades";
+import { translateRequired } from "./Localization.js?v=route-progress-reporting";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

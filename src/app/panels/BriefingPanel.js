@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=pause-full-texture-upgrades";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=route-progress-reporting";
 
 const DISMISS_MS = 300;
 
