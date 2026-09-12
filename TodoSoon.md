@@ -1,106 +1,169 @@
-# Near-Term Roadmap
+# Ближайший roadmap
 
-## 1. Intro Shift — three-minute tutorial
+> Этот файл задаёт порядок ближайших работ. Канонический продуктовый scope остаётся в `docs/game/game-design-ru.md`.
+>
+> Цель этапа: довести вертикальный срез из трёх смен до состояния законченной игры, не расширяя проект новыми секторами и симуляциями.
 
-- Keep the shift at 3:00 with five short burn phases.
-- Teach cause and effect through the panel, not a permanent instruction list:
-  - Field before heavy fuel.
-  - Fuel raises heat and output.
-  - Coolant controls heat but can quench the burn.
-  - Pulse restarts a stalled core when fuel and coolant are correctly set.
-  - Vent is an emergency pulse, not a normal operating rhythm.
-- Use one gentle, scripted disturbance so the player must make a correction before the final phase.
-- Keep phase changes as 9-second ramps instead of instant parameter switches.
+## P0. Служебный терминал вместо бумажных брифов
 
-## 2. Subtitle / operator-thought system
+- Убрать бумажные Shift Brief со стола как обязательный источник задания.
+- Поставить в Entrance Area старый физический моноблок Site-12 с новым Terragen software.
+- Терминал остаётся компактным diegetic-интерфейсом, а не полноценной операционной системой.
+- Первая версия содержит только:
+  - `SHIFT BRIEF` — активное назначение, цель, известные особенности и условия допуска;
+  - `SYSTEMS` — короткие сведения о доступных системах объекта;
+  - `HELP` — управление и уже открытые обучающие подсказки;
+  - `ARCHIVE` — найденные документы и лор без влияния на progression.
+- На терминале отображается только текущая назначенная смена. Неактивные смены не выглядят доступными.
+- Просмотр обязательной страницы `SHIFT BRIEF` создаёт событие готовности смены так же, как прежнее чтение документа.
+- Архитектура должна позволять добавлять новые документы и смены без переделки мира или самого терминала.
+- Не строить рабочий стол, файловую систему, окна, браузер и набор декоративных приложений.
 
-- Add a bottom-screen subtitle queue owned by `AppShell`.
-- Each line needs text, duration, priority, event ID, and a once-per-level flag.
-- Normal lines remain for 3–5 seconds; urgent warnings may interrupt low-priority thoughts.
-- Do not show subtitles while a briefing sheet or results overlay is visible.
-- Suggested intro lines:
-  - Start: `All right... let's wake you up.`
-  - First weak field: `Easy. Need a field under it first.`
-  - First quench: `Damn. Drowned it. Back off the coolant... give it fuel...`
-  - Pulse becomes ready after a quench: `Come on. Take the spark.`
-  - Successful restart: `There you are.`
-  - First deep-red temperature: `Nope. That's way too hot.`
-  - Sustained high load: `Hold together. Just a little longer.`
-- Door lines:
-  - During an active shift: `Yeah, no. Can't leave it burning.`
-  - Repeated attempt: `Of course. Interlocked until shutdown.`
-  - Successful shift: `Core's down. I'm done here.`
-  - Failed but contained: `Fail-safe caught it. Time to go.`
-  - Destroyed core: `That's gone. I need out. Now.`
+## P0. Qualification Shift должна проверять управление реактором
 
-## 3. Bulkhead exit interaction
+- Одного выживания в течение 180 секунд недостаточно для зачёта.
+- Успешная квалификация требует одновременно:
+  - приемлемого времени соответствия `Power Output` текущему `Grid Demand`;
+  - прохождения всех demand ramps;
+  - отсутствия длительных warning/critical состояний;
+  - ограниченного числа safety events, stalls и аварийных вмешательств;
+  - сохранения установки в рабочем состоянии до штатного завершения.
+- Оценка должна учитывать продолжительность отклонений, а не только финальный snapshot.
+- Порог должен требовать осознанного изменения Field, Fuel и Coolant, но оставлять запас новичку после обучения.
+- До калибровки не показывать постоянный игровой счёт. В `Shift Report` вывести понятные итоги, например:
 
-- Register `SM_Door1_Handle` as a first-person interactive handle.
-- Add explicit door states:
-  - `locked`: standby or active shift.
-  - `exitPending`: terminal shutdown sequence complete.
-  - `opening`: handle/door animation is playing.
-  - `exited`: hand control to the results route.
-- Trying the handle during a shift plays a locked movement/sound and queues a subtitle.
-- At shift completion, do not open results automatically.
-- Finish terminal shutdown, unlock the bulkhead, illuminate its indicator, and queue the exit subtitle.
-- Player approaches and holds/turns the handle; animate the handle first, then the bulkhead.
-- Show shift results only after the door interaction completes.
-- Preserve a fallback timeout/debug action so a missing mesh or animation cannot trap the player.
+```text
+GRID COMPLIANCE 87%
+STABILITY ACCEPTABLE
+CRITICAL EVENTS 0
+QUALIFICATION PASSED
+```
 
-## 4. Planned campaign levels
+- Провал по недостаточному управлению не открывает две следующие смены.
 
-1. `INTRO SHIFT`
-   - Basic field/fuel/coolant balance, quench recovery, and physical exit.
-2. `INSTRUMENT FAILURE`
-   - One gauge or warning circuit becomes unreliable; cross-check other instruments.
-3. `FUEL PROBLEMS`
-   - Poor or fluctuating fuel quality changes heat/output response.
-4. `COLD RECOVERY`
-   - Begin with a soaked or stalled core and restore the burn under grid pressure.
-5. `MINIMUM SERVICE`
-   - Hold a barely sustainable low-output burn with strict fuel/resource limits.
-6. `MAXIMUM LOAD`
-   - Operate near 150–170 MK while managing heat soak, field margin, and bus surges.
+## P0. Tutorial, retry и skip
 
-## 5. Interaction and presentation follow-up
+- Обучение сделать event-driven: реплика объясняет один принцип, затем flow ждёт соответствующее действие игрока.
+- Первая попытка Qualification сохраняет полный вводный контекст и обязательные ключевые шаги обучения.
+- После провала показывать быстрый `RESTART SHIFT` без повторного First Boot, общего лора, полной загрузочной презентации и обязательного ожидания уже прослушанного VO.
+- Уже просмотренный briefing и длинные реплики можно пропустить; новые или критичные инструкции не пропускаются автоматически.
+- При повторе краткие подсказки по контролам показываются только для ещё не выполненных шагов либо включаются игроком через `HELP`.
+- После успешного прохождения Qualification появляется `SKIP TRAINING` для последующих перепрохождений.
+- Быстрый restart обязан полностью сбрасывать симуляцию, incidents, objectives, report recorder, терминальный исход и временное состояние комнаты.
 
-- Custom collision meshes.
-- Bulkhead door geometry opening animation and handle sounds.
-- Controls knob dial markings.
-- Controls button retexture.
-- Button tooltips/popups.
-- Startup task card updated for the three-minute shift.
-- Audio layers:
-  - Core hum tied to burn rate.
-  - Field whine tied to magnetic load.
-  - Coolant pump and cavitation.
-  - Ignition capacitor charge and pulse impact.
-  - Core stall wind-down and terminal alarms.
+## P0. Настоящая пауза и быстрые настройки
 
-## 6. Pause/settings follow-up
+- `Esc/P` открывает pause menu только во время gameplay.
+- Пауза действительно останавливает реакторное время, objective timers, incidents, физику, анимации игрового состояния и терминальные последовательности.
+- Меню и аудио могут иметь отдельную безопасную presentation-анимацию, не продвигающую смену.
+- Минимальный набор настроек во время игры:
+  - mouse sensitivity;
+  - master/music/voice/SFX volume;
+  - FOV;
+  - быстрые пресеты `LOW / MEDIUM / HIGH`;
+  - resolution scale;
+  - доступные параметры качества и постобработки.
+- `RESUME`, `RESTART SHIFT`, `SETTINGS` и возврат в меню должны иметь однозначное поведение и не смешиваться с другими app panels.
 
-- Resume.
-- Restart.
-- Settings.
-- FOV.
-- UI scale.
-- Shadows quality.
-- GTAO quality.
-- Post-processing presets.
-- Texture quality.
-- Debug overlay show/hide.
+## P1. First Boot и обычная загрузка — разные презентации
 
-## Done
+### Только при первом запуске
 
-- `SM_Door1_Handle` locked ±30° attempt, hold-to-turn 360° exit, and results handoff.
-- Bottom-center operator thought queue with priority, per-shift deduplication, and 0.7–1.2 second fades.
-- Intro thoughts connected to startup, weak field, quench/restart, redline, high load, and terminal outcomes.
-- Long-term fluorescent light flicker.
-- Correct knob wheel direction.
-- Improved first-person movement.
-- Indicator test gauge/lamp sequence.
-- Fluorescent startup lighting sequence.
-- Recoverable core stall and held ignition pulse.
-- Smooth phase ramps.
-- Terminal complete/failure/core-destroyed sequences.
+```text
+Setup Wizard
+-> 20–40 s Terragen / TGlobal intro
+-> контекст Site-12
+-> Main Menu
+```
+
+- Коротко объяснить компанию, старый объект и роль нового оператора.
+- Использовать несколько атмосферных кадров и минимум текста; это развлечение и worldbuilding, а не энциклопедия.
+- Повторно не показывать после сохранения first-run progress; оставить возможность пересмотреть через `ARCHIVE`.
+
+### Первая загрузка Qualification
+
+- Показать 2–3 простых instructional frames о базовом чтении панели.
+- Завершить короткой мини-анимацией/имитацией спуска personnel transfer lift в игровую зону Site-12.
+- Лифт остаётся загрузочной презентацией, а не отдельной управляемой сценой.
+
+### Обычные загрузки смен
+
+- Использовать короткую сменяемую подборку: Site-12 slides, схемы систем, safety notices и фрагменты `ARCHIVE`.
+- Не повторять историю TGlobal при каждой загрузке.
+- Загрузка не должна обещать игроку отдельный playable elevator.
+
+## P1. Вертикальный release gate трёх смен
+
+После задач P0 прогнать полный flow:
+
+```text
+Qualification
+-> unlock Instrument Reliability Check + Cost of Running Trial
+-> terminal brief
+-> gameplay
+-> fail / win
+-> physical exit
+-> Shift Report
+-> Assigned Shifts
+-> persistence / reload
+```
+
+- Проверить успех, каждый тип провала, restart и повторное прохождение.
+- Проверить RU/EN.
+- Проверить сохранение progression после перезагрузки страницы.
+- Проверить последовательную смену environment runtime без оставшихся объектов, физики, света, аудио и listeners.
+- Этот gate является milestone `игра закончена по вертикали`.
+
+## P1. Instrument Reliability Check и фонарик
+
+- Эта смена — первая дорабатываемая post-qualification смена.
+- Сделать фонарик реально нужным из-за локального ухудшения освещения, а не просто доступным предметом.
+- Инструменты могут врать, запаздывать, дрожать или залипать; authoritative simulation state остаётся отдельным.
+- Игрок должен сверять gauges, lamps, status displays, звук реактора и освещённые фонариком признаки в помещении.
+- `Self-Test` показывает симптомы неисправности, но не выдаёт готовое решение.
+- Не повторять подробное обучение панели; доступна краткая справка терминала.
+
+## P1. Cost of Running Trial
+
+- После стабилизации Qualification и Instrument Reliability выполнить финальный balance pass топливной смены.
+- Проверить читаемость качества смеси, провалов подачи, output instability и стоимости топлива.
+- Требовать долгосрочной эффективности, а не только выживания или краткого попадания в demand.
+
+## P2. Observation Port
+
+Выполнять после прохождения всех трёх смен end-to-end, но до финального polish.
+
+- Довести информационные группы:
+  - `EFFICIENCY / STALL / STRESS`;
+  - `OUTPUT / DEMAND / BATTERY`;
+  - `PUMPS / COOLANT / FUEL`.
+- Реализовать `VIEWPORT SHUTTER`.
+- Реализовать `ALARM SILENCE` как подтверждение/приглушение разрешённых звуковых alarms; визуальные предупреждения и критическое состояние не исчезают.
+- Observation Port является дополнительным физическим источником информации и worldbuilding, но не заменяет основную панель и не блокирует завершение базового reactor loop.
+
+## P2. Фон главного меню
+
+- Заменить абстрактный фон на атмосферную сцену жилой зоны персонала / personal accommodation.
+- Это menu background, не новый исследуемый Staff Room и не расширение gameplay scope.
+- Сцена поддерживает новый лор, визуально отделяет безопасную бытовую зону от Site-12 и остаётся достаточно лёгкой для быстрого запуска меню.
+
+## Не входит в ближайший этап
+
+- Полноценная терминальная ОС с произвольными приложениями.
+- Playable elevator.
+- Power Bus gameplay.
+- Pump Station gameplay.
+- Staff Room survival systems.
+- Усталость, жажда, кофеин и другие operator-condition системы.
+- Новые смены за пределами текущего пакета из трёх.
+
+## Уже готовая основа
+
+- Трёхминутная симуляция и плавные burn-phase ramps.
+- Recoverable stall и held ignition pulse.
+- Terminal outcomes: success, insufficient output, safety trip/core destroyed.
+- Физический выход через bulkhead и передача управления в Shift Report.
+- Operator thoughts, narration, tutorial hint queue и локализация RU/EN.
+- Instrument diagnostics и fuel-blend incidents.
+- Фонарик, инвентарь и embodied first-person movement.
+- Exclusive level lifecycle, loading stages, quality profiles и автоматические проверки.

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=route-progress-reporting";
+import { translateRequired } from "./Localization.js?v=terminal-dirt-png-1024";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

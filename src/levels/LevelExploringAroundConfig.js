@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=route-progress-reporting";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=route-progress-reporting";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=route-progress-reporting";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=terminal-dirt-png-1024";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=terminal-dirt-png-1024";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=terminal-dirt-png-1024";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -34,7 +34,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     },
   },
   physicalBriefing: {
-    enabled: true,
+    enabled: false,
     prefabType: "briefSheet",
     socketPrefix: "SOCKET_Brief_",
     briefingLevelId: "intro-shift",

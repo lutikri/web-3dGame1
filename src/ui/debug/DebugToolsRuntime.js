@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=route-progress-reporting";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=route-progress-reporting";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=route-progress-reporting";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=route-progress-reporting";
+import { createDebugHub } from "./DebugHub.js?v=terminal-dirt-png-1024";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=terminal-dirt-png-1024";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=terminal-dirt-png-1024";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=terminal-dirt-png-1024";
 
 export class DebugToolsRuntime {
   constructor(options) {

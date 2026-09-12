@@ -6,6 +6,7 @@ const TOOLTIP_KINDS = new Set([
   "roomLightButton",
   "bulkheadHandle",
   "doorLatchHandle",
+  "serviceTerminal",
 ]);
 
 export function createInteractionHoverRuntime({

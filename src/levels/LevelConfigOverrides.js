@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=route-progress-reporting";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=terminal-dirt-png-1024";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",
@@ -8,6 +8,7 @@ const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "clock",
   "elevator",
   "interaction",
+  "serviceTerminal",
   "radio",
   "prefabType",
 ]);

@@ -392,7 +392,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       },
       "rigidBody": {
         "enabled": true,
-        "bodyType": "dynamic",
+        "bodyType": "fixed",
         "colliderNamePrefixes": [
           "UBX_SM_Desk1_"
         ],
@@ -525,6 +525,81 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_DoorBulkControlBooth",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "state": {
+        "latched": false
+      },
+      "name": "DoorBulk1_DoorBulkLocalObservation",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "state": {
+        "latched": true
+      },
+      "name": "DoorBulk1_DoorBulkPowerBus",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "light": {
         "enabled": true,
         "type": "spot",
@@ -622,6 +697,321 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "x": 0.9999999995318075,
           "y": 1,
           "z": 0.9999999995318075
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor1001",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor2",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": true,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor3",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor4",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": true,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": true,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor5",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
         }
       }
     },
@@ -1004,6 +1394,69 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "light": {
+        "enabled": true,
+        "color": "#f0f1ff",
+        "intensity": 2.82,
+        "distance": 2,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": true,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_TutorialCabin",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "rootName": "SM_LampDesk1",
       "item": {
         "enabled": true,
@@ -1310,6 +1763,198 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "screen": {
+        "brightness": 0.56,
+        "scanlineStrength": 0.04,
+        "scanlineDensity": 1,
+        "edgeDarkening": 0.1,
+        "cornerDarkening": 0.935,
+        "centerBoost": 0.665,
+        "flickerStrength": 0.1,
+        "jitterStrength": 1.41,
+        "jitterEventStrength": 1.21,
+        "persistenceStrength": 0.14,
+        "persistenceDecay": 2
+      },
+      "name": "operatorPanel_Panel1",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "statusViewport": {
+        "screenMeshName": "SM_PanelViewStatus1_Screen",
+        "updateIntervalSeconds": 1,
+        "screen": {
+          "brightness": 1.2,
+          "scanlineStrength": 0.035,
+          "scanlineDensity": 1,
+          "edgeDarkening": 0.08,
+          "cornerDarkening": 0.18,
+          "centerBoost": 0.12,
+          "flickerStrength": 0.008,
+          "jitterStrength": 0.08,
+          "jitterEventStrength": 0.25,
+          "persistenceStrength": 0.1,
+          "persistenceDecay": 0.2
+        },
+        "palette": {
+          "off": 2372910,
+          "green": 5439377,
+          "amber": 16758847,
+          "red": 16729656
+        },
+        "indicators": {
+          "AlarmSilence": {
+            "tint": 16777215,
+            "intensity": 2.2
+          },
+          "Generation": {
+            "tint": 16777215,
+            "intensity": 2.1
+          },
+          "Cireculation": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Turbine": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Pumps": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Fuel": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Output": {
+            "tint": 16777215,
+            "intensity": 2.1
+          },
+          "Demand": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Battery": {
+            "tint": 16777215,
+            "intensity": 1.8
+          },
+          "Efficiency": {
+            "tint": 16777215,
+            "intensity": 2.2
+          },
+          "Stall": {
+            "tint": 16777215,
+            "intensity": 2.2
+          },
+          "Stress": {
+            "tint": 16777215,
+            "intensity": 2.2
+          },
+          "Coolant": {
+            "tint": 16777215,
+            "intensity": 1.8
+          }
+        }
+      },
+      "name": "PanelStatusViewport1_PanelStatusViewport2",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "plasma": {
+        "meshName": "Torus.003",
+        "runtimeCoreName": "SM_PlasmaView1_Core",
+        "haloScale": 1.077,
+        "flowSpeed": 38,
+        "baseFlowRatio": 0.055,
+        "baseStrength": 1.755,
+        "coreGain": 1.825,
+        "haloGain": 2,
+        "coreOpacity": 0.775,
+        "haloOpacity": 1,
+        "hazeStrength": 1,
+        "filamentStrength": 3,
+        "filamentDensity": 14,
+        "filamentSharpness": 0.295,
+        "filamentSegmentation": 0.78,
+        "hotspotStrength": 2.14,
+        "hotspotThreshold": 0.835,
+        "colorVariation": 0.72,
+        "baseColor": 7282577,
+        "stableColor": 3766488,
+        "filamentColor": 16729544,
+        "hotspotColor": 16770815,
+        "dangerColor": 16730656,
+        "impurityColor": 3724955,
+        "displacementScale": 0.113,
+        "lightLocalOffset": [
+          2.665,
+          0.147,
+          4.985
+        ],
+        "lightColor": 7186687,
+        "lightIntensity": 2.4,
+        "lightDistance": 6,
+        "lightDecay": 2
+      },
+      "name": "plasmaView_Core1",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "name": "radio_ControlBooth1",
       "placementOffset": {
         "position": {
@@ -1355,6 +2000,56 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     },
     {
       "name": "radio_CorridorEntry1001",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#ff1b0a",
+        "intensity": 0.2,
+        "distance": 3,
+        "decay": 1,
+        "localOffset": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0006,
+        "shadowNormalBias": 0.035,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 9,
+        "fluorescentStartup": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0
+        }
+      },
+      "name": "redBulkLamp_ControlBooth1",
       "placementOffset": {
         "position": {
           "x": 0,
@@ -1476,581 +2171,17 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
-      "plasma": {
-        "meshName": "Torus.003",
-        "runtimeCoreName": "SM_PlasmaView1_Core",
-        "haloScale": 1.077,
-        "flowSpeed": 38,
-        "baseFlowRatio": 0.055,
-        "baseStrength": 1.755,
-        "coreGain": 1.825,
-        "haloGain": 2,
-        "coreOpacity": 0.775,
-        "haloOpacity": 1,
-        "hazeStrength": 1,
-        "filamentStrength": 3,
-        "filamentDensity": 14,
-        "filamentSharpness": 0.295,
-        "filamentSegmentation": 0.78,
-        "hotspotStrength": 2.14,
-        "hotspotThreshold": 0.835,
-        "colorVariation": 0.72,
-        "baseColor": 7282577,
-        "stableColor": 3766488,
-        "filamentColor": 16729544,
-        "hotspotColor": 16770815,
-        "dangerColor": 16730656,
-        "impurityColor": 3724955,
-        "displacementScale": 0.113,
-        "lightLocalOffset": [
-          2.665,
-          0.147,
-          4.985
-        ],
-        "lightColor": 7186687,
-        "lightIntensity": 2.4,
-        "lightDistance": 6,
-        "lightDecay": 2
+      "serviceTerminal": {
+        "screenMeshName": "SM_Terminal_Screen",
+        "maxDistance": 2.15,
+        "controlLabel": "SERVICE TERMINAL",
+        "textureWidth": 1600,
+        "textureHeight": 900,
+        "emissiveColor": 16776693,
+        "emissiveIntensity": 0.08,
+        "roughness": 0.42
       },
-      "name": "plasmaView_Core1",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#f0f1ff",
-        "intensity": 2.82,
-        "distance": 2,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": true,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_TutorialCabin",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Corridor4",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": true,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Corridor3",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Corridor2",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Corridor1001",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#d9e8ff",
-        "intensity": 1.5,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": true,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": true,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Corridor5",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "screen": {
-        "brightness": 0.56,
-        "scanlineStrength": 0.04,
-        "scanlineDensity": 1,
-        "edgeDarkening": 0.1,
-        "cornerDarkening": 0.935,
-        "centerBoost": 0.665,
-        "flickerStrength": 0.1,
-        "jitterStrength": 1.41,
-        "jitterEventStrength": 1.21,
-        "persistenceStrength": 0.14,
-        "persistenceDecay": 2
-      },
-      "name": "operatorPanel_Panel1",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#ff1b0a",
-        "intensity": 0.2,
-        "distance": 3,
-        "decay": 1,
-        "localOffset": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0006,
-        "shadowNormalBias": 0.035,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 9,
-        "fluorescentStartup": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0
-        }
-      },
-      "name": "redBulkLamp_ControlBooth1",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "state": {
-        "latched": true
-      },
-      "name": "DoorBulk1_DoorBulkPowerBus",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "state": {
-        "latched": false
-      },
-      "name": "DoorBulk1_DoorBulkControlBooth",
-      "placementOffset": {
-        "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "state": {
-        "latched": false
-      },
-      "name": "DoorBulk1_DoorBulkLocalObservation",
+      "name": "Terminal1",
       "placementOffset": {
         "position": {
           "x": 0,

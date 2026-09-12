@@ -80,6 +80,13 @@ test("service door registry uses the current authored GLB", () => {
   assert.equal(getPrefabDefinition("serviceDoor").assetPath, "assets/mesh/prefabs/SM_Door2.glb");
 });
 
+test("service terminal routes its screen and glass meshes to dedicated materials", () => {
+  const terminal = getPrefabDefinition("Terminal1");
+  assert.equal(terminal.materialKey, "terminalBody");
+  assert.equal(terminal.materialOverrides.SM_Terminal_Screen, "terminalScreen");
+  assert.equal(terminal.materialOverrides.SM_Terminal_ScreenGlass, "terminalScreenGlass");
+});
+
 test("dome lamp owns its bulb material, zero-offset point light, and runtime photometric profile", () => {
   const lamp = createPrefabInstance("LampDome1", {
     name: "HallLamp",
@@ -119,6 +126,7 @@ test("desk owns three physical drawers and excludes their colliders from the des
   assert.equal(desk.drawers.closedPosition, 0.18349);
   assert.equal(desk.drawers.openPosition, 0.632626);
   assert.deepEqual(desk.drawers.axis, [0, 0, -1]);
+  assert.equal(desk.rigidBody.bodyType, "fixed");
   assert.deepEqual(desk.rigidBody.colliderNamePrefixes, ["UBX_SM_Desk1_"]);
 });
 

@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=route-progress-reporting";
+} from "../../../levels/LevelConfigSerialization.js?v=terminal-dirt-png-1024";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=route-progress-reporting";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=terminal-dirt-png-1024";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -21,6 +21,8 @@ const MATERIAL_TUNING_KEYS = [
   "aoMapIntensity",
   "emissive",
   "emissiveIntensity",
+  "opacity",
+  "alphaMapContrast",
   "roomLightControlled",
 ];
 const POST_FX_QUALITY_SECTIONS = new Set(["gtao", "ssgi", "ssr", "screenSpaceShadows"]);
@@ -59,6 +61,16 @@ export function getOperatorPanelScreenDebugProperties(prefab) {
 
 export function getStatusViewportDebugProperties(prefab) {
   return prefab?.behavior === "statusViewport" && prefab.statusViewport ? prefab.statusViewport : null;
+}
+
+export function parseDebugWorkspaceSelection(selectedId = "") {
+  const [kind, ...segments] = String(selectedId).split(":");
+  if (kind === "material") return { kind, key: segments.join(":") };
+  return {
+    kind,
+    levelId: segments[0],
+    key: segments.slice(1).join(":") || undefined,
+  };
 }
 
 export function createDebugProjectSavePayload({
@@ -227,7 +239,7 @@ export function createDebugWorkspace({
   function rebuildProperties() {
     propertiesGui?.destroy();
     propertiesGui = makeGui("PROPERTIES", 8);
-    const [kind, levelId, key] = selectedId.split(":");
+    const { kind, levelId, key } = parseDebugWorkspaceSelection(selectedId);
     if (kind === "prefab") buildPrefabProperties(levelId, key);
     else if (kind === "level-light") buildPointLightProperties(levelId, key);
     else if (kind === "level") buildLevelProperties(levelId, key);
@@ -479,7 +491,15 @@ export function createDebugWorkspace({
       applyMaterialConfig?.(key);
       setStatus(`applied material ${key}`, "live");
     };
-    MATERIAL_TUNING_KEYS.forEach((property) => addAutoController(propertiesGui, material, property, apply));
+    MATERIAL_TUNING_KEYS.forEach((property) => addAutoController(
+      propertiesGui,
+      material,
+      property,
+      apply,
+      material.maskAsAlphaMap && property === "opacity"
+        ? "DIRT OPACITY"
+        : material.maskAsAlphaMap && property === "alphaMapContrast" ? "DIRT CONTRAST" : undefined,
+    ));
     if (material.maskOverlay) addObjectFolder(propertiesGui.addFolder("MASK OVERLAY"), material.maskOverlay, apply);
     action(propertiesGui, "SAVE CONFIGS TO PROJECT", saveProject);
   }
@@ -625,10 +645,10 @@ export function createDebugWorkspace({
     });
   }
 
-  function addAutoController(folder, object, key, onChange) {
+  function addAutoController(folder, object, key, onChange, labelOverride) {
     if (!object || object[key] === undefined) return null;
     const value = object[key];
-    const label = labelize(key).toUpperCase();
+    const label = labelOverride ?? labelize(key).toUpperCase();
     if (ENUMS[key]) return addSelect(folder, object, key, label, ENUMS[key], onChange);
     if (typeof value === "boolean") return addBoolean(folder, object, key, label, onChange);
     if (typeof value === "number") {
@@ -761,9 +781,11 @@ function naturalCompare(a, b) {
 }
 
 function getAutoNumberRange(key, value) {
+  if (/alphaMapContrast/i.test(key)) return [0, 4, 0.01];
   if (/bias|temperature|tint|barrel|fisheye|brightness/i.test(key)) return [-2, 2, 0.001];
   if (/sample|spp|steps|iterations|maxTextureSize/i.test(key)) return [0, Math.max(64, value * 4), 1];
-  if (/threshold|opacity|blend|radius|strength|amount|saturation|contrast|gamma|maxRoughness|scale|intensity/i.test(key)) {
+  if (/opacity/i.test(key)) return [0, 1, 0.005];
+  if (/threshold|blend|radius|strength|amount|saturation|contrast|gamma|maxRoughness|scale|intensity/i.test(key)) {
     return [0, Math.max(2, Math.ceil(Math.max(value, 1) * 2)), 0.005];
   }
   if (/distance|thickness|power|length|spacing|kernel/i.test(key)) return [0, Math.max(10, Math.ceil(Math.max(value, 1) * 4)), 0.01];

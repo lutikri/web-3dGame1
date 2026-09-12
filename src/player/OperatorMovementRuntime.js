@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=route-progress-reporting";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=terminal-dirt-png-1024";
 
 export function createOperatorMovementRuntime({
   config,

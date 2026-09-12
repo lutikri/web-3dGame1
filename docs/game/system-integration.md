@@ -26,9 +26,10 @@ Shift scenario / objectives
 
 - Setup Wizard is application state, not level state. Setup/persistence services own completion, language, graphics, and gamma.
 - Assigned Shifts is menu/application state. It does not own scene objects or level runtime state.
-- The implied personnel-elevator transfer is part of loading presentation and does not load an environment.
+- First Boot is persistent app onboarding shown once after setup; ordinary shift loading uses separate Site-12 presentation content.
+- The personnel-elevator transfer is a short loading presentation and does not load a playable elevator environment.
 - Entrance Corridor, Entrance Area, service corridor, and Control Booth may belong to one exclusively active environment.
-- Shift Brief state belongs to the selected `LevelSession`; briefing presentation remains an app panel concern.
+- Shift Brief state belongs to the selected `LevelSession`; its presentation belongs to the world-space service-terminal feature. The terminal emits a narrow `briefViewed`-style event and does not own progression, objectives, or route loading.
 - Qualification unlocks are persistent progression state. Failed qualification does not unlock later assignments and returns the player to the same qualification assignment.
 - Exit-door interaction requests terminal completion and the following route transition; it does not directly construct the report.
 - Shift Report reads recorded metrics only after the runtime has entered a safe terminal state.
@@ -68,9 +69,9 @@ Required contract: condition effects alter feedback and decision pressure before
 
 ### App routing vs gameplay lifecycle
 
-Menu panels, briefings, environment transitions, and boot loading currently share similar visuals and can accidentally overlap.
+Menu panels, the service terminal, environment transitions, First Boot, and ordinary loading can accidentally overlap or advance gameplay behind their presentation.
 
-Required contract: `AppRouter` owns major context transitions, `AppPanelController` owns menu panels, boot loading stays independent, and input unlock occurs only after the target runtime and briefing state are ready.
+Required contract: `AppRouter` owns major context transitions, `AppPanelController` owns menu panels, First Boot and ordinary loading remain distinct app presentation states, and input unlock occurs only after the target runtime and service-terminal state are ready. A gameplay pause must freeze simulation, objectives, incidents, physics and gameplay timelines without depending on visibility of a particular panel.
 
 ### Composition root vs feature convenience
 

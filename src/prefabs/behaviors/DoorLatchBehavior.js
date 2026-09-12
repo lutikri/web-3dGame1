@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=route-progress-reporting";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=terminal-dirt-png-1024";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

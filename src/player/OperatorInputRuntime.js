@@ -51,6 +51,8 @@ export function createOperatorInputRuntime({
   commitInventorySelection = () => false,
   cancelInventorySelection = () => false,
   activateInteractive,
+  handleServiceTerminalWheel = () => false,
+  handleServiceTerminalKeyDown = () => false,
   releasePrimaryInteractions,
   releaseAllControls,
   requestPointerLock,
@@ -103,6 +105,10 @@ export function createOperatorInputRuntime({
 
   function handleKeyDown(event) {
     unlockAudio();
+    if (handleServiceTerminalKeyDown(event)) {
+      event.preventDefault();
+      return;
+    }
     if (isInputLocked()) {
       if (isMovementCode(event.code)) event.preventDefault();
       return;
@@ -179,6 +185,10 @@ export function createOperatorInputRuntime({
   }
 
   function handleWheel(event) {
+    if (handleServiceTerminalWheel(event)) {
+      event.preventDefault();
+      return;
+    }
     if (isInputLocked()) return;
     if (isInventorySelectionOpen()) {
       event.preventDefault();

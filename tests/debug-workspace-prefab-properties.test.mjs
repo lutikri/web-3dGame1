@@ -8,6 +8,7 @@ import {
   getStatusViewportDebugProperties,
   getSuspendedLampDebugProperties,
   getPlasmaViewDebugProperties,
+  parseDebugWorkspaceSelection,
 } from "../src/ui/debug/workspace/DebugWorkspace.js";
 import {
   isSocketGeneratedPrefab,
@@ -53,6 +54,18 @@ test("debug workspace exposes master status viewport tuning", () => {
   assert.equal(getStatusViewportDebugProperties({ behavior: "radio", statusViewport }), null);
 });
 
+test("debug workspace resolves a material selection to its material key", () => {
+  assert.deepEqual(parseDebugWorkspaceSelection("material:terminalScreenGlass"), {
+    kind: "material",
+    key: "terminalScreenGlass",
+  });
+  assert.deepEqual(parseDebugWorkspaceSelection("prefab:exploring-around:Desk1_1"), {
+    kind: "prefab",
+    levelId: "exploring-around",
+    key: "Desk1_1",
+  });
+});
+
 test("debug workspace groups Blender bulkhead aliases and uses natural name order", () => {
   const prefabs = [
     { prefabType: "DoorBulk1", name: "DoorBulk1_10" },
@@ -77,7 +90,7 @@ test("debug workspace project save batches level, materials, and post processing
       player: {},
     },
     materialConfigs: {
-      metal: { color: "#ffffff", roughness: 0.5, assetPath: "ignored.png" },
+      metal: { color: "#ffffff", roughness: 0.5, opacity: 0.35, assetPath: "ignored.png" },
     },
     globalLightingConfig: { ambientIntensity: 0.2 },
     decalConfig: { opacity: 0.8 },
@@ -88,7 +101,7 @@ test("debug workspace project save batches level, materials, and post processing
   assert.equal(payload.kind, "allConfigs");
   assert.equal(payload.config.room.id, "room");
   assert.deepEqual(payload.config.globalScene, {
-    materials: { metal: { color: "#ffffff", roughness: 0.5 } },
+    materials: { metal: { color: "#ffffff", roughness: 0.5, opacity: 0.35 } },
     lighting: { ambientIntensity: 0.2 },
     camera: { walkSpeed: 1.65, operatorMovement: { bodyRig: { heldMassScale: 1.45 } } },
     decals: { opacity: 0.8 },

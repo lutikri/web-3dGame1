@@ -100,7 +100,7 @@ test("desk drawer registrar creates separate prismatic bodies and toggles their 
   registrar.register("room", {
     name: "Desk",
     behavior: "deskDrawers",
-    rigidBody: { enabled: true, colliderNamePrefixes: ["UBX_SM_Desk1_"] },
+    rigidBody: { enabled: true, bodyType: "fixed", colliderNamePrefixes: ["UBX_SM_Desk1_"] },
     drawers: {
       drawerNames: [drawer.name], closedPosition: 0.18349, openPosition: 0.632626,
       axis: [0, 0, -1],
@@ -109,7 +109,9 @@ test("desk drawer registrar creates separate prismatic bodies and toggles their 
   }, runtime);
 
   assert.deepEqual(calls[0][1].colliderMeshes, [deskCollider]);
+  assert.equal(calls[0][1].bodyType, "fixed");
   assert.deepEqual(calls[1][1].colliderMeshes, [drawerCollider]);
+  assert.equal(calls[1][1].parentKey, "room:Desk:rigid");
   assert.ok(Math.abs(calls[1][1].maxPosition - 0.449136) < 1e-9);
   assert.equal(interactive[0], drawer);
   assert.equal(drawer.userData.kind, "slidingDrawer");

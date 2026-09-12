@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=route-progress-reporting";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=terminal-dirt-png-1024";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

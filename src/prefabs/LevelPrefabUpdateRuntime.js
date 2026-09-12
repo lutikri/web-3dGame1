@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=route-progress-reporting";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=route-progress-reporting";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=route-progress-reporting";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=route-progress-reporting";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=route-progress-reporting";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=route-progress-reporting";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=route-progress-reporting";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-dirt-png-1024";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-dirt-png-1024";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-dirt-png-1024";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-dirt-png-1024";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-dirt-png-1024";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-dirt-png-1024";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

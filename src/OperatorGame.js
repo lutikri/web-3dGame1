@@ -3,135 +3,137 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=route-progress-reporting";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=terminal-dirt-png-1024";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=route-progress-reporting";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=route-progress-reporting";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=route-progress-reporting";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=route-progress-reporting";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=route-progress-reporting";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=route-progress-reporting";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=route-progress-reporting";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=route-progress-reporting";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=route-progress-reporting";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=route-progress-reporting";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=route-progress-reporting";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=route-progress-reporting";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=route-progress-reporting";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=route-progress-reporting";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=route-progress-reporting";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=route-progress-reporting";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=route-progress-reporting";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=route-progress-reporting";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=route-progress-reporting";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=route-progress-reporting";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=route-progress-reporting";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=route-progress-reporting";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=route-progress-reporting";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=route-progress-reporting";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=route-progress-reporting";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=route-progress-reporting";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=route-progress-reporting";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=route-progress-reporting";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=route-progress-reporting";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=route-progress-reporting";
+} from "./game/ShiftReport.js?v=terminal-dirt-png-1024";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=terminal-dirt-png-1024";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=terminal-dirt-png-1024";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=terminal-dirt-png-1024";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=terminal-dirt-png-1024";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=terminal-dirt-png-1024";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=terminal-dirt-png-1024";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=terminal-dirt-png-1024";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=terminal-dirt-png-1024";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=terminal-dirt-png-1024";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=terminal-dirt-png-1024";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=terminal-dirt-png-1024";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=terminal-dirt-png-1024";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=terminal-dirt-png-1024";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=terminal-dirt-png-1024";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=terminal-dirt-png-1024";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=terminal-dirt-png-1024";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=terminal-dirt-png-1024";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=terminal-dirt-png-1024";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=terminal-dirt-png-1024";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=terminal-dirt-png-1024";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=terminal-dirt-png-1024";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=terminal-dirt-png-1024";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=terminal-dirt-png-1024";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=terminal-dirt-png-1024";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=terminal-dirt-png-1024";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=terminal-dirt-png-1024";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=terminal-dirt-png-1024";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=terminal-dirt-png-1024";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=terminal-dirt-png-1024";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=terminal-dirt-png-1024";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=route-progress-reporting";
+} from "./config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=route-progress-reporting";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=route-progress-reporting";
-import { createStatusScreen } from "./StatusScreen.js?v=route-progress-reporting";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=route-progress-reporting";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=route-progress-reporting";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=route-progress-reporting";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=route-progress-reporting";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=route-progress-reporting";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=route-progress-reporting";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=route-progress-reporting";
+} from "./scene/TextureStreaming.js?v=terminal-dirt-png-1024";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=terminal-dirt-png-1024";
+import { createStatusScreen } from "./StatusScreen.js?v=terminal-dirt-png-1024";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=terminal-dirt-png-1024";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=terminal-dirt-png-1024";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=terminal-dirt-png-1024";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=terminal-dirt-png-1024";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=terminal-dirt-png-1024";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=terminal-dirt-png-1024";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=terminal-dirt-png-1024";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=route-progress-reporting";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=route-progress-reporting";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=route-progress-reporting";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=terminal-dirt-png-1024";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=terminal-dirt-png-1024";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=terminal-dirt-png-1024";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=route-progress-reporting";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=route-progress-reporting";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=route-progress-reporting";
-import { AssetCache } from "./runtime/AssetCache.js?v=route-progress-reporting";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=route-progress-reporting";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=route-progress-reporting";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=route-progress-reporting";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=route-progress-reporting";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=route-progress-reporting";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=route-progress-reporting";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=route-progress-reporting";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=route-progress-reporting";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=route-progress-reporting";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=route-progress-reporting";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=route-progress-reporting";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=route-progress-reporting";
+} from "./lighting/FluorescentBehavior.js?v=terminal-dirt-png-1024";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=terminal-dirt-png-1024";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=terminal-dirt-png-1024";
+import { AssetCache } from "./runtime/AssetCache.js?v=terminal-dirt-png-1024";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=terminal-dirt-png-1024";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=terminal-dirt-png-1024";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=terminal-dirt-png-1024";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=terminal-dirt-png-1024";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=terminal-dirt-png-1024";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=terminal-dirt-png-1024";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=terminal-dirt-png-1024";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=terminal-dirt-png-1024";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=terminal-dirt-png-1024";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=terminal-dirt-png-1024";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=terminal-dirt-png-1024";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=terminal-dirt-png-1024";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=route-progress-reporting";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=route-progress-reporting";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=route-progress-reporting";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=route-progress-reporting";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=route-progress-reporting";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=route-progress-reporting";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=route-progress-reporting";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=route-progress-reporting";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=route-progress-reporting";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=route-progress-reporting";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=route-progress-reporting";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=route-progress-reporting";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=route-progress-reporting";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=route-progress-reporting";
-import { PlayerController } from "./player/PlayerController.js?v=route-progress-reporting";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=route-progress-reporting";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=route-progress-reporting";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=route-progress-reporting";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=route-progress-reporting";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=route-progress-reporting";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=route-progress-reporting";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=route-progress-reporting";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=route-progress-reporting";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=route-progress-reporting";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=route-progress-reporting";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=route-progress-reporting";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=route-progress-reporting";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=route-progress-reporting";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=route-progress-reporting";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=route-progress-reporting";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=route-progress-reporting";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=route-progress-reporting";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=route-progress-reporting";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=route-progress-reporting";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=route-progress-reporting";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=route-progress-reporting";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=route-progress-reporting";
+} from "./scene/InteriorObjectRegistry.js?v=terminal-dirt-png-1024";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=terminal-dirt-png-1024";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=terminal-dirt-png-1024";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=terminal-dirt-png-1024";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=terminal-dirt-png-1024";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=terminal-dirt-png-1024";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=terminal-dirt-png-1024";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=terminal-dirt-png-1024";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=terminal-dirt-png-1024";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=terminal-dirt-png-1024";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=terminal-dirt-png-1024";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=terminal-dirt-png-1024";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=terminal-dirt-png-1024";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=terminal-dirt-png-1024";
+import { PlayerController } from "./player/PlayerController.js?v=terminal-dirt-png-1024";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=terminal-dirt-png-1024";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=terminal-dirt-png-1024";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=terminal-dirt-png-1024";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=terminal-dirt-png-1024";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=terminal-dirt-png-1024";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=terminal-dirt-png-1024";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=terminal-dirt-png-1024";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=terminal-dirt-png-1024";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=terminal-dirt-png-1024";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=terminal-dirt-png-1024";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=terminal-dirt-png-1024";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=terminal-dirt-png-1024";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=terminal-dirt-png-1024";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=terminal-dirt-png-1024";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=terminal-dirt-png-1024";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=terminal-dirt-png-1024";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=terminal-dirt-png-1024";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=terminal-dirt-png-1024";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=terminal-dirt-png-1024";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=terminal-dirt-png-1024";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=terminal-dirt-png-1024";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=terminal-dirt-png-1024";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=route-progress-reporting";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=terminal-dirt-png-1024";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -770,6 +772,19 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   },
 });
 let briefingSheetOpener = null;
+let serviceTerminalOpener = null;
+const serviceTerminalInteractionRuntime = createServiceTerminalInteractionRuntime({
+  canvas,
+  camera,
+  pointer,
+  raycaster,
+  getLanguage: () => document.documentElement.lang,
+  onLanguageChange: (language) => serviceTerminalOpener?.({ language }),
+  onBriefViewed: ({ levelId }) => activeLevelSessionRuntime.emit("briefOpened", {
+    target: "terminal",
+    levelId,
+  }),
+});
 const inventorySelectorView = createInventorySelectorView();
 const itemInteractionRuntime = createItemInteractionRuntime({
   interactive,
@@ -792,7 +807,11 @@ const itemInteractionRuntime = createItemInteractionRuntime({
     document.body.classList.toggle("hold-interaction-active", active);
   },
 });
-const updateHoverTarget = interactionHoverRuntime.update;
+function updateHoverTarget() {
+  const target = interactionHoverRuntime.update();
+  serviceTerminalInteractionRuntime.updateAimTarget(target);
+  return target;
+}
 const setHoveredKnob = interactionHoverRuntime.setHoveredKnob;
 const setHoveredTooltipTarget = interactionHoverRuntime.setHoveredTooltipTarget;
 const updateControlTooltip = interactionHoverRuntime.refreshTooltip;
@@ -1211,6 +1230,7 @@ const interiorMaterialRuntime = new InteriorMaterialRuntime({
   textureMaps: interiorCustomTextureMaps,
   prefabInstances: levelPrefabInstances,
   applyTextureMaps: applyTextureMapsToMaterial,
+  updateMaskOverlay: updateMaskOverlayUniforms,
 });
 
 Object.values(materials).forEach((entry) => {
@@ -1669,6 +1689,7 @@ levelPrefabConfigRuntime = new LevelPrefabConfigRuntime({
 function registerPrefabInteraction(...args) {
   const physicsRuntime = prefabPhysicsRegistrar.register(...args);
   itemInteractionRuntime.register(...args);
+  registerServiceTerminalInteraction(...args, interactive);
   return physicsRuntime;
 }
 
@@ -1938,10 +1959,12 @@ function updateActiveLevelSession(dt) {
 }
 
 async function resetForMenu() {
+  serviceTerminalInteractionRuntime.close({ restorePointerLock: false });
   return levelRouteCoordinator.resetForMenu();
 }
 
 async function enterLevelSession({ levelId = activeLevelId, mode = activeLevelMode, onProgress } = {}) {
+  serviceTerminalInteractionRuntime.close({ restorePointerLock: false });
   return levelRouteCoordinator.enterLevel({ levelId, mode, onProgress });
 }
 
@@ -2063,7 +2086,15 @@ const operatorInputRuntime = createOperatorInputRuntime({
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
     else if (target?.userData.kind === "slidingDrawer") prefabPhysicsRegistrar.toggleDeskDrawer(target);
+    else if (target?.userData.kind === "serviceTerminal") {
+      serviceTerminalInteractionRuntime.activate(target, {
+        levelId: target.userData.levelId ?? activeLevelId,
+        prefabName: target.userData.levelPrefabKey?.split(":").slice(1).join(":") ?? "",
+      });
+    }
   },
+  handleServiceTerminalWheel: serviceTerminalInteractionRuntime.handleWheel,
+  handleServiceTerminalKeyDown: serviceTerminalInteractionRuntime.handleKeyDown,
   releasePrimaryInteractions: () => {
     bulkheadExitRuntime.release();
     releaseDoorLatchHandles();
@@ -2192,6 +2223,13 @@ installOperatorGameApi(window, {
   setBriefingSheetOpener: (callback) => {
     briefingSheetOpener = typeof callback === "function" ? callback : null;
   },
+  setServiceTerminalOpener: (callback) => {
+    serviceTerminalOpener = typeof callback === "function" ? callback : null;
+  },
+  closeServiceTerminal: serviceTerminalInteractionRuntime.close,
+  setServiceTerminalLanguage: serviceTerminalInteractionRuntime.setLanguage,
+  isServiceTerminalActive: serviceTerminalInteractionRuntime.isActive,
+  emitLevelEvent: (type, detail) => activeLevelSessionRuntime.emit(type, detail),
   playSoundGroup: (groupKey, options) => audioRuntime.playRandom(groupKey, options),
   finishHoldInteraction: () => itemInteractionRuntime.cancelPrimary(),
   finishSpecialItemView: () => itemInteractionRuntime.closeSpecialView(),

@@ -76,3 +76,17 @@ The report also displays one terminal result:
 - or an equivalent shift-specific completion result.
 
 Detailed recorder values remain available for internal classification and debugging but are not presented as a large player-facing table.
+
+## Qualification result
+
+Surviving the 180-second sequence is necessary but not sufficient for `QUALIFICATION PASSED`.
+
+Qualification evaluates the complete active burn and requires:
+
+- completion of all authored burn phases and demand ramps;
+- sufficient `GRID COMPLIANCE` across scored time;
+- acceptable operating efficiency and containment;
+- bounded warning/critical exposure, stalls, safety events, and emergency interventions;
+- no terminal safety trip or destroyed-core outcome.
+
+Thresholds belong to the qualification shift profile so they can be tuned without changing the shared reactor simulation. The acceptance contract is behavioral: leaving controls nearly unchanged must fail, reasonable novice corrections after instruction must pass, and one recoverable mistake must not automatically invalidate the whole shift.

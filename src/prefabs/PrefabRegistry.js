@@ -357,6 +357,25 @@ const PREFAB_DEFINITIONS = {
       canSleep: true,
     },
   },
+  Terminal1: {
+    assetPath: "assets/mesh/prefabs/PF_Terminal1.glb",
+    materialKey: "terminalBody",
+    behavior: "serviceTerminal",
+    materialOverrides: {
+      SM_Terminal_Screen: "terminalScreen",
+      SM_Terminal_ScreenGlass: "terminalScreenGlass",
+    },
+    serviceTerminal: {
+      screenMeshName: "SM_Terminal_Screen",
+      maxDistance: 2.15,
+      controlLabel: "SERVICE TERMINAL",
+      textureWidth: 1600,
+      textureHeight: 900,
+      emissiveColor: 0xfffdf5,
+      emissiveIntensity: 0.08,
+      roughness: 0.42,
+    },
+  },
   bulkheadDoor: {
     assetPath: "assets/mesh/prefabs/SM_DoorBulk1.glb",
     materialKey: "doorLamp2",
@@ -471,7 +490,7 @@ const PREFAB_DEFINITIONS = {
     },
     rigidBody: {
       enabled: true,
-      bodyType: "dynamic",
+      bodyType: "fixed",
       colliderNamePrefixes: ["UBX_SM_Desk1_"],
       density: 260,
       linearDamping: 1.2,
@@ -693,6 +712,7 @@ const REGISTRY_OWNED_KEYS = new Set([
   "materialOverrides",
   "behavior",
   "interaction",
+  "serviceTerminal",
   "radio",
   "audio",
   "prefabType",

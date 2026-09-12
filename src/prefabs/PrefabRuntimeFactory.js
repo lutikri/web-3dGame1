@@ -1,14 +1,15 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=route-progress-reporting";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=route-progress-reporting";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=route-progress-reporting";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=route-progress-reporting";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=route-progress-reporting";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=route-progress-reporting";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=route-progress-reporting";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=route-progress-reporting";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=route-progress-reporting";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-dirt-png-1024";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-dirt-png-1024";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-dirt-png-1024";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-dirt-png-1024";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-dirt-png-1024";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-dirt-png-1024";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=terminal-dirt-png-1024";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-dirt-png-1024";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-dirt-png-1024";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -135,6 +136,12 @@ export function createPrefabRuntimeFactory({
       runtime.suspendedLamp = createSuspendedLampRuntime(runtime.parts, prefabConfig.suspension, prefabConfig.name);
     } else if (prefabConfig.behavior === "briefSheet") {
       runtime.briefSheet = createBriefSheetRuntime(runtime.parts, prefabConfig.briefSheet);
+    } else if (prefabConfig.behavior === "serviceTerminal") {
+      runtime.serviceTerminal = createServiceTerminalRuntime(
+        runtime.parts,
+        prefabConfig.serviceTerminal,
+        prefabConfig.name,
+      );
     } else if (prefabConfig.behavior === "plasmaView") {
       runtime.plasmaView = createPlasmaViewRuntime(runtime.root, runtime.parts, prefabConfig.plasma, prefabConfig.name);
     } else if (prefabConfig.behavior === "statusViewport") {

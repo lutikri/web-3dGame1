@@ -66,7 +66,7 @@ export function createInteriorMaterialFactory({
   };
 
   const createCustomMaterial = (key, config) => {
-    const material = new THREE.MeshStandardMaterial({
+    const materialParameters = {
       name: config.name ?? `${key}_PBR_Emissive`,
       normalScale: new THREE.Vector2(config.normalScale ?? 1, config.normalScale ?? 1),
       color: config.color ?? "#ffffff",
@@ -78,9 +78,13 @@ export function createInteriorMaterialFactory({
       transparent: Boolean(config.transparent),
       alphaTest: config.alphaTest ?? 0,
       opacity: config.opacity ?? 1,
+      depthTest: config.depthTest ?? true,
       depthWrite: config.depthWrite ?? true,
       side: config.side ?? THREE.FrontSide,
-    });
+    };
+    const material = config.maskAsAlphaMap
+      ? new ContrastAlphaMapMaterial({ ...materialParameters, alphaMapContrast: config.alphaMapContrast ?? 1 })
+      : new THREE.MeshStandardMaterial(materialParameters);
     material.userData.baseEmissiveIntensity = material.emissiveIntensity;
     material.userData.roomLightControlled = Boolean(config.roomLightControlled);
     if (config.maskOverlay) setupMaskOverlay(material, config);
@@ -100,8 +104,10 @@ export function createInteriorMaterialFactory({
     material.metalnessMap = textureMaps.ormMap ?? null;
     material.emissiveMap = textureMaps.emissiveMap ?? null;
     material.userData.maskMap = textureMaps.maskMap ?? null;
+    material.alphaMap = config.maskAsAlphaMap ? textureMaps.maskMap ?? null : null;
     material.transparent = Boolean(config.transparent);
     material.opacity = config.opacity ?? 1;
+    material.depthTest = config.depthTest ?? true;
     material.depthWrite = config.depthWrite ?? true;
     material.side = config.side ?? THREE.FrontSide;
     applyTextureRepeat(textureMaps, config.textureRepeat);
@@ -112,4 +118,52 @@ export function createInteriorMaterialFactory({
   };
 
   return { createPanelMaterial, applyPanelTextureMaps, createCustomMaterials, applyCustomTextureMaps };
+}
+
+class ContrastAlphaMapMaterial extends THREE.MeshStandardMaterial {
+  constructor(parameters = {}) {
+    const { alphaMapContrast = 1, ...materialParameters } = parameters;
+    super(materialParameters);
+    this._alphaMapContrastUniform = { value: clampAlphaMapContrast(alphaMapContrast) };
+    this.#installAlphaMapContrastShader();
+  }
+
+  get alphaMapContrast() {
+    return this._alphaMapContrastUniform.value;
+  }
+
+  set alphaMapContrast(value) {
+    this._alphaMapContrastUniform.value = clampAlphaMapContrast(value);
+  }
+
+  copy(source) {
+    super.copy(source);
+    this.alphaMapContrast = source.alphaMapContrast ?? 1;
+    return this;
+  }
+
+  #installAlphaMapContrastShader() {
+    this.onBeforeCompile = (shader) => {
+      shader.uniforms.alphaMapContrast = this._alphaMapContrastUniform;
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          "#include <alphamap_pars_fragment>",
+          `#include <alphamap_pars_fragment>
+uniform float alphaMapContrast;`,
+        )
+        .replace(
+          "#include <alphamap_fragment>",
+          `#ifdef USE_ALPHAMAP
+  float contrastedAlphaMap = texture2D(alphaMap, vAlphaMapUv).g;
+  contrastedAlphaMap = clamp((contrastedAlphaMap - 0.5) * alphaMapContrast + 0.5, 0.0, 1.0);
+  diffuseColor.a *= contrastedAlphaMap;
+#endif`,
+        );
+    };
+    this.customProgramCacheKey = () => "contrast-alpha-map-v1";
+  }
+}
+
+function clampAlphaMapContrast(value) {
+  return THREE.MathUtils.clamp(Number(value ?? 1), 0, 4);
 }

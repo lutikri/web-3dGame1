@@ -62,8 +62,12 @@ vec3 applyInteriorMaskBlend(vec3 baseColor, vec3 overlayColor, float strength, f
   };
 
   const update = (material, config = {}) => {
-    const uniforms = material.userData.maskOverlayUniforms;
-    if (!uniforms) return;
+    let uniforms = material.userData.maskOverlayUniforms;
+    if (!hasRuntimeUniforms(uniforms)) {
+      if (!config.maskOverlay) return;
+      setup(material, config);
+      uniforms = material.userData.maskOverlayUniforms;
+    }
     const overlay = config.maskOverlay ?? {};
     uniforms.interiorMaskMap.value = material.userData.maskMap ?? emptyMaskTexture;
     uniforms.interiorMaskColorR.value.set(overlay.red?.color ?? "#ffffff");
@@ -89,6 +93,15 @@ vec3 applyInteriorMaskBlend(vec3 baseColor, vec3 overlayColor, float strength, f
   };
 
   return { setup, update, setDebug };
+}
+
+function hasRuntimeUniforms(uniforms) {
+  return uniforms?.interiorMaskColorR?.value?.isColor
+    && uniforms?.interiorMaskColorG?.value?.isColor
+    && uniforms?.interiorMaskColorB?.value?.isColor
+    && uniforms?.interiorMaskThreshold?.value?.isVector3
+    && uniforms?.interiorMaskSoftness?.value?.isVector3
+    && uniforms?.interiorMaskBlendMode?.value?.isVector3;
 }
 
 function createUniforms(config) {

@@ -1,8 +1,8 @@
-import { createPreflight } from "./app/Preflight.js?v=route-progress-reporting";
-import { applyLocalization } from "./app/Localization.js?v=route-progress-reporting";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=route-progress-reporting";
+import { createPreflight } from "./app/Preflight.js?v=terminal-dirt-png-1024";
+import { applyLocalization } from "./app/Localization.js?v=terminal-dirt-png-1024";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
 
-const APP_BUILD_REVISION = "route-progress-reporting";
+const APP_BUILD_REVISION = "terminal-dirt-png-1024";
 const preflight = createPreflight();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 const returnToMenuAfterPreflight = sessionStorage.getItem("operatorGame.preflight.returnToMenu") === "1";
@@ -24,7 +24,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=route-progress-reporting`);
+await import(`./OperatorGame.js?v=terminal-dirt-png-1024`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -38,7 +38,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=route-progress-reporting`);
+const { createAppShell } = await import(`./app/AppShell.js?v=terminal-dirt-png-1024`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -49,7 +49,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=route-progress-reporting`
+    `./runtime/RuntimeSmoke.js?v=terminal-dirt-png-1024`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

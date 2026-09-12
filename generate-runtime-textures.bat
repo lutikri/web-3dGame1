@@ -23,6 +23,11 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
 
 $jobs = @(
+  @{ Source = "T_Terminal1_BaseColor.png"; Prefix = "T_Terminal1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
+  @{ Source = "T_Terminal1_Normal.png"; Prefix = "T_Terminal1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_Terminal1_OcclusionRoughnessMetallic.png"; Prefix = "T_Terminal1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+  @{ Source = "T_Terminal1_ScreenDirt1.png"; Prefix = "T_Terminal1_ScreenDirt1_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190; KeepPreviewPng = $true },
+
   @{ Source = "T_Panel1_BaseColor.png"; Prefix = "T_Panel1_BaseColor_Critical"; Preview = 1024; Mode = "srgb"; Quality = 190 },
   @{ Source = "T_Panel1_Normal.png"; Prefix = "T_Panel1_Normal_Critical"; Preview = 1024; Mode = "normal"; Quality = 200 },
   @{ Source = "T_Panel1_OcclusionRoughnessMetallic.png"; Prefix = "T_Panel1_OcclusionRoughnessMetallic_Critical"; Preview = 1024; Mode = "linear"; Quality = 190 },

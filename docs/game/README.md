@@ -28,10 +28,12 @@ The current first-run route is:
 ```text
 First Site Visit
 -> Setup Wizard
+-> Terragen / TGlobal First Boot
 -> Main Menu
 -> Assigned Shifts
 -> Entrance Corridor
 -> Entrance Area
+-> Service Terminal
 -> Control Booth
 -> Qualification Shift
 -> Return to Entrance
@@ -39,7 +41,7 @@ First Site Visit
 -> Assigned Shifts
 ```
 
-The personnel elevator exists only as an implied off-screen transfer during loading. There is no playable elevator scene in the current scope.
+The personnel elevator exists only as a short loading presentation. There is no playable elevator scene in the current scope.
 
 ## Current playable package
 
@@ -58,16 +60,20 @@ The other two shifts remain unavailable until qualification is successfully comp
 The current release scope includes:
 
 * first-run setup;
+* a one-time Terragen / TGlobal lore introduction;
 * main menu and assigned-shift selection;
+* a personnel-accommodation menu background;
 * Entrance Corridor;
 * Entrance Area;
 * service corridor;
+* the Site-12 service terminal with `SHIFT BRIEF`, `SYSTEMS`, `HELP`, and `ARCHIVE`;
 * Control Booth;
 * three reactor shifts;
+* a real gameplay pause and basic in-game settings;
 * physical return to the entrance after every shift;
 * Shift Report;
 * progression unlocks.
 
 The Power Bus room, Pump Station, Staff Room, and other sectors may exist as labelled locked doors or inaccessible spaces. They are not required to contain active gameplay in the current scope.
 
-Playable elevator arrival, detailed power routing, operator survival systems, long shifts, maintenance rooms, and expanded horror incidents are tracked in [`ideas-backlog.md`](ideas-backlog.md) and must not block completion of the current three-shift package.
+Playable elevator arrival, detailed power routing, operator survival systems, long shifts, maintenance rooms, and expanded horror incidents are tracked in [`ideas-backlog.md`](ideas-backlog.md) and must not block completion of the current three-shift package. The menu's personnel-accommodation scene is presentation only and does not add Staff Room gameplay to the release scope.

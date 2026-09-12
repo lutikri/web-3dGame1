@@ -50,3 +50,50 @@ test("brief paper uses an opaque masked material with a restrained albedo", () =
   assert.equal(briefPaper.alphaTest, 0.5);
   assert.equal(briefPaper.side, THREE.DoubleSide);
 });
+
+test("service terminal exposes authored PBR body and adjustable masked glass materials", () => {
+  const { terminalBody, terminalScreen, terminalScreenGlass } = CONFIG.interior.specialMaterials;
+
+  assert.deepEqual(terminalBody.materialNames, ["M_TerminalBase"]);
+  assert.match(terminalBody.maps.preview.baseColor, /T_Terminal1_BaseColor/);
+  assert.match(terminalBody.maps.preview.normal, /T_Terminal1_Normal/);
+  assert.match(terminalBody.maps.preview.orm, /T_Terminal1_OcclusionRoughnessMetallic/);
+  assert.deepEqual(terminalScreen.materialNames, ["M_TerminalScreen"]);
+  assert.deepEqual(terminalScreenGlass.materialNames, ["M_TerminalScreenGlass"]);
+  assert.equal(terminalScreenGlass.maps.initial.mask, "assets/runtime-textures/T_Terminal1_ScreenDirt1_Interactive_Preview_1024.png");
+  assert.equal(terminalScreenGlass.maps.preview, undefined);
+  assert.equal(terminalScreenGlass.transparent, true);
+  assert.equal(terminalScreenGlass.depthTest, false);
+  assert.equal(terminalScreenGlass.depthWrite, false);
+  assert.equal(terminalScreenGlass.maskAsAlphaMap, true);
+  assert.equal(terminalScreenGlass.alphaMapContrast, 2.3);
+  assert.equal(terminalScreenGlass.maskOverlay, undefined);
+});
+
+test("cheap dirty glass binds a contrasted transparency mask instead of tinting the full screen", () => {
+  const factory = createInteriorMaterialFactory({
+    panelConfig: {},
+    specialMaterials: { glass: { transparent: true, maskAsAlphaMap: true, alphaMapContrast: 2.3, depthTest: false, depthWrite: false } },
+    getPanelTextureMaps: () => null,
+    setupMaskOverlay: () => {},
+    updateMaskOverlay: () => {},
+    patchMaterial: () => {},
+  });
+  const glass = factory.createCustomMaterials().glass;
+  const maskMap = new THREE.Texture();
+  factory.applyCustomTextureMaps(glass, { maskMap }, {
+    transparent: true,
+    maskAsAlphaMap: true,
+    alphaMapContrast: 2.3,
+    depthTest: false,
+    depthWrite: false,
+  });
+
+  assert.equal(glass.map, null);
+  assert.equal(glass.alphaMap, maskMap);
+  assert.equal(glass.alphaMapContrast, 2.3);
+  assert.equal(glass.clone().alphaMapContrast, 2.3);
+  assert.equal(glass.userData.maskMap, maskMap);
+  assert.equal(glass.depthTest, false);
+  assert.equal(glass.depthWrite, false);
+});

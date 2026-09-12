@@ -28,3 +28,22 @@ test("mask overlay runtime owns uniforms, shader patch and debug state", () => {
   material.onBeforeCompile(shader);
   assert.match(shader.fragmentShader, /interiorMaskMap/);
 });
+
+test("mask overlay rebuilds shader uniforms after a Three material clone", () => {
+  const config = {
+    maskOverlay: {
+      red: { color: "#24211e", opacity: 0.9, blend: "multiply" },
+    },
+  };
+  const source = new THREE.MeshStandardMaterial({ name: "Source" });
+  const runtime = createMaskOverlayRuntime({
+    specialMaterials: { source: config },
+    getMaterials: () => ({ source }),
+  });
+  runtime.setup(source, config);
+  const clone = source.clone();
+
+  assert.doesNotThrow(() => runtime.update(clone, config));
+  assert.equal(clone.userData.maskOverlayUniforms.interiorMaskColorR.value.isColor, true);
+  assert.equal(clone.userData.maskOverlayUniforms.interiorMaskThreshold.value.isVector3, true);
+});

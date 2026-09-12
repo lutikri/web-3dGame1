@@ -1279,7 +1279,7 @@ export const LEVEL_UNEXPECTED_STUFF_OVERRIDES = {
       },
       "rigidBody": {
         "enabled": true,
-        "bodyType": "dynamic",
+        "bodyType": "fixed",
         "colliderNamePrefixes": [
           "UBX_SM_Desk1_"
         ],

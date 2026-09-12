@@ -6,11 +6,13 @@ export class InteriorMaterialRuntime {
     const source = this.materials?.[materialKey];
     if (!config || !source) return 0;
     applyMaterialScalars(source, config);
+    this.updateMaskOverlay?.(source, config);
     let updated = 1;
     this.prefabInstances.forEach((runtime) => {
       (runtime.materialCloneEntries ?? []).forEach((entry) => {
         if (entry.materialKey !== materialKey) return;
         applyMaterialScalars(entry.material, config);
+        this.updateMaskOverlay?.(entry.material, config);
         updated += 1;
       });
     });
@@ -61,6 +63,13 @@ function applyMaterialScalars(material, config) {
   material.aoMapIntensity = config.aoMapIntensity ?? 1;
   material.emissive.set(config.emissive ?? "#000000");
   material.emissiveIntensity = config.emissiveIntensity ?? 0;
+  material.opacity = Math.max(0, Math.min(1, Number(config.opacity ?? 1)));
+  if (config.alphaMapContrast !== undefined && "alphaMapContrast" in material) {
+    material.alphaMapContrast = config.alphaMapContrast;
+  }
+  material.transparent = Boolean(config.transparent);
+  material.depthTest = config.depthTest ?? true;
+  material.depthWrite = config.depthWrite ?? true;
   material.userData.baseEmissiveIntensity = material.emissiveIntensity;
   const normalScale = config.normalScale ?? 1;
   material.normalScale.set(normalScale, normalScale);

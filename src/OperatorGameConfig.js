@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=route-progress-reporting";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=route-progress-reporting";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=route-progress-reporting";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=route-progress-reporting";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=terminal-dirt-png-1024";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=terminal-dirt-png-1024";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=terminal-dirt-png-1024";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=terminal-dirt-png-1024";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -197,6 +197,67 @@ export const CONFIG = {
       metalness: 0,
     },
     specialMaterials: applyLevelMaterialTuning({
+      terminalBody: {
+        materialNames: ["M_TerminalBase"],
+        meshNames: ["SM_Terminal1_Base", "SM_Terminal1_Base2"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Terminal1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Terminal1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Terminal1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Terminal1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_Terminal1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_Terminal1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 0.72,
+        metalness: 0.38,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
+      terminalScreen: {
+        materialNames: ["M_TerminalScreen"],
+        meshNames: ["SM_Terminal_Screen"],
+        color: "#f4f3ee",
+        roughness: 0.38,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#fffdf4",
+        emissiveIntensity: 0.08,
+        castShadow: false,
+        receiveShadow: false,
+      },
+      terminalScreenGlass: {
+        materialNames: ["M_TerminalScreenGlass"],
+        meshNames: ["SM_Terminal_ScreenGlass"],
+        maps: {
+          initial: {
+            mask: "assets/runtime-textures/T_Terminal1_ScreenDirt1_Interactive_Preview_1024.png",
+          },
+        },
+        maskAsAlphaMap: true,
+        alphaMapContrast: 2.3,
+        color: "#34302f",
+        roughness: 0.58,
+        metalness: 0,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        transparent: true,
+        opacity: 0.55,
+        depthTest: false,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        castShadow: false,
+        receiveShadow: false,
+      },
       briefPaper: {
         materialNames: ["M_Brief", "M_Brief.001"],
         meshNames: ["SM_Brief1"],

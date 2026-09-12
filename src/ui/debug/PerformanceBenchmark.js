@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=route-progress-reporting";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
 
 const EFFECT_KEYS = [
   "bloom",

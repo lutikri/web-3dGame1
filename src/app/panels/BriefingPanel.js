@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=route-progress-reporting";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=terminal-dirt-png-1024";
 
 const DISMISS_MS = 300;
 

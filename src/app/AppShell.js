@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=route-progress-reporting";
-import { translate } from "./Localization.js?v=route-progress-reporting";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=route-progress-reporting";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=route-progress-reporting";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=route-progress-reporting";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=route-progress-reporting";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=route-progress-reporting";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=terminal-dirt-png-1024";
+import { applyLocalization, translate } from "./Localization.js?v=terminal-dirt-png-1024";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=terminal-dirt-png-1024";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=terminal-dirt-png-1024";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=terminal-dirt-png-1024";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=terminal-dirt-png-1024";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=terminal-dirt-png-1024";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,14 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=route-progress-reporting";
-import { createAppPanelController } from "./AppPanelController.js?v=route-progress-reporting";
-import { createAppRouter } from "./AppRouter.js?v=route-progress-reporting";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=route-progress-reporting";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=route-progress-reporting";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=route-progress-reporting";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=route-progress-reporting";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=route-progress-reporting";
+} from "./AppPersistence.js?v=terminal-dirt-png-1024";
+import { createAppPanelController } from "./AppPanelController.js?v=terminal-dirt-png-1024";
+import { createAppRouter } from "./AppRouter.js?v=terminal-dirt-png-1024";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=terminal-dirt-png-1024";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=terminal-dirt-png-1024";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=terminal-dirt-png-1024";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=terminal-dirt-png-1024";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=terminal-dirt-png-1024";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -76,6 +76,7 @@ export function createAppShell({ gameApi }) {
     panels,
     onBeforeShow: () => {
       hideBriefing(true);
+      gameApi.closeServiceTerminal?.({ restorePointerLock: false });
       introTutorialFlow.stop();
       levelTutorialRuntime.stop();
       gameApi.releasePointerLock?.();
@@ -149,6 +150,13 @@ export function createAppShell({ gameApi }) {
   }
   gameApi.setBriefingSheetOpener?.(({ levelId, sheetIndex }) =>
     briefingPanel.showSheet(levelId, sheetIndex));
+  gameApi.setServiceTerminalOpener?.((state = {}) => {
+    if (state.language) {
+      applyLocalization(state.language);
+      gameApi.setServiceTerminalLanguage?.(state.language);
+      levelSelectPanel.refresh();
+    }
+  });
   let resolveInitialRouteReady = null;
   const initialRouteReady = new Promise((resolve) => {
     resolveInitialRouteReady = resolve;
@@ -610,7 +618,9 @@ export function createAppShell({ gameApi }) {
   }
 
   function updateInputLock() {
-    const uiBlocked = Boolean(transitionActive || briefingPanel.isActive() || isOpen());
+    const uiBlocked = Boolean(
+      transitionActive || briefingPanel.isActive() || isOpen(),
+    );
     gameApi.setInputLocked?.(uiBlocked);
     subtitleQueue.setBlocked(
       uiBlocked || Boolean(document.querySelector("#resultsOverlay")?.classList.contains("is-visible")),

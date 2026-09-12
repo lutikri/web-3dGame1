@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=route-progress-reporting";
+import { applyAxisRotation } from "./TransformUtils.js?v=terminal-dirt-png-1024";
 
 export class InteriorObjectRegistry {
   constructor(options) {
