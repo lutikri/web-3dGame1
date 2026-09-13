@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=terminal-dirt-png-1024";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=terminal-dirt-png-1024";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=terminal-dirt-png-1024";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=development-notice-v1";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=development-notice-v1";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=development-notice-v1";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

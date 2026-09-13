@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createSettingsPanel, qualityLabel } from "../src/app/panels/SettingsPanel.js";
+import { createSettingsPanel, defaultAntiAliasing, qualityLabel } from "../src/app/panels/SettingsPanel.js";
 
 test("settings panel applies normalized settings through the game API", () => {
   const calls = [];
@@ -28,4 +28,11 @@ test("settings panel applies normalized settings through the game API", () => {
   assert.ok(calls.some(([key, value]) => key === "fov" && value === 75));
   assert.ok(calls.some(([key, value]) => key === "sensitivity" && value === 1.2));
   assert.equal(qualityLabel("med"), "MED");
+});
+
+test("settings anti-aliasing defaults follow the chosen graphics profile", () => {
+  assert.equal(defaultAntiAliasing("low"), "fxaa");
+  assert.equal(defaultAntiAliasing("medium"), "fxaa");
+  assert.equal(defaultAntiAliasing("high"), "smaa");
+  assert.equal(defaultAntiAliasing("ultra"), "msaa8");
 });

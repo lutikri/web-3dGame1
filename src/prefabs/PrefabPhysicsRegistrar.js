@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=terminal-dirt-png-1024";
+} from "./behaviors/DeskDrawerBehavior.js?v=development-notice-v1";
 
 export function createPrefabPhysicsRegistrar({
   physics,

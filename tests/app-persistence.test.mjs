@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  acknowledgeDevelopmentNotice,
   clearProgressStorage,
   createEmptyProgress,
   loadProgress,
   loadSettings,
   requestReturnToMenuAfterPreflight,
   saveProgress,
+  shouldShowDevelopmentNotice,
 } from "../src/app/AppPersistence.js";
 
 function createStorage(initial = {}) {
@@ -35,6 +37,11 @@ test("app persistence normalizes invalid settings", () => {
     ssrQuality: "off",
     screenSpaceShadowQuality: "off",
     sensitivity: 100,
+    qualityProfile: null,
+    renderScale: 100,
+    gamma: null,
+    antiAliasing: null,
+    masterVolume: 100,
   });
 });
 
@@ -57,4 +64,12 @@ test("preflight rerun intent is owned by app persistence", () => {
   const storage = createStorage();
   requestReturnToMenuAfterPreflight(storage);
   assert.equal(storage.getItem("operatorGame.preflight.returnToMenu"), "1");
+});
+
+test("development notice is shown once before first preflight only", () => {
+  const storage = createStorage();
+  assert.equal(shouldShowDevelopmentNotice(storage), true);
+  acknowledgeDevelopmentNotice(storage);
+  assert.equal(shouldShowDevelopmentNotice(storage), false);
+  assert.equal(shouldShowDevelopmentNotice(createStorage({ "operatorGame.preflight.v1": "{}" })), false);
 });

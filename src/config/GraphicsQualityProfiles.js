@@ -11,6 +11,8 @@ const POST_EFFECT_KEYS = [
 export const GRAPHICS_QUALITY_PROFILES = {
   low: {
     pixelRatio: 0.6,
+    antiAliasingMethod: "fxaa",
+    msaaSamples: 0,
     maxRenderPixels: 1280 * 720,
     adaptivePixelRatioFactor: 1,
     pointLightSlots: 5,
@@ -22,6 +24,8 @@ export const GRAPHICS_QUALITY_PROFILES = {
   },
   medium: {
     pixelRatio: 0.75,
+    antiAliasingMethod: "fxaa",
+    msaaSamples: 0,
     maxRenderPixels: 1920 * 1080,
     adaptivePixelRatioFactor: 0.85,
     pointLightSlots: 8,
@@ -33,6 +37,8 @@ export const GRAPHICS_QUALITY_PROFILES = {
   },
   high: {
     pixelRatio: 1,
+    antiAliasingMethod: "off",
+    msaaSamples: 4,
     maxRenderPixels: 2560 * 1440,
     adaptivePixelRatioFactor: 0.8,
     pointLightSlots: 12,
@@ -48,6 +54,22 @@ export const GRAPHICS_QUALITY_PROFILES = {
       "sharpen",
       "lensDistortion",
       "chromaticAberration",
+    ],
+  },
+  ultra: {
+    pixelRatio: 1,
+    antiAliasingMethod: "off",
+    msaaSamples: 8,
+    maxRenderPixels: 3840 * 2160,
+    adaptivePixelRatioFactor: 0.85,
+    pointLightSlots: 12,
+    photometricLightSlots: 6,
+    shadowQuality: "max",
+    gtaoQuality: "max",
+    fullTextures: true,
+    effects: [
+      "bloom", "lensEffects", "lut", "colorAdjustments", "sharpen",
+      "lensDistortion", "chromaticAberration",
     ],
   },
 };
@@ -76,8 +98,8 @@ export function applyGraphicsQualityProfileToConfig(config, profile = "low") {
   const post = config.postProcessing;
 
   post.enabled = true;
-  post.antiAliasing.method = "off";
-  post.antiAliasing.msaaSamples = 0;
+  post.antiAliasing.method = quality.antiAliasingMethod;
+  post.antiAliasing.msaaSamples = quality.msaaSamples;
   post.gtao.defaultQuality = quality.gtaoQuality;
   post.ssgi.defaultQuality = "off";
   post.ssr.defaultQuality = "off";

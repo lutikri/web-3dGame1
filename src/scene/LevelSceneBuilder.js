@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=terminal-dirt-png-1024";
+} from "../prefabs/PrefabMarkerResolver.js?v=development-notice-v1";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=terminal-dirt-png-1024";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=terminal-dirt-png-1024";
+} from "../levels/LevelConfigOverrides.js?v=development-notice-v1";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=development-notice-v1";
 
 export function createLevelSceneBuilder({
   scene,

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-dirt-png-1024";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-dirt-png-1024";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-dirt-png-1024";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-dirt-png-1024";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-dirt-png-1024";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-dirt-png-1024";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=development-notice-v1";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=development-notice-v1";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=development-notice-v1";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=development-notice-v1";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=development-notice-v1";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=development-notice-v1";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=development-notice-v1";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=terminal-dirt-png-1024";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-dirt-png-1024";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-dirt-png-1024";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=terminal-dirt-png-1024";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=terminal-dirt-png-1024";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=development-notice-v1";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=development-notice-v1";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=development-notice-v1";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=development-notice-v1";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=development-notice-v1";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=development-notice-v1";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

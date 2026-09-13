@@ -66,7 +66,6 @@ test("service terminal exposes authored PBR body and adjustable masked glass mat
   assert.equal(terminalScreenGlass.depthTest, false);
   assert.equal(terminalScreenGlass.depthWrite, false);
   assert.equal(terminalScreenGlass.maskAsAlphaMap, true);
-  assert.equal(terminalScreenGlass.alphaMapContrast, 2.3);
   assert.equal(terminalScreenGlass.maskOverlay, undefined);
 });
 

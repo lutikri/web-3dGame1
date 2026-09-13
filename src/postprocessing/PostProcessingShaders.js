@@ -247,8 +247,16 @@ export const lensEffectsShader = {
       return color * contribution;
     }
 
+    vec3 linearToDisplay(vec3 color) {
+      vec3 linear = max(color, vec3(0.0));
+      vec3 low = linear * 12.92;
+      vec3 high = 1.055 * pow(linear, vec3(1.0 / 2.4)) - 0.055;
+      return mix(low, high, step(vec3(0.0031308), linear));
+    }
+
     vec3 sampleBloom(vec2 uv) {
-      return texture2D(bloomTexture, clamp(uv, 0.0, 1.0)).rgb * hasBloomTexture;
+      vec3 linearBloom = texture2D(bloomTexture, clamp(uv, 0.0, 1.0)).rgb;
+      return linearToDisplay(linearBloom) * hasBloomTexture;
     }
 
     vec3 sampleBloomChromatic(vec2 uv, vec2 direction) {
@@ -321,4 +329,3 @@ export const compatibleFxaaShader = {
   name: "CompatibleFXAAShader",
   fragmentShader: FXAAShader.fragmentShader.replaceAll("-100.0", "-16.0"),
 };
-

@@ -1396,10 +1396,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#f0f1ff",
-        "intensity": 2.82,
-        "distance": 2,
-        "decay": 1,
+        "color": "#fee4e1",
+        "intensity": 2,
+        "distance": 2.8,
+        "decay": 0.09,
         "localOffset": {
           "x": 0.060629,
           "y": -0.41959,
@@ -2024,8 +2024,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "light": {
         "enabled": true,
         "color": "#ff1b0a",
-        "intensity": 0.2,
-        "distance": 3,
+        "intensity": 1.6,
+        "distance": 1,
         "decay": 1,
         "localOffset": {
           "x": 0,

@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=terminal-dirt-png-1024";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=development-notice-v1";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

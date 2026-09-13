@@ -40,6 +40,33 @@ test("animation loop uses the delay selected by its scheduling policy", () => {
   assert.deepEqual(delays, [1000]);
 });
 
+test("paused animation loop renders a frozen frame without advancing simulation or catch-up", () => {
+  const calls = [];
+  let paused = false;
+  let nextFrame;
+  const loop = new AnimationLoop({
+    clock: { getDelta: () => 0.2 },
+    getPaused: () => paused,
+    steps: [(dt) => calls.push(["simulation", dt])],
+    pausedSteps: [(dt) => calls.push(["render", dt])],
+    requestFrame: (callback) => { nextFrame = callback; },
+  });
+
+  loop.start();
+  paused = true;
+  nextFrame();
+  nextFrame();
+  paused = false;
+  nextFrame();
+  loop.stop();
+  assert.deepEqual(calls, [
+    ["simulation", 0.05],
+    ["render", 0],
+    ["render", 0],
+    ["simulation", 0.05],
+  ]);
+});
+
 test("animation loop wakes immediately when scheduling state changes", () => {
   let delayMs = 1000;
   let schedulingListener;

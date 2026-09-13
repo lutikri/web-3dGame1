@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=terminal-dirt-png-1024";
+} from "./ServiceTerminalCanvasRenderer.js?v=development-notice-v1";
 
 export function createServiceTerminalRuntime(
   parts,

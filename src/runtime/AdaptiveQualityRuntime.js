@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
+import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=development-notice-v1";
 
 export class AdaptiveQualityRuntime {
   constructor({
@@ -29,6 +29,7 @@ export class AdaptiveQualityRuntime {
     this.quality = getGraphicsQualityProfile("low");
     this.degraded = false;
     this.lowRecommended = false;
+    this.renderScale = 100;
     this.pixelRatio = this.#resolvePixelRatio();
     this.lastFps = 0;
     this.lowWindows = 0;
@@ -39,7 +40,7 @@ export class AdaptiveQualityRuntime {
   }
 
   configure = (profile = "low") => {
-    this.profile = ["low", "medium", "high"].includes(profile) ? profile : "low";
+    this.profile = ["low", "medium", "high", "ultra"].includes(profile) ? profile : "low";
     this.quality = getGraphicsQualityProfile(this.profile);
     this.degraded = false;
     this.lowRecommended = false;
@@ -85,9 +86,16 @@ export class AdaptiveQualityRuntime {
 
   resize = () => this.#applyResolvedRatio();
 
+  setRenderScale = (percent = 100) => {
+    this.renderScale = Math.max(50, Math.min(150, Number(percent) || 100));
+    this.#applyResolvedRatio();
+    return this.renderScale;
+  };
+
   snapshot = () => ({
     profile: this.profile,
     pixelRatio: Number(this.pixelRatio.toFixed(3)),
+    renderScale: this.renderScale,
     degraded: this.degraded,
     lastFps: Number(this.lastFps.toFixed(1)),
     lowRecommended: this.lowRecommended,
@@ -95,7 +103,8 @@ export class AdaptiveQualityRuntime {
 
   #resolvePixelRatio() {
     const viewport = this.getViewport();
-    return resolveGraphicsPixelRatio(this.quality, viewport.width, viewport.height, this.degraded);
+    return resolveGraphicsPixelRatio(this.quality, viewport.width, viewport.height, this.degraded)
+      * this.renderScale / 100;
   }
 
   #applyResolvedRatio() {

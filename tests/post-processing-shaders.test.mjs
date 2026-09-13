@@ -15,6 +15,7 @@ test("post-processing shaders expose the uniforms required by the runtime", () =
   assert.ok(sharpenShader.uniforms.resolution);
   assert.ok(lensEffectsShader.uniforms.lensDirtTexture);
   assert.ok(lensEffectsShader.uniforms.bloomTexture);
+  assert.match(lensEffectsShader.fragmentShader, /linearToDisplay\(linearBloom\)/);
 });
 
 test("compatible FXAA shader avoids unsupported loop bounds", () => {

@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=terminal-dirt-png-1024";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=development-notice-v1";
 
 const DISMISS_MS = 300;
 

@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=terminal-dirt-png-1024";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=development-notice-v1";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=terminal-dirt-png-1024";
+} from "./PostProcessingShaders.js?v=development-notice-v1";
 
 export class PostProcessingRuntime {
   composer = null;
@@ -117,6 +117,8 @@ export class PostProcessingRuntime {
       this.composer.addPass(this.lutPass);
     };
     if (lut?.enabled && lut.assetPath && lut.inputColorSpace === "linear") this.#setupLut(lut, revision, addLut);
+    // The authored display-sRGB LUT and screen-space color shaders consume display values.
+    // Keep the linear effects before this explicit conversion boundary.
     this.composer.addPass(new OutputPass());
     if (lut?.enabled && lut.assetPath && lut.inputColorSpace !== "linear") this.#setupLut(lut, revision, addLut);
 
@@ -150,7 +152,10 @@ export class PostProcessingRuntime {
       this.chromaticAberrationPass.uniforms.amount.value = config.chromaticAberration.amount;
       this.composer.addPass(this.chromaticAberrationPass);
     }
-    const aa = config.antiAliasing?.method ?? "off";
+    const requestedMsaa = Number(config.antiAliasing?.msaaSamples ?? 0);
+    const selectedAa = config.antiAliasing?.method ?? "off";
+    const aa = requestedMsaa > 0 && !this.composer.renderTarget1.samples && selectedAa === "off"
+      ? "fxaa" : selectedAa;
     if (aa === "fxaa") {
       this.fxaaPass = new ShaderPass(compatibleFxaaShader);
       this.#updateFxaa();

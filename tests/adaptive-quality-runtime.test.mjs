@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { resolveGraphicsPixelRatio } from "../src/config/GraphicsQualityProfiles.js";
+import {
+  applyGraphicsQualityProfileToConfig,
+  resolveGraphicsPixelRatio,
+} from "../src/config/GraphicsQualityProfiles.js";
+import { POST_PROCESSING_CONFIG } from "../src/PostProcessingConfig.js";
 import { AdaptiveQualityRuntime } from "../src/runtime/AdaptiveQualityRuntime.js";
 
 test("graphics profiles cap their drawing buffer pixel budgets", () => {
@@ -9,6 +13,37 @@ test("graphics profiles cap their drawing buffer pixel budgets", () => {
   assert.equal(resolveGraphicsPixelRatio("medium", 3840, 2160), 0.5);
   assert.equal(resolveGraphicsPixelRatio("high", 3840, 2160).toFixed(3), "0.667");
   assert.equal(resolveGraphicsPixelRatio("low", 3840, 2160).toFixed(3), "0.333");
+});
+
+test("graphics profiles select inexpensive AA below high and composer MSAA on high", () => {
+  for (const [profile, method, samples] of [
+    ["low", "fxaa", 0],
+    ["medium", "fxaa", 0],
+    ["high", "off", 4],
+    ["ultra", "off", 8],
+  ]) {
+    const config = {
+      postProcessing: structuredClone(POST_PROCESSING_CONFIG),
+      shadows: { defaultQuality: "off" },
+    };
+    applyGraphicsQualityProfileToConfig(config, profile);
+    assert.equal(config.postProcessing.antiAliasing.method, method, profile);
+    assert.equal(config.postProcessing.antiAliasing.msaaSamples, samples, profile);
+  }
+});
+
+test("manual render scale multiplies the profile resolution and survives profile changes", () => {
+  const applied = [];
+  const runtime = new AdaptiveQualityRuntime({
+    applyPixelRatio: (ratio) => applied.push(ratio),
+    getViewport: () => ({ width: 1920, height: 1080 }),
+  });
+  runtime.configure("medium");
+  assert.equal(runtime.setRenderScale(150), 150);
+  assert.equal(runtime.snapshot().pixelRatio, 1.125);
+  runtime.configure("ultra");
+  assert.equal(runtime.snapshot().renderScale, 150);
+  assert.equal(applied.at(-1), 1.5);
 });
 
 test("adaptive quality lowers resolution once after sustained low foreground fps", () => {

@@ -6,7 +6,7 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "enabled": true,
   "gtao": {
-    "defaultQuality": "off",
+    "defaultQuality": "max",
     "presets": {
       "off": {
         "enabled": false
@@ -199,17 +199,17 @@ export const POST_PROCESSING_OVERRIDES = {
     }
   },
   "bloom": {
-    "enabled": false,
+    "enabled": true,
     "strength": 0.52,
     "radius": 0.8,
     "threshold": 0.33
   },
   "antiAliasing": {
     "method": "off",
-    "msaaSamples": 0
+    "msaaSamples": 4
   },
   "lensEffects": {
-    "enabled": false,
+    "enabled": true,
     "anamorphicGlare": {
       "enabled": true,
       "strength": 0.25,
@@ -268,19 +268,19 @@ export const POST_PROCESSING_OVERRIDES = {
     }
   },
   "sharpen": {
-    "enabled": false,
-    "amount": 0.295,
+    "enabled": true,
+    "amount": 0.1,
     "zoomBoost": 0.035
   },
   "lensDistortion": {
-    "enabled": false,
+    "enabled": true,
     "barrelAmount": 0,
-    "fisheyeAmount": 0.14,
+    "fisheyeAmount": 0.05,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
-    "enabled": false,
-    "amount": 0.0014
+    "enabled": true,
+    "amount": 0.0005
   }
 };

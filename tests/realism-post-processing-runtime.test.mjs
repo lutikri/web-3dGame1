@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   createFramebufferCopyCompatibilityWrapper,
   RealismPostProcessingRuntime,
+  resolveRealismAntiAliasing,
   resolveRealismEffectSelection,
 } from "../src/postprocessing/RealismPostProcessingRuntime.js";
 
@@ -62,6 +63,18 @@ test("cinematic effect selection avoids layering SSR over full SSGI", () => {
     ssgi: false,
     hbao: false,
   });
+});
+
+test("cinematic composer keeps profile AA and falls back to FXAA without WebGL2 MSAA", () => {
+  assert.deepEqual(resolveRealismAntiAliasing({ method: "off", msaaSamples: 4 }, {
+    isWebGL2: true, maxSamples: 8,
+  }), { method: "off", msaaSamples: 4 });
+  assert.deepEqual(resolveRealismAntiAliasing({ method: "off", msaaSamples: 4 }, {
+    isWebGL2: false,
+  }), { method: "fxaa", msaaSamples: 0 });
+  assert.deepEqual(resolveRealismAntiAliasing({ method: "fxaa", msaaSamples: 0 }, {
+    isWebGL2: true,
+  }), { method: "fxaa", msaaSamples: 0 });
 });
 
 test("realism runtime owns live and emergency effect tuning", () => {

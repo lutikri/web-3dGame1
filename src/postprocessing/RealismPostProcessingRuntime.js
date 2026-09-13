@@ -7,6 +7,7 @@ export class RealismPostProcessingRuntime {
   screenSpaceShadowEffect = null;
   bloomEffect = null;
   chromaticAberrationEffect = null;
+  fxaaEffect = null;
 
   #modulesPromise = null;
   #revision = 0;
@@ -52,7 +53,7 @@ export class RealismPostProcessingRuntime {
     this.dispose();
     const {
       EffectComposer, EffectPass, RenderPass, BloomEffect,
-      ChromaticAberrationEffect, BlendFunction,
+      ChromaticAberrationEffect, FXAAEffect, BlendFunction,
     } = postprocessing;
     const { SSGIEffect, HBAOEffect, VelocityDepthNormalPass } = realismEffects;
     const quality = this.getQuality();
@@ -65,7 +66,8 @@ export class RealismPostProcessingRuntime {
     const tracedEffects = [];
     const presentationEffects = [];
 
-    this.composer = new EffectComposer(this.renderer, { depthBuffer: true });
+    const aa = resolveRealismAntiAliasing(this.config.postProcessing.antiAliasing, this.renderer.capabilities);
+    this.composer = new EffectComposer(this.renderer, { depthBuffer: true, multisampling: aa.msaaSamples });
     this.#installFramebufferCopyCompatibility();
     this.composer.setSize(window.innerWidth, window.innerHeight);
     this.velocityDepthNormalPass = new VelocityDepthNormalPass(this.scene, this.camera);
@@ -108,6 +110,10 @@ export class RealismPostProcessingRuntime {
     }
     if (presentationEffects.length) {
       this.composer.addPass(new EffectPass(this.camera, ...presentationEffects));
+    }
+    if (aa.method === "fxaa") {
+      this.fxaaEffect = new FXAAEffect();
+      this.composer.addPass(new EffectPass(this.camera, this.fxaaEffect));
     }
   }
 
@@ -154,12 +160,14 @@ export class RealismPostProcessingRuntime {
     this.screenSpaceShadowEffect?.dispose?.();
     this.bloomEffect?.dispose?.();
     this.chromaticAberrationEffect?.dispose?.();
+    this.fxaaEffect?.dispose?.();
     this.composer = null;
     this.velocityDepthNormalPass = null;
     this.ssgiEffect = null;
     this.screenSpaceShadowEffect = null;
     this.bloomEffect = null;
     this.chromaticAberrationEffect = null;
+    this.fxaaEffect = null;
   }
 
   inspect() {
@@ -189,6 +197,17 @@ export function resolveRealismEffectSelection({ ssgi = false, screenSpaceShadows
   return {
     ssgi: Boolean(ssgi),
     hbao: Boolean(screenSpaceShadows),
+  };
+}
+
+export function resolveRealismAntiAliasing(config = {}, capabilities = {}) {
+  const requested = Math.max(0, Number(config?.msaaSamples ?? 0));
+  const maxSamples = capabilities?.isWebGL2 ? Math.max(0, Number(capabilities.maxSamples ?? requested)) : 0;
+  const msaaSamples = Math.min(requested, maxSamples);
+  const selectedMethod = config?.method ?? "off";
+  return {
+    msaaSamples,
+    method: requested > 0 && msaaSamples === 0 && selectedMethod === "off" ? "fxaa" : selectedMethod,
   };
 }
 

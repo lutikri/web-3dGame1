@@ -27,8 +27,8 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "aoMapIntensity": 1.035,
       "emissive": "#000000",
       "emissiveIntensity": 0,
-      "opacity": 0.87,
-      "alphaMapContrast": 1.11
+      "opacity": 0.795,
+      "alphaMapContrast": 0.63
     },
     "briefPaper": {
       "color": "#aaa69d",
@@ -77,7 +77,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
         "debugView": false,
         "red": {
           "color": "#f57600",
-          "opacity": 0.6,
+          "opacity": 0.5,
           "intensity": 1,
           "threshold": 0,
           "softness": 1,
@@ -85,16 +85,16 @@ export const GLOBAL_SCENE_OVERRIDES = {
         },
         "green": {
           "color": "#856100",
-          "opacity": 0.06,
-          "intensity": 0.68,
+          "opacity": 0.4,
+          "intensity": 0.945,
           "threshold": 0,
           "softness": 1,
           "blend": "multiply"
         },
         "blue": {
           "color": "#3d2100",
-          "opacity": 0.59,
-          "intensity": 0.68,
+          "opacity": 0.77,
+          "intensity": 0.865,
           "threshold": 0,
           "softness": 1,
           "blend": "multiply"

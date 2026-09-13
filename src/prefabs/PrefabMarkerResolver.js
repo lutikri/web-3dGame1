@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=terminal-dirt-png-1024";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=terminal-dirt-png-1024";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=development-notice-v1";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=development-notice-v1";
 
 const MARKER_PREFIX = "PF_";
 

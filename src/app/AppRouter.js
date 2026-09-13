@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=terminal-dirt-png-1024";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=development-notice-v1";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

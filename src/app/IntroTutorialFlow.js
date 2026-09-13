@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=terminal-dirt-png-1024";
+import { translateRequired } from "./Localization.js?v=development-notice-v1";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

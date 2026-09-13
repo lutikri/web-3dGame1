@@ -268,18 +268,18 @@ export const POST_PROCESSING_CONFIG = {
   },
   "sharpen": {
     "enabled": true,
-    "amount": 0.295,
+    "amount": 0.1,
     "zoomBoost": 0.035
   },
   "lensDistortion": {
     "enabled": true,
     "barrelAmount": 0,
-    "fisheyeAmount": 0.14,
+    "fisheyeAmount": 0.05,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0.0014
+    "amount": 0.0005
   }
 };

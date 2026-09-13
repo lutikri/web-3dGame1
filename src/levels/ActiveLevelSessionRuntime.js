@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=terminal-dirt-png-1024";
+import { LevelSession } from "./LevelSession.js?v=development-notice-v1";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

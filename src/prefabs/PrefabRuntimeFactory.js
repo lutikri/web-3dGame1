@@ -1,15 +1,15 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-dirt-png-1024";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-dirt-png-1024";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-dirt-png-1024";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-dirt-png-1024";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-dirt-png-1024";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-dirt-png-1024";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-dirt-png-1024";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=terminal-dirt-png-1024";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-dirt-png-1024";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-dirt-png-1024";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=development-notice-v1";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=development-notice-v1";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=development-notice-v1";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=development-notice-v1";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=development-notice-v1";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=development-notice-v1";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=development-notice-v1";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=development-notice-v1";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=development-notice-v1";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=development-notice-v1";
 
 export function createPrefabRuntimeFactory({
   config,

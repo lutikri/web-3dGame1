@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=development-notice-v1";
 
 const EFFECT_KEYS = [
   "bloom",
@@ -110,7 +110,8 @@ export function createPerformanceBenchmark({
           name: `PROFILE ${profile.toUpperCase()}`,
           post: true,
           dpr: quality.pixelRatio,
-          msaa: 0,
+          aaMethod: quality.antiAliasingMethod,
+          msaa: quality.msaaSamples,
           shadows: quality.shadowQuality,
           gtao: quality.gtaoQuality,
           effects: quality.effects,
@@ -147,7 +148,7 @@ export function createPerformanceBenchmark({
         config.postProcessing[key].enabled = preset.effects?.includes(key) ?? false;
       }
     }
-    config.postProcessing.antiAliasing.method = "off";
+    config.postProcessing.antiAliasing.method = preset.aaMethod ?? "off";
     config.postProcessing.antiAliasing.msaaSamples = preset.msaa ?? 0;
     setQualityState({
       shadows: preset.restore ? qualityBackup.shadows : preset.shadows ?? "off",

@@ -2,6 +2,7 @@ const SETTINGS_STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const PREFLIGHT_RETURN_TO_MENU_KEY = "operatorGame.preflight.returnToMenu";
+const DEVELOPMENT_NOTICE_STORAGE_KEY = "operatorGame.developmentNotice.v1";
 
 const DEFAULT_SETTINGS = Object.freeze({
   fov: 72,
@@ -12,6 +13,11 @@ const DEFAULT_SETTINGS = Object.freeze({
   ssrQuality: "off",
   screenSpaceShadowQuality: "off",
   sensitivity: 100,
+  qualityProfile: null,
+  renderScale: 100,
+  gamma: null,
+  antiAliasing: null,
+  masterVolume: 100,
 });
 
 export function createEmptyProgress() {
@@ -57,6 +63,15 @@ export function clearPreflightStorage(storage = localStorage) {
   storage.removeItem(PREFLIGHT_STORAGE_KEY);
 }
 
+export function shouldShowDevelopmentNotice(storage = localStorage) {
+  return storage.getItem(PREFLIGHT_STORAGE_KEY) == null
+    && storage.getItem(DEVELOPMENT_NOTICE_STORAGE_KEY) !== "1";
+}
+
+export function acknowledgeDevelopmentNotice(storage = localStorage) {
+  storage.setItem(DEVELOPMENT_NOTICE_STORAGE_KEY, "1");
+}
+
 export function requestReturnToMenuAfterPreflight(storage = sessionStorage) {
   storage.setItem(PREFLIGHT_RETURN_TO_MENU_KEY, "1");
 }
@@ -75,6 +90,11 @@ export function normalizeSettings(source = {}) {
       "off",
     ),
     sensitivity: clampNumber(source.sensitivity, 40, 180, DEFAULT_SETTINGS.sensitivity),
+    qualityProfile: normalizeQuality(source.qualityProfile, ["low", "medium", "high", "ultra"], null),
+    renderScale: clampNumber(source.renderScale, 50, 150, DEFAULT_SETTINGS.renderScale),
+    gamma: source.gamma == null ? null : clampNumber(source.gamma, 0.75, 1.25, 0.93),
+    antiAliasing: normalizeQuality(source.antiAliasing, ["fxaa", "smaa", "msaa4", "msaa8"], null),
+    masterVolume: clampNumber(source.masterVolume, 0, 100, DEFAULT_SETTINGS.masterVolume),
   };
 }
 

@@ -2,6 +2,8 @@ export class AnimationLoop {
   constructor({
     clock,
     steps,
+    getPaused = () => false,
+    pausedSteps = [],
     maxDelta = 0.05,
     schedulingPolicy,
     getFrameDelay = schedulingPolicy?.getDelayMs ?? (() => null),
@@ -10,6 +12,8 @@ export class AnimationLoop {
   }) {
     this.clock = clock;
     this.steps = steps;
+    this.getPaused = getPaused;
+    this.pausedSteps = pausedSteps;
     this.maxDelta = maxDelta;
     this.schedulingPolicy = schedulingPolicy;
     this.getFrameDelay = getFrameDelay;
@@ -37,7 +41,11 @@ export class AnimationLoop {
   #tick = () => {
     if (!this.running) return;
     const dt = Math.min(this.clock.getDelta(), this.maxDelta);
-    for (const step of this.steps) step(dt);
+    if (this.getPaused()) {
+      for (const step of this.pausedSteps) step(0);
+    } else {
+      for (const step of this.steps) step(dt);
+    }
     this.#scheduleNext();
   };
 

@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=terminal-dirt-png-1024";
-import { applyLocalization, translate } from "./Localization.js?v=terminal-dirt-png-1024";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=terminal-dirt-png-1024";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=terminal-dirt-png-1024";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=terminal-dirt-png-1024";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=terminal-dirt-png-1024";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=terminal-dirt-png-1024";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=development-notice-v1";
+import { applyLocalization, translate } from "./Localization.js?v=development-notice-v1";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=development-notice-v1";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=development-notice-v1";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=development-notice-v1";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=development-notice-v1";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=development-notice-v1";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,14 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=terminal-dirt-png-1024";
-import { createAppPanelController } from "./AppPanelController.js?v=terminal-dirt-png-1024";
-import { createAppRouter } from "./AppRouter.js?v=terminal-dirt-png-1024";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=terminal-dirt-png-1024";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=terminal-dirt-png-1024";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=terminal-dirt-png-1024";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=terminal-dirt-png-1024";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=terminal-dirt-png-1024";
+} from "./AppPersistence.js?v=development-notice-v1";
+import { createAppPanelController } from "./AppPanelController.js?v=development-notice-v1";
+import { createAppRouter } from "./AppRouter.js?v=development-notice-v1";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=development-notice-v1";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=development-notice-v1";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=development-notice-v1";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=development-notice-v1";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=development-notice-v1";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=development-notice-v1";
 
 const INTRO_LEVEL_ID = "intro-shift";
 
@@ -56,6 +57,7 @@ export function createAppShell({ gameApi }) {
   const returnToMenuAfterPreflight = Boolean(window.operatorGameBootOptions?.returnToMenuAfterPreflight);
   const progress = firstVisitEmulation ? createEmptyProgress() : loadProgress();
   const mainMenuPanel = createMainMenuPanel();
+  const pausePanel = createPausePanel({ gameApi, levels: LEVELS, translate });
   const levelSelectPanel = createLevelSelectPanel({
     levels: LEVELS,
     progress,
@@ -83,8 +85,15 @@ export function createAppShell({ gameApi }) {
     },
     onVisibilityChange: ({ open, panelName }) => {
       currentPanel = panelName;
+      const gameplayPauseVisible = isGameplayPausePanel({
+        levelId: activeGameplayLevelId, open, panelName, previousPanel,
+      });
+      gameApi.setGameplayPaused?.(gameplayPauseVisible);
+      document.body.classList.toggle("gameplay-paused", gameplayPauseVisible);
       updateInputLock();
       if (open && panelName === "main-menu") mainMenuPanel.updateScale();
+      if (open && panelName === "pause") pausePanel.show(activeGameplayLevelId);
+      if (open && panelName === "settings") settingsPanel.show();
       if (open && panelName === "level-select") levelSelectPanel.show();
     },
   });
@@ -165,6 +174,7 @@ export function createAppShell({ gameApi }) {
   settingsPanel.apply();
   wireActions();
   mainMenuPanel.wire();
+  pausePanel.wire();
   levelSelectPanel.wire();
   briefingPanel.wire();
   settingsPanel.wire();
@@ -241,6 +251,17 @@ export function createAppShell({ gameApi }) {
       } else if (pauseAction) {
         runAction(pauseAction);
       }
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.code !== "Escape" || event.repeat || event.defaultPrevented) return;
+      if (document.querySelector("#resultsOverlay")?.classList.contains("is-visible")) return;
+      const pauseAction = resolvePauseShortcutAction({
+        panelOpen: isOpen(), currentPanel, previousPanel, activeGameplayLevelId,
+      });
+      if (!pauseAction) return;
+      event.preventDefault();
+      if (pauseAction === "pause") showPanel("pause");
+      else runAction(pauseAction);
     });
   }
 

@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=terminal-dirt-png-1024";
+} from "./FluorescentBehavior.js?v=development-notice-v1";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

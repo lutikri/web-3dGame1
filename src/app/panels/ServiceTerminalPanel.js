@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=terminal-dirt-png-1024";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=development-notice-v1";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

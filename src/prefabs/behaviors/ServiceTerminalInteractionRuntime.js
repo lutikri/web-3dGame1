@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=terminal-dirt-png-1024";
+} from "./ServiceTerminalBehavior.js?v=development-notice-v1";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,

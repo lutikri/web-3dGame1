@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=terminal-dirt-png-1024";
+} from "./panels/StatusScreenMaterial.js?v=development-notice-v1";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

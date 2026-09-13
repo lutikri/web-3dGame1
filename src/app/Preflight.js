@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=terminal-dirt-png-1024";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=terminal-dirt-png-1024";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=development-notice-v1";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=development-notice-v1";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=terminal-dirt-png-1024";
+} from "./UiAudioInteractionRuntime.js?v=development-notice-v1";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=terminal-dirt-png-1024";
+} from "../config/GraphicsHardwareTiers.js?v=development-notice-v1";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=terminal-dirt-png-1024";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=development-notice-v1";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
@@ -27,7 +27,7 @@ const COPY = {
   en: {
     gpu: "GRAPHICS ADAPTER",
     integrated: "The browser is using integrated or power-saving graphics. If this computer also has NVIDIA or AMD graphics, switch the browser to the high-performance adapter.",
-    software: "Hardware acceleration is unavailable. The browser is rendering through software, so LOW is the safe starting profile.",
+    software: "Hardware acceleration is unavailable. The browser is rendering through software, so MIN is the safe starting profile.",
     unknown: "The browser did not disclose the adapter model. MEDIUM will be used as the balanced starting profile, but every profile remains available.",
     guide: "I HAVE NVIDIA / AMD",
     continue: "USE CURRENT ADAPTER",
@@ -37,7 +37,7 @@ const COPY = {
     recommended: "RECOMMENDED",
     measured: "Recommendation based on the adapter currently used by the browser",
     choose: "Choose a graphics profile",
-    low: ["LOW", "FASTEST"],
+    low: ["MIN", "FASTEST"],
     medium: ["MEDIUM", "BALANCED"],
     high: ["HIGH", "FULL EFFECTS"],
     apply: "APPLY",
@@ -54,7 +54,7 @@ const COPY = {
   ru: {
     gpu: "ГРАФИЧЕСКИЙ АДАПТЕР",
     integrated: "Браузер использует встроенную или энергосберегающую графику. Если в компьютере также есть NVIDIA или AMD, переключите браузер на производительный адаптер.",
-    software: "Аппаратное ускорение недоступно. Браузер рисует сцену программно, поэтому безопасный стартовый профиль — LOW.",
+    software: "Аппаратное ускорение недоступно. Браузер рисует сцену программно, поэтому безопасный стартовый профиль — MIN.",
     unknown: "Браузер не сообщил модель адаптера. Стартовым сбалансированным профилем будет MEDIUM, но выбрать можно любой профиль.",
     guide: "У МЕНЯ ЕСТЬ NVIDIA / AMD",
     continue: "ИСПОЛЬЗОВАТЬ ТЕКУЩИЙ",
@@ -64,7 +64,7 @@ const COPY = {
     recommended: "РЕКОМЕНДУЕТСЯ",
     measured: "Рекомендация основана на адаптере, который сейчас использует браузер",
     choose: "Выберите профиль графики",
-    low: ["LOW", "МАКСИМУМ FPS"],
+    low: ["MIN", "МАКСИМУМ FPS"],
     medium: ["MEDIUM", "БАЛАНС"],
     high: ["HIGH", "ВСЕ ЭФФЕКТЫ"],
     apply: "ПРИМЕНИТЬ",
@@ -94,7 +94,7 @@ export function createPreflight() {
   async function prepare() {
     if (saved?.profile) {
       if ((saved.qualityProfileRevision ?? 0) < QUALITY_PROFILE_REVISION) {
-        saveAppQualitySettings(saved.profile);
+        saveAppQualitySettings(saved.profile, saved.displayGamma);
         saved.qualityProfileRevision = QUALITY_PROFILE_REVISION;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
       }
@@ -102,7 +102,7 @@ export function createPreflight() {
       return {
         firstRun: false,
         language: saved.language,
-        profile: saved.profile,
+        profile: readAppQualityProfile() ?? saved.profile,
         displayGamma: saved.displayGamma ?? 0.93,
       };
     }
@@ -141,7 +141,7 @@ export function createPreflight() {
       qualityProfileRevision: QUALITY_PROFILE_REVISION,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-    saveAppQualitySettings(profile);
+    saveAppQualitySettings(profile, displayGamma);
     window.operatorGameBootOptions.qualityProfile = profile;
     window.operatorGameBootOptions.deferFullTextures = false;
     window.operatorGameBootOptions.disableFullTextures = !quality.fullTextures;
@@ -554,7 +554,16 @@ function loadSaved() {
   }
 }
 
-function saveAppQualitySettings(profile) {
+function readAppQualityProfile() {
+  try {
+    const profile = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "{}").qualityProfile;
+    return ["low", "medium", "high", "ultra"].includes(profile) ? profile : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveAppQualitySettings(profile, gamma = null) {
   let settings = {};
   try {
     settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "{}");
@@ -567,6 +576,8 @@ function saveAppQualitySettings(profile) {
     SETTINGS_KEY,
     JSON.stringify({
       ...settings,
+      qualityProfile: profile,
+      ...(gamma == null ? {} : { gamma }),
       shadowQuality: shadows,
       gtaoQuality: gtao,
       ssgiQuality: "off",

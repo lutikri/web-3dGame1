@@ -203,61 +203,76 @@
           </div>
         </section>
         <section id="pausePanel" class="app-panel pause-panel" data-app-panel="pause" hidden>
-          <div class="panel-header">
-            <span data-i18n="pause.title">PAUSED</span>
-            <button data-app-action="resume" type="button" aria-label="Resume" data-i18n="actions.resume">RESUME</button>
-          </div>
-          <div class="menu-actions">
-            <button data-app-action="resume" type="button" data-i18n="actions.resume">RESUME</button>
-            <button data-app-action="main-menu" type="button" data-i18n="actions.menu">MENU</button>
-            <button data-app-action="restart" type="button" data-i18n="actions.restart">RESTART</button>
-            <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
+          <div class="main-menu-content">
+            <header class="main-menu-brand">
+              <h1 data-i18n="pause.title">PAUSED</h1>
+              <p>SITE-12 / <span data-i18n="pause.shift">SHIFT</span></p>
+            </header>
+            <div class="main-menu-rule" aria-hidden="true"></div>
+            <nav class="menu-actions" aria-label="Pause menu">
+              <button data-app-action="resume" type="button" data-i18n="actions.resume">RESUME</button>
+              <button data-app-action="settings" type="button" data-i18n="actions.settings">SETTINGS</button>
+              <button data-app-action="restart" type="button" data-i18n="actions.restartShift">RESTART SHIFT</button>
+              <button data-app-action="main-menu" type="button" data-i18n="actions.mainMenu">MAIN MENU</button>
+            </nav>
+            <div class="main-menu-rule" aria-hidden="true"></div>
+            <div class="pause-status-title" data-i18n="pause.shiftStatus">SHIFT STATUS</div>
+            <dl class="main-menu-record">
+              <dt data-i18n="pause.assignment">CURRENT ASSIGNMENT</dt><dd data-pause-assignment>—</dd>
+              <dt data-i18n="pause.elapsed">ELAPSED</dt><dd data-pause-elapsed>00:00</dd>
+            </dl>
           </div>
         </section>
-        <section id="settingsPanel" class="app-panel settings-panel" data-app-panel="settings" hidden>
-          <div class="panel-header">
-            <span data-i18n="settings.title">SETTINGS</span>
-            <button data-app-action="back" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
+        <section id="settingsPanel" class="app-panel settings-panel system-terminal" data-app-panel="settings" hidden>
+          <header class="preflight-header"><span>TERRAGEN SYSTEMS // SYSTEM SETTINGS</span><span>SITE-12 / TERM 04</span></header>
+          <div class="settings-frame">
+            <h1 data-i18n="settings.title">SETTINGS</h1>
+            <div class="settings-body">
+              <aside class="settings-index" aria-label="Settings sections">
+                <nav>
+                  <button type="button" data-settings-tab="graphics" data-i18n="settings.graphics">GRAPHICS</button>
+                  <button type="button" data-settings-tab="controls" data-i18n="settings.controls">CONTROLS</button>
+                  <button type="button" data-settings-tab="audio" data-i18n="settings.audio">AUDIO</button>
+                  <button type="button" data-settings-tab="game" data-i18n="settings.game">GAME</button>
+                </nav>
+                <p>TERRAGEN SYSTEMS<br>OPERATOR INTERFACE v1.4.2</p>
+              </aside>
+              <main class="settings-content">
+                <div data-settings-page="graphics">
+                  <h2 data-i18n="settings.graphics">GRAPHICS</h2>
+                  <p class="settings-description" data-i18n="settings.graphicsHint">DISPLAY AND PERFORMANCE</p>
+                  <div class="settings-option"><div><strong>QUALITY PRESET</strong><small data-i18n="settings.qualityHint">OVERALL GRAPHICS QUALITY</small></div><div class="settings-choices" data-setting-key="qualityProfile"><button data-setting-value="low">MIN</button><button data-setting-value="medium">MEDIUM</button><button data-setting-value="high">HIGH</button><button data-setting-value="ultra">ULTRA</button></div></div>
+                  <div class="settings-option"><div><strong>RENDER SCALE</strong><small data-i18n="settings.renderScaleHint">RENDERING SCALE</small></div><div class="settings-choices" data-setting-key="renderScale"><button data-setting-value="50">50%</button><button data-setting-value="75">75%</button><button data-setting-value="100">100%</button><button data-setting-value="150">150%</button></div></div>
+                  <label class="settings-option"><span><strong>GAMMA</strong><small data-i18n="settings.gammaHint">IMAGE BRIGHTNESS</small></span><span class="settings-range"><input id="settingGamma" type="range" min="0.75" max="1.25" step="0.01"><output id="settingGammaValue">100%</output></span></label>
+                  <div class="settings-option"><div><strong>AVG FPS</strong><small data-i18n="settings.fpsHint">AVERAGE FPS</small></div><output id="settingFpsValue">N/A</output></div>
+                  <div class="settings-option"><div><strong>RENDER RES</strong><small data-i18n="settings.resHint">RENDER RESOLUTION</small></div><output id="settingRenderResValue">—</output></div>
+                  <div class="settings-option"><div><strong>ANTI ALIASING</strong><small data-i18n="settings.aaHint">EDGE SMOOTHING</small></div><div class="settings-choices" data-setting-key="antiAliasing"><button data-setting-value="fxaa">FXAA</button><button data-setting-value="smaa">SMAA</button><button data-setting-value="msaa4">MSAA 4×</button><button data-setting-value="msaa8">MSAA 8×</button></div></div>
+                </div>
+                <div data-settings-page="controls" hidden>
+                  <h2 data-i18n="settings.controls">CONTROLS</h2>
+                  <p class="settings-description" data-i18n="settings.controlsHint">VIEW AND INPUT</p>
+                  <label class="settings-option"><span><strong data-i18n="settings.fov">FOV</strong></span><span class="settings-range"><input id="settingFov" type="range" min="55" max="95" step="1"><output id="settingFovValue">72</output></span></label>
+                  <label class="settings-option"><span><strong data-i18n="settings.sensitivity">CONTROL SENSITIVITY</strong></span><span class="settings-range"><input id="settingSensitivity" type="range" min="40" max="180" step="5"><output id="settingSensitivityValue">100%</output></span></label>
+                  <label class="settings-option"><span><strong data-i18n="settings.uiScale">UI SCALE</strong></span><span class="settings-range"><input id="settingUiScale" type="range" min="80" max="130" step="5"><output id="settingUiScaleValue">100%</output></span></label>
+                </div>
+                <div data-settings-page="audio" hidden>
+                  <h2 data-i18n="settings.audio">AUDIO</h2>
+                  <p class="settings-description" data-i18n="settings.audioHint">SOUND OUTPUT</p>
+                  <label class="settings-option"><span><strong data-i18n="settings.masterVolume">MASTER VOLUME</strong></span><span class="settings-range"><input id="settingMasterVolume" type="range" min="0" max="100" step="1"><output id="settingMasterVolumeValue">100%</output></span></label>
+                </div>
+                <div data-settings-page="game" hidden>
+                  <h2 data-i18n="settings.game">GAME</h2>
+                  <p class="settings-description" data-i18n="settings.gameHint">SYSTEM AND SETUP</p>
+                  <label class="settings-option"><span><strong data-i18n="settings.uiScale">UI SCALE</strong></span><output id="settingUiScaleMirror">100%</output></label>
+                  <button class="settings-action-button" data-app-action="redetect-graphics" type="button" data-i18n="settings.wizard">SETUP WIZARD</button>
+                </div>
+              </main>
+            </div>
           </div>
-          <label class="setting-row">
-            <span data-i18n="settings.fov">FOV</span>
-            <input id="settingFov" type="range" min="55" max="95" step="1" />
-            <strong id="settingFovValue">72</strong>
-          </label>
-          <label class="setting-row">
-            <span data-i18n="settings.uiScale">UI SCALE</span>
-            <input id="settingUiScale" type="range" min="80" max="130" step="5" />
-            <strong id="settingUiScaleValue">100%</strong>
-          </label>
-          <label class="setting-row">
-            <span data-i18n="settings.sensitivity">CONTROL SENSITIVITY</span>
-            <input id="settingSensitivity" type="range" min="40" max="180" step="5" />
-            <strong id="settingSensitivityValue">100%</strong>
-          </label>
-          <label class="setting-row">
-            <span data-i18n="settings.shadows">SHADOWS</span>
-            <select id="settingShadowQuality">
-              <option value="off">OFF</option>
-              <option value="min">MIN 512</option>
-              <option value="med">HIGH 1K</option>
-              <option value="max">MAX 2K</option>
-            </select>
-            <strong id="settingShadowQualityValue">MIN</strong>
-          </label>
-          <label class="setting-row">
-            <span data-i18n="settings.gtao">GTAO</span>
-            <select id="settingGtaoQuality">
-              <option value="off">OFF</option>
-              <option value="min">MIN</option>
-              <option value="med">MED</option>
-              <option value="max">MAX</option>
-            </select>
-            <strong id="settingGtaoQualityValue">OFF</strong>
-          </label>
-          <button class="settings-action-button" data-app-action="redetect-graphics" type="button" data-i18n="settings.wizard">SETUP WIZARD</button>
+          <footer class="preflight-footer settings-footer"><button data-app-action="back" type="button"><kbd>ESC</kbd><span data-i18n="actions.back">BACK</span></button><span data-settings-breadcrumb>SYSTEM SETTINGS / GRAPHICS</span><button data-app-action="back" data-settings-apply type="button"><kbd>ENTER</kbd><span data-i18n="settings.apply">APPLY</span></button></footer>
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=terminal-dirt-png-1024"></script>
+    <script type="module" src="src/main.js?v=development-notice-v1"></script>
   </body>
 </html>

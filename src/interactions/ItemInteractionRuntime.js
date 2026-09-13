@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=terminal-dirt-png-1024";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=development-notice-v1";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();

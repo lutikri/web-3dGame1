@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=terminal-dirt-png-1024";
+import { LevelRuntime } from "./LevelRuntime.js?v=development-notice-v1";
 
 export class LevelEnvironmentLifecycle {
   constructor({
