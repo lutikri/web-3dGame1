@@ -1,265 +1,128 @@
-# OperatorGame
+# SITE-12 / OperatorGame
 
-Browser-based first-person operator game about running an old industrial fusion-core installation from a physical control room.
+> A first-person fusion-reactor operator game built for the browser.
 
-The player is not a builder, factory manager, or omniscient engineer. They are a shift operator: reading analog gauges, warning lamps, screen fragments, sound, light, and room behavior while trying to keep the core inside a working range under rising grid demand.
+[**Play the development build**](https://lutikri.github.io/web-3dGame1/) · [Game design](docs/game/README.md) · [Project structure](docs/project-structure.md)
 
-![Shift briefing and operator UI](assets/repo/showcase-game3.webp)
+> [!WARNING]
+> **Active development build.** Content, balance, performance, saves, and presentation may change. The reactor will probably remain contained. Probably.
 
-## Design direction
+![The FCU-16 reactor control console](assets/repo/site12-reactor-console.webp)
 
-Canonical game documents now live in [`docs/game/`](docs/game/README.md). This README is an onboarding and development overview; it is not a second design authority.
+## About the game
 
-OperatorGame is about causal, physical-feeling control.
+You are a Terragen Systems shift operator assigned to Site-12, an aging underground fusion facility still expected to meet modern grid demand.
 
-The main panel exposes a small set of powerful inputs:
+Read analog gauges, warning lamps, terminal reports, sound, light, and the behavior of the room itself. Balance fuel injection, magnetic containment, and coolant flow while demand rises and the machinery becomes less trustworthy. OperatorGame is about learning one physical control panel deeply—not building a factory from above.
 
-- `Fuel Injection` raises heat and output, consumes fuel, and can hurt stability if the field is weak.
-- `Magnetic Field` improves containment, but costs energy and can reduce useful output when overused.
-- `Coolant Flow` removes heat, but too much cooling can quench the plasma and collapse output.
-- `Emergency Vent / Purge` is a held emergency action. It can save the shift, but it interrupts production and carries a cost.
+## Current build
 
-The player follows changing `Grid Demand` while watching `Plasma Temp`, `Containment / Stability`, `Power Output`, `Core Stress`, warning lamps, sound, flicker, blackout behavior, and post-processing feedback.
+| System | Status |
+| --- | --- |
+| FCU-16 reactor simulation and physical control panel | Playable |
+| Site-12 first-person exploration and interaction | Playable |
+| Qualification Shift | Playable, balance pass in progress |
+| Service terminal: brief, guide, reports, archive | Implemented |
+| Main menu, assigned shifts, progression, and save data | Implemented |
+| Real gameplay pause, preflight, and in-game settings | Implemented |
+| English and Russian interface | Implemented, content pass ongoing |
+| Instrument Reliability and Cost of Running trials | In development |
 
-High temperature is not automatically failure. Late burn phases are meant to push the operator near the dangerous band. The interesting play is not “keep everything low”; it is deciding how much risk the machinery can survive.
-
-## Current player flow
-
-The current game begins with a first-run setup wizard for language, graphics, and gamma.
-
-After setup, the player enters the main menu and opens the Assigned Shifts screen. The first available assignment is the First Operator Qualification Shift.
-
-The playable route is:
-
-```text
-Setup Wizard -> Main Menu -> Assigned Shifts
--> Entrance Corridor -> Entrance Area -> Control Booth
--> Shift -> Return to Entrance -> Shift Report
-```
-
-The personnel elevator is implied during loading and is not a playable scene.
-
-After successful qualification, Instrument Reliability Check and Cost of Running Trial become available.
-
-Detailed progression and game rules live in [`docs/game/`](docs/game/README.md).
-
-![Operator console and fusion core room](assets/repo/showcase-game1.webp)
-
-![Service corridor exploration](assets/repo/showcase-game2.webp)
-
-## Current architecture
-
-Current code structure is tracked in [docs/project-structure.md](docs/project-structure.md). Older design documents are treated as direction notes, not as exact implementation architecture.
-
-### Level lifecycle
-
-Levels are loaded exclusively. The runtime must not load every registered level and hide inactive ones.
-
-On a major route change, the current level owns and then disposes:
-
-- scene objects;
-- lights;
-- interactions;
-- collision;
-- Rapier bodies;
-- level-specific runtime state.
-
-### Runtime ownership
-
-- `PrefabRegistry` owns reusable defaults.
-- Level configs own instance placement and per-instance tuning.
-- Runtime systems own cloned objects, physics bodies, audio nodes, timers, and temporary state.
-- Debug UI goes through `src/ui/debug/DebugHub.js`; new debug tools should not be bolted directly onto gameplay code.
-
-Shared source GLBs and textures may remain cached through `AssetCache`, but cloned instances and physics state belong to the active level only.
-
-Relevant modules:
-
-- `src/levels/LevelRegistry.js` — level metadata and runtime environment registration.
-- `src/runtime/LevelRuntimeManager.js` — atomic level transitions; latest request wins.
-- `src/runtime/LevelRuntime.js` — idempotent disposal of level-owned resources.
-- `src/runtime/AssetCache.js` — cached source assets and isolated cloned instances.
-- `src/runtime/RuntimeSmoke.js` — automated lifecycle smoke test.
-- `src/scene/LevelSceneBuilder.js` — architecture, collision, prefab markers, and prefab instances.
-
-### Prefabs and marker placement
-
-Reusable objects such as lamps, doors, panels, pumps, and control cabinets are prefabs. Shared behavior belongs in `src/prefabs/PrefabRegistry.js`, not in individual level configs.
-
-A level may place a prefab manually in config:
-
-```js
-createPrefabInstance("fluorescentLamp", {
-  name: "Lamp1_TutorialCabin",
-  position: [3.6861, 1.49811, 2.39028],
-});
-```
-
-Or with an Empty marker inside a Blender environment GLB:
+The current player route is:
 
 ```text
-PF_fluorescentLamp_PowerHall1
-PF_redBulkLamp_PowerHall1
-PF_bulkheadDoor_C
+First launch -> Development notice -> Setup / Preflight -> Main Menu
+-> Assigned Shift -> Entrance Corridor -> Service Terminal
+-> Control Booth -> Reactor Shift -> Shift Report
 ```
 
-Marker format:
+After the Qualification Shift, **Instrument Reliability Check** and **Cost of Running Trial** become available. Both remain under active development.
 
-```text
-PF_<prefabType>_<instanceName>
-```
+## Inside Site-12
 
-Rules:
+<table>
+  <tr>
+    <td width="50%">
+      <img src="assets/repo/site12-control-booth.webp" alt="FCU-16 control booth">
+      <br><sub>FCU-16 control booth</sub>
+    </td>
+    <td width="50%">
+      <img src="assets/repo/site12-shaft-corridor.webp" alt="Site-12 elevator-shaft corridor">
+      <br><sub>Entrance corridor and shaft map</sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <img src="assets/repo/site12-observation-wing.webp" alt="Site-12 local observation wing">
+      <br><sub>Local Observation wing</sub>
+    </td>
+  </tr>
+</table>
 
-- `prefabType` must exist in `PrefabRegistry`.
-- The marker must be an Empty object, not a render mesh.
-- The runtime instance name becomes `<prefabType>_<instanceName>`.
-- Manual prefabs with the same stable name override marker placement.
-- Saved level overrides merge by stable prefab `name`.
-- Registry-owned fields such as asset paths, material algorithms, physics algorithms, flicker behavior, and interaction logic must not be saved into level overrides.
+## Reactor operation
 
-### Level sessions
+The panel exposes a small set of controls with overlapping consequences:
 
-`src/levels/LevelSession.js` owns level objectives, bindings, events, and checkpoint data for the current shift.
+- **Fuel Injection** raises heat and output, consumes fuel, and can damage stability when containment is weak.
+- **Magnetic Field** improves containment but consumes energy and can reduce useful output when overused.
+- **Coolant Flow** removes heat, while excessive cooling can quench the plasma and collapse output.
+- **Emergency Vent / Purge** can rescue a failing run, but interrupts production and carries a cost.
 
-Level-specific behavior should be expressed through session config and events where possible. For example:
+The goal is not to keep every gauge low. Late phases deliberately push the reactor toward its dangerous band; the player must match **Grid Demand** without allowing warnings, instability, or core stress to become critical.
 
-- tutorial completion can require time survived plus opening a door;
-- a room button can target a specific prefab lamp;
-- future service-room tasks can listen for power, breaker, pump, or door events.
+## Roadmap
 
-A level is allowed to have no `Panel1`; if no prefab with `behavior: "operatorPanel"` exists, the shared panel is hidden.
+### Completed foundations
 
-### UI and tutorial modules
+- [x] Physical FCU-16 reactor loop, gauges, controls, warnings, and failures
+- [x] First-person Site-12 spaces, interaction, collision, lighting, and audio
+- [x] Paper brief replacement: interactive in-world service terminal
+- [x] Real pause with frozen simulation and in-game settings
+- [x] Preflight quality profiles and one-time development-build notice
 
-- `src/app/AppShell.js` — high-level app shell: menu, settings, route transitions, briefings, pause, and progress.
-- `src/app/BriefingUiConfig.js` — briefing zoom / inspect / vignette tuning.
-- `src/app/SubtitleQueue.js` — operator thought subtitle queue.
-- `src/app/TutorialHintQueue.js` — visual hint rendering with keycaps and mouse icons.
-- `src/app/IntroTutorialFlow.js` — intro tutorial step machine and tutorial subtitle timing.
-- `src/app/Localization.js` — English/Russian UI strings, control labels, subtitles, and hints.
+### Now — qualification and onboarding
 
-Briefings are level-driven through `src/levels/LevelRegistry.js`. While a briefing is visible, gameplay input is locked. After the final sheet is dismissed, tutorial hints become non-blocking.
+- [ ] Rebalance Qualification so success requires real demand compliance and stable operation
+- [ ] Add a meaningful Shift Report: compliance, stability, and critical-event results
+- [ ] Make the tutorial event-driven, with fast restart and no repeated mandatory narration
+- [ ] Finalize tutorial retry and post-qualification **Skip Training** behavior
+- [ ] Separate the one-time lore intro from short repeatable shift loading sequences
 
-### Embodied first-person locomotion
+### Next — complete the three-shift vertical slice
 
-First-person presentation is a simulated body/head rig rather than a camera attached directly to the character capsule.
+- [ ] Finish **Instrument Reliability Check**, including flashlight-driven redundant-instrument reading
+- [ ] Finish **Cost of Running Trial** for players who understand the reactor loop
+- [ ] Test all three shifts end-to-end: briefing, gameplay, fail/win, report, unlocks, save, and EN/RU
 
-- Rapier and the player-collision runtime own the physical capsule, grounded state, vertical velocity, stance resize, and resolved movement.
-- `OperatorMovementRuntime` owns direct 1:1 mouse look and passes actual capsule displacement to the body rig. Procedural motion is not driven from WASD state.
-- `FirstPersonBodyRigRuntime` owns body yaw, the free head-yaw range, stationary foot repositioning, alternating support legs, authored gait curves, acceleration weight, strafe lean, mouse-angular reaction, crouch settling, step stabilization, and landing recovery.
-- `ItemInteractionRuntime` consumes a stronger held-equipment version of the same body motion, so a flashlight moves more than the stabilized head.
-- Locomotion does not drive chromatic aberration, lens distortion, sprint FOV, or other post-processing effects.
+### Later — world presentation and polish
 
-The body rig composes gait, strafe weight, forward/back acceleration, direct-look reaction, head/body yaw separation, steps, crouch, and landing. Do not replace this with a parallel head-bob loop or add locomotion effects in `OperatorGame.js`.
+- [ ] Complete the Observation Port: viewport shutter and alarm-silence controls
+- [ ] Build the personnel-accommodation scene used behind the main menu
+- [ ] Final presentation, accessibility, performance, and compatibility pass
 
-Authoritative tuning lives under `CONFIG.camera.operatorMovement.bodyRig` in `src/OperatorGameConfig.js`. The regression contract is covered by `tests/first-person-body-rig-runtime.test.mjs` and `tests/operator-movement-runtime.test.mjs`; subjective weight and comfort still require pointer-lock playtesting.
+The detailed release scope and canonical gameplay rules live in [`docs/game/`](docs/game/README.md). Ideas outside the three-shift package are tracked separately and do not block the vertical slice.
 
-## Runtime modules
+## Technology
 
-- `src/lighting/LightingRuntime.js` — level-owned ambient and point lights.
-- `src/interactions/DoorInteractionSystem.js` — shared physical door interaction.
-- `src/player/OperatorMovementRuntime.js` — movement intent, direct mouse look, body-rig integration, crouch, zoom lean, and final camera composition.
-- `src/player/FirstPersonBodyRigRuntime.js` — physical head/torso presentation derived from resolved movement and look deltas.
-- `src/player/PlayerCollisionRuntime.js` — capsule dimensions, stance changes, collision-safe view offsets, and collision debug presentation.
-- `src/postprocessing/PostProcessingRuntime.js` — post-processing lifecycle.
-- `src/panels/OperatorPanelRuntime.js` — operator panel lifecycle and visibility.
-- `src/physics/PhysicsSystem.js` — Rapier physics, static collision, character controller, and physical doors.
-- `src/scene/TextureStreaming.js` — staged texture loading to reduce first-load stalls.
+`Three.js` · `Rapier 3D` · `Web Audio` · `postprocessing` · `Vite` · static ES modules
 
-## Development
+The game uses exclusive level loading, reusable prefab behaviors, level-owned runtime state, compressed texture streaming, configurable graphics profiles, and an automated lifecycle smoke test. A concise ownership map is maintained in [`docs/project-structure.md`](docs/project-structure.md).
 
-Install dependencies:
+## Run locally
 
-```text
+```bash
 npm install
-```
-
-Run the local server:
-
-```text
 npm run dev
 ```
 
-Open:
+Open `http://localhost:5173/`.
 
-```text
-http://localhost:5173/
-```
+Useful commands:
 
-If port `5173` is busy:
-
-```powershell
-$env:PORT=5174; npm run dev
-```
-
-Fast validation:
-
-```text
+```bash
 npm run check
+npm run build
 ```
-
-### Dev console commands
-
-The app installs a small browser-console helper for route/progress testing:
-
-```js
-og("complete intro-shift")
-og("complete unexpected-stuff")
-og("complete fuel-problems")
-og("goto intro-shift")
-og("goto fuel-problems")
-og("reset progress")
-og("progress")
-og("levels")
-```
-
-Equivalent method form:
-
-```js
-og.complete("intro-shift")
-og.goto("unexpected-stuff")
-og.resetProgress()
-```
-
-Direct aliases are also available:
-
-```js
-completeLevel("intro-shift")
-attemptLevel("shift-coordination")
-clearLevelProgress("fuel-problems")
-gotoLevel("exploring-around")
-resetProgress()
-```
-
-`goto` / `gotoLevel` bypass route unlocks, but still require the target level to be playable.
-
-#### Graphics commands
-
-Open the browser DevTools console while the game is running. The short commands below switch the cinematic post-processing bundle (SSGI, SSR, and screen-space shadows) together:
-
-```js
-og("cinematic off")
-og("cinematic min")
-og("cinematic med")
-og("cinematic max")
-og("quality cinematic med") // equivalent spelling
-og.cinematic("max")          // equivalent method form
-```
-
-Use the runtime debug API to change the complete graphics profile or an individual effect:
-
-```js
-operatorGameDebug.applyQualityProfile("low")    // low | medium | high
-operatorGameDebug.setShadowQuality("med")       // off | min | med | max
-operatorGameDebug.setGtaoQuality("max")         // off | min | med | max
-operatorGameDebug.setSsgiQuality("off")         // off | min | med | max
-operatorGameDebug.setSsrQuality("off")          // off | min | med | max
-operatorGameDebug.setScreenSpaceShadowQuality("off") // off | min | med | max
-operatorGameDebug.setCinematicPostProcessingQuality("max")
-```
-
-`applyQualityProfile` also changes render resolution, light budgets, texture policy, and the profile's standard effects. Console changes are temporary and last only for the current page session. For persistent player settings, use the in-game Settings panel or rerun its Setup Wizard.
 
 Runtime lifecycle smoke test:
 
@@ -267,53 +130,32 @@ Runtime lifecycle smoke test:
 http://localhost:5173/?runtimeSmoke=1
 ```
 
-Expected browser console result:
+Expected browser-console result: `[RuntimeSmoke] PASS`.
 
-```text
-[RuntimeSmoke] PASS
-```
+## Repository guide
 
-Manual playtesting is still needed for subjective behavior: door feel, lamp flicker, lighting mood, collision comfort, tutorial pacing, and presentation timing.
+| Path | Purpose |
+| --- | --- |
+| `src/app/` | Menus, routing, localization, preflight, pause, and progression UI |
+| `src/levels/` | Level definitions, objectives, events, and stable placement data |
+| `src/prefabs/` | Reusable world objects and their runtime behaviors |
+| `src/player/`, `src/physics/`, `src/runtime/` | First-person movement, collision, loading, and lifecycle ownership |
+| `assets/` | Runtime-ready models, textures, audio, UI, and README images |
+| `source-assets/` | Editable and heavyweight source art; excluded from deployment |
+| `docs/` | Architecture and canonical game-design documentation |
 
-## Assets
+After JavaScript module changes, stamp import URLs before deployment so GitHub Pages does not mix cached module revisions:
 
-- `assets/` contains runtime assets only: GLB, compressed textures, briefings, UI images, and lightweight README showcase WebP files.
-- `source-assets/` contains source art, editable production files, and original heavy files. It is gitignored except for its README.
-- `assets/repo/*.webp` are compressed showcase images for this README.
-- Original showcase PNGs live in `source-assets/reference/showcase/`.
-
-After changing runtime texture sources, run:
-
-```text
-generate-runtime-textures.bat
-```
-
-Generated preview and full KTX2 textures are written to:
-
-```text
-assets/runtime-textures/
-```
-
-## Deployment notes
-
-This project is currently a static ES-module app. GitHub Pages can cache individual modules aggressively, so after JavaScript module changes run:
-
-```text
-npm run stamp-modules -- <revision>
-```
-
-Then run:
-
-```text
+```bash
+npm run stamp-modules -- <short-revision-name>
 npm run check
 ```
 
-The stamp step updates relative module URLs such as `?v=<revision>` to avoid mixed old/new module graphs on Pages.
+Heavy source images, recordings, and deprecated assets must stay outside `assets/` to keep the Pages artifact lean.
 
-The Pages artifact should stay lean. Keep source PNGs, PSDs, recordings, screenshots, and deprecated content outside runtime `assets/` or under ignored source directories.
+## Documentation
 
-## Design document
-
-See [`docs/game/README.md`](docs/game/README.md) for the current design index, canonical fusion-core rules, future-system integration audit, and the archived Unreal-oriented architecture draft.
-
-The living Russian design document is [`docs/game/game-design-ru.md`](docs/game/game-design-ru.md).
+- [Game design index](docs/game/README.md)
+- [Living Russian design document](docs/game/game-design-ru.md)
+- [FCU-16 reactor rules](docs/game/fusion-core.md)
+- [Project structure and ownership](docs/project-structure.md)
