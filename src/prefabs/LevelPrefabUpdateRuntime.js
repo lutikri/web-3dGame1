@@ -1,11 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=development-notice-v1";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=development-notice-v1";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=development-notice-v1";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=development-notice-v1";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=development-notice-v1";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=development-notice-v1";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=development-notice-v1";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=core-viewport-shutter";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=core-viewport-shutter";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=core-viewport-shutter";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=core-viewport-shutter";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=core-viewport-shutter";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=core-viewport-shutter";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=core-viewport-shutter";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=core-viewport-shutter";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -105,6 +106,7 @@ export class LevelPrefabUpdateRuntime {
       updateSuspendedLampRuntime(runtime.suspendedLamp, dt);
       updatePlasmaViewRuntime(runtime.plasmaView, this.getCoreSnapshot?.(), dt);
       updateStatusViewportRuntime(runtime.statusViewport, this.getCoreSnapshot?.(), dt);
+      updateCoreViewportRuntime(runtime.coreViewport, dt);
       updateBarrierGateRuntime(runtime.barrierGate, dt).forEach((event) => {
         if (event.type === "unlockGate") this.#unlockBarrier(runtime, levelId, event);
         else if (event.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);

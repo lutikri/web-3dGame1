@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=development-notice-v1";
-import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=development-notice-v1";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=development-notice-v1";
+import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=core-viewport-shutter";
+import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=core-viewport-shutter";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=core-viewport-shutter";
 
 const elevatorStart = new THREE.Vector3(0.8082548379898071, 35.64804458618164, -2.094832181930542);
 

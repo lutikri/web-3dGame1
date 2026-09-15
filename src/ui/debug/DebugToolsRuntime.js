@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=development-notice-v1";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=development-notice-v1";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=development-notice-v1";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=development-notice-v1";
+import { createDebugHub } from "./DebugHub.js?v=core-viewport-shutter";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=core-viewport-shutter";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=core-viewport-shutter";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=core-viewport-shutter";
 
 export class DebugToolsRuntime {
   constructor(options) {

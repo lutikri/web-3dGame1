@@ -13,6 +13,7 @@ test("runtime texture pipeline has incremental npm entrypoints and dual progress
   assert.match(wrapper, /TEXTURE_TOOL_MODE/);
   assert.match(pipeline, /T_Terminal1_BaseColor\.png/);
   assert.match(pipeline, /T_Terminal1_ScreenDirt1\.png/);
+  assert.match(pipeline, /T_CoreViewport1_BaseColor\.png/);
   assert.match(compatibilityBat, /T_Panel1_\*/);
   assert.match(pipeline, /Test-JobOutputsCurrent/);
   assert.match(pipeline, /ALL \[/);

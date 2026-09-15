@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=development-notice-v1";
+import { LevelRuntime } from "./LevelRuntime.js?v=core-viewport-shutter";
 
 export class LevelEnvironmentLifecycle {
   constructor({

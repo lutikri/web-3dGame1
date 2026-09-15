@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=development-notice-v1";
+} from "./ServiceTerminalBehavior.js?v=core-viewport-shutter";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,

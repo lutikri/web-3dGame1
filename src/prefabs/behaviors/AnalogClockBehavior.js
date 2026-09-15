@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=development-notice-v1";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=core-viewport-shutter";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

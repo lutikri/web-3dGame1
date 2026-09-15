@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   compareDebugPrefabs,
   createDebugProjectSavePayload,
+  getCoreViewportDebugProperties,
   getOperatorPanelScreenDebugProperties,
   getStatusViewportDebugProperties,
   getSuspendedLampDebugProperties,
@@ -52,6 +53,12 @@ test("debug workspace exposes master status viewport tuning", () => {
   const statusViewport = { updateIntervalSeconds: 1, indicators: { Efficiency: { intensity: 2 } } };
   assert.equal(getStatusViewportDebugProperties({ behavior: "statusViewport", statusViewport }), statusViewport);
   assert.equal(getStatusViewportDebugProperties({ behavior: "radio", statusViewport }), null);
+});
+
+test("debug workspace exposes live core viewport shutter tuning", () => {
+  const coreViewport = { closedPosition: 0.000028, openPosition: 0.226287, travelDurationSeconds: 10 };
+  assert.equal(getCoreViewportDebugProperties({ behavior: "coreViewport", coreViewport }), coreViewport);
+  assert.equal(getCoreViewportDebugProperties({ behavior: "radio", coreViewport }), null);
 });
 
 test("debug workspace resolves a material selection to its material key", () => {

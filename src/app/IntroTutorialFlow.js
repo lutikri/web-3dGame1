@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=development-notice-v1";
+import { translateRequired } from "./Localization.js?v=core-viewport-shutter";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

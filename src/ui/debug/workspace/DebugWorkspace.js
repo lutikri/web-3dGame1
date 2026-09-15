@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=development-notice-v1";
+} from "../../../levels/LevelConfigSerialization.js?v=core-viewport-shutter";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=development-notice-v1";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=core-viewport-shutter";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -61,6 +61,10 @@ export function getOperatorPanelScreenDebugProperties(prefab) {
 
 export function getStatusViewportDebugProperties(prefab) {
   return prefab?.behavior === "statusViewport" && prefab.statusViewport ? prefab.statusViewport : null;
+}
+
+export function getCoreViewportDebugProperties(prefab) {
+  return prefab?.behavior === "coreViewport" && prefab.coreViewport ? prefab.coreViewport : null;
 }
 
 export function parseDebugWorkspaceSelection(selectedId = "") {
@@ -360,6 +364,13 @@ export function createDebugWorkspace({
         addColor(indicator, tuning, "tint", "TINT", apply);
         addNumber(indicator, tuning, "intensity", "EMISSIVE", 0, 12, 0.05, apply);
       });
+    }
+    const coreViewport = getCoreViewportDebugProperties(prefab);
+    if (coreViewport) {
+      const shutter = propertiesGui.addFolder("VIEWPORT SHUTTER");
+      addNumber(shutter, coreViewport, "closedPosition", "CLOSED POSITION", -1, 1, 0.0001, apply);
+      addNumber(shutter, coreViewport, "openPosition", "OPEN POSITION", -1, 1, 0.0001, apply);
+      addNumber(shutter, coreViewport, "travelDurationSeconds", "TRAVEL SECONDS", 0.1, 30, 0.1, apply);
     }
     const plasmaConfig = getPlasmaViewDebugProperties(prefab);
     if (plasmaConfig) {

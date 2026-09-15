@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=development-notice-v1";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=core-viewport-shutter";
 
 const DISMISS_MS = 300;
 

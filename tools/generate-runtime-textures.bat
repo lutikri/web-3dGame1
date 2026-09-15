@@ -37,6 +37,10 @@ $jobs = @(
   @{ Source = "T_PanelStatusView1_OcclusionRoughnessMetallic.png"; Prefix = "T_PanelStatusView1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
   @{ Source = "T_PanelStatusView1_Emissive.png"; Prefix = "T_PanelStatusView1_Emissive_Interactive"; Preview = 512; Mode = "srgb"; Quality = 175 },
 
+  @{ Source = "T_CoreViewport1_BaseColor.png"; Prefix = "T_CoreViewport1_BaseColor_Interactive"; Preview = 1024; Mode = "srgb"; Quality = 190 },
+  @{ Source = "T_CoreViewport1_Normal.png"; Prefix = "T_CoreViewport1_Normal_Interactive"; Preview = 1024; Mode = "normal"; Quality = 200 },
+  @{ Source = "T_CoreViewport1_OcclusionRoughnessMetallic.png"; Prefix = "T_CoreViewport1_OcclusionRoughnessMetallic_Interactive"; Preview = 1024; Mode = "linear"; Quality = 190 },
+
   @{ Source = "T_Interior1_Mask_Mask.png"; Prefix = "T_Interior1_Mask_Background"; Preview = 1024; Mode = "linear"; Quality = 190; KeepPreviewPng = $true },
 
   @{ Source = "T_Bricks1Old_BaseColor.png"; Prefix = "T_Bricks1Old_BaseColor_Background"; Preview = 1024; Mode = "srgb"; Quality = 180 },

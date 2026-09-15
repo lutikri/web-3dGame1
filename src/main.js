@@ -1,10 +1,10 @@
-import { createPreflight } from "./app/Preflight.js?v=development-notice-v1";
-import { applyLocalization } from "./app/Localization.js?v=development-notice-v1";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=development-notice-v1";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=development-notice-v1";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=development-notice-v1";
+import { createPreflight } from "./app/Preflight.js?v=core-viewport-shutter";
+import { applyLocalization } from "./app/Localization.js?v=core-viewport-shutter";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=core-viewport-shutter";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=core-viewport-shutter";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=core-viewport-shutter";
 
-const APP_BUILD_REVISION = "development-notice-v1";
+const APP_BUILD_REVISION = "core-viewport-shutter";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -30,7 +30,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=development-notice-v1`);
+await import(`./OperatorGame.js?v=core-viewport-shutter`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -44,7 +44,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=development-notice-v1`);
+const { createAppShell } = await import(`./app/AppShell.js?v=core-viewport-shutter`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -55,7 +55,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=development-notice-v1`
+    `./runtime/RuntimeSmoke.js?v=core-viewport-shutter`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

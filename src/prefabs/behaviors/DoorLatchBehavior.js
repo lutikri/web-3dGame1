@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=development-notice-v1";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=core-viewport-shutter";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

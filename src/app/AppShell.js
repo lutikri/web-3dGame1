@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=development-notice-v1";
-import { applyLocalization, translate } from "./Localization.js?v=development-notice-v1";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=development-notice-v1";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=development-notice-v1";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=development-notice-v1";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=development-notice-v1";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=development-notice-v1";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=core-viewport-shutter";
+import { applyLocalization, translate } from "./Localization.js?v=core-viewport-shutter";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=core-viewport-shutter";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=core-viewport-shutter";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=core-viewport-shutter";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=core-viewport-shutter";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=core-viewport-shutter";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=development-notice-v1";
-import { createAppPanelController } from "./AppPanelController.js?v=development-notice-v1";
-import { createAppRouter } from "./AppRouter.js?v=development-notice-v1";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=development-notice-v1";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=development-notice-v1";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=development-notice-v1";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=development-notice-v1";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=development-notice-v1";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=development-notice-v1";
+} from "./AppPersistence.js?v=core-viewport-shutter";
+import { createAppPanelController } from "./AppPanelController.js?v=core-viewport-shutter";
+import { createAppRouter } from "./AppRouter.js?v=core-viewport-shutter";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=core-viewport-shutter";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=core-viewport-shutter";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=core-viewport-shutter";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=core-viewport-shutter";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=core-viewport-shutter";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=core-viewport-shutter";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

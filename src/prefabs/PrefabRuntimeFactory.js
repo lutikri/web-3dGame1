@@ -1,15 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=development-notice-v1";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=development-notice-v1";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=development-notice-v1";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=development-notice-v1";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=development-notice-v1";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=development-notice-v1";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=development-notice-v1";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=development-notice-v1";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=development-notice-v1";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=development-notice-v1";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=core-viewport-shutter";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=core-viewport-shutter";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=core-viewport-shutter";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=core-viewport-shutter";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=core-viewport-shutter";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=core-viewport-shutter";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=core-viewport-shutter";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=core-viewport-shutter";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=core-viewport-shutter";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=core-viewport-shutter";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=core-viewport-shutter";
 
 export function createPrefabRuntimeFactory({
   config,
@@ -149,6 +150,12 @@ export function createPrefabRuntimeFactory({
         runtime.root,
         runtime.parts,
         prefabConfig.statusViewport,
+        prefabConfig.name,
+      );
+    } else if (prefabConfig.behavior === "coreViewport") {
+      runtime.coreViewport = createCoreViewportRuntime(
+        runtime.parts,
+        prefabConfig.coreViewport,
         prefabConfig.name,
       );
     }

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=development-notice-v1";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=core-viewport-shutter";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

@@ -107,6 +107,13 @@ const PREFAB_DEFINITIONS = {
     behavior: "statusViewport",
     statusViewport: {
       screenMeshName: "SM_PanelViewStatus1_Screen",
+      shutterButtonMeshName: "SM_PanelViewStatus1_Button_ViewShutter",
+      shutterPrefabName: "CoreViewport1",
+      shutterTargetPrefabName: "CoreViewport1",
+      shutterButtonLabel: "VIEWPORT SHUTTER",
+      shutterButtonMaxDistance: 1.85,
+      shutterButtonPressAxis: "z",
+      shutterButtonPressDistance: -0.006,
       updateIntervalSeconds: 1,
       screen: {
         brightness: 1.2,
@@ -142,6 +149,19 @@ const PREFAB_DEFINITIONS = {
         Stress: { tint: 0xffffff, intensity: 2.2 },
         Coolant: { tint: 0xffffff, intensity: 1.8 },
       },
+    },
+  },
+  CoreViewport1: {
+    assetPath: "assets/mesh/prefabs/PF_CoreViewport1.glb",
+    materialKey: "coreViewport1",
+    behavior: "coreViewport",
+    coreViewport: {
+      shutterMeshName: "SM_CoreViewport1_Shutter1",
+      axis: "y",
+      closedPosition: 0.0000284910202,
+      openPosition: 0.226287,
+      travelDurationSeconds: 10,
+      startsOpen: false,
     },
   },
   elevator: {

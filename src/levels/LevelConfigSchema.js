@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=development-notice-v1";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=core-viewport-shutter";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

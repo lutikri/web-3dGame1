@@ -2,7 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=development-notice-v1";
+} from "../../panels/StatusScreenMaterial.js?v=core-viewport-shutter";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=core-viewport-shutter";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -13,6 +14,10 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
   const screenMesh = parts.get(config.screenMeshName ?? "SM_PanelViewStatus1_Screen");
   if (!screenMesh?.isMesh) {
     throw new Error(`[StatusViewport] Missing screen mesh in prefab "${prefabName}"`);
+  }
+  const shutterButton = parts.get(config.shutterButtonMeshName ?? "SM_PanelViewStatus1_Button_ViewShutter");
+  if (!shutterButton?.isMesh) {
+    throw new Error(`[StatusViewport] Missing shutter button mesh in prefab "${prefabName}"`);
   }
 
   const canvas = document.createElement("canvas");
@@ -66,6 +71,10 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
   const runtime = {
     root,
     screenMesh,
+    shutterButton,
+    shutterButtonInitialPosition: shutterButton.position.clone(),
+    shutterButtonPressProgress: 0,
+    shutterButtonPressRemaining: 0,
     screenMaterial,
     indicatorMaterials,
     materialCloneEntries,
@@ -102,6 +111,7 @@ export function applyStatusViewportConfig(runtime, config = {}) {
 export function updateStatusViewportRuntime(runtime, snapshot, dt) {
   if (!runtime) return null;
   const safeDt = Math.max(0, Number(dt) || 0);
+  updateShutterButton(runtime, safeDt);
   runtime.screenMaterial.uniforms.uTime.value += safeDt;
   runtime.persistenceAge += safeDt;
   runtime.screenMaterial.uniforms.uPersistenceAge.value = runtime.persistenceAge;
@@ -121,6 +131,51 @@ export function updateStatusViewportRuntime(runtime, snapshot, dt) {
   runtime.texture.needsUpdate = true;
   applyIndicatorMaterials(runtime, getStatusViewportIndicatorStates(runtime.snapshot));
   return runtime;
+}
+
+export function registerStatusViewportInteraction(levelId, prefabConfig, runtime, interactive) {
+  const statusViewport = runtime?.statusViewport;
+  const button = statusViewport?.shutterButton;
+  if (!button || interactive.includes(button)) return false;
+  const config = prefabConfig.statusViewport ?? {};
+  const nestedName = config.shutterPrefabName ?? "CoreViewport1";
+  const targetPrefabName = config.shutterTargetPrefabName ?? `${prefabConfig.name}__${nestedName}`;
+  button.userData.kind = "viewportShutterButton";
+  button.userData.controlLabel = config.shutterButtonLabel ?? "VIEWPORT SHUTTER";
+  button.userData.levelId = levelId;
+  button.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+  button.userData.shutterTargetKey = `${levelId}:${targetPrefabName}`;
+  button.userData.maxInteractionDistance = Number(config.shutterButtonMaxDistance) || 1.85;
+  interactive.push(button);
+  return true;
+}
+
+export function activateStatusViewportShutter(button, prefabInstances) {
+  if (button?.userData.kind !== "viewportShutterButton") return false;
+  const viewport = prefabInstances.get(button.userData.shutterTargetKey)?.coreViewport;
+  if (!requestCoreViewportToggle(viewport)) return false;
+  const statusViewport = prefabInstances.get(button.userData.levelPrefabKey)?.statusViewport;
+  if (statusViewport) statusViewport.shutterButtonPressRemaining = 0.16;
+  return true;
+}
+
+function updateShutterButton(runtime, dt) {
+  const button = runtime.shutterButton;
+  if (!button) return;
+  runtime.shutterButtonPressRemaining = Math.max(0, runtime.shutterButtonPressRemaining - dt);
+  runtime.shutterButtonPressProgress = THREE.MathUtils.damp(
+    runtime.shutterButtonPressProgress,
+    runtime.shutterButtonPressRemaining > 0 ? 1 : 0,
+    24,
+    dt,
+  );
+  button.position.copy(runtime.shutterButtonInitialPosition);
+  const distance = (Number(runtime.config.shutterButtonPressDistance) || -0.006)
+    * runtime.shutterButtonPressProgress;
+  const axis = runtime.config.shutterButtonPressAxis ?? "z";
+  if (axis === "x") button.position.x += distance;
+  else if (axis === "y") button.position.y += distance;
+  else button.position.z += distance;
 }
 
 export function getStatusViewportIndicatorStates(snapshot) {

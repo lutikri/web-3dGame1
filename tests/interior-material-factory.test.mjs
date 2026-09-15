@@ -69,6 +69,15 @@ test("service terminal exposes authored PBR body and adjustable masked glass mat
   assert.equal(terminalScreenGlass.maskOverlay, undefined);
 });
 
+test("core viewport uses its authored PBR texture set", () => {
+  const { coreViewport1 } = CONFIG.interior.specialMaterials;
+
+  assert.deepEqual(coreViewport1.materialNames, ["M_CoreViewport1"]);
+  assert.match(coreViewport1.maps.preview.baseColor, /T_CoreViewport1_BaseColor/);
+  assert.match(coreViewport1.maps.preview.normal, /T_CoreViewport1_Normal/);
+  assert.match(coreViewport1.maps.preview.orm, /T_CoreViewport1_OcclusionRoughnessMetallic/);
+});
+
 test("cheap dirty glass binds a contrasted transparency mask instead of tinting the full screen", () => {
   const factory = createInteriorMaterialFactory({
     panelConfig: {},

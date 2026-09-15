@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=development-notice-v1";
+} from "./FluorescentBehavior.js?v=core-viewport-shutter";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

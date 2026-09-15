@@ -36,6 +36,21 @@ test("master status viewport marker resolves to the reusable panel behavior", ()
   });
 });
 
+test("core viewport marker resolves to the ten-second shutter behavior", () => {
+  const viewport = createPrefabInstance("CoreViewport1", { name: "CoreViewport1" });
+  assert.equal(viewport.assetPath, "assets/mesh/prefabs/PF_CoreViewport1.glb");
+  assert.equal(viewport.materialKey, "coreViewport1");
+  assert.equal(viewport.behavior, "coreViewport");
+  assert.equal(viewport.coreViewport.shutterMeshName, "SM_CoreViewport1_Shutter1");
+  assert.equal(viewport.coreViewport.axis, "y");
+  assert.equal(viewport.coreViewport.travelDurationSeconds, 10);
+  assert.deepEqual(parsePrefabMarkerName("PF_CoreViewport1"), {
+    prefabType: "CoreViewport1",
+    instanceName: "CoreViewport1",
+    stableName: "CoreViewport1",
+  });
+});
+
 test("flashlight marker resolves to a portable physical equipment item", () => {
   const flashlight = createPrefabInstance("FlashLight", { name: "FlashLight1" });
   assert.equal(flashlight.assetPath, "assets/mesh/prefabs/SM_Flashligh1.glb");

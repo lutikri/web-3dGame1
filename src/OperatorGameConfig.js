@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=development-notice-v1";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=development-notice-v1";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=development-notice-v1";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=development-notice-v1";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=core-viewport-shutter";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=core-viewport-shutter";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=core-viewport-shutter";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=core-viewport-shutter";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -690,6 +690,29 @@ export const CONFIG = {
         aoMapIntensity: 1,
         emissive: "#ffffff",
         emissiveIntensity: 0.04,
+      },
+      coreViewport1: {
+        materialNames: ["M_CoreViewport1"],
+        namePrefixes: ["SM_CoreViewport1"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_CoreViewport1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_CoreViewport1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_CoreViewport1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_CoreViewport1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_CoreViewport1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_CoreViewport1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
       },
       desk1: {
         materialNames: ["M_Desk1", "M_Desk1.001"],
