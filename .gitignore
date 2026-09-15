@@ -1,5 +1,9 @@
 source-assets/*
 !source-assets/README.md
+!source-assets/archive/
+source-assets/archive/*
+!source-assets/archive/panel1-runtime-texture-sources/
+!source-assets/archive/panel1-runtime-texture-sources/*.png
 logs/
 server-*.log
 server-*.err.log

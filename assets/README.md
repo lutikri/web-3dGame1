@@ -2,7 +2,7 @@
 
 Files in this directory are loaded by the browser build.
 
-Do not put heavy source files here. Use `asset-source/` or `3dGameAssetsDev/` for editable originals.
+Do not put heavy source files here. Use `source-assets/` for editable originals and archived production sources.
 
 ```text
 mesh/environment/    Level architecture GLBs

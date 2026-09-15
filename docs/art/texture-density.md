@@ -1,3 +1,5 @@
+# Environment Texture Density
+
 TARGET TD: ~1024 px/m
 NORMAL RANGE: ~850–1400 px/m
 

@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "TEXTURE_TOOL_ROOT=%~dp0"
+for %%I in ("%~dp0..") do set "TEXTURE_TOOL_ROOT=%%~fI"
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$content = Get-Content -Raw -LiteralPath '%~f0'; $script = ($content -split ':POWERSHELL_SCRIPT\r?\n', 2)[1]; Invoke-Expression $script"
 exit /b %ERRORLEVEL%
 

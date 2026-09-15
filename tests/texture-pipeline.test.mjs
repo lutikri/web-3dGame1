@@ -6,7 +6,7 @@ test("runtime texture pipeline has incremental npm entrypoints and dual progress
   const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   const wrapper = await readFile(new URL("../tools/generate-runtime-textures.ps1", import.meta.url), "utf8");
   const compatibilityBat = await readFile(new URL("../tools/compress-panel-textures.bat", import.meta.url), "utf8");
-  const pipeline = await readFile(new URL("../generate-runtime-textures.bat", import.meta.url), "utf8");
+  const pipeline = await readFile(new URL("../tools/generate-runtime-textures.bat", import.meta.url), "utf8");
 
   assert.match(packageJson.scripts.textures, /generate-runtime-textures\.ps1/);
   assert.match(packageJson.scripts["textures:all"], /-All/);

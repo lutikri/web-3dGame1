@@ -2,15 +2,15 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const { URL } = require("node:url");
-const { resolveConfigSaveTarget } = require("./scripts/config-save-target.cjs");
+const { resolveConfigSaveTarget } = require("./config-save-target.cjs");
 
-const root = __dirname;
+const root = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT ?? 5173);
 const host = process.env.HOST ?? "0.0.0.0";
 const clients = new Set();
 const watchedDirs = ["src", "styles", "assets"];
 const watchedFiles = ["index.html", "README.md", "AGENTS.md"];
-const ignoredWatchPaths = [path.resolve(root, "3dGameAssetsDev")];
+const ignoredWatchPaths = [path.resolve(root, "source-assets")];
 const watchedFileStates = new Map();
 const configSaveTargets = {
   postProcessing: {

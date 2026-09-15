@@ -24,8 +24,8 @@ reference/downloaded-models/   downloaded/reference model experiments
 ## Export flow
 
 ```text
-source-assets/audio/*.wav       -> convert-runtime-audio.bat -> assets/sounds/<category>/*.ogg
-source-assets/textures/T_*.png  -> generate-runtime-textures.bat -> assets/runtime-textures/*.ktx2
+source-assets/audio/*.wav       -> tools/convert-runtime-audio.bat -> assets/sounds/<category>/*.ogg
+source-assets/textures/T_*.png  -> tools/generate-runtime-textures.bat -> assets/runtime-textures/*.ktx2
 source-assets/scenes/blender/   -> manual GLB export -> assets/mesh/<category>/
 ```
 

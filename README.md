@@ -44,17 +44,17 @@ After the Qualification Shift, **Instrument Reliability Check** and **Cost of Ru
   <tr>
     <td width="50%">
       <img src="assets/repo/site12-control-booth.webp" alt="FCU-16 control booth">
-      <br><sub>FCU-16 control booth</sub>
+      <br><sub></sub>
     </td>
     <td width="50%">
       <img src="assets/repo/site12-shaft-corridor.webp" alt="Site-12 elevator-shaft corridor">
-      <br><sub>Entrance corridor and shaft map</sub>
+      <br><sub></sub>
     </td>
   </tr>
   <tr>
     <td colspan="2">
       <img src="assets/repo/site12-observation-wing.webp" alt="Site-12 local observation wing">
-      <br><sub>Local Observation wing</sub>
+      <br><sub></sub>
     </td>
   </tr>
 </table>
@@ -156,6 +156,7 @@ Heavy source images, recordings, and deprecated assets must stay outside `assets
 ## Documentation
 
 - [Game design index](docs/game/README.md)
+- [Development roadmap](docs/roadmap.md)
 - [Living Russian design document](docs/game/game-design-ru.md)
 - [FCU-16 reactor rules](docs/game/fusion-core.md)
 - [Project structure and ownership](docs/project-structure.md)

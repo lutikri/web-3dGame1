@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "node dev-server.cjs",
+    "dev": "node scripts/dev-server.cjs",
     "build": "vite build",
     "preview": "vite preview",
     "check": "node scripts/check-project.mjs && node --test tests/*.test.mjs",

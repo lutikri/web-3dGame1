@@ -21,7 +21,7 @@ assets/sounds/ui/
 Source WAV files live in `source-assets/audio/` and are converted with:
 
 ```bat
-convert-runtime-audio.bat
+tools/convert-runtime-audio.bat
 ```
 
 Naming conventions:

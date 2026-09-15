@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$pipelineHost = Join-Path $projectRoot "generate-runtime-textures.bat"
+$pipelineHost = Join-Path $PSScriptRoot "generate-runtime-textures.bat"
 
 if (!(Test-Path -LiteralPath $pipelineHost)) {
   throw "Texture pipeline host was not found: $pipelineHost"
