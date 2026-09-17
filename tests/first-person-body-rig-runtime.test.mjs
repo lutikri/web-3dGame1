@@ -88,6 +88,12 @@ test("crouch, step height and landing feed separate recovery springs", () => {
   assert.ok(snapshot.held.vertical < 0);
 });
 
+test("ground contact micro jitter stays inside the vertical stabilization deadzone", () => {
+  const rig = new FirstPersonBodyRigRuntime({ config: { verticalStabilizationDeadzone: 0.002 } });
+  const snapshot = advance(rig, 30, { actualDelta: new THREE.Vector3(0, 0.001, 0) });
+  assert.equal(snapshot.camera.vertical, 0);
+});
+
 test("physical strafing transfers weight through an underdamped roll and lateral spring", () => {
   const rig = new FirstPersonBodyRigRuntime();
   let snapshot = advance(rig, 90, { actualDelta: new THREE.Vector3(1.65 / 60, 0, 0) });

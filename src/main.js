@@ -1,10 +1,10 @@
-import { createPreflight } from "./app/Preflight.js?v=core-viewport-shutter";
-import { applyLocalization } from "./app/Localization.js?v=core-viewport-shutter";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=core-viewport-shutter";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=core-viewport-shutter";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=core-viewport-shutter";
+import { createPreflight } from "./app/Preflight.js?v=posters2-material";
+import { applyLocalization } from "./app/Localization.js?v=posters2-material";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=posters2-material";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=posters2-material";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=posters2-material";
 
-const APP_BUILD_REVISION = "core-viewport-shutter";
+const APP_BUILD_REVISION = "posters2-material";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -30,7 +30,7 @@ window.operatorGameBootOptions = {
 };
 
 if (bootChoice.firstRun) preflight.showBooting();
-await import(`./OperatorGame.js?v=core-viewport-shutter`);
+await import(`./OperatorGame.js?v=posters2-material`);
 
 let finishPreflightAfterShell = false;
 if (bootChoice.firstRun) {
@@ -44,7 +44,7 @@ if (bootChoice.firstRun) {
   preflight.remove();
 }
 
-const { createAppShell } = await import(`./app/AppShell.js?v=core-viewport-shutter`);
+const { createAppShell } = await import(`./app/AppShell.js?v=posters2-material`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -55,7 +55,7 @@ if (finishPreflightAfterShell) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=core-viewport-shutter`
+    `./runtime/RuntimeSmoke.js?v=posters2-material`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

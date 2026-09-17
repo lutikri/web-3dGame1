@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=core-viewport-shutter";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=posters2-material";
 
 const EFFECT_KEYS = [
   "bloom",

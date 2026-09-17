@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=core-viewport-shutter";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=core-viewport-shutter";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=core-viewport-shutter";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=core-viewport-shutter";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=core-viewport-shutter";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=core-viewport-shutter";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=core-viewport-shutter";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=core-viewport-shutter";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=core-viewport-shutter";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=core-viewport-shutter";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=core-viewport-shutter";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=posters2-material";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=posters2-material";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=posters2-material";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=posters2-material";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=posters2-material";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=posters2-material";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=posters2-material";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=posters2-material";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=posters2-material";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=posters2-material";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=posters2-material";
 
 export function createPrefabRuntimeFactory({
   config,

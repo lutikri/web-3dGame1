@@ -30,6 +30,9 @@ test("master status viewport marker resolves to the reusable panel behavior", ()
   assert.equal(panel.materialKey, "panelStatusView1");
   assert.equal(panel.statusViewport.screenMeshName, "SM_PanelViewStatus1_Screen");
   assert.equal(panel.statusViewport.updateIntervalSeconds, 1);
+  assert.equal(panel.statusViewport.shutterButtonPressAxis, "y");
+  assert.equal(panel.statusViewport.screen.flipX, true);
+  assert.equal(panel.statusViewport.screen.flipY, true);
   assert.deepEqual(parsePrefabMarkerName("PF_PanelStatusViewport1_PanelStatusViewport1"), {
     prefabType: "PanelStatusViewport1",
     instanceName: "PanelStatusViewport1",
@@ -92,7 +95,9 @@ test("operator panel owns independent status screen effect defaults", () => {
 });
 
 test("service door registry uses the current authored GLB", () => {
-  assert.equal(getPrefabDefinition("serviceDoor").assetPath, "assets/mesh/prefabs/SM_Door2.glb");
+  const door = getPrefabDefinition("serviceDoor");
+  assert.equal(door.assetPath, "assets/mesh/prefabs/SM_Door2.glb");
+  assert.deepEqual(door.doorHitbox.padding.toArray(), [0.12, 0.16, 0.1]);
 });
 
 test("service terminal routes its screen and glass meshes to dedicated materials", () => {

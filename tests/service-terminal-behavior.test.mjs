@@ -44,7 +44,7 @@ test("service terminal behavior resolves and registers its authored screen mesh"
   assert.equal(screen.userData.maxInteractionDistance, 2.15);
   assert.equal(runtime.serviceTerminal.glowLight, undefined);
   assert.equal(runtime.serviceTerminal.glass, glass);
-  assert.equal(glass.renderOrder, 10);
+  assert.equal(glass.renderOrder, 0);
   assert.equal(screen.children.length, 0);
 });
 

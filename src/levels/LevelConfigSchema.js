@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=core-viewport-shutter";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=posters2-material";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

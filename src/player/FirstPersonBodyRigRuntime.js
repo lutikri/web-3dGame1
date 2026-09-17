@@ -126,7 +126,8 @@ export class FirstPersonBodyRigRuntime {
       this.turnStepCooldown = this.config.stationaryTurnStepInterval ?? 0.34;
     }
 
-    if (groundedBefore && groundedAfter && Math.abs(displacement.y) > 0.0001 && Math.abs(displacement.y) < 0.4) {
+    const verticalDeadzone = this.config.verticalStabilizationDeadzone ?? 0.0015;
+    if (groundedBefore && groundedAfter && Math.abs(displacement.y) > verticalDeadzone && Math.abs(displacement.y) < 0.4) {
       this.verticalStabilizer.position -= displacement.y * (this.config.stepVerticalStabilization ?? 0.72);
     }
     if (!groundedBefore && groundedAfter && verticalVelocityBefore < -0.65) {

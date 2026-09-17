@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=core-viewport-shutter";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=core-viewport-shutter";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=core-viewport-shutter";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=core-viewport-shutter";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=core-viewport-shutter";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=core-viewport-shutter";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=core-viewport-shutter";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=posters2-material";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=posters2-material";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=posters2-material";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=posters2-material";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=posters2-material";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=posters2-material";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=posters2-material";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

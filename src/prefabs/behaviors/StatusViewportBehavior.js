@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=core-viewport-shutter";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=core-viewport-shutter";
+} from "../../panels/StatusScreenMaterial.js?v=posters2-material";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=posters2-material";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -73,6 +73,7 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
     screenMesh,
     shutterButton,
     shutterButtonInitialPosition: shutterButton.position.clone(),
+    shutterButtonPressDirection: new THREE.Vector3(),
     shutterButtonPressProgress: 0,
     shutterButtonPressRemaining: 0,
     screenMaterial,
@@ -103,6 +104,11 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
 export function applyStatusViewportConfig(runtime, config = {}) {
   if (!runtime) return false;
   runtime.config = config;
+  getStatusViewportButtonPressDirection(
+    runtime.shutterButton,
+    config.shutterButtonPressAxis ?? "z",
+    runtime.shutterButtonPressDirection,
+  );
   applyStatusScreenMaterialConfig(runtime.screenMaterial, config.screen);
   applyIndicatorMaterials(runtime, getStatusViewportIndicatorStates(runtime.snapshot));
   return true;
@@ -172,10 +178,12 @@ function updateShutterButton(runtime, dt) {
   button.position.copy(runtime.shutterButtonInitialPosition);
   const distance = (Number(runtime.config.shutterButtonPressDistance) || -0.006)
     * runtime.shutterButtonPressProgress;
-  const axis = runtime.config.shutterButtonPressAxis ?? "z";
-  if (axis === "x") button.position.x += distance;
-  else if (axis === "y") button.position.y += distance;
-  else button.position.z += distance;
+  button.position.addScaledVector(runtime.shutterButtonPressDirection, distance);
+}
+
+export function getStatusViewportButtonPressDirection(button, axis = "z", target = new THREE.Vector3()) {
+  target.set(axis === "x" ? 1 : 0, axis === "y" ? 1 : 0, axis === "z" ? 1 : 0);
+  return target.applyQuaternion(button?.quaternion ?? new THREE.Quaternion()).normalize();
 }
 
 export function getStatusViewportIndicatorStates(snapshot) {

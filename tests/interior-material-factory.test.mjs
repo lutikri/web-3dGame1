@@ -42,6 +42,16 @@ test("rock and signs materials expose their authored PBR texture sets", () => {
   assert.equal(signs1.emissiveIntensity, 1);
 });
 
+test("second poster sheet maps its authored material to the second runtime atlas", () => {
+  const { posters2 } = CONFIG.interior.specialMaterials;
+
+  assert.deepEqual(posters2.materialNames, ["M_Posters2"]);
+  assert.match(posters2.maps.preview.baseColor, /T_Posters2_BaseColor_Secondary_Preview_1024_ETC1S/);
+  assert.match(posters2.maps.full.baseColor, /T_Posters2_BaseColor_Secondary_Full_ETC1S/);
+  assert.equal(posters2.side, THREE.DoubleSide);
+  assert.equal(posters2.alphaTest, 0.5);
+});
+
 test("brief paper uses an opaque masked material with a restrained albedo", () => {
   const { briefPaper } = CONFIG.interior.specialMaterials;
 
@@ -63,7 +73,7 @@ test("service terminal exposes authored PBR body and adjustable masked glass mat
   assert.equal(terminalScreenGlass.maps.initial.mask, "assets/runtime-textures/T_Terminal1_ScreenDirt1_Interactive_Preview_1024.png");
   assert.equal(terminalScreenGlass.maps.preview, undefined);
   assert.equal(terminalScreenGlass.transparent, true);
-  assert.equal(terminalScreenGlass.depthTest, false);
+  assert.equal(terminalScreenGlass.depthTest, true);
   assert.equal(terminalScreenGlass.depthWrite, false);
   assert.equal(terminalScreenGlass.maskAsAlphaMap, true);
   assert.equal(terminalScreenGlass.maskOverlay, undefined);

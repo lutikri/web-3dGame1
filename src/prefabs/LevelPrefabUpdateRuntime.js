@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=core-viewport-shutter";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=core-viewport-shutter";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=core-viewport-shutter";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=core-viewport-shutter";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=core-viewport-shutter";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=core-viewport-shutter";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=core-viewport-shutter";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=core-viewport-shutter";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=posters2-material";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=posters2-material";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=posters2-material";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=posters2-material";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=posters2-material";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=posters2-material";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=posters2-material";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=posters2-material";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=core-viewport-shutter";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=core-viewport-shutter";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=posters2-material";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=posters2-material";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

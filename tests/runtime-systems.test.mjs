@@ -268,6 +268,41 @@ test("door interaction system registers hinged door meshes and latch handles", (
   assert.equal(physicsCalls[0].sceneKey, "level");
 });
 
+test("door interaction system expands a mesh handle with an invisible interaction proxy", () => {
+  const interactive = [];
+  const root = new THREE.Group();
+  const doorMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 0.1), new THREE.MeshBasicMaterial());
+  const handle = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.04, 0.04), new THREE.MeshBasicMaterial());
+  doorMesh.name = "Door";
+  handle.name = "Handle";
+  handle.position.z = 0.08;
+  doorMesh.add(handle);
+  root.add(doorMesh);
+  root.updateMatrixWorld(true);
+  const runtime = { root, parts: new Map([["Door", doorMesh], ["Handle", handle]]), materialClones: [] };
+  const system = new DoorInteractionSystem({
+    prefabInstances: new Map([["level:Door1", runtime]]), interactive,
+    resolveEnvironmentId: (id) => id, applyVisualRotation: () => {}, applyLatchRotation: () => {},
+    playSound: () => {}, canOperateLatch: () => true,
+  });
+
+  assert.equal(system.register("level", {
+    name: "Door1",
+    doorHitbox: { padding: new THREE.Vector3(0.1, 0.15, 0.08) },
+    interaction: { type: "hingedDoor", meshName: "Door", latchHandleName: "Handle", doorClickAction: "none" },
+  }, runtime), true);
+  const proxy = runtime.door.latchHitProxies[0];
+  assert.equal(proxy.userData.doorLatchHandleTarget, handle);
+  assert.equal(proxy.material.colorWrite, false);
+  assert.equal(proxy.material.visible, false);
+  assert.ok(new THREE.Box3().setFromObject(proxy).getSize(new THREE.Vector3()).y > 0.3);
+  const proxyCenter = proxy.getWorldPosition(new THREE.Vector3());
+  const proxyRay = new THREE.Raycaster(proxyCenter.clone().add(new THREE.Vector3(0, 0, 1)), new THREE.Vector3(0, 0, -1));
+  assert.ok(proxyRay.intersectObject(proxy).length > 0);
+  assert.equal(system.beginLatchInteraction(proxy), true);
+  assert.equal(runtime.door.activeLatchHandle, handle);
+});
+
 test("door interaction system advances latch operations", () => {
   const latched = [];
   const runtime = {

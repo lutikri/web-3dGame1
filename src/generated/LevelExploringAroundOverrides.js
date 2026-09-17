@@ -364,6 +364,36 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "coreViewport": {
+        "shutterMeshName": "SM_CoreViewport1_Shutter1",
+        "axis": "y",
+        "closedPosition": 0.0000284910202,
+        "openPosition": 0.226287,
+        "travelDurationSeconds": 10,
+        "startsOpen": false
+      },
+      "name": "CoreViewport1",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "rootName": "SM_Desk1",
       "drawers": {
         "drawerNames": [
@@ -1800,9 +1830,18 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "statusViewport": {
         "screenMeshName": "SM_PanelViewStatus1_Screen",
+        "shutterButtonMeshName": "SM_PanelViewStatus1_Button_ViewShutter",
+        "shutterPrefabName": "CoreViewport1",
+        "shutterTargetPrefabName": "CoreViewport1",
+        "shutterButtonLabel": "VIEWPORT SHUTTER",
+        "shutterButtonMaxDistance": 1.85,
+        "shutterButtonPressAxis": "y",
+        "shutterButtonPressDistance": -0.006,
         "updateIntervalSeconds": 1,
         "screen": {
-          "brightness": 1.2,
+          "flipX": true,
+          "flipY": true,
+          "brightness": 0.83,
           "scanlineStrength": 0.035,
           "scanlineDensity": 1,
           "edgeDarkening": 0.08,
@@ -1823,55 +1862,55 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "indicators": {
           "AlarmSilence": {
             "tint": 16777215,
-            "intensity": 2.2
+            "intensity": 0.55
           },
           "Generation": {
             "tint": 16777215,
-            "intensity": 2.1
+            "intensity": 0.55
           },
           "Cireculation": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           },
           "Turbine": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           },
           "Pumps": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           },
           "Fuel": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.6
           },
           "Output": {
             "tint": 16777215,
-            "intensity": 2.1
+            "intensity": 0.55
           },
           "Demand": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           },
           "Battery": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           },
           "Efficiency": {
             "tint": 16777215,
-            "intensity": 2.2
+            "intensity": 0.55
           },
           "Stall": {
             "tint": 16777215,
-            "intensity": 2.2
+            "intensity": 0.55
           },
           "Stress": {
             "tint": 16777215,
-            "intensity": 2.2
+            "intensity": 0.55
           },
           "Coolant": {
             "tint": 16777215,
-            "intensity": 1.8
+            "intensity": 0.55
           }
         }
       },
@@ -1900,11 +1939,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "plasma": {
         "meshName": "Torus.003",
         "runtimeCoreName": "SM_PlasmaView1_Core",
-        "haloScale": 1.077,
+        "haloScale": 1.067,
         "flowSpeed": 38,
         "baseFlowRatio": 0.055,
-        "baseStrength": 1.755,
-        "coreGain": 1.825,
+        "baseStrength": 1.805,
+        "coreGain": 2.315,
         "haloGain": 2,
         "coreOpacity": 0.775,
         "haloOpacity": 1,
@@ -1913,9 +1952,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "filamentDensity": 14,
         "filamentSharpness": 0.295,
         "filamentSegmentation": 0.78,
-        "hotspotStrength": 2.14,
-        "hotspotThreshold": 0.835,
-        "colorVariation": 0.72,
+        "hotspotStrength": 2.075,
+        "hotspotThreshold": 0.83,
+        "colorVariation": 0.8,
         "baseColor": 7282577,
         "stableColor": 3766488,
         "filamentColor": 16729544,
@@ -1928,9 +1967,9 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           0.147,
           4.985
         ],
-        "lightColor": 7186687,
-        "lightIntensity": 2.4,
-        "lightDistance": 6,
+        "lightColor": 8154111,
+        "lightIntensity": 15.89,
+        "lightDistance": 1.8,
         "lightDecay": 2
       },
       "name": "plasmaView_Core1",
@@ -2121,6 +2160,13 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "doorHitbox": {
+        "padding": {
+          "x": 0.12,
+          "y": 0.16,
+          "z": 0.1
+        }
+      },
       "state": {
         "latched": false
       },
@@ -2146,6 +2192,13 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
+      "doorHitbox": {
+        "padding": {
+          "x": 0.12,
+          "y": 0.16,
+          "z": 0.1
+        }
+      },
       "state": {
         "latched": true
       },

@@ -59,6 +59,7 @@ export function getStatusScreenPersistenceWeight(age, strength, decay) {
 
 export function createStatusScreenMaterial({ currentTexture, previousTexture, width, height, config } = {}) {
   const effects = normalizeStatusScreenEffects(config);
+  const uvTransform = getStatusScreenUvTransform(config);
   const material = new THREE.ShaderMaterial({
     name: "StatusScreenCRTMaterial",
     uniforms: {
@@ -68,6 +69,8 @@ export function createStatusScreenMaterial({ currentTexture, previousTexture, wi
       uTime: { value: 0 },
       uPersistenceAge: { value: 1000 },
       uPowerFactor: { value: 1 },
+      uUvScale: { value: uvTransform.scale },
+      uUvOffset: { value: uvTransform.offset },
       ...createEffectUniforms(effects),
     },
     vertexShader: `
@@ -96,17 +99,20 @@ export function createStatusScreenMaterial({ currentTexture, previousTexture, wi
       uniform float uJitterEventStrength;
       uniform float uPersistenceStrength;
       uniform float uPersistenceDecay;
+      uniform vec2 uUvScale;
+      uniform vec2 uUvOffset;
       varying vec2 vUv;
 
       void main() {
         vec2 texel = 1.0 / uResolution;
+        vec2 orientedUv = vUv * uUvScale + uUvOffset;
         float slowDrift = sin(uTime * 2.7) * 0.55 + sin(uTime * 7.1 + 1.4) * 0.2;
         float eventPulse = pow(max(0.0, sin(uTime * 0.77 + 2.1)), 24.0);
         float lineCenter = fract(uTime * 0.071 + 0.31);
-        float lineBand = exp(-pow((vUv.y - lineCenter) * 90.0, 2.0));
+        float lineBand = exp(-pow((orientedUv.y - lineCenter) * 90.0, 2.0));
         float jitterPixels = slowDrift * uJitterStrength
           + eventPulse * uJitterEventStrength * (0.35 + lineBand * 0.65);
-        vec2 uv = clamp(vUv + vec2(jitterPixels * texel.x, 0.0), texel, 1.0 - texel);
+        vec2 uv = clamp(orientedUv + vec2(jitterPixels * texel.x, 0.0), texel, 1.0 - texel);
 
         vec3 center = texture2D(uCurrentMap, uv).rgb;
         vec3 color = center;
@@ -143,6 +149,7 @@ export function createStatusScreenMaterial({ currentTexture, previousTexture, wi
     toneMapped: false,
   });
   material.userData.statusScreenEffects = effects;
+  material.userData.statusScreenUv = { flipX: Boolean(config?.flipX), flipY: Boolean(config?.flipY) };
   return material;
 }
 
@@ -151,8 +158,23 @@ export function applyStatusScreenMaterialConfig(material, config) {
   Object.entries(UNIFORM_BY_CONFIG_KEY).forEach(([key, uniformName]) => {
     if (material?.uniforms?.[uniformName]) material.uniforms[uniformName].value = effects[key];
   });
-  if (material) material.userData.statusScreenEffects = effects;
+  if (material) {
+    const uvTransform = getStatusScreenUvTransform(config);
+    material.uniforms?.uUvScale?.value.copy(uvTransform.scale);
+    material.uniforms?.uUvOffset?.value.copy(uvTransform.offset);
+    material.userData.statusScreenEffects = effects;
+    material.userData.statusScreenUv = { flipX: Boolean(config?.flipX), flipY: Boolean(config?.flipY) };
+  }
   return effects;
+}
+
+export function getStatusScreenUvTransform(config = {}) {
+  const flipX = Boolean(config.flipX);
+  const flipY = Boolean(config.flipY);
+  return {
+    scale: new THREE.Vector2(flipX ? -1 : 1, flipY ? -1 : 1),
+    offset: new THREE.Vector2(flipX ? 1 : 0, flipY ? 1 : 0),
+  };
 }
 
 function createEffectUniforms(effects) {

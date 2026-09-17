@@ -45,6 +45,7 @@ export class LevelOwnedState {
       this.pointLightPool?.unregister(runtime.pointLightPoolEntry);
       this.photometricLights.unregister(runtime.photometricPointLight);
       (runtime.materialClones ?? runtime.emissiveMaterials ?? []).forEach((material) => material.dispose());
+      (runtime.ownedGeometries ?? []).forEach((geometry) => geometry.dispose());
       runtime.briefSheet?.dispose?.();
       runtime.serviceTerminal?.dispose?.();
       runtime.plasmaView?.dispose?.();

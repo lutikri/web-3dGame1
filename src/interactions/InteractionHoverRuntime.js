@@ -86,6 +86,7 @@ export function createInteractionHoverRuntime({
     if (target && hit) {
       target.userData.lastHitDistance = hit.distance;
       target.userData.lastHitPoint = hit.point.clone();
+      target.userData.lastHitUv = hit.uv?.clone?.() ?? null;
     }
     setHoveredKnob(target?.userData.kind === "controlKnob" ? target : null);
     setHoveredDoor(target?.userData.kind === "hingedDoor" ? target : null);

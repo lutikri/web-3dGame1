@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=core-viewport-shutter";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=posters2-material";
 
 export class DoorInteractionSystem {
   constructor({
@@ -38,7 +38,11 @@ export class DoorInteractionSystem {
     const runtime = this.getRuntime(handle);
     const door = runtime?.door;
     if (!door) return false;
-    door.activeLatchHandle = handle ?? door.latchHandle ?? door.latchHandles?.[0] ?? null;
+    door.activeLatchHandle = handle?.userData?.doorLatchHandleTarget
+      ?? handle
+      ?? door.latchHandle
+      ?? door.latchHandles?.[0]
+      ?? null;
     if (door.interaction.latchAction !== "holdOpen") {
       this.playSound(door.activeLatchHandle ?? door.mesh, "DoorBulk1_LatchCrank1", { maxDistance: 4.5 });
     }
@@ -322,6 +326,20 @@ export class DoorInteractionSystem {
       handle.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
       this.interactive.push(handle);
     });
+    const latchHitProxies = latchHandles
+      .map((handle) => createDoorLatchHitProxy(handle, doorMesh, prefabConfig.doorHitbox?.padding))
+      .filter(Boolean);
+    latchHitProxies.forEach((proxy) => {
+      proxy.userData.kind = "doorLatchHandle";
+      proxy.userData.levelId = levelId;
+      proxy.userData.controlLabel = interaction.latchControlLabel ?? "DOOR HANDLE";
+      proxy.userData.maxInteractionDistance = interaction.maxDistance ?? 2.8;
+      proxy.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+      this.interactive.push(proxy);
+      runtime.materialClones?.push(proxy.material);
+      (runtime.ownedGeometries ??= []).push(proxy.geometry);
+    });
+    runtime.door.latchHitProxies = latchHitProxies;
     this.applyVisualRotation(runtime);
     if (this.physics && colliderMesh) {
       runtime.physicsDoorKey = `${levelId}:${prefabConfig.name}`;
@@ -394,4 +412,37 @@ export class DoorInteractionSystem {
       this.physics?.setDoorLocked(runtime.physicsDoorKey, true, runtime.door.interaction.initialDegrees ?? 0);
     });
   }
+}
+
+export function createDoorLatchHitProxy(handle, doorMesh, padding = new THREE.Vector3()) {
+  if (!handle || !doorMesh) return null;
+  handle.updateWorldMatrix(true, true);
+  doorMesh.updateWorldMatrix(true, false);
+  const worldBounds = new THREE.Box3().setFromObject(handle);
+  if (worldBounds.isEmpty()) return null;
+
+  const inverseDoorWorld = new THREE.Matrix4().copy(doorMesh.matrixWorld).invert();
+  const localBounds = new THREE.Box3().makeEmpty();
+  for (const x of [worldBounds.min.x, worldBounds.max.x]) {
+    for (const y of [worldBounds.min.y, worldBounds.max.y]) {
+      for (const z of [worldBounds.min.z, worldBounds.max.z]) {
+        localBounds.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(inverseDoorWorld));
+      }
+    }
+  }
+  const resolvedPadding = padding?.isVector3 ? padding : new THREE.Vector3();
+  const size = localBounds.getSize(new THREE.Vector3()).addScaledVector(resolvedPadding, 2);
+  if (size.x <= 0 || size.y <= 0 || size.z <= 0) return null;
+
+  const proxy = new THREE.Mesh(
+    new THREE.BoxGeometry(size.x, size.y, size.z),
+    new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }),
+  );
+  proxy.material.visible = false;
+  proxy.name = `${handle.name || "DoorHandle"}_InteractionProxy`;
+  proxy.position.copy(localBounds.getCenter(new THREE.Vector3()));
+  proxy.userData.doorLatchHandleTarget = handle;
+  doorMesh.add(proxy);
+  proxy.updateMatrixWorld(true);
+  return proxy;
 }

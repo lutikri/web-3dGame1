@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=core-viewport-shutter";
+} from "../../../levels/LevelConfigSerialization.js?v=posters2-material";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=core-viewport-shutter";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=posters2-material";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -295,6 +295,10 @@ export function createDebugWorkspace({
     }
 
     if (prefab.light) addPrefabLightProperties(propertiesGui.addFolder("LIGHT"), prefab, apply);
+    if (prefab.doorHitbox?.padding?.isVector3) {
+      const hitbox = propertiesGui.addFolder("DOOR HANDLE HITBOX");
+      addVector(hitbox, "PADDING", prefab.doorHitbox.padding, 0, 0.5, 0.005, () => apply(true));
+    }
     const suspended = getSuspendedLampDebugProperties(prefab, materialConfigs);
     if (suspended) {
       const folder = propertiesGui.addFolder("SUSPENDED LAMP");
@@ -339,7 +343,13 @@ export function createDebugWorkspace({
       const viewport = propertiesGui.addFolder("MASTER STATUS VIEW");
       addNumber(viewport, statusViewport, "updateIntervalSeconds", "UPDATE SECONDS", 0.1, 5, 0.1, apply);
 
+      const shutterButton = viewport.addFolder("SHUTTER BUTTON");
+      addSelect(shutterButton, statusViewport, "shutterButtonPressAxis", "PRESS AXIS", ["x", "y", "z"], apply);
+      addNumber(shutterButton, statusViewport, "shutterButtonPressDistance", "PRESS DISTANCE", -0.03, 0.03, 0.0005, apply);
+
       const screen = viewport.addFolder("SCREEN");
+      addBoolean(screen, statusViewport.screen, "flipX", "FLIP X", apply);
+      addBoolean(screen, statusViewport.screen, "flipY", "FLIP Y", apply);
       addNumber(screen, statusViewport.screen, "brightness", "BRIGHTNESS", 0, 4, 0.01, apply);
       addNumber(screen, statusViewport.screen, "scanlineStrength", "SCANLINES", 0, 0.25, 0.001, apply);
       addNumber(screen, statusViewport.screen, "scanlineDensity", "LINE DENSITY", 0.25, 3, 0.01, apply);
@@ -622,6 +632,7 @@ export function createDebugWorkspace({
     addNumber(recovery, bodyRig, "turnWeightFrequency", "TURN RECOVERY", 0.1, 20, 0.1);
     addNumber(recovery, bodyRig, "stanceSpringFrequency", "STANCE RECOVERY", 0.1, 20, 0.1);
     addNumber(recovery, bodyRig, "stepVerticalStabilization", "STEP STABILIZATION", 0, 2, 0.01);
+    addNumber(recovery, bodyRig, "verticalStabilizationDeadzone", "VERTICAL DEADZONE", 0, 0.02, 0.0001);
     addNumber(recovery, bodyRig, "verticalRecoveryFrequency", "VERTICAL RECOVERY", 0.1, 20, 0.1);
     addNumber(recovery, bodyRig, "landingImpulseScale", "LANDING SCALE", 0, 0.1, 0.001);
     addNumber(recovery, bodyRig, "landingImpulseLimit", "LANDING LIMIT", 0, 0.5, 0.005);

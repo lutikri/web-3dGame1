@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=core-viewport-shutter";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=posters2-material";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

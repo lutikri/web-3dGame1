@@ -63,6 +63,19 @@ test("in-world terminal click is accepted only through a screen UV hit", () => {
   assert.equal(harness.calls.some((call) => Array.isArray(call) && call[0] === "activate"), false);
 });
 
+test("terminal activation reuses the resolved aim UV while the camera is leaning", () => {
+  const harness = createHarness();
+  harness.target.userData.lastHitUv = new THREE.Vector2(0.75, 0.25);
+  harness.runtime.updateAimTarget(harness.target);
+  harness.setHits([]);
+
+  assert.equal(harness.runtime.activate(harness.target), true);
+  assert.deepEqual(
+    harness.calls.find((call) => Array.isArray(call) && call[0] === "activate"),
+    ["activate", 1200, 225],
+  );
+});
+
 test("terminal escape closes only the focused document and keeps aim controls active", () => {
   const harness = createHarness();
   harness.runtime.updateAimTarget(harness.target);

@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=core-viewport-shutter";
+} from "./ServiceTerminalCanvasRenderer.js?v=posters2-material";
 
 export function createServiceTerminalRuntime(
   parts,
@@ -17,7 +17,7 @@ export function createServiceTerminalRuntime(
   const glassName = config.glassMeshName ?? "SM_Terminal_ScreenGlass";
   const glass = parts.get(glassName);
   if (glass?.isMesh) {
-    glass.renderOrder = Number(config.glassRenderOrder ?? 10);
+    glass.renderOrder = Number(config.glassRenderOrder ?? 0);
   }
   const renderer = createRenderer({ config, prefabName: instanceName });
   const material = screen.material;
@@ -58,9 +58,15 @@ export function registerServiceTerminalInteraction(levelId, prefabConfig, runtim
   return true;
 }
 
-export function getServiceTerminalHit(runtime, raycaster, camera, pointer) {
+export function getServiceTerminalHit(runtime, raycaster, camera, pointer, preferredUv = null) {
   const screen = runtime?.screen;
   if (!screen || !raycaster || !camera || !pointer) return null;
+  if (preferredUv) {
+    return {
+      hit: null,
+      pixel: uvToTerminalPixels(preferredUv, runtime.renderer.canvas.width, runtime.renderer.canvas.height),
+    };
+  }
   screen.updateWorldMatrix(true, false);
   raycaster.setFromCamera(pointer, camera);
   const hit = raycaster.intersectObject(screen, false)[0];

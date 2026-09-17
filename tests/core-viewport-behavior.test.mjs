@@ -9,6 +9,7 @@ import {
 } from "../src/prefabs/behaviors/CoreViewportBehavior.js";
 import {
   activateStatusViewportShutter,
+  getStatusViewportButtonPressDirection,
   registerStatusViewportInteraction,
 } from "../src/prefabs/behaviors/StatusViewportBehavior.js";
 
@@ -63,4 +64,14 @@ test("status viewport button targets the placed core viewport prefab", () => {
   assert.equal(activateStatusViewportShutter(button, instances), true);
   assert.equal(coreViewport.targetProgress, 1);
   assert.equal(statusViewport.shutterButtonPressRemaining, 0.16);
+});
+
+test("status viewport button maps authored Blender Z to the glTF local Y axis", () => {
+  const button = new THREE.Object3D();
+  button.rotation.x = THREE.MathUtils.degToRad(45);
+  const direction = getStatusViewportButtonPressDirection(button, "y");
+
+  assert.ok(Math.abs(direction.x) < 1e-9);
+  assert.ok(Math.abs(direction.y) > 0.7);
+  assert.ok(Math.abs(direction.z) > 0.7);
 });

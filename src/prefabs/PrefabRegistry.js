@@ -7,6 +7,9 @@ const SERVICE_DOOR_DEFINITION = {
   materialOverrides: {
     SM_Door2_Glass: "door2Glass",
   },
+  doorHitbox: {
+    padding: new THREE.Vector3(0.12, 0.16, 0.1),
+  },
   interaction: {
     type: "hingedDoor",
     meshName: "SM_Door2_Door",
@@ -112,10 +115,12 @@ const PREFAB_DEFINITIONS = {
       shutterTargetPrefabName: "CoreViewport1",
       shutterButtonLabel: "VIEWPORT SHUTTER",
       shutterButtonMaxDistance: 1.85,
-      shutterButtonPressAxis: "z",
+      shutterButtonPressAxis: "y",
       shutterButtonPressDistance: -0.006,
       updateIntervalSeconds: 1,
       screen: {
+        flipX: true,
+        flipY: true,
         brightness: 1.2,
         scanlineStrength: 0.035,
         scanlineDensity: 1,

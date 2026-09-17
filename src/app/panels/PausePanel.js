@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=core-viewport-shutter";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=posters2-material";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

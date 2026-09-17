@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=core-viewport-shutter";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=core-viewport-shutter";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=core-viewport-shutter";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=core-viewport-shutter";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=posters2-material";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=posters2-material";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=posters2-material";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=posters2-material";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -134,6 +134,7 @@ export const CONFIG = {
         turnWeightFrequency: 6.5,
         stanceSpringFrequency: 4.6,
         stepVerticalStabilization: 0.72,
+        verticalStabilizationDeadzone: 0.0015,
         verticalRecoveryFrequency: 5.4,
         landingImpulseScale: 0.018,
         landingImpulseLimit: 0.13,
@@ -252,7 +253,7 @@ export const CONFIG = {
         emissiveIntensity: 0,
         transparent: true,
         opacity: 0.55,
-        depthTest: false,
+        depthTest: true,
         depthWrite: false,
         side: THREE.DoubleSide,
         castShadow: false,
@@ -755,6 +756,26 @@ export const CONFIG = {
           },
           full: {
             baseColor: "assets/runtime-textures/T_Posters1_BaseColor_Secondary_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 0.82,
+        metalness: 0,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+        alphaTest: 0.5,
+        side: THREE.DoubleSide,
+        castShadow: true,
+        receiveShadow: true,
+      },
+      posters2: {
+        materialNames: ["M_Posters2"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_Posters2_BaseColor_Secondary_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_Posters2_BaseColor_Secondary_Full_ETC1S.ktx2",
           },
         },
         color: "#ffffff",

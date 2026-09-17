@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=core-viewport-shutter";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=posters2-material";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

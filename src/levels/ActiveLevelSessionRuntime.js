@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=core-viewport-shutter";
+import { LevelSession } from "./LevelSession.js?v=posters2-material";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

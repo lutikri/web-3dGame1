@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=core-viewport-shutter";
+} from "./ServiceTerminalBehavior.js?v=posters2-material";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,
@@ -25,7 +25,13 @@ export function createServiceTerminalInteractionRuntime({
     aimedRuntime = nextRuntime;
     if (!aimedRuntime) return null;
     aimedRuntime.setLanguage(getLanguage());
-    const hit = getServiceTerminalHit(aimedRuntime, raycaster, camera, pointer);
+    const hit = getServiceTerminalHit(
+      aimedRuntime,
+      raycaster,
+      camera,
+      pointer,
+      target.userData.lastHitUv,
+    );
     return applyServiceTerminalHover(aimedRuntime, hit);
   }
 
@@ -33,7 +39,13 @@ export function createServiceTerminalInteractionRuntime({
     const runtime = target?.userData?.serviceTerminalRuntime;
     if (!runtime?.renderer) return false;
     runtime.setLanguage(getLanguage());
-    const hit = getServiceTerminalHit(runtime, raycaster, camera, pointer);
+    const hit = getServiceTerminalHit(
+      runtime,
+      raycaster,
+      camera,
+      pointer,
+      target.userData.lastHitUv,
+    );
     if (!hit) return false;
     focusedRuntime = runtime;
     focusedRequest = request;
