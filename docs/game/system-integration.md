@@ -21,6 +21,7 @@ Shift scenario / objectives
 - Prefabs support physical expansion because doors, radios, lights, control posts, clocks, and future pumps can share registry-owned behavior across levels.
 - `LevelSession` can coordinate objectives while incidents remain independent runtime services.
 - The current browser runtime now has explicit services for level ownership, prefab updates, panel presentation, scene feedback, scene audio, narration, terminal completion, player movement/collision/input, loading, and debug snapshots. Future systems should connect through those services rather than adding another parallel frame loop in `OperatorGame.js`.
+- Planned audible warnings use a central Announcement System: simulation, objectives, and prefab behaviors publish typed alarm requests, while one service owns playback and arbitration.
 
 ## Current flow ownership
 
@@ -104,6 +105,14 @@ Define reactor profiles and panel bindings as data. Avoid branching core runtime
 ### Save/checkpoint evolution
 
 Each new persistent system needs a schema version, normalization, migration, and an explicit list of checkpoint-owned fields. Runtime object references, Three.js objects, audio nodes, timers, and physics handles are never serialized.
+
+### Announcement System
+
+Add an announcement runtime that consumes typed alarm state and owns facility-speaker playback, priority, deduplication, repeat cadence, acknowledgement, and silence. Reactor simulation, objective logic, panel lamps, and prefab behaviors must not create competing alarm loops or manage shared audio nodes directly.
+
+`UNDER DEMAND` and `OVER DEMAND` become the first demand-compliance consumers. Their requests follow the canonical thresholds and hysteresis in `fusion-core.md`; safety-critical announcements can interrupt them. The Observation Port `ALARM SILENCE` button sends an acknowledgement/silence command to this runtime without mutating simulation or visual-warning state.
+
+The active environment owns speaker emitters and their audio nodes. Level/session teardown clears active requests, pending repeats, acknowledgement state, and timers so alarms cannot leak across restart, report, or route transitions.
 
 ## Integration gate for every new system
 

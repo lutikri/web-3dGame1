@@ -25,7 +25,10 @@ Read analog gauges, warning lamps, terminal reports, sound, light, and the behav
 | Service terminal: brief, guide, reports, archive | Implemented |
 | Main menu, assigned shifts, progression, and save data | Implemented |
 | Real gameplay pause, preflight, and in-game settings | Implemented |
+| First Boot slides, real loading progress, and reusable Site-12 menu environment | Implemented |
+| Observation Port status display and viewport shutter | Implemented; alarm silence pending |
 | English and Russian interface | Implemented, content pass ongoing |
+| Bundled Latin/Cyrillic interface fonts | Implemented |
 | Instrument Reliability and Cost of Running trials | In development |
 
 The current player route is:
@@ -79,6 +82,9 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 - [x] Paper brief replacement: interactive in-world service terminal
 - [x] Real pause with frozen simulation and in-game settings
 - [x] Preflight quality profiles and one-time development-build notice
+- [x] One-time First Boot presentation with real loading progress and explicit continue state
+- [x] Reuse the loaded Site-12 environment behind the main menu and subsequent shift entry
+- [x] Observation Port status display and physical viewport shutter
 
 ### Now — qualification and onboarding
 
@@ -86,7 +92,8 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 - [ ] Add a meaningful Shift Report: compliance, stability, and critical-event results
 - [ ] Make the tutorial event-driven, with fast restart and no repeated mandatory narration
 - [ ] Finalize tutorial retry and post-qualification **Skip Training** behavior
-- [ ] Separate the one-time lore intro from short repeatable shift loading sequences
+- [ ] Move gameplay alarm playback and prioritization into a central **Announcement System**
+- [ ] Add non-chattering audible **UNDER DEMAND** and **OVER DEMAND** alarms
 
 ### Next — complete the three-shift vertical slice
 
@@ -96,8 +103,8 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 
 ### Later — world presentation and polish
 
-- [ ] Complete the Observation Port: viewport shutter and alarm-silence controls
-- [ ] Build the personnel-accommodation scene used behind the main menu
+- [ ] Complete the Observation Port `ALARM SILENCE` integration; the viewport shutter is already operational
+- [ ] Optionally replace the reused Site-12 menu environment with a dedicated personnel-accommodation scene
 - [ ] Final presentation, accessibility, performance, and compatibility pass
 
 The detailed release scope and canonical gameplay rules live in [`docs/game/`](docs/game/README.md). Ideas outside the three-shift package are tracked separately and do not block the vertical slice.

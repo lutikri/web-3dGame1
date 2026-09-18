@@ -33,6 +33,14 @@ Use `CORE STRESS`, `Fuel Reserve`, `Heat Sink Capacity`, `Reaction Efficiency`, 
 
 Warning lamps include `TEMP HIGH`, `FIELD WEAK`, `OUTPUT LOW`, `INSTABILITY`, `QUENCH RISK`, and `CORE STRESS`. The Panel1 under/over-demand lamps are yellow for moderate error and red for severe error. Reaction efficiency progresses green, yellow, red, then blinking red for very poor operation.
 
+## Audible alarms
+
+- `UNDER DEMAND` and `OVER DEMAND` require distinct audible warnings tied to the same moderate/severe demand-error bands as their panel lamps.
+- Entering or leaving the target band must not produce audio chatter. Audible requests use dwell time, hysteresis, deduplication, and a bounded repeat cadence.
+- Simulation and panel runtimes publish typed alarm state only. A central `Announcement System` owns playback, speaker routing, priority, interruption, repetition, acknowledgement, and silence state.
+- Safety-critical alarms have priority over demand-compliance warnings. Mutually exclusive under/over-demand warnings must never play over one another.
+- `ALARM SILENCE` affects permitted audio only. It does not clear the warning lamp, simulation state, qualification exposure timer, recorded shift metric, or terminal outcome.
+
 `Control_Btn_Test` runs the indicator diagnostic, not gameplay start. Startup lamp feedback is deterministic: red, yellow, green, then two short green blinks before live status.
 
 ## Burn phases
