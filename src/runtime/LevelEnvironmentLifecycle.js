@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=stable-first-boot-layout";
+import { LevelRuntime } from "./LevelRuntime.js?v=bundled-ui-fonts";
 
 export class LevelEnvironmentLifecycle {
   constructor({

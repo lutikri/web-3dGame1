@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=stable-first-boot-layout";
+import { translateRequired } from "./Localization.js?v=bundled-ui-fonts";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

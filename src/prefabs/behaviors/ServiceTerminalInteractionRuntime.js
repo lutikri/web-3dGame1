@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=stable-first-boot-layout";
+} from "./ServiceTerminalBehavior.js?v=bundled-ui-fonts";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,

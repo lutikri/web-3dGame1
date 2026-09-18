@@ -66,6 +66,11 @@ test("exploring around keeps the corridor trigger repeatable for the physical re
   );
 });
 
+test("service-terminal shifts do not spawn retired paper briefings", () => {
+  assert.equal(LEVEL_DEFINITIONS["exploring-around"].environment.physicalBriefing.enabled, false);
+  assert.equal(LEVEL_DEFINITIONS["unexpected-stuff"].environment.physicalBriefing.enabled, false);
+});
+
 test("exploring around starts localized panel guidance on first control booth entry", () => {
   const environment = LEVEL_DEFINITIONS["exploring-around"].environment;
   const sequence = environment.triggerSequences.find(({ name }) => name === "ControlBooth");

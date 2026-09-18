@@ -31,6 +31,7 @@ export class InteriorMaterialRuntime {
       const entries = runtime.materialCloneEntries?.length ? runtime.materialCloneEntries : legacyEntries;
       entries.forEach((entry) => {
         if (entry.materialKey !== materialKey) return;
+        if (entry.material.userData?.runtimeTextureOwned) return;
         this.applyTextureMaps(entry.material, textureMaps, materialConfig);
         entry.material.userData.baseEmissiveIntensity = materialConfig.emissiveIntensity ?? 0;
         updated += 1;

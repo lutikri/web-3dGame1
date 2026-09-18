@@ -3,141 +3,141 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=stable-first-boot-layout";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=bundled-ui-fonts";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=stable-first-boot-layout";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=stable-first-boot-layout";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=stable-first-boot-layout";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=stable-first-boot-layout";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=stable-first-boot-layout";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=stable-first-boot-layout";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=stable-first-boot-layout";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=stable-first-boot-layout";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=stable-first-boot-layout";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=stable-first-boot-layout";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=stable-first-boot-layout";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=stable-first-boot-layout";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=stable-first-boot-layout";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=stable-first-boot-layout";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=stable-first-boot-layout";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=stable-first-boot-layout";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=stable-first-boot-layout";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=stable-first-boot-layout";
+} from "./game/ShiftReport.js?v=bundled-ui-fonts";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=bundled-ui-fonts";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=bundled-ui-fonts";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=bundled-ui-fonts";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=bundled-ui-fonts";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=bundled-ui-fonts";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=bundled-ui-fonts";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=bundled-ui-fonts";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=bundled-ui-fonts";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=bundled-ui-fonts";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=bundled-ui-fonts";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=bundled-ui-fonts";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=bundled-ui-fonts";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=bundled-ui-fonts";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=bundled-ui-fonts";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=bundled-ui-fonts";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=bundled-ui-fonts";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=bundled-ui-fonts";
 import {
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=stable-first-boot-layout";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=stable-first-boot-layout";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=stable-first-boot-layout";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=stable-first-boot-layout";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=stable-first-boot-layout";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=stable-first-boot-layout";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=stable-first-boot-layout";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=stable-first-boot-layout";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=stable-first-boot-layout";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=stable-first-boot-layout";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=stable-first-boot-layout";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=stable-first-boot-layout";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=stable-first-boot-layout";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=bundled-ui-fonts";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=bundled-ui-fonts";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=bundled-ui-fonts";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=bundled-ui-fonts";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=bundled-ui-fonts";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=bundled-ui-fonts";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=bundled-ui-fonts";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=bundled-ui-fonts";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=bundled-ui-fonts";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=bundled-ui-fonts";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=bundled-ui-fonts";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=bundled-ui-fonts";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=bundled-ui-fonts";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
+} from "./config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=stable-first-boot-layout";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=stable-first-boot-layout";
-import { createStatusScreen } from "./StatusScreen.js?v=stable-first-boot-layout";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=stable-first-boot-layout";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=stable-first-boot-layout";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=stable-first-boot-layout";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=stable-first-boot-layout";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=stable-first-boot-layout";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=stable-first-boot-layout";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=stable-first-boot-layout";
+} from "./scene/TextureStreaming.js?v=bundled-ui-fonts";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=bundled-ui-fonts";
+import { createStatusScreen } from "./StatusScreen.js?v=bundled-ui-fonts";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=bundled-ui-fonts";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=bundled-ui-fonts";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=bundled-ui-fonts";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=bundled-ui-fonts";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=bundled-ui-fonts";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=bundled-ui-fonts";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=bundled-ui-fonts";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=stable-first-boot-layout";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=stable-first-boot-layout";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=stable-first-boot-layout";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=bundled-ui-fonts";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=bundled-ui-fonts";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=bundled-ui-fonts";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=stable-first-boot-layout";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=stable-first-boot-layout";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=stable-first-boot-layout";
-import { AssetCache } from "./runtime/AssetCache.js?v=stable-first-boot-layout";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=stable-first-boot-layout";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=stable-first-boot-layout";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=stable-first-boot-layout";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=stable-first-boot-layout";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=stable-first-boot-layout";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=stable-first-boot-layout";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=stable-first-boot-layout";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=stable-first-boot-layout";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=stable-first-boot-layout";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=stable-first-boot-layout";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=stable-first-boot-layout";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=stable-first-boot-layout";
+} from "./lighting/FluorescentBehavior.js?v=bundled-ui-fonts";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=bundled-ui-fonts";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=bundled-ui-fonts";
+import { AssetCache } from "./runtime/AssetCache.js?v=bundled-ui-fonts";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=bundled-ui-fonts";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=bundled-ui-fonts";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=bundled-ui-fonts";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=bundled-ui-fonts";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=bundled-ui-fonts";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=bundled-ui-fonts";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=bundled-ui-fonts";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=bundled-ui-fonts";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=bundled-ui-fonts";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=bundled-ui-fonts";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=bundled-ui-fonts";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=bundled-ui-fonts";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=stable-first-boot-layout";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=stable-first-boot-layout";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=stable-first-boot-layout";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=stable-first-boot-layout";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=stable-first-boot-layout";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=stable-first-boot-layout";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=stable-first-boot-layout";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=stable-first-boot-layout";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=stable-first-boot-layout";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=stable-first-boot-layout";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=stable-first-boot-layout";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=stable-first-boot-layout";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=stable-first-boot-layout";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=stable-first-boot-layout";
-import { PlayerController } from "./player/PlayerController.js?v=stable-first-boot-layout";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=stable-first-boot-layout";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=stable-first-boot-layout";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=stable-first-boot-layout";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=stable-first-boot-layout";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=stable-first-boot-layout";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=stable-first-boot-layout";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=stable-first-boot-layout";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=stable-first-boot-layout";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=stable-first-boot-layout";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=stable-first-boot-layout";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=stable-first-boot-layout";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=stable-first-boot-layout";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=stable-first-boot-layout";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=stable-first-boot-layout";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=stable-first-boot-layout";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=stable-first-boot-layout";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=stable-first-boot-layout";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=stable-first-boot-layout";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=stable-first-boot-layout";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=stable-first-boot-layout";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=stable-first-boot-layout";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=stable-first-boot-layout";
+} from "./scene/InteriorObjectRegistry.js?v=bundled-ui-fonts";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=bundled-ui-fonts";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=bundled-ui-fonts";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=bundled-ui-fonts";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=bundled-ui-fonts";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=bundled-ui-fonts";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=bundled-ui-fonts";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=bundled-ui-fonts";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=bundled-ui-fonts";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=bundled-ui-fonts";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=bundled-ui-fonts";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=bundled-ui-fonts";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=bundled-ui-fonts";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=bundled-ui-fonts";
+import { PlayerController } from "./player/PlayerController.js?v=bundled-ui-fonts";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=bundled-ui-fonts";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=bundled-ui-fonts";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=bundled-ui-fonts";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=bundled-ui-fonts";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=bundled-ui-fonts";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=bundled-ui-fonts";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=bundled-ui-fonts";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=bundled-ui-fonts";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=bundled-ui-fonts";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=bundled-ui-fonts";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=bundled-ui-fonts";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=bundled-ui-fonts";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=bundled-ui-fonts";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=bundled-ui-fonts";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=bundled-ui-fonts";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=bundled-ui-fonts";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=bundled-ui-fonts";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=bundled-ui-fonts";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=bundled-ui-fonts";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=bundled-ui-fonts";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=bundled-ui-fonts";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=bundled-ui-fonts";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=stable-first-boot-layout";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=bundled-ui-fonts";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;

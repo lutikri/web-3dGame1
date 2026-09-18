@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=stable-first-boot-layout";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=bundled-ui-fonts";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=stable-first-boot-layout";
+} from "./panels/StatusScreenMaterial.js?v=bundled-ui-fonts";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;
@@ -363,7 +363,7 @@ function drawTerminalText(ctx, row, column, text, color, reverse = false) {
 
   ctx.save();
   ctx.scale(TERMINAL_SCALE_X, 1);
-  ctx.font = `700 ${TERMINAL_FONT_SIZE}px Consolas, monospace`;
+  ctx.font = `700 ${TERMINAL_FONT_SIZE}px "Cascadia Mono", monospace`;
   ctx.textAlign = "start";
   ctx.textBaseline = "alphabetic";
   const cellWidth = ctx.measureText("0").width;

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

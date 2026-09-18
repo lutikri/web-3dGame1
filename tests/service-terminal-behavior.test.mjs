@@ -46,6 +46,7 @@ test("service terminal behavior resolves and registers its authored screen mesh"
   assert.equal(runtime.serviceTerminal.glass, glass);
   assert.equal(glass.renderOrder, 0);
   assert.equal(screen.children.length, 0);
+  assert.equal(screen.material.userData.runtimeTextureOwned, true);
 });
 
 test("service terminal converts screen UV coordinates to top-left canvas pixels", () => {

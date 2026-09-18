@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=stable-first-boot-layout";
+} from "./behaviors/DeskDrawerBehavior.js?v=bundled-ui-fonts";
 
 export function createPrefabPhysicsRegistrar({
   physics,

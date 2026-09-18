@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=stable-first-boot-layout";
+} from "./ServiceTerminalCanvasRenderer.js?v=bundled-ui-fonts";
 
 export function createServiceTerminalRuntime(
   parts,
@@ -23,6 +23,7 @@ export function createServiceTerminalRuntime(
   const material = screen.material;
   material.map = renderer.texture;
   material.emissiveMap = renderer.texture;
+  material.userData.runtimeTextureOwned = true;
   material.color?.set(0xffffff);
   material.emissive?.set(config.emissiveColor ?? 0xffffff);
   material.emissiveIntensity = Number(config.emissiveIntensity ?? 0.08);

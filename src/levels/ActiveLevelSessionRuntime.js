@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=stable-first-boot-layout";
+import { LevelSession } from "./LevelSession.js?v=bundled-ui-fonts";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

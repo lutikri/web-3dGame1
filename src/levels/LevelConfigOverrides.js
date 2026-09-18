@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=stable-first-boot-layout";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=bundled-ui-fonts";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

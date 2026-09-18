@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=stable-first-boot-layout";
+import { applyAxisRotation } from "./TransformUtils.js?v=bundled-ui-fonts";
 
 export class InteriorObjectRegistry {
   constructor(options) {

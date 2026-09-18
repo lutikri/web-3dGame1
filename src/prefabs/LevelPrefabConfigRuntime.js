@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=stable-first-boot-layout";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=stable-first-boot-layout";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=stable-first-boot-layout";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=stable-first-boot-layout";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=stable-first-boot-layout";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=bundled-ui-fonts";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=bundled-ui-fonts";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=bundled-ui-fonts";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=bundled-ui-fonts";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=bundled-ui-fonts";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

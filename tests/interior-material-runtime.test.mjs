@@ -16,6 +16,24 @@ test("interior material runtime synchronizes registered prefab material clones",
   assert.equal(material.userData.baseEmissiveIntensity, 2);
 });
 
+test("interior material runtime preserves runtime-owned canvas textures", () => {
+  const material = new THREE.MeshStandardMaterial();
+  material.userData.runtimeTextureOwned = true;
+  const calls = [];
+  const runtime = new InteriorMaterialRuntime({
+    configs: { screen: { emissiveIntensity: 0.1 } },
+    textureMaps: { screen: { map: null, emissiveMap: null } },
+    materials: {},
+    prefabInstances: new Map([["room:terminal", {
+      materialCloneEntries: [{ materialKey: "screen", material }],
+    }]]),
+    applyTextureMaps: (...args) => calls.push(args),
+  });
+
+  assert.equal(runtime.syncPrefabClones("screen"), 0);
+  assert.deepEqual(calls, []);
+});
+
 test("interior material runtime applies live scalar config to source and prefab clones", () => {
   const createMaterial = () => ({
     color: { value: null, set(value) { this.value = value; } },

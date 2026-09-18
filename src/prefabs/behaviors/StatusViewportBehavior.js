@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=stable-first-boot-layout";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=stable-first-boot-layout";
+} from "../../panels/StatusScreenMaterial.js?v=bundled-ui-fonts";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=bundled-ui-fonts";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -302,7 +302,7 @@ function drawMasterLog(runtime) {
   ctx.fillStyle = "#020806";
   ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   ctx.textBaseline = "alphabetic";
-  ctx.font = "600 34px ui-monospace, 'Courier New', monospace";
+  ctx.font = "600 34px 'Cascadia Mono', monospace";
   ctx.fillStyle = "#a7ffc8";
   ctx.fillText("MASTER EVENT LOG", 46, 58);
   ctx.strokeStyle = "#246d43";
@@ -312,7 +312,7 @@ function drawMasterLog(runtime) {
   ctx.lineTo(978, 82);
   ctx.stroke();
 
-  ctx.font = "500 27px ui-monospace, 'Courier New', monospace";
+  ctx.font = "500 27px 'Cascadia Mono', monospace";
   const visible = runtime.log.slice(-5);
   visible.forEach((entry, index) => {
     const y = 132 + index * 52;
@@ -331,7 +331,7 @@ function drawMasterLog(runtime) {
   ctx.moveTo(46, 420);
   ctx.lineTo(978, 420);
   ctx.stroke();
-  ctx.font = "700 31px ui-monospace, 'Courier New', monospace";
+  ctx.font = "700 31px 'Cascadia Mono', monospace";
   const status = getMasterSystemStatus(runtime.snapshot);
   ctx.fillStyle = status === "SYSTEM STABLE" ? "#6dff9e"
     : status.includes("FAULT") || status.includes("IMMEDIATE") ? "#ff675c" : "#ffc45b";

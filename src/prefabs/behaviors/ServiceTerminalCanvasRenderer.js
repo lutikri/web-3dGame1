@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=stable-first-boot-layout";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=bundled-ui-fonts";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;
@@ -43,6 +43,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   };
   const hitRegions = [];
   const images = new Map();
+  let disposed = false;
 
   function draw() {
     activeContext = context;
@@ -389,11 +390,15 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   }
 
   function dispose() {
+    disposed = true;
     texture.dispose();
     images.clear();
   }
 
   draw();
+  document.fonts?.ready?.then(() => {
+    if (!disposed) draw();
+  });
   return {
     canvas,
     texture,
@@ -426,7 +431,7 @@ function currentContext() { return activeContext; }
 function text(value, x, y, size, weight = 500, color = COLORS.ink, align = "left", forcedContext = null) {
   const ctx = forcedContext ?? activeContext;
   if (!ctx) return;
-  ctx.font = `${weight} ${size}px Arial, sans-serif`;
+  ctx.font = `${weight} ${size}px "Segoe UI", sans-serif`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
   ctx.textBaseline = "alphabetic";
@@ -439,7 +444,7 @@ function multiline(value, x, y, size, lineHeight, weight, color, maxWidth, align
     const words = paragraph.split(/\s+/);
     let lineValue = "";
     let row = paragraphIndex;
-    ctx.font = `${weight} ${size}px Arial, sans-serif`;
+    ctx.font = `${weight} ${size}px "Segoe UI", sans-serif`;
     words.forEach((word) => {
       const candidate = lineValue ? `${lineValue} ${word}` : word;
       if (lineValue && ctx.measureText(candidate).width > maxWidth) {

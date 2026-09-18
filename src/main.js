@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=stable-first-boot-layout";
-import { applyLocalization } from "./app/Localization.js?v=stable-first-boot-layout";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=stable-first-boot-layout";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=stable-first-boot-layout";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=stable-first-boot-layout";
+import { createPreflight } from "./app/Preflight.js?v=bundled-ui-fonts";
+import { applyLocalization } from "./app/Localization.js?v=bundled-ui-fonts";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=bundled-ui-fonts";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=bundled-ui-fonts";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=bundled-ui-fonts";
 
-const APP_BUILD_REVISION = "stable-first-boot-layout";
+const APP_BUILD_REVISION = "bundled-ui-fonts";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -41,11 +41,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=stable-first-boot-layout`);
+await import(`./OperatorGame.js?v=bundled-ui-fonts`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=stable-first-boot-layout`);
+const { createAppShell } = await import(`./app/AppShell.js?v=bundled-ui-fonts`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -57,7 +57,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=stable-first-boot-layout`
+    `./runtime/RuntimeSmoke.js?v=bundled-ui-fonts`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

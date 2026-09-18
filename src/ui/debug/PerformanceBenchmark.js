@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
 
 const EFFECT_KEYS = [
   "bloom",

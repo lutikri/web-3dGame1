@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=stable-first-boot-layout";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=bundled-ui-fonts";
 
 const DISMISS_MS = 300;
 

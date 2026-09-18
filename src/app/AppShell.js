@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=stable-first-boot-layout";
-import { applyLocalization, translate } from "./Localization.js?v=stable-first-boot-layout";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=stable-first-boot-layout";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=stable-first-boot-layout";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=stable-first-boot-layout";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=stable-first-boot-layout";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=stable-first-boot-layout";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=bundled-ui-fonts";
+import { applyLocalization, translate } from "./Localization.js?v=bundled-ui-fonts";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=bundled-ui-fonts";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=bundled-ui-fonts";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=bundled-ui-fonts";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=bundled-ui-fonts";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=bundled-ui-fonts";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=stable-first-boot-layout";
-import { createAppPanelController } from "./AppPanelController.js?v=stable-first-boot-layout";
-import { createAppRouter } from "./AppRouter.js?v=stable-first-boot-layout";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=stable-first-boot-layout";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=stable-first-boot-layout";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=stable-first-boot-layout";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=stable-first-boot-layout";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=stable-first-boot-layout";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=stable-first-boot-layout";
+} from "./AppPersistence.js?v=bundled-ui-fonts";
+import { createAppPanelController } from "./AppPanelController.js?v=bundled-ui-fonts";
+import { createAppRouter } from "./AppRouter.js?v=bundled-ui-fonts";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=bundled-ui-fonts";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=bundled-ui-fonts";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=bundled-ui-fonts";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=bundled-ui-fonts";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=bundled-ui-fonts";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=bundled-ui-fonts";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=stable-first-boot-layout";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=bundled-ui-fonts";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=stable-first-boot-layout";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=stable-first-boot-layout";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=bundled-ui-fonts";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=bundled-ui-fonts";
 
 const MARKER_PREFIX = "PF_";
 

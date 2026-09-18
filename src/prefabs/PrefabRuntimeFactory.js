@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=stable-first-boot-layout";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=stable-first-boot-layout";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=stable-first-boot-layout";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=stable-first-boot-layout";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=stable-first-boot-layout";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=stable-first-boot-layout";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=stable-first-boot-layout";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=stable-first-boot-layout";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=stable-first-boot-layout";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=bundled-ui-fonts";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=bundled-ui-fonts";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=bundled-ui-fonts";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=bundled-ui-fonts";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=bundled-ui-fonts";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=bundled-ui-fonts";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=bundled-ui-fonts";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=bundled-ui-fonts";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=bundled-ui-fonts";
 
 export function createPrefabRuntimeFactory({
   config,
