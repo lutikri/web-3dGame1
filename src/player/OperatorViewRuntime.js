@@ -4,6 +4,7 @@ export class OperatorViewRuntime {
   constructor(options) {
     Object.assign(this, options);
     this.exitPointerLock ??= () => globalThis.document?.exitPointerLock?.();
+    this.warmedMenuLevelId = null;
   }
 
   clearTransientInput() {
@@ -44,8 +45,9 @@ export class OperatorViewRuntime {
   }
 
   async enterMenuView() {
-    const loadedLevelId = await this.loadLevelEnvironment("intro-shift");
-    if (loadedLevelId !== "intro-shift") return false;
+    const menuLevelId = this.config.camera.menuView?.environmentId ?? "exploring-around";
+    const loadedLevelId = await this.loadLevelEnvironment(menuLevelId);
+    if (loadedLevelId !== menuLevelId) return false;
     this.resetLevelDoors();
     this.setViewMode("menu");
     this.updateActiveLevelEnvironment();
@@ -62,6 +64,10 @@ export class OperatorViewRuntime {
     this.camera.fov = menuView?.fovDegrees ?? this.config.camera.fovDegrees;
     this.camera.updateProjectionMatrix();
     this.setRoomLightsEnabled(Boolean(menuView?.roomLightsOn), { instant: true });
+    if (this.warmedMenuLevelId !== loadedLevelId) {
+      await this.warmupRendering?.();
+      this.warmedMenuLevelId = loadedLevelId;
+    }
     return true;
   }
 }

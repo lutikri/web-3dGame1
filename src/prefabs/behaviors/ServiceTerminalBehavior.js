@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=posters2-material";
+} from "./ServiceTerminalCanvasRenderer.js?v=stable-first-boot-layout";
 
 export function createServiceTerminalRuntime(
   parts,

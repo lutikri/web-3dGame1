@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=posters2-material";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=posters2-material";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=stable-first-boot-layout";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=stable-first-boot-layout";
 
 export class DoorStateRuntime {
   constructor(options) {

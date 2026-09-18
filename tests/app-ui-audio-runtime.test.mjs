@@ -11,6 +11,9 @@ test("app UI audio accepts enabled controls only inside the app overlay", () => 
   assert.equal(resolveUiAudioControl({ contains: () => false }, target), null);
   control.disabled = true;
   assert.equal(resolveUiAudioControl({ contains: () => true }, target), null);
+  control.disabled = false;
+  control.dataset = { uiSound: "none" };
+  assert.equal(resolveUiAudioControl({ contains: () => true }, target), null);
 });
 
 test("app UI hover sounds once per control and click remains immediate", () => {

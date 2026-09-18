@@ -251,6 +251,13 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "emissive": "#000000",
       "emissiveIntensity": 0
     },
+    "posters2": {
+      "color": "#d1d1d1",
+      "roughness": 1.73,
+      "metalness": 0,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
     "signs1": {
       "color": "#ffffff",
       "roughness": 1,
@@ -401,13 +408,13 @@ export const GLOBAL_SCENE_OVERRIDES = {
     },
     "menuView": {
       "position": {
-        "x": 4.4,
-        "y": 0.95,
-        "z": -1.85
+        "x": 4.3,
+        "y": 1.06,
+        "z": -1.9
       },
       "rotationDegrees": {
-        "x": 20.3,
-        "y": 55.9,
+        "x": 7,
+        "y": 42,
         "z": 0
       },
       "fovDegrees": 55,

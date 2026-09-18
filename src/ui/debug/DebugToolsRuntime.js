@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=posters2-material";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=posters2-material";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=posters2-material";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=posters2-material";
+import { createDebugHub } from "./DebugHub.js?v=stable-first-boot-layout";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=stable-first-boot-layout";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=stable-first-boot-layout";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=stable-first-boot-layout";
 
 export class DebugToolsRuntime {
   constructor(options) {

@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=posters2-material";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=stable-first-boot-layout";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

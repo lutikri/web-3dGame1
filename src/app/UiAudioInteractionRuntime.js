@@ -4,6 +4,7 @@ export function resolveUiAudioControl(root, target) {
   const control = target?.closest?.(UI_CONTROL_SELECTOR) ?? null;
   if (!control || !root?.contains?.(control)) return null;
   if (control.disabled || control.getAttribute?.("aria-disabled") === "true") return null;
+  if (control.dataset?.uiSound === "none") return null;
   return control;
 }
 

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=posters2-material";
+import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
 
 export class AdaptiveQualityRuntime {
   constructor({

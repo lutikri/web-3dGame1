@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=posters2-material";
+import { translateRequired } from "./Localization.js?v=stable-first-boot-layout";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

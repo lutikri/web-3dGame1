@@ -2,6 +2,13 @@
   box-sizing: border-box;
 }
 
+:root {
+  --layer-route-loading: 130;
+  --layer-preflight: 200;
+  --layer-system-modal: 210;
+  --layer-screen-transition: 220;
+}
+
 body {
   margin: 0;
   overflow: hidden;
@@ -1943,7 +1950,7 @@ body.app-ui-open #lockButton {
 }
 
 .route-loading-overlay {
-  z-index: 130;
+  z-index: var(--layer-route-loading);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -2050,6 +2057,12 @@ body.app-ui-open #lockButton {
   letter-spacing: 0.025em;
 }
 
+.loading-detail {
+  color: rgba(145, 173, 140, 0.72);
+  font-size: 12px;
+  letter-spacing: 0.045em;
+}
+
 .loading-shift-title {
   color: #91ad8c;
   font-size: 14px;
@@ -2093,7 +2106,7 @@ html.preflight-boot #app {
 .development-notice-overlay {
   position: fixed;
   inset: 0;
-  z-index: 210000;
+  z-index: var(--layer-system-modal);
   display: grid;
   place-items: center;
   background: #050303;
@@ -2236,7 +2249,7 @@ html.preflight-boot #app {
   --preflight-scale: 1;
   position: fixed;
   inset: 0;
-  z-index: 200000;
+  z-index: var(--layer-preflight);
   overflow: hidden;
   background: #000;
   color: #a8c5a2;
@@ -2249,6 +2262,180 @@ html.preflight-boot #app {
 
 .preflight-overlay.is-finishing .preflight-terminal {
   visibility: hidden;
+}
+
+.preflight-overlay.is-first-boot {
+  background: #f1f0eb;
+}
+
+.first-boot-slides,
+.first-boot-images {
+  position: absolute;
+  inset: 0;
+}
+
+.first-boot-slides {
+  overflow: hidden;
+  background: #f1f0eb;
+  color: #171b1d;
+  font-family: "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+}
+
+.first-boot-images img {
+  position: absolute;
+  top: calc(50% - 44px);
+  left: 50%;
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - clamp(90px, 19vw, 340px));
+  max-height: calc(100vh - clamp(220px, 26vh, 300px));
+  object-fit: contain;
+  opacity: 0;
+  box-shadow: 0 18px 48px rgba(34, 38, 40, 0.07);
+  transform: translate(-50%, -50%);
+}
+
+.first-boot-images img.is-active {
+  opacity: 1;
+}
+
+.first-boot-loading {
+  position: absolute;
+  right: clamp(34px, 5vw, 92px);
+  bottom: clamp(28px, 5vh, 64px);
+  left: clamp(34px, 5vw, 92px);
+  display: grid;
+  gap: 8px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.first-boot-loading-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+}
+
+.first-boot-loading-copy {
+  color: #4d5558;
+  font-size: clamp(11px, 0.78vw, 14px);
+  letter-spacing: 0.07em;
+}
+
+.first-boot-loading-info,
+.first-boot-loading-percent {
+  display: grid;
+  gap: 5px;
+}
+
+.first-boot-loading-info {
+  min-width: 0;
+  justify-self: start;
+}
+
+.first-boot-loading-info > span {
+  overflow: hidden;
+  max-width: min(520px, 35vw);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.first-boot-loading-percent {
+  justify-items: end;
+  justify-self: end;
+}
+
+.first-boot-loading-copy [data-first-boot-count] {
+  margin-top: 2px;
+  color: #929698;
+  font-size: 0.88em;
+}
+
+.first-boot-continue {
+  align-self: center;
+  justify-self: center;
+  width: 176px;
+  border: 1px solid rgba(23, 27, 29, 0.35);
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.35);
+  color: #33393b;
+  font: inherit;
+  letter-spacing: 0.12em;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  pointer-events: none;
+  transition: border-color 0.15s ease, color 0.15s ease, opacity 0.2s ease;
+}
+
+.first-boot-continue.is-ready {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.first-boot-continue:hover,
+.first-boot-continue:focus-visible {
+  border-color: #df531d;
+  color: #b83e11;
+  outline: none;
+}
+
+.first-boot-continue:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.first-boot-loading-copy strong {
+  color: #171b1d;
+  font-size: clamp(14px, 1.15vw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.first-boot-loading-copy span {
+  color: #73797c;
+}
+
+.first-boot-loading-track {
+  height: 3px;
+  overflow: hidden;
+  background: rgba(23, 27, 29, 0.18);
+}
+
+.first-boot-loading-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #df531d;
+  transition: width 0.18s linear;
+}
+
+.screen-transition-layer {
+  --screen-transition-duration: 900ms;
+  position: fixed;
+  z-index: var(--layer-screen-transition);
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--screen-transition-duration) cubic-bezier(0.58, 0, 0.88, 0.38);
+}
+
+.screen-transition-layer[data-tone="black"] {
+  background: #000;
+}
+
+.screen-transition-layer.is-covered {
+  opacity: 1;
+  transition-timing-function: cubic-bezier(0.12, 0.72, 0.22, 1);
+}
+
+.screen-transition-layer[hidden] {
+  display: none;
+}
+
+.preflight-overlay.is-menu-reveal {
+  background: transparent;
 }
 
 .preflight-terminal {
@@ -2527,7 +2714,7 @@ html.preflight-boot #app {
 
 .preflight-quality-zoom {
   position: absolute;
-  z-index: 200010;
+  z-index: 2;
   top: 50%;
   left: 50%;
   width: 1040px;

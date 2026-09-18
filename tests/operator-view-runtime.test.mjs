@@ -7,12 +7,13 @@ function createHarness() {
   const state = {};
   const camera = new THREE.PerspectiveCamera();
   const runtime = new OperatorViewRuntime({
-    config: { player: {}, camera: { fovDegrees: 72, menuView: { position: new THREE.Vector3(4, 3, 2), rotationDegrees: { x: -5, y: 90 }, fovDegrees: 55, roomLightsOn: true } }, levelEnvironments: { room: { player: { spawnPosition: new THREE.Vector3(1, 2, 3), rotationDegrees: { x: 12, y: 24 }, controlMode: "walk" } } } },
+    config: { player: {}, camera: { fovDegrees: 72, menuView: { environmentId: "main-room", position: new THREE.Vector3(4, 3, 2), rotationDegrees: { x: -5, y: 90 }, fovDegrees: 55, roomLightsOn: true } }, levelEnvironments: { room: { player: { spawnPosition: new THREE.Vector3(1, 2, 3), rotationDegrees: { x: 12, y: 24 }, controlMode: "walk" } } } },
     camera, keys: new Set(["KeyW"]), pointer: new THREE.Vector2(1, 1), playerPosition: new THREE.Vector3(),
     playerSpawnPosition: new THREE.Vector3(), movementVelocity: new THREE.Vector3(1, 1, 1), movementRuntime: { resetPresentation() {} },
     getActiveLevelId: () => "room", setViewMode: (v) => { state.view = v; }, setControlMode: (v) => { state.control = v; },
     setJumpQueued: (v) => { state.jump = v; }, setZoomActive: (v) => { state.zoom = v; }, setYaw: (v) => { state.yaw = v; }, setPitch: (v) => { state.pitch = v; },
-    teleportCharacter() {}, syncPlayerCapsule() {}, loadLevelEnvironment: async () => "intro-shift", resetLevelDoors() {},
+    teleportCharacter() {}, syncPlayerCapsule() {}, loadLevelEnvironment: async (id) => id, resetLevelDoors() {},
+    warmupRendering: async () => { state.warmed = true; },
     updateActiveLevelEnvironment() {}, setRoomLightsEnabled: (v) => { state.lights = v; }, exitPointerLock() {},
   });
   return { runtime, state, camera };
@@ -32,8 +33,10 @@ test("operator view runtime applies the authored level spawn", () => {
 test("operator view runtime applies menu presentation after loading the preview", async () => {
   const { runtime, state, camera } = createHarness();
   assert.equal(await runtime.enterMenuView(), true);
+  assert.equal(await runtime.enterMenuView(), true);
   assert.equal(state.view, "menu");
   assert.equal(state.lights, true);
+  assert.equal(state.warmed, true);
   assert.deepEqual(camera.position.toArray(), [4, 3, 2]);
   assert.equal(camera.fov, 55);
 });

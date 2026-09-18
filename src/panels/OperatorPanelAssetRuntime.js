@@ -5,12 +5,23 @@ export class OperatorPanelAssetRuntime {
   }
 
   load() {
-    this.loader.load(
-      this.assetPath,
-      (gltf) => this.handleLoaded(gltf.scene),
-      (event) => this.handleProgress(event),
-      (error) => this.handleError(error),
-    );
+    return new Promise((resolve, reject) => {
+      this.loader.load(
+        this.assetPath,
+        (gltf) => {
+          try {
+            resolve(this.handleLoaded(gltf.scene));
+          } catch (error) {
+            reject(error);
+          }
+        },
+        (event) => this.handleProgress(event),
+        (error) => {
+          this.handleError(error);
+          reject(error);
+        },
+      );
+    });
   }
 
   handleLoaded(model) {
@@ -30,7 +41,6 @@ export class OperatorPanelAssetRuntime {
     this.applyActiveLevel();
     this.scene.add(model);
     this.getCollisionLevelIds().forEach((levelId) => this.rebuildLevelStaticPhysics(levelId));
-    this.finishLoading();
     this.logLoaded();
     return model;
   }
@@ -66,7 +76,9 @@ export class OperatorPanelAssetRuntime {
   applyActiveTransform(levelId, viewMode) {
     if (!this.model) return false;
     this.applyBaseTransform();
-    const panelLevelId = viewMode === "menu" ? "intro-shift" : levelId;
+    const panelLevelId = viewMode === "menu"
+      ? this.config.camera.menuView?.environmentId ?? "exploring-around"
+      : levelId;
     const panelConfig = this.getLevelConfig(panelLevelId);
     this.model.visible = Boolean(panelConfig);
     this.panelCollisionMeshes.forEach((mesh) => {

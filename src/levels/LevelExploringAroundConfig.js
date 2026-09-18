@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=posters2-material";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=posters2-material";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=posters2-material";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=stable-first-boot-layout";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=stable-first-boot-layout";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=stable-first-boot-layout";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

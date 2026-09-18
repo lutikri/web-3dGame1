@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=posters2-material";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=stable-first-boot-layout";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

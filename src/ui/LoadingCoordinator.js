@@ -60,4 +60,5 @@ export class LoadingCoordinator {
   #dispatchComplete() {
     this.dispatchTarget.dispatchEvent(new CustomEvent("operatorgame:loading-complete"));
   }
+
 }

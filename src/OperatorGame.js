@@ -3,141 +3,141 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=posters2-material";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=stable-first-boot-layout";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=posters2-material";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=posters2-material";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=posters2-material";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=posters2-material";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=posters2-material";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=posters2-material";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=posters2-material";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=posters2-material";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=posters2-material";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=posters2-material";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=posters2-material";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=posters2-material";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=posters2-material";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=posters2-material";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=posters2-material";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=posters2-material";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=posters2-material";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=posters2-material";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=posters2-material";
+} from "./game/ShiftReport.js?v=stable-first-boot-layout";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=stable-first-boot-layout";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=stable-first-boot-layout";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=stable-first-boot-layout";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=stable-first-boot-layout";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=stable-first-boot-layout";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=stable-first-boot-layout";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=stable-first-boot-layout";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=stable-first-boot-layout";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=stable-first-boot-layout";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=stable-first-boot-layout";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=stable-first-boot-layout";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=stable-first-boot-layout";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=stable-first-boot-layout";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=stable-first-boot-layout";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=stable-first-boot-layout";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=stable-first-boot-layout";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=stable-first-boot-layout";
 import {
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=posters2-material";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=posters2-material";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=posters2-material";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=posters2-material";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=posters2-material";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=posters2-material";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=posters2-material";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=posters2-material";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=posters2-material";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=posters2-material";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=posters2-material";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=posters2-material";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=posters2-material";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=posters2-material";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=stable-first-boot-layout";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=stable-first-boot-layout";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=stable-first-boot-layout";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=stable-first-boot-layout";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=stable-first-boot-layout";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=stable-first-boot-layout";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=stable-first-boot-layout";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=stable-first-boot-layout";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=stable-first-boot-layout";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=stable-first-boot-layout";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=stable-first-boot-layout";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=stable-first-boot-layout";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=stable-first-boot-layout";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=posters2-material";
+} from "./config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=posters2-material";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=posters2-material";
-import { createStatusScreen } from "./StatusScreen.js?v=posters2-material";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=posters2-material";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=posters2-material";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=posters2-material";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=posters2-material";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=posters2-material";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=posters2-material";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=posters2-material";
+} from "./scene/TextureStreaming.js?v=stable-first-boot-layout";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=stable-first-boot-layout";
+import { createStatusScreen } from "./StatusScreen.js?v=stable-first-boot-layout";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=stable-first-boot-layout";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=stable-first-boot-layout";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=stable-first-boot-layout";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=stable-first-boot-layout";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=stable-first-boot-layout";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=stable-first-boot-layout";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=stable-first-boot-layout";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=posters2-material";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=posters2-material";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=posters2-material";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=stable-first-boot-layout";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=stable-first-boot-layout";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=stable-first-boot-layout";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=posters2-material";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=posters2-material";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=posters2-material";
-import { AssetCache } from "./runtime/AssetCache.js?v=posters2-material";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=posters2-material";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=posters2-material";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=posters2-material";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=posters2-material";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=posters2-material";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=posters2-material";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=posters2-material";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=posters2-material";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=posters2-material";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=posters2-material";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=posters2-material";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=posters2-material";
+} from "./lighting/FluorescentBehavior.js?v=stable-first-boot-layout";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=stable-first-boot-layout";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=stable-first-boot-layout";
+import { AssetCache } from "./runtime/AssetCache.js?v=stable-first-boot-layout";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=stable-first-boot-layout";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=stable-first-boot-layout";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=stable-first-boot-layout";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=stable-first-boot-layout";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=stable-first-boot-layout";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=stable-first-boot-layout";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=stable-first-boot-layout";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=stable-first-boot-layout";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=stable-first-boot-layout";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=stable-first-boot-layout";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=stable-first-boot-layout";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=stable-first-boot-layout";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=posters2-material";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=posters2-material";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=posters2-material";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=posters2-material";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=posters2-material";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=posters2-material";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=posters2-material";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=posters2-material";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=posters2-material";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=posters2-material";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=posters2-material";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=posters2-material";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=posters2-material";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=posters2-material";
-import { PlayerController } from "./player/PlayerController.js?v=posters2-material";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=posters2-material";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=posters2-material";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=posters2-material";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=posters2-material";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=posters2-material";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=posters2-material";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=posters2-material";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=posters2-material";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=posters2-material";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=posters2-material";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=posters2-material";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=posters2-material";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=posters2-material";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=posters2-material";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=posters2-material";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=posters2-material";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=posters2-material";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=posters2-material";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=posters2-material";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=posters2-material";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=posters2-material";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=posters2-material";
+} from "./scene/InteriorObjectRegistry.js?v=stable-first-boot-layout";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=stable-first-boot-layout";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=stable-first-boot-layout";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=stable-first-boot-layout";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=stable-first-boot-layout";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=stable-first-boot-layout";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=stable-first-boot-layout";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=stable-first-boot-layout";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=stable-first-boot-layout";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=stable-first-boot-layout";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=stable-first-boot-layout";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=stable-first-boot-layout";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=stable-first-boot-layout";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=stable-first-boot-layout";
+import { PlayerController } from "./player/PlayerController.js?v=stable-first-boot-layout";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=stable-first-boot-layout";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=stable-first-boot-layout";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=stable-first-boot-layout";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=stable-first-boot-layout";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=stable-first-boot-layout";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=stable-first-boot-layout";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=stable-first-boot-layout";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=stable-first-boot-layout";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=stable-first-boot-layout";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=stable-first-boot-layout";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=stable-first-boot-layout";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=stable-first-boot-layout";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=stable-first-boot-layout";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=stable-first-boot-layout";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=stable-first-boot-layout";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=stable-first-boot-layout";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=stable-first-boot-layout";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=stable-first-boot-layout";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=stable-first-boot-layout";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=stable-first-boot-layout";
+import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=stable-first-boot-layout";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=stable-first-boot-layout";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=posters2-material";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=stable-first-boot-layout";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -399,6 +399,7 @@ const audioRuntime = new AudioRuntime({
   groups: SOUND_GROUPS,
   mix: SOUND_MIX,
   masterVolume: 1,
+  suspended: Boolean(bootOptions.firstRun),
 });
 const menuAudioRuntime = new MenuAudioRuntime({ audio: audioRuntime });
 let activeShiftProfile = null;
@@ -489,7 +490,7 @@ const levelEnvironmentActivation = createLevelEnvironmentActivation({
   config: CONFIG,
   scene,
   resolveEnvironmentId: getLevelEnvironmentId,
-  getRequestedLevelId: () => operatorViewMode === "menu" ? "intro-shift" : activeLevelId,
+  getRequestedLevelId: () => operatorViewMode === "menu" ? getMenuEnvironmentId() : activeLevelId,
   getViewMode: () => operatorViewMode,
   environmentModels: levelEnvironmentModels,
   collisionModels: levelCollisionModels,
@@ -757,7 +758,7 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   controlTooltip,
   config: CONFIG,
   getInteractionLevelId: () =>
-    getLevelEnvironmentId(operatorViewMode === "menu" ? "intro-shift" : activeLevelId),
+    getLevelEnvironmentId(operatorViewMode === "menu" ? getMenuEnvironmentId() : activeLevelId),
   getActiveLevelId: () => activeLevelId,
   prefabInstances: levelPrefabInstances,
   config: CONFIG,
@@ -767,7 +768,7 @@ const interactionHoverRuntime = createInteractionHoverRuntime({
   getTooltipText,
   setHoveredDoor: setHoveredHingedDoor,
   getOcclusionRoots: () => {
-    const environmentId = getLevelEnvironmentId(operatorViewMode === "menu" ? "intro-shift" : activeLevelId);
+    const environmentId = getLevelEnvironmentId(operatorViewMode === "menu" ? getMenuEnvironmentId() : activeLevelId);
     return [
       levelEnvironmentModels.get(environmentId),
       levelEnvironmentModels.get(`${environmentId}:prefabs`),
@@ -865,6 +866,7 @@ const operatorViewRuntime = new OperatorViewRuntime({
   setPitch: (value) => { pitch = value; },
   teleportCharacter: (position) => physicsSystem?.teleportCharacter(position),
   syncPlayerCapsule, loadLevelEnvironment, resetLevelDoors, updateActiveLevelEnvironment,
+  warmupRendering: (...args) => renderWarmupRuntime?.warmup(...args),
   setRoomLightsEnabled: (...args) => setRoomLightsEnabled(...args),
 });
 const menuCameraRuntime = new MenuCameraRuntime({
@@ -1169,7 +1171,6 @@ const operatorPanelAssetRuntime = new OperatorPanelAssetRuntime({
   applyActiveLevel: () => operatorPanelRuntime.applyLevel(activeLevelId, operatorViewMode),
   getCollisionLevelIds: () => levelCollisionModels.keys(),
   rebuildLevelStaticPhysics,
-  finishLoading,
   setLoadingProgress,
   setLoadingStatus,
   reportError: (...args) => console.error(...args),
@@ -1486,10 +1487,14 @@ async function init() {
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);
-  const initialLevelLoad = loadLevelEnvironment("intro-shift");
-  operatorPanelRuntime.load();
-  await initialLevelLoad;
-  if (CONFIG.loading?.skip || fastDebugBoot) triggerRoomLightBoot();
+  const initialLevelLoad = loadLevelEnvironment(getMenuEnvironmentId());
+  await Promise.all([initialLevelLoad, operatorPanelRuntime.load()]);
+  if (CONFIG.loading?.skip || fastDebugBoot) {
+    triggerRoomLightBoot();
+  } else {
+    await enterMenuView();
+    finishLoading();
+  }
   animationLoop.start();
 }
 
@@ -1519,7 +1524,11 @@ function setupSceneDebugPanels() {
 }
 
 function getDisplayedLevelId() {
-  return operatorViewMode === "menu" ? "intro-shift" : getLevelEnvironmentId(activeLevelId);
+  return operatorViewMode === "menu" ? getMenuEnvironmentId() : getLevelEnvironmentId(activeLevelId);
+}
+
+function getMenuEnvironmentId() {
+  return getLevelEnvironmentId(CONFIG.camera.menuView?.environmentId ?? "exploring-around");
 }
 
 function getLevelSceneSoundKeys(levelId = getDisplayedLevelId()) {
@@ -1794,7 +1803,7 @@ function applyPanelTransform(model) {
 
 function applyActivePanelTransform() {
   const applied = operatorPanelAssetRuntime.applyActiveTransform(activeLevelId, operatorViewMode);
-  const panelLevelId = operatorViewMode === "menu" ? "intro-shift" : activeLevelId;
+  const panelLevelId = operatorViewMode === "menu" ? getMenuEnvironmentId() : activeLevelId;
   const panelConfig = operatorPanelAssetRuntime.getLevelConfig(panelLevelId);
   if (panelConfig?.screen) statusScreen.applyConfig(panelConfig.screen);
   return applied;
@@ -2256,6 +2265,7 @@ installOperatorGameApi(window, {
   unlockAudio: () => audioRuntime.unlock(),
   isAudioUnlocked: () => audioRuntime.unlocked,
   setMenuAudioActive: (active) => menuAudioRuntime.setActive(active),
+  setAudioSuspended: (suspended) => audioRuntime.setSuspended(suspended),
   setBriefingSheetOpener: (callback) => {
     briefingSheetOpener = typeof callback === "function" ? callback : null;
   },

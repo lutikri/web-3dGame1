@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=posters2-material";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
 
 const EFFECT_KEYS = [
   "bloom",

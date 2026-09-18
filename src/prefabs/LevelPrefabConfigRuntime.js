@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=posters2-material";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=posters2-material";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=posters2-material";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=posters2-material";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=posters2-material";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=posters2-material";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=posters2-material";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=stable-first-boot-layout";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=stable-first-boot-layout";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=stable-first-boot-layout";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=stable-first-boot-layout";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=stable-first-boot-layout";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

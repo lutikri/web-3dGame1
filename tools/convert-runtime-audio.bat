@@ -23,7 +23,7 @@ if (!(Test-Path -LiteralPath $sourceDir)) {
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 function Get-AudioCategory($name) {
-  if ($name -like "Menu_Click*" -or $name -like "Menu_Hover*" -or $name -like "Menu_SetupComlete*") { return "ui" }
+  if ($name -like "Menu_Click*" -or $name -like "Menu_Hover*" -or $name -like "Menu_SetupComlete*" -or $name -like "TCorporateIntro*") { return "ui" }
   if ($name -like "Ambience_*" -or $name -like "AmbienceLoop_*" -or $name -like "Menu_*") { return "ambience" }
   if ($name -like "UI_*") { return "ui" }
   if ($name -like "Message*" -or $name -like "Radio*") { return "narration" }

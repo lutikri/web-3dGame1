@@ -200,13 +200,13 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "bloom": {
     "enabled": true,
-    "strength": 0.25,
+    "strength": 0.52,
     "radius": 0.8,
     "threshold": 0.33
   },
   "antiAliasing": {
     "method": "off",
-    "msaaSamples": 4
+    "msaaSamples": 8
   },
   "lensEffects": {
     "enabled": true,
@@ -246,7 +246,7 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "colorAdjustments": {
     "enabled": true,
-    "brightness": 0.021,
+    "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
     "gamma": 1.25,

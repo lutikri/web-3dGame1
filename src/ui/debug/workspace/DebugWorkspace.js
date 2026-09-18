@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=posters2-material";
+} from "../../../levels/LevelConfigSerialization.js?v=stable-first-boot-layout";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=posters2-material";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=stable-first-boot-layout";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };

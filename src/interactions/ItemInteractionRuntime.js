@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=posters2-material";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=stable-first-boot-layout";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();

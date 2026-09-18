@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=posters2-material";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=stable-first-boot-layout";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

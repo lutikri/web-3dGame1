@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=posters2-material";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=posters2-material";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=posters2-material";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=posters2-material";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=stable-first-boot-layout";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=stable-first-boot-layout";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=stable-first-boot-layout";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=stable-first-boot-layout";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -157,8 +157,9 @@ export const CONFIG = {
       wheelStep: 0.35,
     },
     menuView: {
-      position: new THREE.Vector3(4.4, 0.95, -1.85),
-      rotationDegrees: new THREE.Vector3(20.3, 55.9, 0),
+      environmentId: "exploring-around",
+      position: new THREE.Vector3(4.3, 1.06, -1.9),
+      rotationDegrees: new THREE.Vector3(7, 42, 0),
       fovDegrees: 55,
       roomLightsOn: false,
       pointerLook: {

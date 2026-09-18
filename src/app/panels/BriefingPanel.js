@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=posters2-material";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=stable-first-boot-layout";
 
 const DISMISS_MS = 300;
 

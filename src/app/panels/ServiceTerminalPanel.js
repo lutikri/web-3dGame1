@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=posters2-material";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=stable-first-boot-layout";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

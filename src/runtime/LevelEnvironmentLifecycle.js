@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=posters2-material";
+import { LevelRuntime } from "./LevelRuntime.js?v=stable-first-boot-layout";
 
 export class LevelEnvironmentLifecycle {
   constructor({

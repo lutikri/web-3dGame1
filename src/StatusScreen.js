@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=posters2-material";
+} from "./panels/StatusScreenMaterial.js?v=stable-first-boot-layout";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

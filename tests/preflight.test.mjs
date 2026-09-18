@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   classifyGraphicsAdapter,
   createPreflightUiAudio,
+  getFirstBootSlideState,
   getPreflightScale,
   recommendGraphicsProfile,
 } from "../src/app/Preflight.js";
@@ -67,6 +68,18 @@ test("preflight scales one fixed 1920 by 1080 composition uniformly", () => {
   assert.equal(getPreflightScale(960, 540), 0.5);
 });
 
+test("first boot advances three nine-second slides while reserving completion for runtime readiness", () => {
+  assert.deepEqual(getFirstBootSlideState(0), {
+    slideIndex: 0, status: "LOADING ASSETS...", progress: 0,
+  });
+  assert.equal(getFirstBootSlideState(9000).slideIndex, 1);
+  assert.equal(getFirstBootSlideState(18000).slideIndex, 2);
+  assert.equal(getFirstBootSlideState(27000).slideIndex, 0);
+  assert.equal(getFirstBootSlideState(36000).slideIndex, 1);
+  assert.equal(getFirstBootSlideState(27000).progress, 100);
+  assert.equal(getFirstBootSlideState(60000).progress, 100);
+});
+
 test("preflight owns and disposes its native UI button audio", () => {
   const listeners = new Map();
   const listenerOptions = new Map();
@@ -107,10 +120,12 @@ test("preflight owns and disposes its native UI button audio", () => {
   listeners.get("click")(eventFor(controlA));
   listeners.get("mousemove")(eventFor(controlB));
   listeners.get("click")(eventFor(setupControl));
+  runtime.playCorporateIntro();
   assert.deepEqual(played, [
     ["assets/sounds/ui/Menu_Click1.ogg", 0.76],
     ["assets/sounds/ui/Menu_Hover1.ogg", 0.44],
     ["assets/sounds/ui/Menu_SetupComlete1.ogg", 0.78],
+    ["assets/sounds/ui/TCorporateIntro1.ogg", 0.82],
   ]);
 
   runtime.dispose();
@@ -118,5 +133,7 @@ test("preflight owns and disposes its native UI button audio", () => {
   assert.deepEqual(paused, [
     "assets/sounds/ui/Menu_Click1.ogg",
     "assets/sounds/ui/Menu_Hover1.ogg",
+    "assets/sounds/ui/Menu_SetupComlete1.ogg",
+    "assets/sounds/ui/TCorporateIntro1.ogg",
   ]);
 });

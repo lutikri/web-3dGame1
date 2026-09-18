@@ -18,7 +18,7 @@ export async function runLevelRuntimeSmoke(gameApi) {
     const completed = await action();
     if (completed === false) throw new Error(`[RuntimeSmoke] ${name} was superseded`);
     const state = gameApi.inspectRuntime();
-    const expectedEnvironment = name === "menu-preview" ? "intro-shift" : name;
+    const expectedEnvironment = name === "menu-preview" ? "exploring-around" : name;
     assertEqual(state.loadedRuntimeLevelId, expectedEnvironment, `${name}: loaded runtime`);
     assertOwnedKeys(state.environmentRoots, expectedEnvironment, `${name}: environment roots`);
     assertOwnedKeys(state.collisionLevels, expectedEnvironment, `${name}: collision levels`);

@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=posters2-material";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=posters2-material";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=posters2-material";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=posters2-material";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=stable-first-boot-layout";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=stable-first-boot-layout";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=stable-first-boot-layout";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=stable-first-boot-layout";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();

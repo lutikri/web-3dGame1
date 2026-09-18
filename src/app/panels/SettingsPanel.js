@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=posters2-material";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

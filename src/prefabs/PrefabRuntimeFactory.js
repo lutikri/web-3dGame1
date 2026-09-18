@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=posters2-material";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=posters2-material";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=posters2-material";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=posters2-material";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=posters2-material";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=posters2-material";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=posters2-material";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=posters2-material";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=posters2-material";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=posters2-material";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=posters2-material";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=stable-first-boot-layout";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=stable-first-boot-layout";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=stable-first-boot-layout";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=stable-first-boot-layout";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=stable-first-boot-layout";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=stable-first-boot-layout";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=stable-first-boot-layout";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=stable-first-boot-layout";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=stable-first-boot-layout";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=stable-first-boot-layout";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=stable-first-boot-layout";
 
 export function createPrefabRuntimeFactory({
   config,

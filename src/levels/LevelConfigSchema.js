@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=posters2-material";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=stable-first-boot-layout";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

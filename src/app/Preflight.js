@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=posters2-material";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=posters2-material";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=stable-first-boot-layout";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=stable-first-boot-layout";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=posters2-material";
+} from "./UiAudioInteractionRuntime.js?v=stable-first-boot-layout";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=posters2-material";
+} from "../config/GraphicsHardwareTiers.js?v=stable-first-boot-layout";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=posters2-material";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=stable-first-boot-layout";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
@@ -19,6 +19,13 @@ const QUALITY_PREVIEWS = {
   medium: "assets/ui/performance/set-med.jpg",
   high: "assets/ui/performance/set-max.jpg",
 };
+const FIRST_BOOT_SLIDES = [
+  "assets/ui/first-boot/Slide1.jpg",
+  "assets/ui/first-boot/Slide2.jpg",
+  "assets/ui/first-boot/Slide3.jpg",
+];
+const FIRST_BOOT_SLIDE_MS = 9000;
+const FIRST_BOOT_TOTAL_MS = FIRST_BOOT_SLIDES.length * FIRST_BOOT_SLIDE_MS;
 
 const PREFLIGHT_DESIGN_WIDTH = 1920;
 const PREFLIGHT_DESIGN_HEIGHT = 1080;
@@ -80,7 +87,7 @@ const COPY = {
   },
 };
 
-export function createPreflight() {
+export function createPreflight({ screenTransition } = {}) {
   let saved = loadSaved();
   let language = saved?.language ?? "en";
   let overlay = null;
@@ -220,6 +227,95 @@ export function createPreflight() {
         <span class="preflight-spinner"></span>
         <strong>${copy.loadingRuntime}</strong>
       </div>`;
+  }
+
+  function startFirstBootSlides() {
+    if (!overlay) return { finish: async () => {} };
+    let startedAt = null;
+    let timer = null;
+    let runtimeReady = false;
+    let completing = false;
+    let resolveCompletion;
+    const completion = new Promise((resolve) => { resolveCompletion = resolve; });
+    overlay.classList.add("is-first-boot");
+
+    const render = () => {
+      if (startedAt === null) return;
+      const elapsed = performance.now() - startedAt;
+      const state = getFirstBootSlideState(elapsed);
+      overlay.querySelectorAll("[data-first-boot-slide]").forEach((image, index) => {
+        image.classList.toggle("is-active", index === state.slideIndex);
+      });
+      const percent = overlay.querySelector("[data-first-boot-percent]");
+      const status = overlay.querySelector("[data-first-boot-status]");
+      const count = overlay.querySelector("[data-first-boot-count]");
+      const fill = overlay.querySelector("[data-first-boot-fill]");
+      if (percent) percent.textContent = `${String(state.progress).padStart(2, "0")}%`;
+      if (status) status.textContent = runtimeReady
+        ? language === "ru" ? "СИСТЕМА ГОТОВА · ПРОСМОТР НЕОБЯЗАТЕЛЕН" : "SYSTEM READY · ORIENTATION OPTIONAL"
+        : state.status;
+      if (count) count.textContent = `${language === "ru" ? "СЛАЙД" : "SLIDE"} ${String(state.slideIndex + 1).padStart(2, "0")} / 03`;
+      if (fill) fill.style.width = `${state.progress}%`;
+    };
+
+    const completePresentation = async () => {
+      if (completing) return completion;
+      completing = true;
+      if (timer !== null) window.clearInterval(timer);
+      timer = null;
+      const continueButton = overlay?.querySelector("[data-first-boot-continue]");
+      continueButton?.setAttribute("aria-disabled", "true");
+      await wait(120);
+      await screenTransition?.cover({ tone: "white", durationMs: 950, holdMs: 400 });
+      remove();
+      await screenTransition?.reveal({ durationMs: 1100 });
+      resolveCompletion();
+      return completion;
+    };
+
+    const ready = (async () => {
+      await screenTransition?.cover({ tone: "white", durationMs: 900, holdMs: 400 });
+      if (!overlay) return;
+      overlay.innerHTML = `
+        <section class="first-boot-slides" aria-live="polite">
+          <div class="first-boot-images" aria-hidden="true">
+            ${FIRST_BOOT_SLIDES.map((path, index) => `<img src="${path}" alt="" data-first-boot-slide="${index}" />`).join("")}
+          </div>
+          <footer class="first-boot-loading">
+            <div class="first-boot-loading-copy">
+              <div class="first-boot-loading-info"><strong>INITIALIZATION</strong><span data-first-boot-status>PREPARING RENDERER...</span><span data-first-boot-count>SLIDE 01 / 03</span></div>
+              <button type="button" class="first-boot-continue" data-first-boot-continue data-ui-sound="none" aria-hidden="true" disabled>${language === "ru" ? "ПРОДОЛЖИТЬ" : "CONTINUE"}</button>
+              <div class="first-boot-loading-percent"><strong data-first-boot-percent>00%</strong></div>
+            </div>
+            <div class="first-boot-loading-track"><i data-first-boot-fill></i></div>
+          </footer>
+        </section>`;
+      await waitForFirstBootImages(overlay);
+      overlay.querySelector("[data-first-boot-slide='0']")?.classList.add("is-active");
+      await screenTransition?.reveal({ durationMs: 1100 });
+      startedAt = performance.now();
+      render();
+      timer = window.setInterval(render, 80);
+      overlay.querySelector("[data-first-boot-continue]")?.addEventListener("click", completePresentation, { once: true });
+      await uiAudio?.playCorporateIntro?.();
+    })();
+
+    return {
+      ready,
+      async finish() {
+        await ready;
+        if (startedAt === null) return;
+        runtimeReady = true;
+        const continueButton = overlay?.querySelector("[data-first-boot-continue]");
+        if (continueButton) {
+          continueButton.classList.add("is-ready");
+          continueButton.setAttribute("aria-hidden", "false");
+          continueButton.disabled = false;
+        }
+        render();
+        return completion;
+      },
+    };
   }
 
   function createOverlay() {
@@ -385,7 +481,38 @@ export function createPreflight() {
     return overlay.querySelector(".preflight-panel");
   }
 
-  return { prepare, chooseProfile, showBooting, calibrateBrightness, complete, finish, remove };
+  return {
+    prepare,
+    chooseProfile,
+    showBooting,
+    startFirstBootSlides,
+    calibrateBrightness,
+    complete,
+    finish,
+    remove,
+  };
+}
+
+export function getFirstBootSlideState(elapsedMs) {
+  const elapsed = Math.max(0, Number(elapsedMs) || 0);
+  const slideIndex = Math.floor(elapsed / FIRST_BOOT_SLIDE_MS) % FIRST_BOOT_SLIDES.length;
+  const statuses = ["LOADING ASSETS...", "COMPILING MAP...", "COMPILING SHADERS..."];
+  return {
+    slideIndex,
+    status: statuses[slideIndex],
+    progress: Math.min(100, Math.floor((elapsed / FIRST_BOOT_TOTAL_MS) * 100)),
+  };
+}
+
+async function waitForFirstBootImages(root) {
+  const pending = [...root.querySelectorAll("[data-first-boot-slide]")].map(async (image) => {
+    try {
+      await image.decode?.();
+    } catch {
+      // A failed optional orientation image must not block the application boot.
+    }
+  });
+  await Promise.race([Promise.all(pending), wait(4000)]);
 }
 
 function qualityCard(profile, recommendation, fps, copy) {
@@ -454,13 +581,16 @@ export function createPreflightUiAudio({ root, AudioClass = globalThis.Audio } =
   const clickAudio = new AudioClass(SOUND_REGISTRY.Menu_Click1.path);
   const hoverAudio = new AudioClass(SOUND_REGISTRY.Menu_Hover1.path);
   const setupCompleteAudio = new AudioClass(SOUND_REGISTRY.Menu_SetupComlete1.path);
+  const corporateIntroAudio = new AudioClass(SOUND_REGISTRY.TCorporateIntro1.path);
   clickAudio.volume = SOUND_REGISTRY.Menu_Click1.volume;
   hoverAudio.volume = SOUND_REGISTRY.Menu_Hover1.volume;
   setupCompleteAudio.volume = SOUND_REGISTRY.Menu_SetupComlete1.volume;
+  corporateIntroAudio.volume = SOUND_REGISTRY.TCorporateIntro1.volume;
+  corporateIntroAudio.preload = "auto";
   let unlocked = false;
   const play = (audio) => {
     audio.currentTime = 0;
-    audio.play()?.catch?.(() => {});
+    return audio.play()?.catch?.(() => {});
   };
   const interaction = createUiAudioInteractionRuntime({
     root,
@@ -481,11 +611,16 @@ export function createPreflightUiAudio({ root, AudioClass = globalThis.Audio } =
   root.addEventListener("click", handleClick, true);
   root.addEventListener("mousemove", handleMouseMove);
   return {
+    playCorporateIntro() {
+      return play(corporateIntroAudio);
+    },
     dispose() {
       root.removeEventListener("click", handleClick, true);
       root.removeEventListener("mousemove", handleMouseMove);
       clickAudio.pause?.();
       hoverAudio.pause?.();
+      setupCompleteAudio.pause?.();
+      corporateIntroAudio.pause?.();
     },
   };
 }
@@ -596,15 +731,20 @@ function escapeHtml(value) {
 function preloadFirstRunAssets() {
   const criticalAssets = [
     "assets/mesh/panel/SM_Panel1.glb",
-    "assets/mesh/environment/SM_Interior1_1.glb",
+    "assets/mesh/environment/SM_Interior2.glb",
     "assets/mesh/prefabs/SM_DoorBulk1.glb",
     "assets/mesh/prefabs/SM_Lamp_BulkRed.glb",
     "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
     "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",
     ...Object.values(QUALITY_PREVIEWS),
+    ...FIRST_BOOT_SLIDES,
   ];
   criticalAssets.forEach((url) => {
     fetch(url, { cache: "force-cache", priority: "low" }).catch(() => {});
   });
+}
+
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

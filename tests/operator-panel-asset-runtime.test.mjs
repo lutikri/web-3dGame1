@@ -3,7 +3,7 @@ import test from "node:test";
 import * as THREE from "three";
 import { OperatorPanelAssetRuntime } from "../src/panels/OperatorPanelAssetRuntime.js";
 
-test("operator panel asset runtime classifies collision meshes and completes loading", () => {
+test("operator panel asset runtime classifies collision meshes without owning boot completion", () => {
   const calls = [];
   const scene = new THREE.Scene();
   const model = new THREE.Group();
@@ -15,13 +15,34 @@ test("operator panel asset runtime classifies collision meshes and completes loa
     getCollisionVisible: () => true, registerPanelObject: () => calls.push("register"),
     onModelLoaded: () => calls.push("loaded"), applyActiveLevel: () => calls.push("level"),
     getCollisionLevelIds: () => ["room"], rebuildLevelStaticPhysics: (id) => calls.push(id),
-    finishLoading: () => calls.push("finish"), logLoaded: () => calls.push("log"),
+    logLoaded: () => calls.push("log"),
   });
   runtime.handleLoaded(model);
   assert.equal(collisionMeshes.length, 1);
   assert.equal(collisionMeshes[0].visible, true);
   assert.equal(scene.children.includes(model), true);
-  assert.deepEqual(calls, ["register", "loaded", "level", "room", "finish", "log"]);
+  assert.deepEqual(calls, ["register", "loaded", "level", "room", "log"]);
+});
+
+test("operator panel asset load resolves after the model is registered", async () => {
+  const model = new THREE.Group();
+  const calls = [];
+  const runtime = new OperatorPanelAssetRuntime({
+    assetPath: "panel.glb",
+    loader: { load: (_path, onLoad) => onLoad({ scene: model }) },
+    scene: new THREE.Scene(),
+    collisionDebugMaterial: new THREE.MeshBasicMaterial(),
+    panelCollisionMeshes: [],
+    getCollisionVisible: () => false,
+    registerPanelObject: () => {},
+    onModelLoaded: () => calls.push("loaded"),
+    applyActiveLevel: () => calls.push("level"),
+    getCollisionLevelIds: () => [],
+    rebuildLevelStaticPhysics: () => {},
+    logLoaded: () => calls.push("log"),
+  });
+  assert.equal(await runtime.load(), model);
+  assert.deepEqual(calls, ["loaded", "level", "log"]);
 });
 
 test("operator panel asset runtime maps loader progress to the boot range", () => {

@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=posters2-material";
+} from "./behaviors/DeskDrawerBehavior.js?v=stable-first-boot-layout";
 
 export function createPrefabPhysicsRegistrar({
   physics,

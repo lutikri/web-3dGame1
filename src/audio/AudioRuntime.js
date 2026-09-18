@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export class AudioRuntime {
-  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1 }) {
+  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1, suspended = false }) {
     this.sounds = sounds;
     this.groups = groups;
     this.mix = {
@@ -15,6 +15,7 @@ export class AudioRuntime {
       ...mix,
     };
     this.masterVolume = this.mix.master;
+    this.suspended = Boolean(suspended);
     this.context = null;
     this.masterGain = null;
     this.bufferPromises = new Map();
@@ -418,7 +419,7 @@ export class AudioRuntime {
     if (!AudioContextClass) return null;
     this.context = new AudioContextClass();
     this.masterGain = this.context.createGain();
-    this.masterGain.gain.value = this.masterVolume;
+    this.masterGain.gain.value = this.suspended ? 0 : this.masterVolume;
     this.masterGain.connect(this.context.destination);
     return this.context;
   }
@@ -426,7 +427,12 @@ export class AudioRuntime {
   setMasterVolume(value) {
     this.masterVolume = THREE.MathUtils.clamp(Number(value) || 0, 0, 2);
     this.mix.master = this.masterVolume;
-    if (this.masterGain) this.masterGain.gain.value = this.masterVolume;
+    if (this.masterGain) this.masterGain.gain.value = this.suspended ? 0 : this.masterVolume;
+  }
+
+  setSuspended(value) {
+    this.suspended = Boolean(value);
+    if (this.masterGain) this.masterGain.gain.value = this.suspended ? 0 : this.masterVolume;
   }
 
   setMixVolume(group, value) {

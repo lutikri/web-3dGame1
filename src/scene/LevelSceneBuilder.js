@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=posters2-material";
+} from "../prefabs/PrefabMarkerResolver.js?v=stable-first-boot-layout";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=posters2-material";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=posters2-material";
+} from "../levels/LevelConfigOverrides.js?v=stable-first-boot-layout";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=stable-first-boot-layout";
 
 export function createLevelSceneBuilder({
   scene,

@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=posters2-material";
+} from "./FluorescentBehavior.js?v=stable-first-boot-layout";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {
