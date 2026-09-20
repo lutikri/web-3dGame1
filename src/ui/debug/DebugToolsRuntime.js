@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=alarm-silence";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=alarm-silence";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=alarm-silence";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=alarm-silence";
+import { createDebugHub } from "./DebugHub.js?v=qualification-scoring";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=qualification-scoring";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=qualification-scoring";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=qualification-scoring";
 
 export class DebugToolsRuntime {
   constructor(options) {

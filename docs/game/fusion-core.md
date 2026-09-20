@@ -98,3 +98,5 @@ Qualification evaluates the complete active burn and requires:
 - no terminal safety trip or destroyed-core outcome.
 
 Thresholds belong to the qualification shift profile so they can be tuned without changing the shared reactor simulation. The acceptance contract is behavioral: leaving controls nearly unchanged must fail, reasonable novice corrections after instruction must pass, and one recoverable mistake must not automatically invalidate the whole shift.
+
+Current provisional calibration scores after a 12-second grace period. Passing requires at least 45% of scored time within 12% of grid demand, at least two non-precharge phases with 45% compliance, average efficiency of 62% or better, no demand deviation above 25% lasting longer than 42 seconds, and bounded stress/critical-state exposure. The Shift Report exposes `GRID COMPLIANCE` and `PHASES PASSED`; these values remain subject to playtest tuning.

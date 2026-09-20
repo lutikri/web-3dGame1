@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=alarm-silence";
+import { translateRequired } from "./Localization.js?v=qualification-scoring";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

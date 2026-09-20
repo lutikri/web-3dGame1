@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=alarm-silence";
+import { applyAxisRotation } from "./TransformUtils.js?v=qualification-scoring";
 
 export class InteriorObjectRegistry {
   constructor(options) {

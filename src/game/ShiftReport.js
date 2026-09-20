@@ -30,6 +30,11 @@ export function createShiftRecorder() {
     maxOutput: 0,
     knobMovement: 0,
     previousControls: null,
+    qualificationScoredTime: 0,
+    qualificationCompliantTime: 0,
+    qualificationSevereDeviationStreak: 0,
+    qualificationMaxSevereDeviationStreak: 0,
+    qualificationPhases: {},
   };
 }
 
@@ -57,6 +62,7 @@ export function updateShiftRecorder(recorder, dt, snapshot, controls) {
   if (snapshot.warning?.instability) recorder.instabilityTime += dt;
   if (controls.ventActive) recorder.ventTime += dt;
   if (controls.pulseActive) recorder.pulseTime += dt;
+  updateQualificationRecorder(recorder, dt, snapshot, controls.shiftProfile?.qualification);
 
   recorder.maxTemp = Math.max(recorder.maxTemp, snapshot.plasmaTemp);
   recorder.maxCoreStress = Math.max(recorder.maxCoreStress, snapshot.coreStress);
@@ -99,7 +105,95 @@ export function getShiftRecorderDebugState(recorder) {
     ventActivations: recorder.ventActivations,
     pulseTime: Number(recorder.pulseTime.toFixed(1)),
     pulseActivations: recorder.pulseActivations,
+    gridCompliance: recorder.qualificationScoredTime > 0
+      ? Number((recorder.qualificationCompliantTime / recorder.qualificationScoredTime).toFixed(3))
+      : 0,
+    maxSevereDemandStreak: Number(recorder.qualificationMaxSevereDeviationStreak.toFixed(1)),
   };
+}
+
+export function evaluateQualificationOutcome(recorder, snapshot, shiftProfile = null) {
+  const config = shiftProfile?.qualification;
+  const isQualityTerminal = snapshot?.mode === "complete" || snapshot?.failureType === "qualityFailure";
+  if (!config || !isQualityTerminal) return snapshot;
+
+  const duration = Math.max(1, recorder.elapsed);
+  const scoredTime = Math.max(0, recorder.qualificationScoredTime);
+  const gridCompliance = scoredTime > 0 ? recorder.qualificationCompliantTime / scoredTime : 0;
+  const averageEfficiency = recorder.efficiencySum / duration;
+  const criticalTempRatio = recorder.tempCriticalTime / duration;
+  const coreStallRatio = recorder.quenchTime / duration;
+  const instabilityRatio = recorder.instabilityTime / duration;
+  const excluded = new Set(config.excludedPhaseNames ?? []);
+  const phaseResults = Object.entries(recorder.qualificationPhases)
+    .filter(([name, phase]) => !excluded.has(name)
+      && phase.scoredTime >= Number(config.minPhaseScoredSeconds ?? 8))
+    .map(([name, phase]) => ({
+      name,
+      compliance: phase.scoredTime > 0 ? phase.compliantTime / phase.scoredTime : 0,
+    }));
+  const passingPhases = phaseResults.filter(
+    (phase) => phase.compliance >= Number(config.minPhaseComplianceRatio ?? 0.45),
+  ).length;
+  const reasons = [];
+  if (gridCompliance < Number(config.minGridComplianceRatio ?? 0.55)) reasons.push("gridCompliance");
+  if (averageEfficiency < Number(config.minAverageEfficiency ?? 62)) reasons.push("operatingEfficiency");
+  if (recorder.maxCoreStress > Number(config.maxPeakCoreStress ?? 92)) reasons.push("peakCoreStress");
+  if (criticalTempRatio > Number(config.maxCriticalTempRatio ?? 0.15)) reasons.push("criticalTemperature");
+  if (coreStallRatio > Number(config.maxCoreStallRatio ?? 0.12)) reasons.push("coreStall");
+  if (instabilityRatio > Number(config.maxInstabilityRatio ?? 0.12)) reasons.push("instability");
+  if (recorder.qualificationMaxSevereDeviationStreak
+    > Number(config.maxSevereDemandStreakSeconds ?? 24)) reasons.push("sustainedDemandDeviation");
+  if (passingPhases < Number(config.minPassingPhases ?? 3)) reasons.push("phaseTracking");
+
+  const passed = snapshot.mode === "complete" && reasons.length === 0;
+  return {
+    ...snapshot,
+    mode: passed ? "complete" : "failed",
+    failureType: passed ? null : "qualityFailure",
+    qualification: {
+      passed,
+      reasons,
+      gridCompliance,
+      averageEfficiency,
+      peakCoreStress: recorder.maxCoreStress,
+      criticalTempRatio,
+      coreStallRatio,
+      instabilityRatio,
+      maxSevereDemandStreakSeconds: recorder.qualificationMaxSevereDeviationStreak,
+      passingPhases,
+      requiredPassingPhases: Number(config.minPassingPhases ?? 3),
+      phaseResults,
+    },
+  };
+}
+
+function updateQualificationRecorder(recorder, dt, snapshot, config) {
+  if (!config) return;
+  const elapsed = Math.max(0, Number(snapshot.elapsed) || 0);
+  const previousElapsed = Math.max(0, elapsed - dt);
+  const graceSeconds = Math.max(0, Number(config.graceSeconds) || 0);
+  const scoredDt = Math.max(0, elapsed - graceSeconds) - Math.max(0, previousElapsed - graceSeconds);
+  if (scoredDt <= 0) return;
+
+  const demandError = Math.abs(Number(snapshot.demandError) || 0);
+  const compliant = demandError <= Number(config.demandToleranceRatio ?? 0.12);
+  const severe = demandError > Number(config.severeDemandToleranceRatio ?? 0.25);
+  recorder.qualificationScoredTime += scoredDt;
+  if (compliant) recorder.qualificationCompliantTime += scoredDt;
+  recorder.qualificationSevereDeviationStreak = severe
+    ? recorder.qualificationSevereDeviationStreak + scoredDt
+    : 0;
+  recorder.qualificationMaxSevereDeviationStreak = Math.max(
+    recorder.qualificationMaxSevereDeviationStreak,
+    recorder.qualificationSevereDeviationStreak,
+  );
+
+  const phaseName = snapshot.phase?.name ?? "UNASSIGNED";
+  const phase = recorder.qualificationPhases[phaseName] ?? { scoredTime: 0, compliantTime: 0 };
+  phase.scoredTime += scoredDt;
+  if (compliant) phase.compliantTime += scoredDt;
+  recorder.qualificationPhases[phaseName] = phase;
 }
 
 export function buildShiftReport(recorder, snapshot) {
@@ -114,6 +208,15 @@ export function buildShiftReport(recorder, snapshot) {
   const outputSurgeRatio = recorder.outputSurgeTime / duration;
   const quenchRatio = recorder.quenchTime / duration;
   const movementRate = recorder.knobMovement / duration;
+  const qualificationStats = snapshot.qualification
+    ? [
+        ["results.stats.gridCompliance", `${Math.round(snapshot.qualification.gridCompliance * 100)}%`],
+        [
+          "results.stats.phasesPassed",
+          `${snapshot.qualification.passingPhases} / ${snapshot.qualification.phaseResults.length}`,
+        ],
+      ]
+    : [["results.stats.avgDemandError", `${Math.round(avgDemandError * 100)}%`]];
   const profile = pickOperatorProfile({
     avgDemandError,
     avgEfficiency,
@@ -148,9 +251,9 @@ export function buildShiftReport(recorder, snapshot) {
     summary: profile.summary,
     stats: [
       ["results.stats.shiftTime", formatDuration(snapshot.elapsed)],
+      ...qualificationStats,
       ["results.stats.avgEfficiency", `${Math.round(avgEfficiency)}%`],
       ["results.stats.avgOutput", `${Math.round(avgOutput)} MW`],
-      ["results.stats.avgDemandError", `${Math.round(avgDemandError * 100)}%`],
       ["results.stats.maxTemp", `${Math.round(recorder.maxTemp)} MK`],
       ["results.stats.maxCoreStress", `${Math.round(recorder.maxCoreStress)}%`],
       ["results.stats.maxHeatSoak", `${Math.round(recorder.maxThermalSoak)}%`],

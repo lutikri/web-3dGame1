@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=alarm-silence";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=qualification-scoring";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

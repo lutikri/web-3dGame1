@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=alarm-silence";
+} from "./ServiceTerminalBehavior.js?v=qualification-scoring";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,

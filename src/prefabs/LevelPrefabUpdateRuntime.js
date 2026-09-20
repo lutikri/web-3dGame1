@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=alarm-silence";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=alarm-silence";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=alarm-silence";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=alarm-silence";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=alarm-silence";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=alarm-silence";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=alarm-silence";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=alarm-silence";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=qualification-scoring";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=qualification-scoring";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=qualification-scoring";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=qualification-scoring";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=qualification-scoring";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=qualification-scoring";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=qualification-scoring";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=qualification-scoring";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=alarm-silence";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=qualification-scoring";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=alarm-silence";
+} from "./PostProcessingShaders.js?v=qualification-scoring";
 
 export class PostProcessingRuntime {
   composer = null;

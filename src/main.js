@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=alarm-silence";
-import { applyLocalization } from "./app/Localization.js?v=alarm-silence";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=alarm-silence";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=alarm-silence";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=alarm-silence";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=alarm-silence";
+import { createPreflight } from "./app/Preflight.js?v=qualification-scoring";
+import { applyLocalization } from "./app/Localization.js?v=qualification-scoring";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=qualification-scoring";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=qualification-scoring";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=qualification-scoring";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=qualification-scoring";
 
-const APP_BUILD_REVISION = "alarm-silence";
+const APP_BUILD_REVISION = "qualification-scoring";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -41,11 +41,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=alarm-silence`);
+await import(`./OperatorGame.js?v=qualification-scoring`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=alarm-silence`);
+const { createAppShell } = await import(`./app/AppShell.js?v=qualification-scoring`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -57,7 +57,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=alarm-silence`
+    `./runtime/RuntimeSmoke.js?v=qualification-scoring`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

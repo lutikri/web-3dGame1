@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=alarm-silence";
+} from "./FluorescentBehavior.js?v=qualification-scoring";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

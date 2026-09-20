@@ -32,11 +32,17 @@ test("operator panel runtime composes one simulation and presentation tick", () 
       areNeedlesFrozen: () => false,
       onIgnitionPulse: () => calls.push("pulse"),
       onLightRestart: () => {},
-      updateThoughts: () => {}, updateRecorder: () => {}, updateCompletion: () => {},
+      updateThoughts: () => {}, updateRecorder: () => {},
+      evaluateCompletion: (value) => {
+        calls.push("evaluate");
+        return { ...value, evaluated: true };
+      },
+      updateCompletion: () => {},
     },
   });
   runtime.update(0.1);
   assert.equal(snapshot.elapsed, 2);
+  assert.equal(snapshot.evaluated, true);
   assert.equal(lamp.material, "red");
-  assert.deepEqual(calls, ["pulse", "diagnostics", "screen", "controls", "gauge", "lamp-scale"]);
+  assert.deepEqual(calls, ["pulse", "diagnostics", "evaluate", "screen", "controls", "gauge", "lamp-scale"]);
 });

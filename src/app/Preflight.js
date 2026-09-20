@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=alarm-silence";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=alarm-silence";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=qualification-scoring";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=qualification-scoring";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=alarm-silence";
+} from "./UiAudioInteractionRuntime.js?v=qualification-scoring";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=alarm-silence";
+} from "../config/GraphicsHardwareTiers.js?v=qualification-scoring";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=alarm-silence";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=qualification-scoring";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

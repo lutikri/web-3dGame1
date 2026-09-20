@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=alarm-silence";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=alarm-silence";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=alarm-silence";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=alarm-silence";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=alarm-silence";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=alarm-silence";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=alarm-silence";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=alarm-silence";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=alarm-silence";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=alarm-silence";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=alarm-silence";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=qualification-scoring";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=qualification-scoring";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=qualification-scoring";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=qualification-scoring";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=qualification-scoring";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=qualification-scoring";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=qualification-scoring";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=qualification-scoring";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=qualification-scoring";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=qualification-scoring";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=qualification-scoring";
 
 export function createPrefabRuntimeFactory({
   config,

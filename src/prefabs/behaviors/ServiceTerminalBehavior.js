@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=alarm-silence";
+} from "./ServiceTerminalCanvasRenderer.js?v=qualification-scoring";
 
 export function createServiceTerminalRuntime(
   parts,

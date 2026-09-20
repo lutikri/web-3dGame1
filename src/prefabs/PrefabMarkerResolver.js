@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=alarm-silence";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=alarm-silence";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=qualification-scoring";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=qualification-scoring";
 
 const MARKER_PREFIX = "PF_";
 

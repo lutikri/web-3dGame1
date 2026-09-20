@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=alarm-silence";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=qualification-scoring";
 
 const DISMISS_MS = 300;
 

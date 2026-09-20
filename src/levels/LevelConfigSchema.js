@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=alarm-silence";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=qualification-scoring";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

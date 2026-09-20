@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=alarm-silence";
-import { applyLocalization, translate } from "./Localization.js?v=alarm-silence";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=alarm-silence";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=alarm-silence";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=alarm-silence";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=alarm-silence";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=alarm-silence";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=qualification-scoring";
+import { applyLocalization, translate } from "./Localization.js?v=qualification-scoring";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=qualification-scoring";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=qualification-scoring";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=qualification-scoring";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=qualification-scoring";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=qualification-scoring";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=alarm-silence";
-import { createAppPanelController } from "./AppPanelController.js?v=alarm-silence";
-import { createAppRouter } from "./AppRouter.js?v=alarm-silence";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=alarm-silence";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=alarm-silence";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=alarm-silence";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=alarm-silence";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=alarm-silence";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=alarm-silence";
+} from "./AppPersistence.js?v=qualification-scoring";
+import { createAppPanelController } from "./AppPanelController.js?v=qualification-scoring";
+import { createAppRouter } from "./AppRouter.js?v=qualification-scoring";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=qualification-scoring";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=qualification-scoring";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=qualification-scoring";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=qualification-scoring";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=qualification-scoring";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=qualification-scoring";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

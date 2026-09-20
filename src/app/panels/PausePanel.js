@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=alarm-silence";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=qualification-scoring";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

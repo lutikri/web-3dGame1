@@ -39,15 +39,16 @@ export class OperatorPanelRuntime {
       shiftElapsed: before.elapsed,
     });
     const inputs = tick.getControlInputs(fuelBlend);
-    const snapshot = tick.simulation.update(dt, inputs);
+    let snapshot = tick.simulation.update(dt, inputs);
     const pulseCount = snapshot.ignitionPulseCount ?? 0;
     if (pulseCount > this.observedIgnitionPulseCount) tick.onIgnitionPulse();
     this.observedIgnitionPulseCount = pulseCount;
-    tick.setSnapshot(snapshot);
     tick.diagnostics.update(dt);
     if (tick.diagnostics.consumeLightRestartRequest()) tick.onLightRestart();
-    tick.updateThoughts(before, snapshot, inputs);
     tick.updateRecorder(dt, snapshot, inputs);
+    snapshot = tick.evaluateCompletion?.(snapshot, inputs) ?? snapshot;
+    tick.setSnapshot(snapshot);
+    tick.updateThoughts(before, snapshot, inputs);
     tick.updateCompletion(dt, snapshot);
     const panelSnapshot = tick.diagnostics.createSelfTestSnapshot(tick.getPresentationSnapshot(snapshot));
     tick.statusScreen.setSnapshot(panelSnapshot);

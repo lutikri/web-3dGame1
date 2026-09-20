@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=alarm-silence";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=alarm-silence";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=alarm-silence";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=qualification-scoring";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=qualification-scoring";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=qualification-scoring";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -68,6 +68,34 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
         target: "fluorescentLamp_TutorialCabin",
       },
     ],
+  },
+  shiftProfile: {
+    defaultEvents: false,
+    transitionSeconds: 9,
+    demandWander: { enabled: false },
+    phases: [
+      { name: "FIELD PRECHARGE", start: 0, end: 24, temp: [20, 55], powerTemp: [25, 70], output: [0, 250], containmentMin: 75, demand: 140 },
+      { name: "PLASMA IGNITION", start: 24, end: 52, temp: [75, 105], powerTemp: [85, 120], output: [300, 550], containmentMin: 65, demand: 430 },
+      { name: "STABLE BURN", start: 52, end: 90, temp: [100, 135], powerTemp: [118, 148], output: [500, 750], containmentMin: 70, demand: 650 },
+      { name: "DEMAND SURGE", start: 90, end: 135, temp: [125, 155], powerTemp: [150, 166], output: [750, 950], containmentMin: 60, demand: 850 },
+      { name: "SUSTAINED HIGH LOAD", start: 135, end: 180, temp: [138, 162], powerTemp: [158, 172], output: [850, 1100], containmentMin: 55, demand: 980 },
+    ],
+    qualification: {
+      graceSeconds: 12,
+      demandToleranceRatio: 0.12,
+      severeDemandToleranceRatio: 0.25,
+      minGridComplianceRatio: 0.45,
+      minAverageEfficiency: 62,
+      maxPeakCoreStress: 92,
+      maxCriticalTempRatio: 0.15,
+      maxCoreStallRatio: 0.12,
+      maxInstabilityRatio: 0.12,
+      maxSevereDemandStreakSeconds: 42,
+      minPhaseComplianceRatio: 0.45,
+      minPassingPhases: 2,
+      minPhaseScoredSeconds: 8,
+      excludedPhaseNames: ["FIELD PRECHARGE"],
+    },
   },
   narration: {
     autoStart: false,

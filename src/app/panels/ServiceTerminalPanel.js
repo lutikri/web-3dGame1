@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=alarm-silence";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=qualification-scoring";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 
