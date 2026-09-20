@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=bundled-ui-fonts";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=bundled-ui-fonts";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=bundled-ui-fonts";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=bundled-ui-fonts";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=bundled-ui-fonts";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=bundled-ui-fonts";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=alarm-silence";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=alarm-silence";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=alarm-silence";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=alarm-silence";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=alarm-silence";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=alarm-silence";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=alarm-silence";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=alarm-silence";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

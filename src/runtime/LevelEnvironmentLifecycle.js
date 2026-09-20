@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=bundled-ui-fonts";
+import { LevelRuntime } from "./LevelRuntime.js?v=alarm-silence";
 
 export class LevelEnvironmentLifecycle {
   constructor({

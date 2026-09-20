@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=bundled-ui-fonts";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=alarm-silence";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();

@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=bundled-ui-fonts";
+} from "./behaviors/DeskDrawerBehavior.js?v=alarm-silence";
 
 export function createPrefabPhysicsRegistrar({
   physics,

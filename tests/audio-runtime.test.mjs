@@ -13,3 +13,16 @@ test("audio runtime keeps the game mix silent throughout first-boot presentation
   runtime.setSuspended(false);
   assert.equal(runtime.masterGain.gain.value, 1.2);
 });
+
+test("audio runtime can stop selected attached one-shots immediately", () => {
+  const runtime = new AudioRuntime({ sounds: {} });
+  const stopped = [];
+  runtime.stopOneShotState = (state) => stopped.push(state.id);
+  runtime.attachedOneShots.set("alarm", { id: "alarm" });
+  runtime.attachedOneShots.set("narration", { id: "narration" });
+
+  assert.equal(runtime.stopAttachedOneShots((state) => state.id === "alarm"), 1);
+  assert.deepEqual(stopped, ["alarm"]);
+  assert.equal(runtime.attachedOneShots.has("alarm"), false);
+  assert.equal(runtime.attachedOneShots.has("narration"), true);
+});

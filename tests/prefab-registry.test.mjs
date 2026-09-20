@@ -31,6 +31,8 @@ test("master status viewport marker resolves to the reusable panel behavior", ()
   assert.equal(panel.statusViewport.screenMeshName, "SM_PanelViewStatus1_Screen");
   assert.equal(panel.statusViewport.updateIntervalSeconds, 1);
   assert.equal(panel.statusViewport.shutterButtonPressAxis, "y");
+  assert.equal(panel.statusViewport.alarmSilenceButtonPressAxis, "y");
+  assert.equal(panel.statusViewport.alarmSilenceButtonPressDistance, -0.006);
   assert.equal(panel.statusViewport.screen.flipX, true);
   assert.equal(panel.statusViewport.screen.flipY, true);
   assert.deepEqual(parsePrefabMarkerName("PF_PanelStatusViewport1_PanelStatusViewport1"), {

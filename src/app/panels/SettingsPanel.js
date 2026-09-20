@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=alarm-silence";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

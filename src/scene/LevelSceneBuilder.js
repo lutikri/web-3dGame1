@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=bundled-ui-fonts";
+} from "../prefabs/PrefabMarkerResolver.js?v=alarm-silence";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=bundled-ui-fonts";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=bundled-ui-fonts";
+} from "../levels/LevelConfigOverrides.js?v=alarm-silence";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=alarm-silence";
 
 export function createLevelSceneBuilder({
   scene,

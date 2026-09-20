@@ -21,7 +21,7 @@
 - Первая версия терминала использует `SHIFT BRIEF / OPERATIONS GUIDE / SHIFT REPORTS / ARCHIVE / NOTICES` вместо исходных `SHIFT BRIEF / SYSTEMS / HELP / ARCHIVE`. Это принятая текущая структура, но содержимое ещё будет расширяться.
 - First Boot уже показывает loading-slides, однако отдельная мини-анимация спуска в Site-12 ещё не сделана.
 - Вместо отдельной жилой сцены фон меню пока использует основной Site-12 environment. Personnel accommodation остаётся возможным последующим визуальным апгрейдом, а не блокером загрузочного flow.
-- Observation Port собран частично: shutter готов, `ALARM SILENCE` и централизованная система звуковых alarms ещё не готовы.
+- Observation Port собран частично: shutter, централизованный `Announcement System` и фиксируемая кнопка `ALARM SILENCE` готовы.
 
 ## P0. Служебный терминал вместо бумажных брифов — готово
 
@@ -61,13 +61,12 @@ QUALIFICATION PASSED
 
 - Провал по недостаточному управлению не открывает две следующие смены.
 
-## P0. Announcement System и alarms соответствия спросу
+## P0. Announcement System и alarms соответствия спросу — основа готова
 
-- Перенести всё воспроизведение игровых alarms в централизованный `Announcement System`.
-- Реактор, objectives и физические панели публикуют только типизированное состояние/событие; они не запускают и не зацикливают alarm audio напрямую.
-- Добавить отдельные звуковые alarms для `UNDER DEMAND` и `OVER DEMAND`, синхронизированные с существующими moderate/severe диапазонами ламп.
-- Защитить звуковые предупреждения от дребезга около целевого диапазона: использовать выдержку состояния, hysteresis, deduplication и ограниченную частоту повторов.
-- Задать приоритеты так, чтобы safety-critical объявления перекрывали demand alarms, а `UNDER DEMAND` и `OVER DEMAND` не спорили друг с другом.
+- Воспроизведение reactor alarms перенесено из `CoreAudioRuntime` в централизованный `AnnouncementSystemRuntime`.
+- Добавлены отдельные one-shot sounds для входа `UNDER DEMAND` и `OVER DEMAND` в yellow/red состояние.
+- Удержание одного состояния не повторяет звук; переходы `yellow -> red`, `red -> yellow` и повторный вход после `off` создают новый сигнал.
+- Existing stress, stall и high-temperature alarm policies также принадлежат Announcement System и воспроизводятся через все PA emitters активного environment; Core Audio отвечает только за reactor bed и startup/shutdown sounds.
 - `ALARM SILENCE` подтверждает/приглушает разрешённый активный звук через `Announcement System`, но не очищает лампу, состояние реактора, записанную метрику или критический исход.
 
 ## P0. Tutorial, retry и skip
@@ -169,7 +168,7 @@ Qualification
   - `OUTPUT / DEMAND / BATTERY`;
   - `PUMPS / COOLANT / FUEL`.
 - `VIEWPORT SHUTTER` реализован: физическая кнопка управляет десятисекундным подъёмом створки.
-- Реализовать `ALARM SILENCE` как подтверждение/приглушение разрешённых звуковых alarms; визуальные предупреждения и критическое состояние не исчезают.
+- [x] Реализовать `ALARM SILENCE` как фиксируемое приглушение разрешённых звуковых alarms; визуальные предупреждения и `CORE DAMAGE` не отключаются.
 - Observation Port является дополнительным физическим источником информации и worldbuilding, но не заменяет основную панель и не блокирует завершение базового reactor loop.
 
 ## P2. Фон главного меню — изменённый план

@@ -85,6 +85,7 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 - [x] One-time First Boot presentation with real loading progress and explicit continue state
 - [x] Reuse the loaded Site-12 environment behind the main menu and subsequent shift entry
 - [x] Observation Port status display and physical viewport shutter
+- [x] Central Announcement System with edge-triggered yellow/red demand alarms
 
 ### Now — qualification and onboarding
 
@@ -92,8 +93,6 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 - [ ] Add a meaningful Shift Report: compliance, stability, and critical-event results
 - [ ] Make the tutorial event-driven, with fast restart and no repeated mandatory narration
 - [ ] Finalize tutorial retry and post-qualification **Skip Training** behavior
-- [ ] Move gameplay alarm playback and prioritization into a central **Announcement System**
-- [ ] Add non-chattering audible **UNDER DEMAND** and **OVER DEMAND** alarms
 
 ### Next — complete the three-shift vertical slice
 

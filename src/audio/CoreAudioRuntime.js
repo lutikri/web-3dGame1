@@ -4,18 +4,14 @@ const CLIP_SECONDS = {
   startup: 27.85,
   turnDown: 20.15,
   trip: 10.266667,
-  highTemp: 2.3,
 };
 const DEFAULT_LOOP_VOLUME = 0.64;
 
 export class CoreAudioRuntime {
-  constructor({ audio, getCoreAnchor, getPanel, playSound }) {
-    Object.assign(this, { audio, getCoreAnchor, getPanel, playSound });
+  constructor({ audio, getCoreAnchor, playSound }) {
+    Object.assign(this, { audio, getCoreAnchor, playSound });
     this.previousMode = "standby";
     this.transition = null;
-    this.highTempRepeats = 0;
-    this.highTempTimer = 0;
-    this.previousCoreStress = null;
   }
 
   update(dt, { levelId, active, snapshot }) {
@@ -24,13 +20,7 @@ export class CoreAudioRuntime {
     this.#advanceTransition(dt);
 
     const coreAnchor = this.getCoreAnchor();
-    const panel = this.getPanel();
     const runningState = mode === "running" || mode === "startupFault";
-    const coreStress = snapshot?.coreStress ?? 0;
-    const stressRiseRate = this.previousCoreStress == null || dt <= 0
-      ? 0
-      : Math.max(0, (coreStress - this.previousCoreStress) / dt);
-    const rapidStressRise = coreStress >= 55 && stressRiseRate >= 6;
     const defaultVolume = active ? this.#getDefaultLoopMix(mode) * DEFAULT_LOOP_VOLUME : 0;
     this.audio.setAttachedLoop("core:default", coreAnchor, "Core1_DefaultLoop1", defaultVolume > 0.001, {
       levelId, volume: defaultVolume, refDistance: 1.2, maxDistance: 20, fadeSeconds: 0.04,
@@ -43,29 +33,12 @@ export class CoreAudioRuntime {
         maxDistance: 20,
         fadeSeconds: 0.7,
       });
-
-    this.audio.setAttachedLoop("panel:core", panel, "Core1_Panel1_Loop", active, {
-      levelId, volume: 0.18, refDistance: 0.8, maxDistance: 4.5, fadeSeconds: 0.8,
-    });
-    this.audio.setAttachedLoop("panel:alarm:stress", panel, "Core1_Panel1_AlarmHighCoreStress1",
-      active && runningState && (coreStress > 80 || rapidStressRise), {
-        levelId, volume: 0.62, refDistance: 0.8, maxDistance: 5.5, fadeSeconds: 0.2,
-      });
-    this.audio.setAttachedLoop("panel:alarm:stall", panel, "Core1_Panel1_AlarmCoreStall",
-      active && runningState && Boolean(snapshot?.warning?.coreStall), {
-        levelId, volume: 0.66, refDistance: 0.8, maxDistance: 5.5, fadeSeconds: 0.15,
-      });
-    this.#updateHighTempAlarm(dt, active && runningState, snapshot, panel, levelId);
-    this.previousCoreStress = coreStress;
     this.previousMode = mode;
   }
 
   reset() {
     this.previousMode = "standby";
     this.transition = null;
-    this.highTempRepeats = 0;
-    this.highTempTimer = 0;
-    this.previousCoreStress = null;
   }
 
   #handleModeTransition(mode, levelId) {
@@ -101,17 +74,4 @@ export class CoreAudioRuntime {
     return mode === "running" || mode === "startupFault" ? 1 : 0;
   }
 
-  #updateHighTempAlarm(dt, active, snapshot, panel, levelId) {
-    const alarmActive = active && ((snapshot?.plasmaTemp ?? 0) > 155 || (snapshot?.coreStress ?? 0) > 98);
-    if (!alarmActive) {
-      this.highTempRepeats = 0;
-      this.highTempTimer = 0;
-      return;
-    }
-    this.highTempTimer -= Math.max(0, dt);
-    if (this.highTempRepeats >= 8 || this.highTempTimer > 0) return;
-    this.playSound(panel, "Core1_Panel1_AlarmHighTemp1", { levelId, maxDistance: 5.5 });
-    this.highTempRepeats += 1;
-    this.highTempTimer = CLIP_SECONDS.highTemp;
-  }
 }

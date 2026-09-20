@@ -42,32 +42,13 @@ test("core audio crossfades the default loop across authored transition duration
   assert.ok(Math.abs(loops.find(([id]) => id === "core:default")[4].volume - 0.32) < 0.001);
 });
 
-test("core panel alarms follow stress, red temperature, and stall policies", () => {
+test("core audio leaves panel alarm playback to the announcement system", () => {
   const { runtime, loops, oneShots } = createHarness();
-  const danger = snapshot({ plasmaTemp: 156, coreStress: 91, warning: { coreStall: true } });
-  runtime.update(0, { levelId: "room", active: true, snapshot: danger });
-  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], true);
-  assert.equal(loops.find(([id]) => id === "panel:alarm:stall")[3], true);
-  assert.equal(oneShots.filter(([, key]) => key === "Core1_Panel1_AlarmHighTemp1").length, 1);
-
-  for (let index = 0; index < 10; index += 1) {
-    runtime.update(2.3, { levelId: "room", active: true, snapshot: danger });
-  }
-  assert.equal(oneShots.filter(([, key]) => key === "Core1_Panel1_AlarmHighTemp1").length, 8);
-
-  runtime.update(0, { levelId: "room", active: true, snapshot: snapshot() });
-  runtime.update(0, { levelId: "room", active: true, snapshot: danger });
-  assert.equal(oneShots.filter(([, key]) => key === "Core1_Panel1_AlarmHighTemp1").length, 9);
-});
-
-test("core stress alarm starts above eighty or during a rapid stress rise", () => {
-  const { runtime, loops } = createHarness();
-  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 60 }) });
-  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], false);
-  loops.length = 0;
-  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 67 }) });
-  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], true);
-  loops.length = 0;
-  runtime.update(1, { levelId: "room", active: true, snapshot: snapshot({ coreStress: 81 }) });
-  assert.equal(loops.find(([id]) => id === "panel:alarm:stress")[3], true);
+  runtime.update(1, {
+    levelId: "room",
+    active: true,
+    snapshot: snapshot({ plasmaTemp: 170, coreStress: 99, warning: { coreStall: true } }),
+  });
+  assert.equal(loops.some(([id]) => id.includes("alarm")), false);
+  assert.equal(oneShots.some(([, key]) => key.includes("Alarm")), false);
 });

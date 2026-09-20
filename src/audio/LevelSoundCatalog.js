@@ -2,6 +2,7 @@ const PANEL_SOUNDS = [
   "Core1_DefaultLoop1", "Core1_Panel1_AlarmCoreStall", "Core1_Panel1_AlarmHighCoreStress1",
   "Core1_Panel1_AlarmHighTemp1", "Core1_Panel1_Loop", "Core1_Pulse", "Core1_StartupFailed1",
   "Core1_StartupNormal1", "Core1_Stress_Loop", "Core1_Trip1", "Core1_TurnDown",
+  "SFX_Panel1_DemandRed1", "SFX_Panel1_DemandYellow1",
   "Panel_KnobTick1", "Panel_KnobTick2", "Panel_KnobTick3",
   "Button_Light1", "Button_Light2", "Button_Light3", "ButtonMechanical1", "ButtonMechanical2",
   "ButtonMechanical3", "ButtonMechanical4", "LampTurnOn1",

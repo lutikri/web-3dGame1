@@ -407,6 +407,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "wheelStep": 0.35
     },
     "menuView": {
+      "environmentId": "exploring-around",
       "position": {
         "x": 4.3,
         "y": 1.06,

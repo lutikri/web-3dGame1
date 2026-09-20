@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=bundled-ui-fonts";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=bundled-ui-fonts";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=bundled-ui-fonts";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=bundled-ui-fonts";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=bundled-ui-fonts";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=bundled-ui-fonts";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=bundled-ui-fonts";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=bundled-ui-fonts";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=bundled-ui-fonts";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=alarm-silence";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=alarm-silence";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=alarm-silence";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=alarm-silence";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=alarm-silence";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=alarm-silence";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=alarm-silence";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=alarm-silence";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=alarm-silence";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=alarm-silence";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=alarm-silence";
 
 export function createPrefabRuntimeFactory({
   config,

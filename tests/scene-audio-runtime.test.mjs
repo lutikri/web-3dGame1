@@ -12,6 +12,13 @@ test("entry hall marker key and clock loop resolve to runtime OGG assets", () =>
   assert.equal(SOUND_REGISTRY.Clock1_loop.loop, true);
 });
 
+test("demand announcement sounds resolve to converted panel audio", () => {
+  assert.equal(SOUND_REGISTRY.SFX_Panel1_DemandYellow1.path,
+    "assets/sounds/machinery/SFX_Panel1_DemandYellow1.ogg");
+  assert.equal(SOUND_REGISTRY.SFX_Panel1_DemandRed1.path,
+    "assets/sounds/machinery/SFX_Panel1_DemandRed1.ogg");
+});
+
 test("scene audio runtime composes panel, movement, prefab, and core loops", () => {
   const attached = [];
   const loops = [];
@@ -52,6 +59,9 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
     coreAudio: {
       update: (dt, state) => attached.push(["coreAudio", dt, state]),
     },
+    announcements: {
+      update: (dt, state) => attached.push(["announcements", dt, state]),
+    },
     playSound: () => {},
   });
 
@@ -59,6 +69,7 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
 
   assert.ok(attached.some(([id, , , active]) => id === "lamp:room:LampA" && active));
   assert.ok(attached.some(([id, , state]) => id === "coreAudio" && state.active));
+  assert.ok(attached.some(([id, , state]) => id === "announcements" && state.active));
   assert.ok(attached.some(([id, , soundKey, active]) => id === "prefab:room:ClockA:loop" && soundKey === "Clock1_loop" && active));
   assert.ok(loops.some(([id, active]) => id === "Footsteps1_Walk1" && active));
 });

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=bundled-ui-fonts";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=bundled-ui-fonts";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=bundled-ui-fonts";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=bundled-ui-fonts";
+import { createDebugHub } from "./DebugHub.js?v=alarm-silence";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=alarm-silence";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=alarm-silence";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=alarm-silence";
 
 export class DebugToolsRuntime {
   constructor(options) {

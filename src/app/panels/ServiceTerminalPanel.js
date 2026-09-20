@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=bundled-ui-fonts";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=alarm-silence";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

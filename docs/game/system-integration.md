@@ -21,7 +21,7 @@ Shift scenario / objectives
 - Prefabs support physical expansion because doors, radios, lights, control posts, clocks, and future pumps can share registry-owned behavior across levels.
 - `LevelSession` can coordinate objectives while incidents remain independent runtime services.
 - The current browser runtime now has explicit services for level ownership, prefab updates, panel presentation, scene feedback, scene audio, narration, terminal completion, player movement/collision/input, loading, and debug snapshots. Future systems should connect through those services rather than adding another parallel frame loop in `OperatorGame.js`.
-- Planned audible warnings use a central Announcement System: simulation, objectives, and prefab behaviors publish typed alarm requests, while one service owns playback and arbitration.
+- Audible warnings use a central Announcement System: simulation, objectives, and prefab behaviors publish typed alarm state, while one service owns playback and transition state.
 
 ## Current flow ownership
 
@@ -108,9 +108,9 @@ Each new persistent system needs a schema version, normalization, migration, and
 
 ### Announcement System
 
-Add an announcement runtime that consumes typed alarm state and owns facility-speaker playback, priority, deduplication, repeat cadence, acknowledgement, and silence. Reactor simulation, objective logic, panel lamps, and prefab behaviors must not create competing alarm loops or manage shared audio nodes directly.
+`AnnouncementSystemRuntime` consumes typed alarm state and owns playback through every PA/radio emitter in the active environment, transition deduplication, and the existing stress, stall, and high-temperature alarm policies. The operator panel is only a fallback emitter for environments without PA prefabs. Reactor simulation, objective logic, panel lamps, and prefab behaviors must not create competing alarm loops or manage shared audio nodes directly.
 
-`UNDER DEMAND` and `OVER DEMAND` become the first demand-compliance consumers. Their requests follow the canonical thresholds and hysteresis in `fusion-core.md`; safety-critical announcements can interrupt them. The Observation Port `ALARM SILENCE` button sends an acknowledgement/silence command to this runtime without mutating simulation or visual-warning state.
+`UNDER DEMAND` and `OVER DEMAND` are edge-triggered consumers: entering yellow or red plays the matching one-shot once, while an unchanged state remains silent. The Observation Port `ALARM SILENCE` button is a latched toggle: it immediately stops permitted announcement one-shots and suppresses permitted loops without mutating simulation or visual-warning state. The core-damage announcement (`coreStress > 98` or `failureType: coreDestroyed`) is safety-critical and cannot be silenced.
 
 The active environment owns speaker emitters and their audio nodes. Level/session teardown clears active requests, pending repeats, acknowledgement state, and timers so alarms cannot leak across restart, report, or route transitions.
 

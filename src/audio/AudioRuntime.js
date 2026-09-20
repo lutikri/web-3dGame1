@@ -89,6 +89,17 @@ export class AudioRuntime {
     });
   }
 
+  stopAttachedOneShots(predicate = () => true) {
+    let stopped = 0;
+    [...this.attachedOneShots.entries()].forEach(([key, state]) => {
+      if (!predicate(state)) return;
+      this.stopOneShotState(state);
+      this.attachedOneShots.delete(key);
+      stopped += 1;
+    });
+    return stopped;
+  }
+
   play(soundKey, options = {}) {
     const config = this.sounds[soundKey];
     if (!config) {

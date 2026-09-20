@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=bundled-ui-fonts";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=bundled-ui-fonts";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=bundled-ui-fonts";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=bundled-ui-fonts";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=bundled-ui-fonts";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=alarm-silence";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=alarm-silence";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=alarm-silence";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=alarm-silence";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=alarm-silence";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=alarm-silence";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=alarm-silence";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

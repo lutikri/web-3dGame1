@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
+import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=alarm-silence";
 
 export class AdaptiveQualityRuntime {
   constructor({

@@ -53,7 +53,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     }
   },
   "physicalBriefing": {
-    "enabled": true,
+    "enabled": false,
     "prefabType": "briefSheet",
     "socketPrefix": "SOCKET_Brief_",
     "briefingLevelId": "intro-shift",
@@ -1841,7 +1841,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "screen": {
           "flipX": true,
           "flipY": true,
-          "brightness": 0.83,
+          "brightness": 0.39,
           "scanlineStrength": 0.035,
           "scanlineDensity": 1,
           "edgeDarkening": 0.08,
@@ -1862,55 +1862,55 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "indicators": {
           "AlarmSilence": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Generation": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Cireculation": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Turbine": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Pumps": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Fuel": {
             "tint": 16777215,
-            "intensity": 0.6
+            "intensity": 0.45
           },
           "Output": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Demand": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Battery": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Efficiency": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Stall": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Stress": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           },
           "Coolant": {
             "tint": 16777215,
-            "intensity": 0.55
+            "intensity": 0.45
           }
         }
       },
@@ -2253,132 +2253,6 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "y": 1,
           "z": 1
         }
-      }
-    },
-    {
-      "rootName": "SM_Brief1",
-      "briefSheet": {
-        "meshName": "SM_Brief1",
-        "texturePath": "assets/ui/briefings/Intro1-ru.png",
-        "sheetIndex": 0,
-        "briefingLevelId": "intro-shift",
-        "holdSeconds": 0.5,
-        "maxDistance": 1.65
-      },
-      "item": {
-        "enabled": true,
-        "kind": "briefSheet",
-        "label": "Brief",
-        "icon": "brief",
-        "portable": true,
-        "activationMode": "specialView",
-        "maxDistance": 1.65,
-        "takeSeconds": 0.5,
-        "grabDistance": 0.95,
-        "grabOffset": [
-          0,
-          -0.28,
-          0
-        ],
-        "rotationOffset": [
-          -72,
-          0,
-          0
-        ]
-      },
-      "rigidBody": {
-        "enabled": true,
-        "bodyType": "dynamic",
-        "colliderNamePrefixes": [
-          "UBX_SM_Brief1"
-        ],
-        "density": 80,
-        "linearDamping": 0.8,
-        "angularDamping": 1.4,
-        "friction": 0.72,
-        "restitution": 0,
-        "canSleep": true
-      },
-      "name": "Brief_01",
-      "position": {
-        "x": -2.44248366355896,
-        "y": 0.9720377922058105,
-        "z": 9.112358093261719
-      },
-      "rotation": {
-        "isEuler": true,
-        "_x": 0,
-        "_y": -0.1365851666228528,
-        "_z": 0,
-        "_order": "XYZ"
-      },
-      "scale": {
-        "x": 1.0000000002559692,
-        "y": 1,
-        "z": 1.0000000002559692
-      }
-    },
-    {
-      "rootName": "SM_Brief1",
-      "briefSheet": {
-        "meshName": "SM_Brief1",
-        "texturePath": "assets/ui/briefings/Intro1_2-ru.png",
-        "sheetIndex": 1,
-        "briefingLevelId": "intro-shift",
-        "holdSeconds": 0.5,
-        "maxDistance": 1.65
-      },
-      "item": {
-        "enabled": true,
-        "kind": "briefSheet",
-        "label": "Brief",
-        "icon": "brief",
-        "portable": true,
-        "activationMode": "specialView",
-        "maxDistance": 1.65,
-        "takeSeconds": 0.5,
-        "grabDistance": 0.95,
-        "grabOffset": [
-          0,
-          -0.28,
-          0
-        ],
-        "rotationOffset": [
-          -72,
-          0,
-          0
-        ]
-      },
-      "rigidBody": {
-        "enabled": true,
-        "bodyType": "dynamic",
-        "colliderNamePrefixes": [
-          "UBX_SM_Brief1"
-        ],
-        "density": 80,
-        "linearDamping": 0.8,
-        "angularDamping": 1.4,
-        "friction": 0.72,
-        "restitution": 0,
-        "canSleep": true
-      },
-      "name": "Brief_02",
-      "position": {
-        "x": -2.838200092315674,
-        "y": 0.9720382690429688,
-        "z": 9.112358093261719
-      },
-      "rotation": {
-        "isEuler": true,
-        "_x": 0,
-        "_y": 0.10035192153932494,
-        "_z": 0,
-        "_order": "XYZ"
-      },
-      "scale": {
-        "x": 0.9999999999735899,
-        "y": 1,
-        "z": 0.9999999999735899
       }
     }
   ],

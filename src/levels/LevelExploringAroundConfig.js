@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=bundled-ui-fonts";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=bundled-ui-fonts";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=bundled-ui-fonts";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=alarm-silence";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=alarm-silence";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=alarm-silence";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=alarm-silence";
 
 const EFFECT_KEYS = [
   "bloom",

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=bundled-ui-fonts";
+import { applyAxisRotation } from "./TransformUtils.js?v=alarm-silence";
 
 export class InteriorObjectRegistry {
   constructor(options) {

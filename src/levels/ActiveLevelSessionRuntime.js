@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=bundled-ui-fonts";
+import { LevelSession } from "./LevelSession.js?v=alarm-silence";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

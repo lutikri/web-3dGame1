@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=bundled-ui-fonts";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=bundled-ui-fonts";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=bundled-ui-fonts";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=bundled-ui-fonts";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=alarm-silence";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=alarm-silence";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=alarm-silence";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=alarm-silence";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

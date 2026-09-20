@@ -8,6 +8,7 @@ const TOOLTIP_KINDS = new Set([
   "doorLatchHandle",
   "serviceTerminal",
   "viewportShutterButton",
+  "alarmSilenceButton",
 ]);
 
 export function createInteractionHoverRuntime({
@@ -215,7 +216,7 @@ function isInteractionOccluder(object, isObjectVisible) {
 export function getInteractionMaxDistance(object, interactionConfig = {}) {
   if (!object) return Infinity;
   if (Number.isFinite(object.userData.maxInteractionDistance)) return object.userData.maxInteractionDistance;
-  if (["controlKnob", "controlButton", "roomLightButton", "viewportShutterButton"].includes(object.userData.kind)) {
+  if (["controlKnob", "controlButton", "roomLightButton", "viewportShutterButton", "alarmSilenceButton"].includes(object.userData.kind)) {
     return interactionConfig.panelMaxDistance ?? 1.45;
   }
   return interactionConfig.maxDistance ?? 1.85;

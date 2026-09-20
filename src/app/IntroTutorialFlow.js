@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=bundled-ui-fonts";
+import { translateRequired } from "./Localization.js?v=alarm-silence";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

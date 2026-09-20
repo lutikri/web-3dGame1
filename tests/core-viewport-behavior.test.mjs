@@ -8,6 +8,7 @@ import {
   updateCoreViewportRuntime,
 } from "../src/prefabs/behaviors/CoreViewportBehavior.js";
 import {
+  activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   getStatusViewportButtonPressDirection,
   registerStatusViewportInteraction,
@@ -45,10 +46,16 @@ test("core viewport fails loudly when the authored shutter mesh is missing", () 
 
 test("status viewport button targets the placed core viewport prefab", () => {
   const button = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+  const alarmSilenceButton = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
   const shutter = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
   shutter.name = "SM_CoreViewport1_Shutter1";
   const coreViewport = createCoreViewportRuntime(new Map([[shutter.name, shutter]]));
-  const statusViewport = { shutterButton: button, shutterButtonPressRemaining: 0 };
+  const statusViewport = {
+    shutterButton: button,
+    shutterButtonPressRemaining: 0,
+    alarmSilenceButton,
+    alarmSilenced: false,
+  };
   const panelRuntime = { statusViewport };
   const instances = new Map([
     ["room:PanelStatusViewport1", panelRuntime],
@@ -61,9 +68,15 @@ test("status viewport button targets the placed core viewport prefab", () => {
     statusViewport: { shutterTargetPrefabName: "CoreViewport1" },
   }, panelRuntime, interactive), true);
   assert.equal(button.userData.shutterTargetKey, "room:CoreViewport1");
+  assert.equal(alarmSilenceButton.userData.kind, "alarmSilenceButton");
+  assert.equal(interactive.length, 2);
   assert.equal(activateStatusViewportShutter(button, instances), true);
   assert.equal(coreViewport.targetProgress, 1);
   assert.equal(statusViewport.shutterButtonPressRemaining, 0.16);
+  assert.equal(activateStatusViewportAlarmSilence(alarmSilenceButton, instances, () => true), true);
+  assert.equal(statusViewport.alarmSilenced, true);
+  assert.equal(activateStatusViewportAlarmSilence(alarmSilenceButton, instances, () => false), true);
+  assert.equal(statusViewport.alarmSilenced, false);
 });
 
 test("status viewport button maps authored Blender Z to the glTF local Y axis", () => {

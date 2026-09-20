@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=bundled-ui-fonts";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=bundled-ui-fonts";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=alarm-silence";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=alarm-silence";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

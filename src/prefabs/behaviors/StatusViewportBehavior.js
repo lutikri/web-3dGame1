@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=bundled-ui-fonts";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=bundled-ui-fonts";
+} from "../../panels/StatusScreenMaterial.js?v=alarm-silence";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=alarm-silence";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -18,6 +18,12 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
   const shutterButton = parts.get(config.shutterButtonMeshName ?? "SM_PanelViewStatus1_Button_ViewShutter");
   if (!shutterButton?.isMesh) {
     throw new Error(`[StatusViewport] Missing shutter button mesh in prefab "${prefabName}"`);
+  }
+  const alarmSilenceButton = parts.get(
+    config.alarmSilenceButtonMeshName ?? "SM_PanelViewStatus1_Indicator_AlarmSilence",
+  );
+  if (!alarmSilenceButton?.isMesh) {
+    throw new Error(`[StatusViewport] Missing alarm silence button mesh in prefab "${prefabName}"`);
   }
 
   const canvas = document.createElement("canvas");
@@ -76,6 +82,11 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
     shutterButtonPressDirection: new THREE.Vector3(),
     shutterButtonPressProgress: 0,
     shutterButtonPressRemaining: 0,
+    alarmSilenceButton,
+    alarmSilenceButtonInitialPosition: alarmSilenceButton.position.clone(),
+    alarmSilenceButtonPressDirection: new THREE.Vector3(),
+    alarmSilenceButtonPressProgress: 0,
+    alarmSilenced: false,
     screenMaterial,
     indicatorMaterials,
     materialCloneEntries,
@@ -109,6 +120,11 @@ export function applyStatusViewportConfig(runtime, config = {}) {
     config.shutterButtonPressAxis ?? "z",
     runtime.shutterButtonPressDirection,
   );
+  getStatusViewportButtonPressDirection(
+    runtime.alarmSilenceButton,
+    config.alarmSilenceButtonPressAxis ?? config.shutterButtonPressAxis ?? "z",
+    runtime.alarmSilenceButtonPressDirection,
+  );
   applyStatusScreenMaterialConfig(runtime.screenMaterial, config.screen);
   applyIndicatorMaterials(runtime, getStatusViewportIndicatorStates(runtime.snapshot));
   return true;
@@ -118,6 +134,7 @@ export function updateStatusViewportRuntime(runtime, snapshot, dt) {
   if (!runtime) return null;
   const safeDt = Math.max(0, Number(dt) || 0);
   updateShutterButton(runtime, safeDt);
+  updateAlarmSilenceButton(runtime, safeDt);
   runtime.screenMaterial.uniforms.uTime.value += safeDt;
   runtime.persistenceAge += safeDt;
   runtime.screenMaterial.uniforms.uPersistenceAge.value = runtime.persistenceAge;
@@ -142,18 +159,33 @@ export function updateStatusViewportRuntime(runtime, snapshot, dt) {
 export function registerStatusViewportInteraction(levelId, prefabConfig, runtime, interactive) {
   const statusViewport = runtime?.statusViewport;
   const button = statusViewport?.shutterButton;
-  if (!button || interactive.includes(button)) return false;
+  const alarmSilenceButton = statusViewport?.alarmSilenceButton;
+  if (!button || !alarmSilenceButton) return false;
   const config = prefabConfig.statusViewport ?? {};
   const nestedName = config.shutterPrefabName ?? "CoreViewport1";
   const targetPrefabName = config.shutterTargetPrefabName ?? `${prefabConfig.name}__${nestedName}`;
-  button.userData.kind = "viewportShutterButton";
-  button.userData.controlLabel = config.shutterButtonLabel ?? "VIEWPORT SHUTTER";
-  button.userData.levelId = levelId;
-  button.userData.levelPrefabKey = `${levelId}:${prefabConfig.name}`;
-  button.userData.shutterTargetKey = `${levelId}:${targetPrefabName}`;
-  button.userData.maxInteractionDistance = Number(config.shutterButtonMaxDistance) || 1.85;
-  interactive.push(button);
-  return true;
+  const levelPrefabKey = `${levelId}:${prefabConfig.name}`;
+  let registered = false;
+  if (!interactive.includes(button)) {
+    button.userData.kind = "viewportShutterButton";
+    button.userData.controlLabel = config.shutterButtonLabel ?? "VIEWPORT SHUTTER";
+    button.userData.levelId = levelId;
+    button.userData.levelPrefabKey = levelPrefabKey;
+    button.userData.shutterTargetKey = `${levelId}:${targetPrefabName}`;
+    button.userData.maxInteractionDistance = Number(config.shutterButtonMaxDistance) || 1.85;
+    interactive.push(button);
+    registered = true;
+  }
+  if (!interactive.includes(alarmSilenceButton)) {
+    alarmSilenceButton.userData.kind = "alarmSilenceButton";
+    alarmSilenceButton.userData.controlLabel = config.alarmSilenceButtonLabel ?? "ALARM SILENCE";
+    alarmSilenceButton.userData.levelId = levelId;
+    alarmSilenceButton.userData.levelPrefabKey = levelPrefabKey;
+    alarmSilenceButton.userData.maxInteractionDistance = Number(config.alarmSilenceButtonMaxDistance) || 1.85;
+    interactive.push(alarmSilenceButton);
+    registered = true;
+  }
+  return registered;
 }
 
 export function activateStatusViewportShutter(button, prefabInstances) {
@@ -163,6 +195,20 @@ export function activateStatusViewportShutter(button, prefabInstances) {
   const statusViewport = prefabInstances.get(button.userData.levelPrefabKey)?.statusViewport;
   if (statusViewport) statusViewport.shutterButtonPressRemaining = 0.16;
   return true;
+}
+
+export function activateStatusViewportAlarmSilence(button, prefabInstances, toggleSilenced) {
+  if (button?.userData.kind !== "alarmSilenceButton") return false;
+  const statusViewport = prefabInstances.get(button.userData.levelPrefabKey)?.statusViewport;
+  if (!statusViewport || typeof toggleSilenced !== "function") return false;
+  setStatusViewportAlarmSilenced(statusViewport, toggleSilenced());
+  return true;
+}
+
+export function setStatusViewportAlarmSilenced(runtime, silenced) {
+  if (!runtime) return false;
+  runtime.alarmSilenced = Boolean(silenced);
+  return runtime.alarmSilenced;
 }
 
 function updateShutterButton(runtime, dt) {
@@ -176,9 +222,24 @@ function updateShutterButton(runtime, dt) {
     dt,
   );
   button.position.copy(runtime.shutterButtonInitialPosition);
-  const distance = (Number(runtime.config.shutterButtonPressDistance) || -0.006)
+  const distance = (Number(runtime.config.alarmSilenceButtonPressDistance) || -0.006)
     * runtime.shutterButtonPressProgress;
   button.position.addScaledVector(runtime.shutterButtonPressDirection, distance);
+}
+
+function updateAlarmSilenceButton(runtime, dt) {
+  const button = runtime.alarmSilenceButton;
+  if (!button) return;
+  runtime.alarmSilenceButtonPressProgress = THREE.MathUtils.damp(
+    runtime.alarmSilenceButtonPressProgress,
+    runtime.alarmSilenced ? 1 : 0,
+    24,
+    dt,
+  );
+  button.position.copy(runtime.alarmSilenceButtonInitialPosition);
+  const distance = (Number(runtime.config.shutterButtonPressDistance) || -0.006)
+    * runtime.alarmSilenceButtonPressProgress;
+  button.position.addScaledVector(runtime.alarmSilenceButtonPressDirection, distance);
 }
 
 export function getStatusViewportButtonPressDirection(button, axis = "z", target = new THREE.Vector3()) {

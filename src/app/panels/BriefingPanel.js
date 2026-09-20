@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=bundled-ui-fonts";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=alarm-silence";
 
 const DISMISS_MS = 300;
 

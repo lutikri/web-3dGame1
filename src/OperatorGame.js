@@ -3,141 +3,143 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=bundled-ui-fonts";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=alarm-silence";
 import {
   buildShiftReport,
   createShiftRecorder,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=bundled-ui-fonts";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=bundled-ui-fonts";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=bundled-ui-fonts";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=bundled-ui-fonts";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=bundled-ui-fonts";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=bundled-ui-fonts";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=bundled-ui-fonts";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=bundled-ui-fonts";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=bundled-ui-fonts";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=bundled-ui-fonts";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=bundled-ui-fonts";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=bundled-ui-fonts";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=bundled-ui-fonts";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=bundled-ui-fonts";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=bundled-ui-fonts";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=bundled-ui-fonts";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=bundled-ui-fonts";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=bundled-ui-fonts";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=bundled-ui-fonts";
+} from "./game/ShiftReport.js?v=alarm-silence";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=alarm-silence";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=alarm-silence";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=alarm-silence";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=alarm-silence";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=alarm-silence";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=alarm-silence";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=alarm-silence";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=alarm-silence";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=alarm-silence";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=alarm-silence";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=alarm-silence";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=alarm-silence";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=alarm-silence";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=alarm-silence";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=alarm-silence";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=alarm-silence";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=alarm-silence";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=alarm-silence";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=alarm-silence";
 import {
+  activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=bundled-ui-fonts";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=bundled-ui-fonts";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=bundled-ui-fonts";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=bundled-ui-fonts";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=bundled-ui-fonts";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=bundled-ui-fonts";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=bundled-ui-fonts";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=bundled-ui-fonts";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=bundled-ui-fonts";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=bundled-ui-fonts";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=bundled-ui-fonts";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=bundled-ui-fonts";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=bundled-ui-fonts";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=bundled-ui-fonts";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=alarm-silence";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=alarm-silence";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=alarm-silence";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=alarm-silence";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=alarm-silence";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=alarm-silence";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=alarm-silence";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=alarm-silence";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=alarm-silence";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=alarm-silence";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=alarm-silence";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=alarm-silence";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=alarm-silence";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=alarm-silence";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=bundled-ui-fonts";
+} from "./config/GraphicsQualityProfiles.js?v=alarm-silence";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=bundled-ui-fonts";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=bundled-ui-fonts";
-import { createStatusScreen } from "./StatusScreen.js?v=bundled-ui-fonts";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=bundled-ui-fonts";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=bundled-ui-fonts";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=bundled-ui-fonts";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=bundled-ui-fonts";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=bundled-ui-fonts";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=bundled-ui-fonts";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=bundled-ui-fonts";
+} from "./scene/TextureStreaming.js?v=alarm-silence";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=alarm-silence";
+import { createStatusScreen } from "./StatusScreen.js?v=alarm-silence";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=alarm-silence";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=alarm-silence";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=alarm-silence";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=alarm-silence";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=alarm-silence";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=alarm-silence";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=alarm-silence";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=bundled-ui-fonts";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=bundled-ui-fonts";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=bundled-ui-fonts";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=alarm-silence";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=alarm-silence";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=alarm-silence";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=bundled-ui-fonts";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=bundled-ui-fonts";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=bundled-ui-fonts";
-import { AssetCache } from "./runtime/AssetCache.js?v=bundled-ui-fonts";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=bundled-ui-fonts";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=bundled-ui-fonts";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=bundled-ui-fonts";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=bundled-ui-fonts";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=bundled-ui-fonts";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=bundled-ui-fonts";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=bundled-ui-fonts";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=bundled-ui-fonts";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=bundled-ui-fonts";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=bundled-ui-fonts";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=bundled-ui-fonts";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=bundled-ui-fonts";
+} from "./lighting/FluorescentBehavior.js?v=alarm-silence";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=alarm-silence";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=alarm-silence";
+import { AssetCache } from "./runtime/AssetCache.js?v=alarm-silence";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=alarm-silence";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=alarm-silence";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=alarm-silence";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=alarm-silence";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=alarm-silence";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=alarm-silence";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=alarm-silence";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=alarm-silence";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=alarm-silence";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=alarm-silence";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=alarm-silence";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=alarm-silence";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=bundled-ui-fonts";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=bundled-ui-fonts";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=bundled-ui-fonts";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=bundled-ui-fonts";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=bundled-ui-fonts";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=bundled-ui-fonts";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=bundled-ui-fonts";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=bundled-ui-fonts";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=bundled-ui-fonts";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=bundled-ui-fonts";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=bundled-ui-fonts";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=bundled-ui-fonts";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=bundled-ui-fonts";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=bundled-ui-fonts";
-import { PlayerController } from "./player/PlayerController.js?v=bundled-ui-fonts";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=bundled-ui-fonts";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=bundled-ui-fonts";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=bundled-ui-fonts";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=bundled-ui-fonts";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=bundled-ui-fonts";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=bundled-ui-fonts";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=bundled-ui-fonts";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=bundled-ui-fonts";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=bundled-ui-fonts";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=bundled-ui-fonts";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=bundled-ui-fonts";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=bundled-ui-fonts";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=bundled-ui-fonts";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=bundled-ui-fonts";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=bundled-ui-fonts";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=bundled-ui-fonts";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=bundled-ui-fonts";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=bundled-ui-fonts";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=bundled-ui-fonts";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=bundled-ui-fonts";
-import { createNarrationRuntime } from "./audio/NarrationRuntime.js?v=bundled-ui-fonts";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=bundled-ui-fonts";
+} from "./scene/InteriorObjectRegistry.js?v=alarm-silence";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=alarm-silence";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=alarm-silence";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=alarm-silence";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=alarm-silence";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=alarm-silence";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=alarm-silence";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=alarm-silence";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=alarm-silence";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=alarm-silence";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=alarm-silence";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=alarm-silence";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=alarm-silence";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=alarm-silence";
+import { PlayerController } from "./player/PlayerController.js?v=alarm-silence";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=alarm-silence";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=alarm-silence";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=alarm-silence";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=alarm-silence";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=alarm-silence";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=alarm-silence";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=alarm-silence";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=alarm-silence";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=alarm-silence";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=alarm-silence";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=alarm-silence";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=alarm-silence";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=alarm-silence";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=alarm-silence";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=alarm-silence";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=alarm-silence";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=alarm-silence";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=alarm-silence";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=alarm-silence";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=alarm-silence";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=alarm-silence";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=alarm-silence";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=bundled-ui-fonts";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=alarm-silence";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -995,7 +997,12 @@ const getOperationalNeedleJitter = sceneFeedbackMath.getOperationalNeedleJitter;
 const coreAudioRuntime = new CoreAudioRuntime({
   audio: audioRuntime,
   getCoreAnchor: () => panelModel,
-  getPanel: () => panelModel,
+  playSound: playSoundAtObject,
+});
+const announcementSystemRuntime = new AnnouncementSystemRuntime({
+  audio: audioRuntime,
+  getEmitters: (levelId) => findLevelRadioRuntimes(levelPrefabInstances, levelId),
+  getFallbackEmitter: () => panelModel,
   playSound: playSoundAtObject,
 });
 const sceneAudioRuntime = new SceneAudioRuntime({
@@ -1015,6 +1022,7 @@ const sceneAudioRuntime = new SceneAudioRuntime({
     getStartupLightFactor() * getTerminalLightFactor() * diagnosticRuntime.getBlackoutFactor(),
   getSnapshot: () => latestSnapshot,
   coreAudio: coreAudioRuntime,
+  announcements: announcementSystemRuntime,
   playSound: playSoundAtObject,
 });
 const updateAudioState = sceneAudioRuntime.update;
@@ -2110,6 +2118,13 @@ const operatorInputRuntime = createOperatorInputRuntime({
       });
     } else if (target?.userData.kind === "viewportShutterButton"
       && activateStatusViewportShutter(target, levelPrefabInstances)) {
+      playSoundGroupAtObject(target, "mechanicalButton", { maxDistance: 3 });
+    } else if (target?.userData.kind === "alarmSilenceButton"
+      && activateStatusViewportAlarmSilence(
+        target,
+        levelPrefabInstances,
+        () => announcementSystemRuntime.toggleSilenced(),
+      )) {
       playSoundGroupAtObject(target, "mechanicalButton", { maxDistance: 3 });
     }
   },

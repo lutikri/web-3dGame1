@@ -205,8 +205,8 @@ export const POST_PROCESSING_OVERRIDES = {
     "threshold": 0.33
   },
   "antiAliasing": {
-    "method": "off",
-    "msaaSamples": 8
+    "method": "smaa",
+    "msaaSamples": 0
   },
   "lensEffects": {
     "enabled": true,

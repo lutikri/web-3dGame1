@@ -111,12 +111,17 @@ const PREFAB_DEFINITIONS = {
     statusViewport: {
       screenMeshName: "SM_PanelViewStatus1_Screen",
       shutterButtonMeshName: "SM_PanelViewStatus1_Button_ViewShutter",
+      alarmSilenceButtonMeshName: "SM_PanelViewStatus1_Indicator_AlarmSilence",
       shutterPrefabName: "CoreViewport1",
       shutterTargetPrefabName: "CoreViewport1",
       shutterButtonLabel: "VIEWPORT SHUTTER",
       shutterButtonMaxDistance: 1.85,
       shutterButtonPressAxis: "y",
       shutterButtonPressDistance: -0.006,
+      alarmSilenceButtonLabel: "ALARM SILENCE",
+      alarmSilenceButtonMaxDistance: 1.85,
+      alarmSilenceButtonPressAxis: "y",
+      alarmSilenceButtonPressDistance: -0.006,
       updateIntervalSeconds: 1,
       screen: {
         flipX: true,

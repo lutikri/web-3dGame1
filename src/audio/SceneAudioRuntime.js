@@ -17,12 +17,14 @@ export class SceneAudioRuntime {
     getLightFactor,
     getSnapshot,
     coreAudio,
+    announcements,
     playSound,
   }) {
     Object.assign(this, {
       config, audio, camera, getPanel, keys, prefabInstances, getViewMode, getActiveLevelId,
       resolveEnvironmentId, hasPanel, getMovementVelocity, isNoclipEnabled, getLightFactor,
       getSnapshot, coreAudio, playSound,
+      announcements,
     });
     this.previousLightFactor = 1;
   }
@@ -41,15 +43,24 @@ export class SceneAudioRuntime {
     this.#updatePanel(displayedLevelId, viewMode);
     this.#updateFootsteps(viewMode);
     this.#updatePrefabLoops(displayedLevelId, lightFactor);
+    const snapshot = this.getSnapshot();
     this.coreAudio.update(dt, {
       levelId: displayedLevelId,
       active: viewMode === "level" && this.hasPanel(displayedLevelId),
-      snapshot: this.getSnapshot(),
+      snapshot,
+    });
+    this.announcements.update(dt, {
+      levelId: displayedLevelId,
+      active: viewMode === "level" && this.hasPanel(displayedLevelId),
+      snapshot,
     });
   };
 
   #updatePanel(levelId, viewMode) {
-    // CoreAudioRuntime owns the reactor panel bed and its alarm layers.
+    this.audio.setAttachedLoop("panel:core", this.getPanel(), "Core1_Panel1_Loop",
+      viewMode === "level" && this.hasPanel(levelId), {
+        levelId, volume: 0.18, refDistance: 0.8, maxDistance: 4.5, fadeSeconds: 0.8,
+      });
   }
 
   #updateFootsteps(viewMode) {

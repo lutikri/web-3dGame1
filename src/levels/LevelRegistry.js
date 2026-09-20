@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=bundled-ui-fonts";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=bundled-ui-fonts";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=bundled-ui-fonts";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=bundled-ui-fonts";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=alarm-silence";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=alarm-silence";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=alarm-silence";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=alarm-silence";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();

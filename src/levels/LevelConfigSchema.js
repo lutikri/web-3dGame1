@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=bundled-ui-fonts";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=alarm-silence";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 
