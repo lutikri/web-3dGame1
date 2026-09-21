@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=shared-screen-focus";
+} from "./ServiceTerminalCanvasRenderer.js?v=early-menu-track";
 
 export function createServiceTerminalRuntime(
   parts,

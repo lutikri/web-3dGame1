@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=shared-screen-focus";
+import { LevelRuntime } from "./LevelRuntime.js?v=early-menu-track";
 
 export class LevelEnvironmentLifecycle {
   constructor({

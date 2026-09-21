@@ -10,6 +10,18 @@ test("menu music gives the rare loop an explicit one-in-twenty chance", () => {
   assert.equal(chooseMenuMusic({ previousKey: "Menu_Musical1", random: () => rolls.shift() }), "Menu_Musical2");
 });
 
+test("menu music honors the early-progression preferred track before random selection", () => {
+  let randomCalls = 0;
+  assert.equal(chooseMenuMusic({
+    preferredMusicKey: "Menu_Musical5",
+    random: () => {
+      randomCalls += 1;
+      return 0;
+    },
+  }), "Menu_Musical5");
+  assert.equal(randomCalls, 0);
+});
+
 test("menu audio owns ambience and one stable music loop per menu visit", () => {
   const calls = [];
   const rolls = [0.5, 0, 0.5, 0];
@@ -30,6 +42,25 @@ test("menu audio owns ambience and one stable music loop per menu visit", () => 
     ["Menu_Musical1", false],
     ["Menu_Ambience1", true],
     ["Menu_Musical2", true],
+  ]);
+});
+
+test("active menu audio can switch between progression policy and normal rotation", () => {
+  const calls = [];
+  const runtime = new MenuAudioRuntime({
+    audio: { setLoop: (...args) => calls.push(args) },
+    random: () => 0.5,
+  });
+
+  assert.equal(runtime.setActive(true, { preferredMusicKey: "Menu_Musical5" }), "Menu_Musical5");
+  assert.equal(runtime.setActive(true, { preferredMusicKey: "Menu_Musical5" }), "Menu_Musical5");
+  assert.equal(runtime.setActive(true), "Menu_Musical4");
+  assert.deepEqual(calls, [
+    ["Menu_Ambience1", true],
+    ["Menu_Musical5", true],
+    ["Menu_Musical5", false],
+    ["Menu_Ambience1", true],
+    ["Menu_Musical4", true],
   ]);
 });
 

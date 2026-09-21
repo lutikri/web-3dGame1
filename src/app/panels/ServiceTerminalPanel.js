@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=shared-screen-focus";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=early-menu-track";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

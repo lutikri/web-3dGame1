@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=shared-screen-focus";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=shared-screen-focus";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=early-menu-track";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=early-menu-track";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=shared-screen-focus";
+} from "./UiAudioInteractionRuntime.js?v=early-menu-track";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=shared-screen-focus";
+} from "../config/GraphicsHardwareTiers.js?v=early-menu-track";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=shared-screen-focus";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=early-menu-track";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

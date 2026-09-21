@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shared-screen-focus";
-import { applyLocalization, translate } from "./Localization.js?v=shared-screen-focus";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shared-screen-focus";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shared-screen-focus";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shared-screen-focus";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=shared-screen-focus";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shared-screen-focus";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=early-menu-track";
+import { applyLocalization, translate } from "./Localization.js?v=early-menu-track";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=early-menu-track";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=early-menu-track";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=early-menu-track";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=early-menu-track";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=early-menu-track";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,19 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=shared-screen-focus";
-import { createAppPanelController } from "./AppPanelController.js?v=shared-screen-focus";
-import { createAppRouter } from "./AppRouter.js?v=shared-screen-focus";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shared-screen-focus";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shared-screen-focus";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shared-screen-focus";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shared-screen-focus";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shared-screen-focus";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shared-screen-focus";
+} from "./AppPersistence.js?v=early-menu-track";
+import { createAppPanelController } from "./AppPanelController.js?v=early-menu-track";
+import { createAppRouter } from "./AppRouter.js?v=early-menu-track";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=early-menu-track";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=early-menu-track";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=early-menu-track";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=early-menu-track";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=early-menu-track";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=early-menu-track";
 
 const INTRO_LEVEL_ID = "intro-shift";
+const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
+const EARLY_MENU_COMPLETED_SHIFT_COUNT = 2;
 
 export function createAppShell({ gameApi }) {
   const overlay = document.querySelector("#appOverlay");
@@ -618,8 +620,20 @@ export function createAppShell({ gameApi }) {
   }
 
   function showPanel(panelName) {
-    gameApi.setMenuAudioActive?.(!activeGameplayLevelId);
+    gameApi.setMenuAudioActive?.(!activeGameplayLevelId, getMenuAudioPolicy());
     panelController.show(panelName);
+  }
+
+  function getMenuAudioPolicy() {
+    const firstAssignedShifts = Object.values(LEVELS)
+      .filter((level) => level.assignment)
+      .sort((a, b) => a.assignment.order - b.assignment.order)
+      .slice(0, EARLY_MENU_COMPLETED_SHIFT_COUNT);
+    const completedEarlyMenuSequence = firstAssignedShifts.length === EARLY_MENU_COMPLETED_SHIFT_COUNT
+      && firstAssignedShifts.every((level) => progress.completedLevels[level.id]);
+    return {
+      preferredMusicKey: completedEarlyMenuSequence ? null : EARLY_MENU_MUSIC_KEY,
+    };
   }
 
   function hideOverlay() {

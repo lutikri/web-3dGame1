@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shared-screen-focus";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=early-menu-track";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

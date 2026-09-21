@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=shared-screen-focus";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=early-menu-track";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

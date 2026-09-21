@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=shared-screen-focus";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=early-menu-track";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=shared-screen-focus";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=shared-screen-focus";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=shared-screen-focus";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=shared-screen-focus";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=early-menu-track";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=early-menu-track";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=early-menu-track";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=early-menu-track";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();

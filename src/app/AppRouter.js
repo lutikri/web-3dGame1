@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=shared-screen-focus";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=early-menu-track";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

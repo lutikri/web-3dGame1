@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=shared-screen-focus";
-import { applyLocalization } from "./app/Localization.js?v=shared-screen-focus";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=shared-screen-focus";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=shared-screen-focus";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=shared-screen-focus";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shared-screen-focus";
+import { createPreflight } from "./app/Preflight.js?v=early-menu-track";
+import { applyLocalization } from "./app/Localization.js?v=early-menu-track";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=early-menu-track";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=early-menu-track";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=early-menu-track";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=early-menu-track";
 
-const APP_BUILD_REVISION = "shared-screen-focus";
+const APP_BUILD_REVISION = "early-menu-track";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=shared-screen-focus`);
+await import(`./OperatorGame.js?v=early-menu-track`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=shared-screen-focus`);
+const { createAppShell } = await import(`./app/AppShell.js?v=early-menu-track`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -62,7 +62,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=shared-screen-focus`
+    `./runtime/RuntimeSmoke.js?v=early-menu-track`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

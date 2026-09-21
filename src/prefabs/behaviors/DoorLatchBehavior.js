@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=shared-screen-focus";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=early-menu-track";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

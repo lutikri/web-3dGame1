@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=shared-screen-focus";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=early-menu-track";
 
 export function createOperatorMovementRuntime({
   config,

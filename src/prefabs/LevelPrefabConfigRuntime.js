@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shared-screen-focus";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shared-screen-focus";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shared-screen-focus";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shared-screen-focus";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shared-screen-focus";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=early-menu-track";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=early-menu-track";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=early-menu-track";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=early-menu-track";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=early-menu-track";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=early-menu-track";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=early-menu-track";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

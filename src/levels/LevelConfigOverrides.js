@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shared-screen-focus";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=early-menu-track";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

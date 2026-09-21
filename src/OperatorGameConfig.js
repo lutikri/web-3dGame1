@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=shared-screen-focus";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=shared-screen-focus";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=shared-screen-focus";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=shared-screen-focus";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=early-menu-track";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=early-menu-track";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=early-menu-track";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=early-menu-track";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

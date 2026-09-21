@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shared-screen-focus";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shared-screen-focus";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shared-screen-focus";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shared-screen-focus";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shared-screen-focus";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shared-screen-focus";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shared-screen-focus";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shared-screen-focus";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shared-screen-focus";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=early-menu-track";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=early-menu-track";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=early-menu-track";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=early-menu-track";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=early-menu-track";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=early-menu-track";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=early-menu-track";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=early-menu-track";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=early-menu-track";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=early-menu-track";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=early-menu-track";
 
 export function createPrefabRuntimeFactory({
   config,

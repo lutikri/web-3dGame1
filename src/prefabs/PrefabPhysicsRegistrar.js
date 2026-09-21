@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=shared-screen-focus";
+} from "./behaviors/DeskDrawerBehavior.js?v=early-menu-track";
 
 export function createPrefabPhysicsRegistrar({
   physics,

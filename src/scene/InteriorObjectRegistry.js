@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=shared-screen-focus";
+import { applyAxisRotation } from "./TransformUtils.js?v=early-menu-track";
 
 export class InteriorObjectRegistry {
   constructor(options) {

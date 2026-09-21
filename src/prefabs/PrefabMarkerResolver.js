@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=shared-screen-focus";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=shared-screen-focus";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=early-menu-track";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=early-menu-track";
 
 const MARKER_PREFIX = "PF_";
 

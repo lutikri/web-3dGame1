@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=shared-screen-focus";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=early-menu-track";
 
 const DISMISS_MS = 300;
 

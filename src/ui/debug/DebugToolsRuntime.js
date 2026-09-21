@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=shared-screen-focus";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shared-screen-focus";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shared-screen-focus";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shared-screen-focus";
+import { createDebugHub } from "./DebugHub.js?v=early-menu-track";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=early-menu-track";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=early-menu-track";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=early-menu-track";
 
 export class DebugToolsRuntime {
   constructor(options) {

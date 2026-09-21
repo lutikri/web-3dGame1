@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shared-screen-focus";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=early-menu-track";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

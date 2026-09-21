@@ -3,145 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shared-screen-focus";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=early-menu-track";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=shared-screen-focus";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shared-screen-focus";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shared-screen-focus";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shared-screen-focus";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shared-screen-focus";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shared-screen-focus";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shared-screen-focus";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shared-screen-focus";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shared-screen-focus";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shared-screen-focus";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shared-screen-focus";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shared-screen-focus";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shared-screen-focus";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shared-screen-focus";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shared-screen-focus";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shared-screen-focus";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shared-screen-focus";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shared-screen-focus";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shared-screen-focus";
+} from "./game/ShiftReport.js?v=early-menu-track";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=early-menu-track";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=early-menu-track";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=early-menu-track";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=early-menu-track";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=early-menu-track";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=early-menu-track";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=early-menu-track";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=early-menu-track";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=early-menu-track";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=early-menu-track";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=early-menu-track";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=early-menu-track";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=early-menu-track";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=early-menu-track";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=early-menu-track";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=early-menu-track";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=early-menu-track";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=early-menu-track";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=early-menu-track";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shared-screen-focus";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shared-screen-focus";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shared-screen-focus";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shared-screen-focus";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shared-screen-focus";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shared-screen-focus";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shared-screen-focus";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shared-screen-focus";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shared-screen-focus";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shared-screen-focus";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shared-screen-focus";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shared-screen-focus";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shared-screen-focus";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=early-menu-track";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=early-menu-track";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=early-menu-track";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=early-menu-track";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=early-menu-track";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=early-menu-track";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=early-menu-track";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=early-menu-track";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=early-menu-track";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=early-menu-track";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=early-menu-track";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=early-menu-track";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=early-menu-track";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=early-menu-track";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=shared-screen-focus";
+} from "./config/GraphicsQualityProfiles.js?v=early-menu-track";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=shared-screen-focus";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shared-screen-focus";
-import { createStatusScreen } from "./StatusScreen.js?v=shared-screen-focus";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shared-screen-focus";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shared-screen-focus";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shared-screen-focus";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shared-screen-focus";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shared-screen-focus";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shared-screen-focus";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shared-screen-focus";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shared-screen-focus";
+} from "./scene/TextureStreaming.js?v=early-menu-track";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=early-menu-track";
+import { createStatusScreen } from "./StatusScreen.js?v=early-menu-track";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=early-menu-track";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=early-menu-track";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=early-menu-track";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=early-menu-track";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=early-menu-track";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=early-menu-track";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=early-menu-track";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=early-menu-track";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=shared-screen-focus";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shared-screen-focus";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shared-screen-focus";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=early-menu-track";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=early-menu-track";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=early-menu-track";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=shared-screen-focus";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shared-screen-focus";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shared-screen-focus";
-import { AssetCache } from "./runtime/AssetCache.js?v=shared-screen-focus";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shared-screen-focus";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shared-screen-focus";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shared-screen-focus";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shared-screen-focus";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shared-screen-focus";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shared-screen-focus";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shared-screen-focus";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shared-screen-focus";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shared-screen-focus";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shared-screen-focus";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shared-screen-focus";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shared-screen-focus";
+} from "./lighting/FluorescentBehavior.js?v=early-menu-track";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=early-menu-track";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=early-menu-track";
+import { AssetCache } from "./runtime/AssetCache.js?v=early-menu-track";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=early-menu-track";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=early-menu-track";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=early-menu-track";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=early-menu-track";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=early-menu-track";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=early-menu-track";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=early-menu-track";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=early-menu-track";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=early-menu-track";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=early-menu-track";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=early-menu-track";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=early-menu-track";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=shared-screen-focus";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shared-screen-focus";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shared-screen-focus";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shared-screen-focus";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shared-screen-focus";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shared-screen-focus";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shared-screen-focus";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shared-screen-focus";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shared-screen-focus";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shared-screen-focus";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shared-screen-focus";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shared-screen-focus";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shared-screen-focus";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shared-screen-focus";
-import { PlayerController } from "./player/PlayerController.js?v=shared-screen-focus";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shared-screen-focus";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shared-screen-focus";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shared-screen-focus";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shared-screen-focus";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shared-screen-focus";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shared-screen-focus";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shared-screen-focus";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shared-screen-focus";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shared-screen-focus";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shared-screen-focus";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shared-screen-focus";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shared-screen-focus";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shared-screen-focus";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shared-screen-focus";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shared-screen-focus";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shared-screen-focus";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shared-screen-focus";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shared-screen-focus";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shared-screen-focus";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=shared-screen-focus";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shared-screen-focus";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shared-screen-focus";
+} from "./scene/InteriorObjectRegistry.js?v=early-menu-track";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=early-menu-track";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=early-menu-track";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=early-menu-track";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=early-menu-track";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=early-menu-track";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=early-menu-track";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=early-menu-track";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=early-menu-track";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=early-menu-track";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=early-menu-track";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=early-menu-track";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=early-menu-track";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=early-menu-track";
+import { PlayerController } from "./player/PlayerController.js?v=early-menu-track";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=early-menu-track";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=early-menu-track";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=early-menu-track";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=early-menu-track";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=early-menu-track";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=early-menu-track";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=early-menu-track";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=early-menu-track";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=early-menu-track";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=early-menu-track";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=early-menu-track";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=early-menu-track";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=early-menu-track";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=early-menu-track";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=early-menu-track";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=early-menu-track";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=early-menu-track";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=early-menu-track";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=early-menu-track";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=early-menu-track";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=early-menu-track";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=early-menu-track";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shared-screen-focus";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=early-menu-track";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -2342,7 +2342,7 @@ installOperatorGameApi(window, {
   setGameplayPaused: (paused) => { gameplayPaused = Boolean(paused); },
   unlockAudio: () => audioRuntime.unlock(),
   isAudioUnlocked: () => audioRuntime.unlocked,
-  setMenuAudioActive: (active) => menuAudioRuntime.setActive(active),
+  setMenuAudioActive: (active, options) => menuAudioRuntime.setActive(active, options),
   setAudioSuspended: (suspended) => audioRuntime.setSuspended(suspended),
   setBriefingSheetOpener: (callback) => {
     briefingSheetOpener = typeof callback === "function" ? callback : null;

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=shared-screen-focus";
+import { translateRequired } from "./Localization.js?v=early-menu-track";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

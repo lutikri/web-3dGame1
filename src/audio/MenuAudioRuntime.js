@@ -10,9 +10,11 @@ export function chooseMenuMusic({
   commonMusicKeys = DEFAULT_COMMON_MUSIC,
   rareMusicKey = "Menu_Musical3_rare",
   rareChance = 1 / 20,
+  preferredMusicKey = null,
   previousKey = null,
   random = Math.random,
 } = {}) {
+  if (preferredMusicKey) return preferredMusicKey;
   if (rareMusicKey && random() < rareChance) return rareMusicKey;
   const withoutPrevious = commonMusicKeys.filter((key) => key !== previousKey);
   const choices = withoutPrevious.length ? withoutPrevious : commonMusicKeys;
@@ -40,12 +42,22 @@ export class MenuAudioRuntime {
     this.active = false;
     this.musicKey = null;
     this.previousMusicKey = null;
+    this.preferredMusicKey = null;
   }
 
-  setActive = (active) => {
+  setActive = (active, { preferredMusicKey = null } = {}) => {
     const nextActive = Boolean(active);
-    if (nextActive === this.active) return this.musicKey;
+    const nextPreferredMusicKey = preferredMusicKey || null;
+    if (nextActive === this.active && nextPreferredMusicKey === this.preferredMusicKey) return this.musicKey;
+
+    if (this.active && nextActive && this.musicKey) {
+      this.audio.setLoop(this.musicKey, false);
+      this.previousMusicKey = this.musicKey;
+      this.musicKey = null;
+    }
+
     this.active = nextActive;
+    this.preferredMusicKey = nextPreferredMusicKey;
     if (!nextActive) {
       this.audio.setLoop(this.ambienceKey, false);
       if (this.musicKey) this.audio.setLoop(this.musicKey, false);
@@ -58,6 +70,7 @@ export class MenuAudioRuntime {
       commonMusicKeys: this.commonMusicKeys,
       rareMusicKey: this.rareMusicKey,
       rareChance: this.rareChance,
+      preferredMusicKey: this.preferredMusicKey,
       previousKey: this.previousMusicKey,
       random: this.random,
     });
@@ -70,5 +83,6 @@ export class MenuAudioRuntime {
     active: this.active,
     ambienceKey: this.ambienceKey,
     musicKey: this.musicKey,
+    preferredMusicKey: this.preferredMusicKey,
   });
 }

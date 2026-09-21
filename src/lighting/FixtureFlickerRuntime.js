@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=shared-screen-focus";
+} from "./FluorescentBehavior.js?v=early-menu-track";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

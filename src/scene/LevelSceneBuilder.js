@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=shared-screen-focus";
+} from "../prefabs/PrefabMarkerResolver.js?v=early-menu-track";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=shared-screen-focus";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=shared-screen-focus";
+} from "../levels/LevelConfigOverrides.js?v=early-menu-track";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=early-menu-track";
 
 export function createLevelSceneBuilder({
   scene,

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shared-screen-focus";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=early-menu-track";
 
 const EFFECT_KEYS = [
   "bloom",

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=shared-screen-focus";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=early-menu-track";
 
 export class DoorInteractionSystem {
   constructor({
