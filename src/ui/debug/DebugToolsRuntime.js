@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=qualification-scoring";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=qualification-scoring";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=qualification-scoring";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=qualification-scoring";
+import { createDebugHub } from "./DebugHub.js?v=randomized-boot-backgrounds";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=randomized-boot-backgrounds";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=randomized-boot-backgrounds";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=randomized-boot-backgrounds";
 
 export class DebugToolsRuntime {
   constructor(options) {

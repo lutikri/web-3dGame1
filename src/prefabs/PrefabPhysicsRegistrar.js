@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=qualification-scoring";
+} from "./behaviors/DeskDrawerBehavior.js?v=randomized-boot-backgrounds";
 
 export function createPrefabPhysicsRegistrar({
   physics,

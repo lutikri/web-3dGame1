@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=qualification-scoring";
+import { LevelRuntime } from "./LevelRuntime.js?v=randomized-boot-backgrounds";
 
 export class LevelEnvironmentLifecycle {
   constructor({

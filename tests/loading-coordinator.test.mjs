@@ -32,3 +32,46 @@ test("loading coordinator owns route visibility and completion state", () => {
   assert.deepEqual(routeLifecycle, ["start", "complete"]);
   assert.deepEqual(calls[0], ["show", { title: "SHIFT", statusText: "PREP", progressValue: 12 }]);
 });
+
+test("repeat boot covers through the shared transition before hiding its overlay", async () => {
+  const order = [];
+  let finishOptions = null;
+  let finishCallback = null;
+  const overlay = {
+    finish(callback, options) {
+      finishOptions = options;
+      finishCallback = callback;
+      order.push("finish");
+    },
+    skip() {},
+    update() {},
+    setProgress() {},
+    setStatus() {},
+  };
+  const bootTransition = {
+    async cover(options) {
+      order.push(["cover", options]);
+    },
+  };
+  const coordinator = new LoadingCoordinator({
+    overlay,
+    shouldSkipBoot: () => false,
+    onBootComplete: () => order.push("complete"),
+    dispatchTarget: new EventTarget(),
+    isModelPending: () => false,
+    bootTransition,
+  });
+
+  coordinator.finishBoot();
+  await finishOptions.beforeHide();
+  order.push("hide");
+  finishCallback();
+
+  assert.equal(finishOptions.immediateHide, true);
+  assert.deepEqual(order, [
+    "finish",
+    ["cover", { tone: "black", durationMs: 420 }],
+    "hide",
+    "complete",
+  ]);
+});

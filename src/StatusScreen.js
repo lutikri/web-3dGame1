@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=qualification-scoring";
+} from "./panels/StatusScreenMaterial.js?v=randomized-boot-backgrounds";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

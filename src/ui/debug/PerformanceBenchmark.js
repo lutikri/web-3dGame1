@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=qualification-scoring";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
 
 const EFFECT_KEYS = [
   "bloom",

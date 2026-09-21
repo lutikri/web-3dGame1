@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=qualification-scoring";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=randomized-boot-backgrounds";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

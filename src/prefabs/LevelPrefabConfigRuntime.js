@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=qualification-scoring";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=qualification-scoring";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=qualification-scoring";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=qualification-scoring";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=qualification-scoring";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=qualification-scoring";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=qualification-scoring";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=randomized-boot-backgrounds";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=randomized-boot-backgrounds";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=randomized-boot-backgrounds";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=randomized-boot-backgrounds";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=randomized-boot-backgrounds";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=qualification-scoring";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=randomized-boot-backgrounds";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

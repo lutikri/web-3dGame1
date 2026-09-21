@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=qualification-scoring";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=randomized-boot-backgrounds";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

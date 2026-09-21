@@ -37,25 +37,40 @@
       </div>
       <button id="lockButton" type="button">Enter First Person</button>
       <canvas id="scene"></canvas>
-      <div id="loadingOverlay" class="loading-overlay" aria-live="polite">
+      <div id="loadingOverlay" class="loading-overlay boot-loading-overlay" aria-live="polite">
+        <div class="boot-backdrop" data-boot-background aria-hidden="true">
+          <img class="boot-background-image" data-boot-background-image src="./assets/ui/boot-backgrounds/site-12-01.webp" fetchpriority="high" alt="" />
+          <span class="boot-corner boot-corner-tl"></span><span class="boot-corner boot-corner-tr"></span>
+          <span class="boot-corner boot-corner-bl"></span><span class="boot-corner boot-corner-br"></span>
+          <div class="boot-watermark boot-watermark-left">TGLOBAL ST<br />SITE-12<br />EST. 2040</div>
+          <div class="boot-watermark boot-watermark-right">SYS&nbsp;&nbsp;v2.4.7<br />WEBGL&nbsp;&nbsp;<b data-boot-webgl>INIT</b><br />NODE&nbsp;&nbsp;04</div>
+          <div class="boot-footer-label">SITE-12 / LOCAL SERVICE MODE</div>
+          <div class="boot-footer-label boot-footer-label-right">SESSION_RESTORE</div>
+        </div>
         <div class="loading-stage">
-          <div class="loading-panel">
-            <div class="loading-header">
-              <span>TGLOBAL ST</span>
-              <span id="loadingPercent">00%</span>
+          <section class="boot-terminal" aria-label="Restoring operator session">
+            <header class="boot-terminal-header">
+              <span>TGLOBAL ST&nbsp;&nbsp;/&nbsp;&nbsp;SITE-12</span>
+              <span>LOCAL NODE 04</span>
+            </header>
+            <div class="boot-title-row">
+              <strong>RESTORING SESSION</strong>
+              <span id="loadingStatus">RECONNECTING TO LOCAL SERVICES</span>
+              <span id="loadingShiftTitle" hidden>LOCAL SERVICES</span>
             </div>
-            <div class="loading-body">
-              <div class="loading-spinner" aria-hidden="true"></div>
-              <div class="loading-copy">
-                <strong id="loadingStatus">INITIALIZING LOCAL TERMINAL...</strong>
-                <span id="loadingShiftTitle" class="loading-shift-title">VERIFYING DISPLAY PROFILE...</span>
-                <span class="loading-detail">LOADING ORIENTATION MATERIALS...</span>
-              </div>
+            <div class="boot-status-grid">
+              <section class="boot-status-column">
+                <h2>LOCAL SYSTEM STATUS</h2>
+                <div class="boot-system-row is-complete" data-boot-system="localSession"><i></i><span>LOCAL SESSION</span><b>RESTORED</b></div>
+                <div class="boot-system-row is-active" data-boot-system="siteData"><i></i><span>SITE DATA</span><b>LOADING</b></div>
+                <div class="boot-system-row is-active" data-boot-system="renderSystem"><i></i><span>RENDER SYSTEM</span><b>INITIALIZING</b></div>
+              </section>
             </div>
-            <div class="loading-bar" aria-hidden="true">
-              <div id="loadingBarFill"></div>
-            </div>
-          </div>
+            <footer class="boot-progress">
+              <div><span data-boot-ready-label>PLEASE STAND BY</span><strong id="loadingPercent">00%</strong></div>
+              <div class="loading-bar" aria-hidden="true"><div id="loadingBarFill"></div></div>
+            </footer>
+          </section>
         </div>
       </div>
       <div id="routeLoadingOverlay" class="loading-overlay route-loading-overlay" aria-live="polite" hidden>
@@ -274,6 +289,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=qualification-scoring"></script>
+    <script type="module" src="src/main.js?v=randomized-boot-backgrounds"></script>
   </body>
 </html>

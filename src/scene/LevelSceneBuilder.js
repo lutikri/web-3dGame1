@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=qualification-scoring";
+} from "../prefabs/PrefabMarkerResolver.js?v=randomized-boot-backgrounds";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=qualification-scoring";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=qualification-scoring";
+} from "../levels/LevelConfigOverrides.js?v=randomized-boot-backgrounds";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=randomized-boot-backgrounds";
 
 export function createLevelSceneBuilder({
   scene,

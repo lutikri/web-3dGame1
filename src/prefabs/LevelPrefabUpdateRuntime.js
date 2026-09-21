@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=qualification-scoring";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=qualification-scoring";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=qualification-scoring";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=qualification-scoring";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=qualification-scoring";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=qualification-scoring";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=qualification-scoring";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=qualification-scoring";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=randomized-boot-backgrounds";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=randomized-boot-backgrounds";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=randomized-boot-backgrounds";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=randomized-boot-backgrounds";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=randomized-boot-backgrounds";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=randomized-boot-backgrounds";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

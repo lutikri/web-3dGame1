@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=qualification-scoring";
+} from "./ServiceTerminalCanvasRenderer.js?v=randomized-boot-backgrounds";
 
 export function createServiceTerminalRuntime(
   parts,

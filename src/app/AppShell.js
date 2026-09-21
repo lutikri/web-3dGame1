@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=qualification-scoring";
-import { applyLocalization, translate } from "./Localization.js?v=qualification-scoring";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=qualification-scoring";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=qualification-scoring";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=qualification-scoring";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=qualification-scoring";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=qualification-scoring";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=randomized-boot-backgrounds";
+import { applyLocalization, translate } from "./Localization.js?v=randomized-boot-backgrounds";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=randomized-boot-backgrounds";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=randomized-boot-backgrounds";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=randomized-boot-backgrounds";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=randomized-boot-backgrounds";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=randomized-boot-backgrounds";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=qualification-scoring";
-import { createAppPanelController } from "./AppPanelController.js?v=qualification-scoring";
-import { createAppRouter } from "./AppRouter.js?v=qualification-scoring";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=qualification-scoring";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=qualification-scoring";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=qualification-scoring";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=qualification-scoring";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=qualification-scoring";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=qualification-scoring";
+} from "./AppPersistence.js?v=randomized-boot-backgrounds";
+import { createAppPanelController } from "./AppPanelController.js?v=randomized-boot-backgrounds";
+import { createAppRouter } from "./AppRouter.js?v=randomized-boot-backgrounds";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=randomized-boot-backgrounds";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=randomized-boot-backgrounds";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=randomized-boot-backgrounds";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=randomized-boot-backgrounds";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=randomized-boot-backgrounds";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=randomized-boot-backgrounds";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

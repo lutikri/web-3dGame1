@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=qualification-scoring";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=qualification-scoring";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=qualification-scoring";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=qualification-scoring";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=randomized-boot-backgrounds";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=randomized-boot-backgrounds";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=randomized-boot-backgrounds";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=randomized-boot-backgrounds";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

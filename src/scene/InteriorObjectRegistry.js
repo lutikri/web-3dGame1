@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=qualification-scoring";
+import { applyAxisRotation } from "./TransformUtils.js?v=randomized-boot-backgrounds";
 
 export class InteriorObjectRegistry {
   constructor(options) {

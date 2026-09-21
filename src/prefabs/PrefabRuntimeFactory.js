@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=qualification-scoring";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=qualification-scoring";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=qualification-scoring";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=qualification-scoring";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=qualification-scoring";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=qualification-scoring";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=qualification-scoring";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=qualification-scoring";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=qualification-scoring";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=qualification-scoring";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=qualification-scoring";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=randomized-boot-backgrounds";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=randomized-boot-backgrounds";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=randomized-boot-backgrounds";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=randomized-boot-backgrounds";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=randomized-boot-backgrounds";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=randomized-boot-backgrounds";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=randomized-boot-backgrounds";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=randomized-boot-backgrounds";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=randomized-boot-backgrounds";
 
 export function createPrefabRuntimeFactory({
   config,

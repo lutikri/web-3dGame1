@@ -1,7 +1,7 @@
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=qualification-scoring";
+} from "./ServiceTerminalBehavior.js?v=randomized-boot-backgrounds";
 
 export function createServiceTerminalInteractionRuntime({
   canvas,

@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=qualification-scoring";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=randomized-boot-backgrounds";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

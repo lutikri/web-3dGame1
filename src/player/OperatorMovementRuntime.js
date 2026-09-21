@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=qualification-scoring";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=randomized-boot-backgrounds";
 
 export function createOperatorMovementRuntime({
   config,

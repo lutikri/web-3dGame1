@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=qualification-scoring";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=randomized-boot-backgrounds";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

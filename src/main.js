@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=qualification-scoring";
-import { applyLocalization } from "./app/Localization.js?v=qualification-scoring";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=qualification-scoring";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=qualification-scoring";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=qualification-scoring";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=qualification-scoring";
+import { createPreflight } from "./app/Preflight.js?v=randomized-boot-backgrounds";
+import { applyLocalization } from "./app/Localization.js?v=randomized-boot-backgrounds";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=randomized-boot-backgrounds";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=randomized-boot-backgrounds";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=randomized-boot-backgrounds";
 
-const APP_BUILD_REVISION = "qualification-scoring";
+const APP_BUILD_REVISION = "randomized-boot-backgrounds";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -28,6 +28,7 @@ window.operatorGameBootOptions = {
   qualityProfile: bootProfile,
   displayGamma: bootDisplayGamma,
   firstRun: bootChoice.firstRun,
+  repeatBoot: !bootChoice.firstRun && !runtimeSmokeMode,
   deferFullTextures: bootChoice.firstRun,
   disableFullTextures: !bootQuality.fullTextures && !bootChoice.firstRun,
   returnToMenuAfterPreflight,
@@ -41,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=qualification-scoring`);
+await import(`./OperatorGame.js?v=randomized-boot-backgrounds`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=qualification-scoring`);
+const { createAppShell } = await import(`./app/AppShell.js?v=randomized-boot-backgrounds`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -53,11 +54,15 @@ if (firstBootSlides) {
   await window.operatorGameApp.initialRouteReady;
   await firstBootSlides.finish();
   window.operatorGameDebug.setAudioSuspended?.(false);
+} else if (window.operatorGameBootOptions.repeatBoot) {
+  await window.operatorGameApp.initialRouteReady;
+  await screenTransition.reveal({ durationMs: 720 });
+  window.operatorGameDebug.setAudioSuspended?.(false);
 }
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=qualification-scoring`
+    `./runtime/RuntimeSmoke.js?v=randomized-boot-backgrounds`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

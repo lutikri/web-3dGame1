@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=qualification-scoring";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=randomized-boot-backgrounds";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

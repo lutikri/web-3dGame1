@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=qualification-scoring";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=qualification-scoring";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=randomized-boot-backgrounds";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=randomized-boot-backgrounds";
 
 const MARKER_PREFIX = "PF_";
 

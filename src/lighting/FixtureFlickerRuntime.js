@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=qualification-scoring";
+} from "./FluorescentBehavior.js?v=randomized-boot-backgrounds";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

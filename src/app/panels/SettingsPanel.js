@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=qualification-scoring";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },
@@ -9,6 +9,7 @@ const RANGE_CONTROLS = [
 ];
 
 export function createSettingsPanel({ settings, gameApi, save, root = document, body = document.body }) {
+  const view = root.defaultView ?? globalThis.window;
   const panel = root.querySelector("#settingsPanel");
   const ranges = RANGE_CONTROLS.map((control) => ({
     ...control, input: root.querySelector(control.input), value: root.querySelector(control.value),
@@ -18,6 +19,15 @@ export function createSettingsPanel({ settings, gameApi, save, root = document, 
   const choices = [...(panel?.querySelectorAll("[data-setting-key]") ?? [])];
   let activeTab = "graphics";
   let wired = false;
+  let viewportObserver = null;
+
+  const updateScale = () => {
+    if (!panel || !view) return;
+    panel.style.setProperty(
+      "--settings-scale",
+      String(getSettingsPanelScale(view.innerWidth, view.innerHeight)),
+    );
+  };
 
   function initialize() {
     const boot = globalThis.window?.operatorGameBootOptions ?? {};
@@ -29,6 +39,12 @@ export function createSettingsPanel({ settings, gameApi, save, root = document, 
   function wire() {
     if (wired) return;
     wired = true;
+    updateScale();
+    view?.addEventListener?.("resize", updateScale);
+    if (view?.ResizeObserver && panel) {
+      viewportObserver = new view.ResizeObserver(updateScale);
+      viewportObserver.observe(body);
+    }
     ranges.forEach(({ key, input }) => input?.addEventListener("input", () => {
       settings[key] = Number(input.value);
       apply();
@@ -110,11 +126,24 @@ export function createSettingsPanel({ settings, gameApi, save, root = document, 
   }
 
   function show() {
+    updateScale();
     selectTab(activeTab);
     updateMetrics();
   }
 
-  return { wire, apply, show };
+  function dispose() {
+    view?.removeEventListener?.("resize", updateScale);
+    viewportObserver?.disconnect?.();
+    viewportObserver = null;
+  }
+
+  return { wire, apply, show, dispose };
+}
+
+export function getSettingsPanelScale(viewportWidth, viewportHeight) {
+  const width = Number.isFinite(viewportWidth) ? viewportWidth : 1920;
+  const height = Number.isFinite(viewportHeight) ? viewportHeight : 1080;
+  return Math.min(width / 1920, height / 1080);
 }
 
 export function defaultAntiAliasing(profile) {

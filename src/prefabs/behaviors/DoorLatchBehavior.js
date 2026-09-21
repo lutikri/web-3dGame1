@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=qualification-scoring";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=randomized-boot-backgrounds";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=qualification-scoring";
+import { translateRequired } from "./Localization.js?v=randomized-boot-backgrounds";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

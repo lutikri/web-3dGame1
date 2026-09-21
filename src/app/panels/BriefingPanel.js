@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=qualification-scoring";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=randomized-boot-backgrounds";
 
 const DISMISS_MS = 300;
 

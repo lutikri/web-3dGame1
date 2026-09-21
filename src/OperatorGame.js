@@ -3,144 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=qualification-scoring";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=randomized-boot-backgrounds";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=qualification-scoring";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=qualification-scoring";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=qualification-scoring";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=qualification-scoring";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=qualification-scoring";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=qualification-scoring";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=qualification-scoring";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=qualification-scoring";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=qualification-scoring";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=qualification-scoring";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=qualification-scoring";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=qualification-scoring";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=qualification-scoring";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=qualification-scoring";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=qualification-scoring";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=qualification-scoring";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=qualification-scoring";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=qualification-scoring";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=qualification-scoring";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=qualification-scoring";
+} from "./game/ShiftReport.js?v=randomized-boot-backgrounds";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=randomized-boot-backgrounds";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=randomized-boot-backgrounds";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=randomized-boot-backgrounds";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=randomized-boot-backgrounds";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=randomized-boot-backgrounds";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=randomized-boot-backgrounds";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=randomized-boot-backgrounds";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=randomized-boot-backgrounds";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=randomized-boot-backgrounds";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=randomized-boot-backgrounds";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=randomized-boot-backgrounds";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=randomized-boot-backgrounds";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=randomized-boot-backgrounds";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=randomized-boot-backgrounds";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=randomized-boot-backgrounds";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=randomized-boot-backgrounds";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=randomized-boot-backgrounds";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=randomized-boot-backgrounds";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=qualification-scoring";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=qualification-scoring";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=qualification-scoring";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=qualification-scoring";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=qualification-scoring";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=qualification-scoring";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=qualification-scoring";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=qualification-scoring";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=qualification-scoring";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=qualification-scoring";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=qualification-scoring";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=qualification-scoring";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=qualification-scoring";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=qualification-scoring";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=randomized-boot-backgrounds";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=randomized-boot-backgrounds";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=randomized-boot-backgrounds";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=randomized-boot-backgrounds";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=randomized-boot-backgrounds";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=randomized-boot-backgrounds";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=randomized-boot-backgrounds";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=randomized-boot-backgrounds";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=randomized-boot-backgrounds";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=randomized-boot-backgrounds";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=randomized-boot-backgrounds";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=randomized-boot-backgrounds";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=randomized-boot-backgrounds";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=qualification-scoring";
+} from "./config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=qualification-scoring";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=qualification-scoring";
-import { createStatusScreen } from "./StatusScreen.js?v=qualification-scoring";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=qualification-scoring";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=qualification-scoring";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=qualification-scoring";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=qualification-scoring";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=qualification-scoring";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=qualification-scoring";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=qualification-scoring";
+} from "./scene/TextureStreaming.js?v=randomized-boot-backgrounds";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=randomized-boot-backgrounds";
+import { createStatusScreen } from "./StatusScreen.js?v=randomized-boot-backgrounds";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=randomized-boot-backgrounds";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=randomized-boot-backgrounds";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=randomized-boot-backgrounds";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=randomized-boot-backgrounds";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=randomized-boot-backgrounds";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=randomized-boot-backgrounds";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=randomized-boot-backgrounds";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=randomized-boot-backgrounds";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=qualification-scoring";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=qualification-scoring";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=qualification-scoring";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=randomized-boot-backgrounds";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=randomized-boot-backgrounds";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=randomized-boot-backgrounds";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=qualification-scoring";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=qualification-scoring";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=qualification-scoring";
-import { AssetCache } from "./runtime/AssetCache.js?v=qualification-scoring";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=qualification-scoring";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=qualification-scoring";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=qualification-scoring";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=qualification-scoring";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=qualification-scoring";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=qualification-scoring";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=qualification-scoring";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=qualification-scoring";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=qualification-scoring";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=qualification-scoring";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=qualification-scoring";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=qualification-scoring";
+} from "./lighting/FluorescentBehavior.js?v=randomized-boot-backgrounds";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=randomized-boot-backgrounds";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=randomized-boot-backgrounds";
+import { AssetCache } from "./runtime/AssetCache.js?v=randomized-boot-backgrounds";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=randomized-boot-backgrounds";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=randomized-boot-backgrounds";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=randomized-boot-backgrounds";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=randomized-boot-backgrounds";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=randomized-boot-backgrounds";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=randomized-boot-backgrounds";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=randomized-boot-backgrounds";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=randomized-boot-backgrounds";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=randomized-boot-backgrounds";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=randomized-boot-backgrounds";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=randomized-boot-backgrounds";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=randomized-boot-backgrounds";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=qualification-scoring";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=qualification-scoring";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=qualification-scoring";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=qualification-scoring";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=qualification-scoring";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=qualification-scoring";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=qualification-scoring";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=qualification-scoring";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=qualification-scoring";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=qualification-scoring";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=qualification-scoring";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=qualification-scoring";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=qualification-scoring";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=qualification-scoring";
-import { PlayerController } from "./player/PlayerController.js?v=qualification-scoring";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=qualification-scoring";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=qualification-scoring";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=qualification-scoring";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=qualification-scoring";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=qualification-scoring";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=qualification-scoring";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=qualification-scoring";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=qualification-scoring";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=qualification-scoring";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=qualification-scoring";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=qualification-scoring";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=qualification-scoring";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=qualification-scoring";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=qualification-scoring";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=qualification-scoring";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=qualification-scoring";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=qualification-scoring";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=qualification-scoring";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=qualification-scoring";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=qualification-scoring";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=qualification-scoring";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=qualification-scoring";
+} from "./scene/InteriorObjectRegistry.js?v=randomized-boot-backgrounds";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=randomized-boot-backgrounds";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=randomized-boot-backgrounds";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=randomized-boot-backgrounds";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=randomized-boot-backgrounds";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=randomized-boot-backgrounds";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=randomized-boot-backgrounds";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=randomized-boot-backgrounds";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=randomized-boot-backgrounds";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=randomized-boot-backgrounds";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=randomized-boot-backgrounds";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=randomized-boot-backgrounds";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=randomized-boot-backgrounds";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=randomized-boot-backgrounds";
+import { PlayerController } from "./player/PlayerController.js?v=randomized-boot-backgrounds";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=randomized-boot-backgrounds";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=randomized-boot-backgrounds";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=randomized-boot-backgrounds";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=randomized-boot-backgrounds";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=randomized-boot-backgrounds";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=randomized-boot-backgrounds";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=randomized-boot-backgrounds";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=randomized-boot-backgrounds";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=randomized-boot-backgrounds";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=randomized-boot-backgrounds";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=randomized-boot-backgrounds";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=randomized-boot-backgrounds";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=randomized-boot-backgrounds";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=randomized-boot-backgrounds";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=randomized-boot-backgrounds";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=randomized-boot-backgrounds";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=randomized-boot-backgrounds";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=randomized-boot-backgrounds";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=randomized-boot-backgrounds";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=randomized-boot-backgrounds";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=randomized-boot-backgrounds";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=randomized-boot-backgrounds";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=qualification-scoring";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=randomized-boot-backgrounds";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -217,6 +218,7 @@ const loadingOverlay = createLoadingOverlay({
   status: document.querySelector("#loadingStatus"),
   shiftTitle: document.querySelector("#loadingShiftTitle"),
   barFill: document.querySelector("#loadingBarFill"),
+  minimumVisibleMs: bootOptions.repeatBoot ? 900 : 2000,
   finishStatusText: translate("loading.coreOnline"),
 });
 
@@ -246,6 +248,10 @@ const camera = new THREE.PerspectiveCamera(CONFIG.camera.fovDegrees, window.inne
 camera.position.copy(playerSpawnPosition);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+loadingOverlay.setBootDiagnostics({
+  renderer: renderer.capabilities.isWebGL2 ? "WEBGL 2 / ACTIVE" : "WEBGL 1 / ACTIVE",
+  profile: bootOptions.qualityProfile ?? "high",
+});
 renderer.setPixelRatio(getQualityProfilePixelRatio(bootOptions.qualityProfile ?? "high"));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -402,7 +408,7 @@ const audioRuntime = new AudioRuntime({
   groups: SOUND_GROUPS,
   mix: SOUND_MIX,
   masterVolume: 1,
-  suspended: Boolean(bootOptions.firstRun),
+  suspended: Boolean(bootOptions.firstRun || bootOptions.repeatBoot),
 });
 const menuAudioRuntime = new MenuAudioRuntime({ audio: audioRuntime });
 let activeShiftProfile = null;
@@ -654,6 +660,7 @@ const loadingCoordinator = new LoadingCoordinator({
   onRouteStart: () => deferredTextureUpgradeQueue?.pause(),
   onRouteComplete: () => deferredTextureUpgradeQueue?.resume(),
   isModelPending: () => !panelModel,
+  bootTransition: bootOptions.repeatBoot ? getScreenTransitionRuntime() : null,
 });
 const setLoadingProgress = loadingCoordinator.setProgress;
 const setLoadingStatus = loadingCoordinator.setStatus;
@@ -1490,6 +1497,8 @@ await init();
 
 async function init() {
   if (CONFIG.loading?.skip || fastDebugBoot) skipLoadingOverlay();
+  loadingOverlay.setBootSystem("siteData", "active", "LOADING");
+  loadingOverlay.appendBootLog("loading site configuration");
   restoreSavedPostProcessingConfig(CONFIG.postProcessing);
   configureQualityProfile(bootOptions.qualityProfile ?? "high");
   CONFIG.postProcessing.colorAdjustments.gamma = Number(bootOptions.displayGamma ?? 0.93);
@@ -1497,16 +1506,30 @@ async function init() {
   setupLights();
   setupLightFixtures();
   buildRoom();
+  loadingOverlay.appendBootLog("preparing material programs");
   postProcessingRuntime.setup();
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);
-  const initialLevelLoad = loadLevelEnvironment(getMenuEnvironmentId());
-  await Promise.all([initialLevelLoad, operatorPanelRuntime.load()]);
+  const initialLevelLoad = loadLevelEnvironment(getMenuEnvironmentId()).then((result) => {
+    loadingOverlay.setBootSystem("siteData", "complete", "LOADED");
+    loadingOverlay.appendBootLog("site data loaded");
+    return result;
+  });
+  const initialPanelLoad = operatorPanelRuntime.load().then((result) => {
+    loadingOverlay.setBootSystem("controlBus", "complete", "READY");
+    loadingOverlay.appendBootLog("control bus bound");
+    return result;
+  });
+  loadingOverlay.setBootSystem("controlBus", "active", "BINDING");
+  loadingOverlay.appendBootLog("compiling local render pipeline");
+  await Promise.all([initialLevelLoad, initialPanelLoad]);
   if (CONFIG.loading?.skip || fastDebugBoot) {
     triggerRoomLightBoot();
   } else {
     await enterMenuView();
+    loadingOverlay.setBootSystem("renderSystem", "complete", "ONLINE");
+    loadingOverlay.appendBootLog("menu environment ready");
     finishLoading();
   }
   animationLoop.start();

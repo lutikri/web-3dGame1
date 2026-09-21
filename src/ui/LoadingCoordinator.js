@@ -8,6 +8,7 @@ export class LoadingCoordinator {
     onRouteComplete = () => {},
     dispatchTarget = window,
     isModelPending,
+    bootTransition = null,
   }) {
     this.overlay = overlay;
     this.complete = initialComplete;
@@ -17,6 +18,7 @@ export class LoadingCoordinator {
     this.onRouteComplete = onRouteComplete;
     this.dispatchTarget = dispatchTarget;
     this.isModelPending = isModelPending;
+    this.bootTransition = bootTransition;
   }
 
   setProgress = (value) => this.overlay.setProgress(value);
@@ -32,6 +34,11 @@ export class LoadingCoordinator {
       this.complete = true;
       this.#dispatchComplete();
       this.onBootComplete();
+    }, {
+      beforeHide: this.bootTransition
+        ? () => this.bootTransition.cover({ tone: "black", durationMs: 420 })
+        : undefined,
+      immediateHide: Boolean(this.bootTransition),
     });
   };
 

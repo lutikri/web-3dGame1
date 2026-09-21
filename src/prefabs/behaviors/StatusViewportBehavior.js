@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=qualification-scoring";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=qualification-scoring";
+} from "../../panels/StatusScreenMaterial.js?v=randomized-boot-backgrounds";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=randomized-boot-backgrounds";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
