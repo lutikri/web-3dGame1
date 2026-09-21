@@ -21,6 +21,10 @@ test("interaction hover resolves hit proxies and distance policy", () => {
   assert.equal(getInteractionMaxDistance(root, { panelMaxDistance: 2 }), 0.75);
   assert.equal(getTooltipTarget(root), root);
   assert.equal(getTooltipTarget({ userData: { kind: "hingedDoor" } }), null);
+  assert.equal(getTooltipTarget({ userData: { kind: "doorLatchHandle" } }), null);
+  assert.equal(getTooltipTarget({ userData: { kind: "serviceTerminal" } }), null);
+  assert.equal(getTooltipTarget({ userData: { kind: "hingedDoor" } }, { forceTooltip: true }).userData.kind, "hingedDoor");
+  assert.equal(getTooltipTarget({ userData: { kind: "serviceTerminal" } }, { forceTooltip: true }), null);
 });
 
 test("dynamic view obstruction continuously limits an active lean offset", () => {

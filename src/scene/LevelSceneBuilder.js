@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=randomized-boot-backgrounds";
+} from "../prefabs/PrefabMarkerResolver.js?v=shared-screen-focus";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=randomized-boot-backgrounds";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=randomized-boot-backgrounds";
+} from "../levels/LevelConfigOverrides.js?v=shared-screen-focus";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=shared-screen-focus";
 
 export function createLevelSceneBuilder({
   scene,

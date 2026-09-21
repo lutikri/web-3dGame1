@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=randomized-boot-backgrounds";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=randomized-boot-backgrounds";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shared-screen-focus";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=shared-screen-focus";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=randomized-boot-backgrounds";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=randomized-boot-backgrounds";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=randomized-boot-backgrounds";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=randomized-boot-backgrounds";
+import { createDebugHub } from "./DebugHub.js?v=shared-screen-focus";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shared-screen-focus";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shared-screen-focus";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shared-screen-focus";
 
 export class DebugToolsRuntime {
   constructor(options) {

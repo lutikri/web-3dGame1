@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=randomized-boot-backgrounds";
+} from "./FluorescentBehavior.js?v=shared-screen-focus";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shared-screen-focus";
 
 const EFFECT_KEYS = [
   "bloom",

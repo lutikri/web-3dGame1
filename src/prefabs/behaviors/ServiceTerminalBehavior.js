@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=randomized-boot-backgrounds";
+} from "./ServiceTerminalCanvasRenderer.js?v=shared-screen-focus";
 
 export function createServiceTerminalRuntime(
   parts,
@@ -13,6 +13,11 @@ export function createServiceTerminalRuntime(
   const screen = parts.get(screenName);
   if (!screen?.isMesh) {
     throw new Error(`[ServiceTerminal] Missing screen mesh "${screenName}" in prefab "${instanceName}"`);
+  }
+  const viewSocketName = config.viewSocketName ?? "SOCKET_TerminalView";
+  const viewSocket = parts.get(viewSocketName);
+  if (!viewSocket) {
+    throw new Error(`[ServiceTerminal] Missing view socket "${viewSocketName}" in prefab "${instanceName}"`);
   }
   const glassName = config.glassMeshName ?? "SM_Terminal_ScreenGlass";
   const glass = parts.get(glassName);
@@ -36,6 +41,11 @@ export function createServiceTerminalRuntime(
   return {
     screen,
     screenName,
+    viewSocket,
+    viewSocketName,
+    focusFovDegrees: Number(config.focusFovDegrees ?? 52),
+    enterDurationSeconds: Number(config.enterDurationSeconds ?? 0.42),
+    exitDurationSeconds: Number(config.exitDurationSeconds ?? 0.32),
     glass,
     glassName,
     renderer,

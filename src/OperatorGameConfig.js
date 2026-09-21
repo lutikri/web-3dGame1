@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=randomized-boot-backgrounds";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=randomized-boot-backgrounds";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=randomized-boot-backgrounds";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=randomized-boot-backgrounds";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=shared-screen-focus";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=shared-screen-focus";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=shared-screen-focus";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=shared-screen-focus";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -175,6 +175,14 @@ export const CONFIG = {
     rotation: new THREE.Euler(0, 0, 0),
     scale: new THREE.Vector3(1, 1, 1),
     placeholderColor: "#365247",
+    focusView: {
+      screenMeshName: "DisplaySmall1_ScreenMesh",
+      viewSocketName: "SOCKET_ScreenView",
+      maxDistance: 1.85,
+      focusFovDegrees: 52,
+      enterDurationSeconds: 0.42,
+      exitDurationSeconds: 0.32,
+    },
     maps: {
       preview: {
         baseColor: "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",

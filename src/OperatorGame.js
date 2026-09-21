@@ -3,145 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=randomized-boot-backgrounds";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shared-screen-focus";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=randomized-boot-backgrounds";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=randomized-boot-backgrounds";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=randomized-boot-backgrounds";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=randomized-boot-backgrounds";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=randomized-boot-backgrounds";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=randomized-boot-backgrounds";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=randomized-boot-backgrounds";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=randomized-boot-backgrounds";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=randomized-boot-backgrounds";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=randomized-boot-backgrounds";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=randomized-boot-backgrounds";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=randomized-boot-backgrounds";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=randomized-boot-backgrounds";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=randomized-boot-backgrounds";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=randomized-boot-backgrounds";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=randomized-boot-backgrounds";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=randomized-boot-backgrounds";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=randomized-boot-backgrounds";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=randomized-boot-backgrounds";
+} from "./game/ShiftReport.js?v=shared-screen-focus";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shared-screen-focus";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shared-screen-focus";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shared-screen-focus";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shared-screen-focus";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shared-screen-focus";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shared-screen-focus";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shared-screen-focus";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shared-screen-focus";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shared-screen-focus";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shared-screen-focus";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shared-screen-focus";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shared-screen-focus";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shared-screen-focus";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shared-screen-focus";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shared-screen-focus";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shared-screen-focus";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shared-screen-focus";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shared-screen-focus";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=randomized-boot-backgrounds";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=randomized-boot-backgrounds";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=randomized-boot-backgrounds";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=randomized-boot-backgrounds";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=randomized-boot-backgrounds";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=randomized-boot-backgrounds";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=randomized-boot-backgrounds";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=randomized-boot-backgrounds";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=randomized-boot-backgrounds";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=randomized-boot-backgrounds";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=randomized-boot-backgrounds";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=randomized-boot-backgrounds";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=randomized-boot-backgrounds";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shared-screen-focus";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shared-screen-focus";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shared-screen-focus";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shared-screen-focus";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shared-screen-focus";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shared-screen-focus";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shared-screen-focus";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shared-screen-focus";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shared-screen-focus";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shared-screen-focus";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shared-screen-focus";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shared-screen-focus";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shared-screen-focus";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
+} from "./config/GraphicsQualityProfiles.js?v=shared-screen-focus";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=randomized-boot-backgrounds";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=randomized-boot-backgrounds";
-import { createStatusScreen } from "./StatusScreen.js?v=randomized-boot-backgrounds";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=randomized-boot-backgrounds";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=randomized-boot-backgrounds";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=randomized-boot-backgrounds";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=randomized-boot-backgrounds";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=randomized-boot-backgrounds";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=randomized-boot-backgrounds";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=randomized-boot-backgrounds";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=randomized-boot-backgrounds";
+} from "./scene/TextureStreaming.js?v=shared-screen-focus";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shared-screen-focus";
+import { createStatusScreen } from "./StatusScreen.js?v=shared-screen-focus";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shared-screen-focus";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shared-screen-focus";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shared-screen-focus";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shared-screen-focus";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shared-screen-focus";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shared-screen-focus";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shared-screen-focus";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shared-screen-focus";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=randomized-boot-backgrounds";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=randomized-boot-backgrounds";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=randomized-boot-backgrounds";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=shared-screen-focus";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shared-screen-focus";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shared-screen-focus";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=randomized-boot-backgrounds";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=randomized-boot-backgrounds";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=randomized-boot-backgrounds";
-import { AssetCache } from "./runtime/AssetCache.js?v=randomized-boot-backgrounds";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=randomized-boot-backgrounds";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=randomized-boot-backgrounds";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=randomized-boot-backgrounds";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=randomized-boot-backgrounds";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=randomized-boot-backgrounds";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=randomized-boot-backgrounds";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=randomized-boot-backgrounds";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=randomized-boot-backgrounds";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=randomized-boot-backgrounds";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=randomized-boot-backgrounds";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=randomized-boot-backgrounds";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=randomized-boot-backgrounds";
+} from "./lighting/FluorescentBehavior.js?v=shared-screen-focus";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shared-screen-focus";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shared-screen-focus";
+import { AssetCache } from "./runtime/AssetCache.js?v=shared-screen-focus";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shared-screen-focus";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shared-screen-focus";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shared-screen-focus";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shared-screen-focus";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shared-screen-focus";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shared-screen-focus";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shared-screen-focus";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shared-screen-focus";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shared-screen-focus";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shared-screen-focus";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shared-screen-focus";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shared-screen-focus";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=randomized-boot-backgrounds";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=randomized-boot-backgrounds";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=randomized-boot-backgrounds";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=randomized-boot-backgrounds";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=randomized-boot-backgrounds";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=randomized-boot-backgrounds";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=randomized-boot-backgrounds";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=randomized-boot-backgrounds";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=randomized-boot-backgrounds";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=randomized-boot-backgrounds";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=randomized-boot-backgrounds";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=randomized-boot-backgrounds";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=randomized-boot-backgrounds";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=randomized-boot-backgrounds";
-import { PlayerController } from "./player/PlayerController.js?v=randomized-boot-backgrounds";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=randomized-boot-backgrounds";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=randomized-boot-backgrounds";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=randomized-boot-backgrounds";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=randomized-boot-backgrounds";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=randomized-boot-backgrounds";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=randomized-boot-backgrounds";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=randomized-boot-backgrounds";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=randomized-boot-backgrounds";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=randomized-boot-backgrounds";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=randomized-boot-backgrounds";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=randomized-boot-backgrounds";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=randomized-boot-backgrounds";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=randomized-boot-backgrounds";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=randomized-boot-backgrounds";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=randomized-boot-backgrounds";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=randomized-boot-backgrounds";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=randomized-boot-backgrounds";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=randomized-boot-backgrounds";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=randomized-boot-backgrounds";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=randomized-boot-backgrounds";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=randomized-boot-backgrounds";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=randomized-boot-backgrounds";
+} from "./scene/InteriorObjectRegistry.js?v=shared-screen-focus";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shared-screen-focus";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shared-screen-focus";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shared-screen-focus";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shared-screen-focus";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shared-screen-focus";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shared-screen-focus";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shared-screen-focus";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shared-screen-focus";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shared-screen-focus";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shared-screen-focus";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shared-screen-focus";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shared-screen-focus";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shared-screen-focus";
+import { PlayerController } from "./player/PlayerController.js?v=shared-screen-focus";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shared-screen-focus";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shared-screen-focus";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shared-screen-focus";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shared-screen-focus";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shared-screen-focus";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shared-screen-focus";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shared-screen-focus";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shared-screen-focus";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shared-screen-focus";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shared-screen-focus";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shared-screen-focus";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shared-screen-focus";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shared-screen-focus";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shared-screen-focus";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shared-screen-focus";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shared-screen-focus";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shared-screen-focus";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shared-screen-focus";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shared-screen-focus";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=shared-screen-focus";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shared-screen-focus";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shared-screen-focus";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=randomized-boot-backgrounds";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shared-screen-focus";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -793,6 +793,14 @@ const serviceTerminalInteractionRuntime = createServiceTerminalInteractionRuntim
   camera,
   pointer,
   raycaster,
+  exitPointerLock: () => document.exitPointerLock?.(),
+  requestPointerLock,
+  setPlayerEnabled: (enabled) => playerController.setEnabled(enabled),
+  clearMovementInput: () => {
+    keys.clear();
+    movementVelocity.set(0, 0, 0);
+    zoomActive = false;
+  },
   getLanguage: () => document.documentElement.lang,
   onLanguageChange: (language) => serviceTerminalOpener?.({ language }),
   onBriefViewed: ({ levelId }) => activeLevelSessionRuntime.emit("briefOpened", {
@@ -1183,7 +1191,10 @@ const operatorPanelAssetRuntime = new OperatorPanelAssetRuntime({
   getCollisionVisible: () => CONFIG.player?.collision?.show,
   getLevelEnvironmentId,
   registerPanelObject,
-  onModelLoaded: (model) => { panelModel = model; },
+  onModelLoaded: (model) => {
+    panelModel = model;
+    registerOperatorPanelScreenFocus(model);
+  },
   applyActiveLevel: () => operatorPanelRuntime.applyLevel(activeLevelId, operatorViewMode),
   getCollisionLevelIds: () => levelCollisionModels.keys(),
   rebuildLevelStaticPhysics,
@@ -1470,6 +1481,7 @@ const animationLoop = new AnimationLoop({
     updateLevelPrefabElevators,
     updateLevelPrefabBehaviors,
     levelTriggerSequenceRuntime.update,
+    serviceTerminalInteractionRuntime.update,
     (dt) => playerController.update(dt),
     updateHoverTarget,
     (dt) => itemInteractionRuntime.update(dt),
@@ -1814,6 +1826,26 @@ function registerPanelObject(object) {
   return interiorObjectRegistry.registerPanelObject(object);
 }
 
+function registerOperatorPanelScreenFocus(model) {
+  const config = CONFIG.panel.focusView ?? {};
+  const screenName = config.screenMeshName ?? "DisplaySmall1_ScreenMesh";
+  const socketName = config.viewSocketName ?? "SOCKET_ScreenView";
+  const screen = model?.getObjectByName(screenName);
+  const viewSocket = model?.getObjectByName(socketName);
+  if (!screen?.isMesh) throw new Error(`[OperatorPanel] Missing focus screen "${screenName}"`);
+  if (!viewSocket) throw new Error(`[OperatorPanel] Missing focus socket "${socketName}"`);
+  screen.userData.kind = "screenFocus";
+  screen.userData.maxInteractionDistance = Number(config.maxDistance) || 1.85;
+  screen.userData.screenFocusRuntime = {
+    viewSocket,
+    focusFovDegrees: Number(config.focusFovDegrees ?? 52),
+    enterDurationSeconds: Number(config.enterDurationSeconds ?? 0.42),
+    exitDurationSeconds: Number(config.exitDurationSeconds ?? 0.32),
+  };
+  if (!interactive.includes(screen)) interactive.push(screen);
+  return screen;
+}
+
 function getInteriorCustomMaterialKey(object) {
   return interiorObjectRegistry.getInteriorCustomMaterialKey(object);
 }
@@ -2140,7 +2172,7 @@ const operatorInputRuntime = createOperatorInputRuntime({
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
     else if (target?.userData.kind === "slidingDrawer") prefabPhysicsRegistrar.toggleDeskDrawer(target);
-    else if (target?.userData.kind === "serviceTerminal") {
+    else if (target?.userData.kind === "serviceTerminal" || target?.userData.kind === "screenFocus") {
       serviceTerminalInteractionRuntime.activate(target, {
         levelId: target.userData.levelId ?? activeLevelId,
         prefabName: target.userData.levelPrefabKey?.split(":").slice(1).join(":") ?? "",
@@ -2159,6 +2191,8 @@ const operatorInputRuntime = createOperatorInputRuntime({
   },
   handleServiceTerminalWheel: serviceTerminalInteractionRuntime.handleWheel,
   handleServiceTerminalKeyDown: serviceTerminalInteractionRuntime.handleKeyDown,
+  handleServiceTerminalPointerDown: serviceTerminalInteractionRuntime.handlePointerDown,
+  isServiceTerminalActive: serviceTerminalInteractionRuntime.isActive,
   releasePrimaryInteractions: () => {
     bulkheadExitRuntime.release();
     releaseDoorLatchHandles();

@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=randomized-boot-backgrounds";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=randomized-boot-backgrounds";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=randomized-boot-backgrounds";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=randomized-boot-backgrounds";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=randomized-boot-backgrounds";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=randomized-boot-backgrounds";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=randomized-boot-backgrounds";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=randomized-boot-backgrounds";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=randomized-boot-backgrounds";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shared-screen-focus";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shared-screen-focus";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shared-screen-focus";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shared-screen-focus";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shared-screen-focus";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shared-screen-focus";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shared-screen-focus";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shared-screen-focus";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shared-screen-focus";
 
 export function createPrefabRuntimeFactory({
   config,

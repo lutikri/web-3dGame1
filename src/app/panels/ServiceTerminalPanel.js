@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=randomized-boot-backgrounds";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=shared-screen-focus";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

@@ -22,9 +22,11 @@ test("service terminal behavior resolves and registers its authored screen mesh"
   screen.name = "SM_Terminal_Screen";
   const glass = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial());
   glass.name = "SM_Terminal_ScreenGlass";
+  const viewSocket = new THREE.Object3D();
+  viewSocket.name = "SOCKET_TerminalView";
   const runtime = {
     serviceTerminal: createServiceTerminalRuntime(
-      new Map([[screen.name, screen], [glass.name, glass]]),
+      new Map([[screen.name, screen], [glass.name, glass], [viewSocket.name, viewSocket]]),
       {},
       "Terminal1",
       { createRenderer: createRendererStub },
@@ -44,6 +46,7 @@ test("service terminal behavior resolves and registers its authored screen mesh"
   assert.equal(screen.userData.maxInteractionDistance, 2.15);
   assert.equal(runtime.serviceTerminal.glowLight, undefined);
   assert.equal(runtime.serviceTerminal.glass, glass);
+  assert.equal(runtime.serviceTerminal.viewSocket, viewSocket);
   assert.equal(glass.renderOrder, 0);
   assert.equal(screen.children.length, 0);
   assert.equal(screen.material.userData.runtimeTextureOwned, true);
@@ -57,5 +60,14 @@ test("service terminal behavior fails loudly when the screen mesh is missing", (
   assert.throws(
     () => createServiceTerminalRuntime(new Map(), {}, "Terminal1"),
     /Missing screen mesh "SM_Terminal_Screen"/,
+  );
+});
+
+test("service terminal behavior fails loudly when the authored view socket is missing", () => {
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial());
+  screen.name = "SM_Terminal_Screen";
+  assert.throws(
+    () => createServiceTerminalRuntime(new Map([[screen.name, screen]]), {}, "Terminal1", { createRenderer: createRendererStub }),
+    /Missing view socket "SOCKET_TerminalView"/,
   );
 });

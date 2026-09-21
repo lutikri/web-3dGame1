@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=randomized-boot-backgrounds";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=shared-screen-focus";
 
 const DISMISS_MS = 300;
 

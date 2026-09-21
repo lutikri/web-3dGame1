@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=randomized-boot-backgrounds";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=randomized-boot-backgrounds";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=randomized-boot-backgrounds";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=randomized-boot-backgrounds";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=randomized-boot-backgrounds";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=randomized-boot-backgrounds";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=randomized-boot-backgrounds";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shared-screen-focus";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shared-screen-focus";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shared-screen-focus";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shared-screen-focus";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shared-screen-focus";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shared-screen-focus";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shared-screen-focus";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

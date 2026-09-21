@@ -116,6 +116,19 @@ body {
   display: block;
 }
 
+body.screen-focus #scene {
+  cursor: default;
+}
+
+body.screen-focus.screen-focus-action-hover #scene {
+  cursor: pointer;
+}
+
+body.screen-focus .crosshair,
+body.screen-focus .control-tooltip {
+  opacity: 0;
+}
+
 .debug-overlay {
   position: fixed;
   z-index: 2;
@@ -154,17 +167,43 @@ body {
 .control-tooltip {
   position: fixed;
   z-index: 4;
-  transform: translate(-50%, -120%);
-  border: 1px solid rgba(103, 215, 135, 0.72);
-  background: rgba(3, 8, 6, 0.78);
-  box-shadow: 0 0 14px rgba(103, 215, 135, 0.22);
-  color: #73e895;
-  padding: 5px 8px;
-  font: 900 0.74rem "Cascadia Mono", Consolas, monospace;
-  letter-spacing: 0;
+  min-width: 68px;
+  transform: translate(-50%, calc(-100% - 16px));
+  border: 0;
+  border-bottom: 1px solid rgba(221, 230, 218, 0.42);
+  background: linear-gradient(90deg, transparent, rgba(3, 7, 5, 0.48) 18%, rgba(3, 7, 5, 0.48) 82%, transparent);
+  box-shadow: none;
+  color: rgba(230, 235, 226, 0.86);
+  padding: 4px 12px 5px;
+  font: 600 0.66rem "Cascadia Mono", Consolas, monospace;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   pointer-events: none;
   text-transform: uppercase;
   white-space: nowrap;
+  animation: interaction-tooltip-in 140ms ease-out both;
+}
+
+.control-tooltip::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 8px;
+  background: linear-gradient(rgba(221, 230, 218, 0.42), transparent);
+  content: "";
+}
+
+.control-tooltip.is-hold-interaction {
+  color: rgba(205, 220, 201, 0.9);
+  border-bottom-color: rgba(168, 197, 162, 0.52);
+}
+
+@keyframes interaction-tooltip-in {
+  from { opacity: 0; transform: translate(-50%, calc(-100% - 11px)); }
+  to { opacity: 1; transform: translate(-50%, calc(-100% - 16px)); }
 }
 
 .control-tooltip[hidden] {
@@ -3951,7 +3990,6 @@ html.preflight-boot #app {
 /* Shared visual contract for Site-12's legacy green operator interfaces. */
 .debug-overlay,
 .fps-meter,
-.control-tooltip,
 .texture-loading-indicator,
 .results-panel,
 .app-panel:not(.main-menu-panel):not(.pause-panel):not(.settings-panel),
@@ -3968,7 +4006,6 @@ html.preflight-boot #app {
 
 .debug-overlay,
 .fps-meter,
-.control-tooltip,
 .texture-loading-indicator,
 .results-panel,
 .app-panel:not(.main-menu-panel):not(.pause-panel):not(.settings-panel) {

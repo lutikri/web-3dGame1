@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=randomized-boot-backgrounds";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=shared-screen-focus";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

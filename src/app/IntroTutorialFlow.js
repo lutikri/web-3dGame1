@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=randomized-boot-backgrounds";
+import { translateRequired } from "./Localization.js?v=shared-screen-focus";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

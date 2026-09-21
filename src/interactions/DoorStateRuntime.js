@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=randomized-boot-backgrounds";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=randomized-boot-backgrounds";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=shared-screen-focus";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=shared-screen-focus";
 
 export class DoorStateRuntime {
   constructor(options) {

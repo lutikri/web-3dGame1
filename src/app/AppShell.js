@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=randomized-boot-backgrounds";
-import { applyLocalization, translate } from "./Localization.js?v=randomized-boot-backgrounds";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=randomized-boot-backgrounds";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=randomized-boot-backgrounds";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=randomized-boot-backgrounds";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=randomized-boot-backgrounds";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=randomized-boot-backgrounds";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shared-screen-focus";
+import { applyLocalization, translate } from "./Localization.js?v=shared-screen-focus";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shared-screen-focus";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shared-screen-focus";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shared-screen-focus";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=shared-screen-focus";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shared-screen-focus";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=randomized-boot-backgrounds";
-import { createAppPanelController } from "./AppPanelController.js?v=randomized-boot-backgrounds";
-import { createAppRouter } from "./AppRouter.js?v=randomized-boot-backgrounds";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=randomized-boot-backgrounds";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=randomized-boot-backgrounds";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=randomized-boot-backgrounds";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=randomized-boot-backgrounds";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=randomized-boot-backgrounds";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=randomized-boot-backgrounds";
+} from "./AppPersistence.js?v=shared-screen-focus";
+import { createAppPanelController } from "./AppPanelController.js?v=shared-screen-focus";
+import { createAppRouter } from "./AppRouter.js?v=shared-screen-focus";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shared-screen-focus";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shared-screen-focus";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shared-screen-focus";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shared-screen-focus";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shared-screen-focus";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shared-screen-focus";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=randomized-boot-backgrounds";
+import { LevelSession } from "./LevelSession.js?v=shared-screen-focus";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

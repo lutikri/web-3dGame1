@@ -5,10 +5,13 @@ const TOOLTIP_KINDS = new Set([
   "controlButton",
   "roomLightButton",
   "bulkheadHandle",
-  "doorLatchHandle",
-  "serviceTerminal",
   "viewportShutterButton",
   "alarmSilenceButton",
+]);
+
+const HIDDEN_TOOLTIP_KINDS = new Set([
+  "doorLatchHandle",
+  "serviceTerminal",
 ]);
 
 export function createInteractionHoverRuntime({
@@ -91,7 +94,7 @@ export function createInteractionHoverRuntime({
     }
     setHoveredKnob(target?.userData.kind === "controlKnob" ? target : null);
     setHoveredDoor(target?.userData.kind === "hingedDoor" ? target : null);
-    setHoveredTooltipTarget(forceTooltip ? target : getTooltipTarget(target));
+    setHoveredTooltipTarget(getTooltipTarget(target, { forceTooltip }));
     dispatchHoverSignal(target);
   }
 
@@ -140,6 +143,11 @@ export function createInteractionHoverRuntime({
       return;
     }
     controlTooltip.hidden = false;
+    controlTooltip.dataset.interactionKind = hoveredTooltipTarget.userData.kind ?? "interaction";
+    controlTooltip.classList.toggle(
+      "is-hold-interaction",
+      Number(hoveredTooltipTarget.userData.holdInteractionSeconds) > 0,
+    );
     controlTooltip.textContent = getTooltipText(hoveredTooltipTarget);
     controlTooltip.style.left = `${(screenPosition.x * 0.5 + 0.5) * window.innerWidth}px`;
     controlTooltip.style.top = `${(-screenPosition.y * 0.5 + 0.5) * window.innerHeight}px`;
@@ -232,8 +240,9 @@ export function findInteractiveRoot(object) {
   return null;
 }
 
-export function getTooltipTarget(object) {
-  return object && TOOLTIP_KINDS.has(object.userData.kind) ? object : null;
+export function getTooltipTarget(object, { forceTooltip = false } = {}) {
+  if (!object || HIDDEN_TOOLTIP_KINDS.has(object.userData.kind)) return null;
+  return forceTooltip || TOOLTIP_KINDS.has(object.userData.kind) ? object : null;
 }
 
 export function createInteractionTooltipPolicy({ translateControlLabel, translate, prefabInstances, config, getActiveLevelId, getLevelEnvironmentId, getRoomLightsEnabled }) {

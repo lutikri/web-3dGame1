@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=randomized-boot-backgrounds";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shared-screen-focus";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

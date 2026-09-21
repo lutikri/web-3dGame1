@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=randomized-boot-backgrounds";
+import { LevelRuntime } from "./LevelRuntime.js?v=shared-screen-focus";
 
 export class LevelEnvironmentLifecycle {
   constructor({

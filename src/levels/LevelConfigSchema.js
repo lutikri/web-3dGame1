@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=randomized-boot-backgrounds";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shared-screen-focus";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

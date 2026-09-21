@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=randomized-boot-backgrounds";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=randomized-boot-backgrounds";
+} from "../../panels/StatusScreenMaterial.js?v=shared-screen-focus";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=shared-screen-focus";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -14,6 +14,11 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
   const screenMesh = parts.get(config.screenMeshName ?? "SM_PanelViewStatus1_Screen");
   if (!screenMesh?.isMesh) {
     throw new Error(`[StatusViewport] Missing screen mesh in prefab "${prefabName}"`);
+  }
+  const viewSocketName = config.viewSocketName ?? "SOCKET_ScreenView";
+  const viewSocket = parts.get(viewSocketName);
+  if (!viewSocket) {
+    throw new Error(`[StatusViewport] Missing view socket "${viewSocketName}" in prefab "${prefabName}"`);
   }
   const shutterButton = parts.get(config.shutterButtonMeshName ?? "SM_PanelViewStatus1_Button_ViewShutter");
   if (!shutterButton?.isMesh) {
@@ -77,6 +82,11 @@ export function createStatusViewportRuntime(root, parts, config = {}, prefabName
   const runtime = {
     root,
     screenMesh,
+    viewSocket,
+    viewSocketName,
+    focusFovDegrees: Number(config.focusFovDegrees ?? 52),
+    enterDurationSeconds: Number(config.enterDurationSeconds ?? 0.42),
+    exitDurationSeconds: Number(config.exitDurationSeconds ?? 0.32),
     shutterButton,
     shutterButtonInitialPosition: shutterButton.position.clone(),
     shutterButtonPressDirection: new THREE.Vector3(),
@@ -160,12 +170,22 @@ export function registerStatusViewportInteraction(levelId, prefabConfig, runtime
   const statusViewport = runtime?.statusViewport;
   const button = statusViewport?.shutterButton;
   const alarmSilenceButton = statusViewport?.alarmSilenceButton;
-  if (!button || !alarmSilenceButton) return false;
+  const screenMesh = statusViewport?.screenMesh;
+  if (!button || !alarmSilenceButton || !screenMesh) return false;
   const config = prefabConfig.statusViewport ?? {};
   const nestedName = config.shutterPrefabName ?? "CoreViewport1";
   const targetPrefabName = config.shutterTargetPrefabName ?? `${prefabConfig.name}__${nestedName}`;
   const levelPrefabKey = `${levelId}:${prefabConfig.name}`;
   let registered = false;
+  if (!interactive.includes(screenMesh)) {
+    screenMesh.userData.kind = "screenFocus";
+    screenMesh.userData.levelId = levelId;
+    screenMesh.userData.levelPrefabKey = levelPrefabKey;
+    screenMesh.userData.maxInteractionDistance = Number(config.screenFocusMaxDistance) || 1.85;
+    screenMesh.userData.screenFocusRuntime = statusViewport;
+    interactive.push(screenMesh);
+    registered = true;
+  }
   if (!interactive.includes(button)) {
     button.userData.kind = "viewportShutterButton";
     button.userData.controlLabel = config.shutterButtonLabel ?? "VIEWPORT SHUTTER";

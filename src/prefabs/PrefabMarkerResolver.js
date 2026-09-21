@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=randomized-boot-backgrounds";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=randomized-boot-backgrounds";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=shared-screen-focus";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=shared-screen-focus";
 
 const MARKER_PREFIX = "PF_";
 

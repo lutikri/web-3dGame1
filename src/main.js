@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=randomized-boot-backgrounds";
-import { applyLocalization } from "./app/Localization.js?v=randomized-boot-backgrounds";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=randomized-boot-backgrounds";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=randomized-boot-backgrounds";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=randomized-boot-backgrounds";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=randomized-boot-backgrounds";
+import { createPreflight } from "./app/Preflight.js?v=shared-screen-focus";
+import { applyLocalization } from "./app/Localization.js?v=shared-screen-focus";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=shared-screen-focus";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=shared-screen-focus";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=shared-screen-focus";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shared-screen-focus";
 
-const APP_BUILD_REVISION = "randomized-boot-backgrounds";
+const APP_BUILD_REVISION = "shared-screen-focus";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=randomized-boot-backgrounds`);
+await import(`./OperatorGame.js?v=shared-screen-focus`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=randomized-boot-backgrounds`);
+const { createAppShell } = await import(`./app/AppShell.js?v=shared-screen-focus`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -62,7 +62,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=randomized-boot-backgrounds`
+    `./runtime/RuntimeSmoke.js?v=shared-screen-focus`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

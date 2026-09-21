@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=randomized-boot-backgrounds";
+} from "./behaviors/DeskDrawerBehavior.js?v=shared-screen-focus";
 
 export function createPrefabPhysicsRegistrar({
   physics,

@@ -53,6 +53,8 @@ export function createOperatorInputRuntime({
   activateInteractive,
   handleServiceTerminalWheel = () => false,
   handleServiceTerminalKeyDown = () => false,
+  handleServiceTerminalPointerDown = () => false,
+  isServiceTerminalActive = () => false,
   releasePrimaryInteractions,
   releaseAllControls,
   requestPointerLock,
@@ -109,6 +111,10 @@ export function createOperatorInputRuntime({
       event.preventDefault();
       return;
     }
+    if (isServiceTerminalActive()) {
+      if (isMovementCode(event.code)) event.preventDefault();
+      return;
+    }
     if (isInputLocked()) {
       if (isMovementCode(event.code)) event.preventDefault();
       return;
@@ -151,6 +157,10 @@ export function createOperatorInputRuntime({
 
   function handleKeyUp(event) {
     keys.delete(event.code);
+    if (isServiceTerminalActive()) {
+      if (isMovementCode(event.code)) event.preventDefault();
+      return;
+    }
     if (event.code === "KeyQ" && dropPressedAt != null) {
       event.preventDefault();
       const heldSeconds = Math.max(0, now() - dropPressedAt);
@@ -169,6 +179,10 @@ export function createOperatorInputRuntime({
   }
 
   function handleMouseMove(event) {
+    if (isServiceTerminalActive()) {
+      if (document.pointerLockElement !== canvas) updatePointerFromEvent(event);
+      return;
+    }
     if (isInputLocked()) return;
     if (getDraggedDoor()) {
       updateCameraLook(event.movementX, event.movementY);
@@ -231,6 +245,15 @@ export function createOperatorInputRuntime({
   function handleMouseDown(event) {
     unlockAudio();
     if (isDebugTransformEditing()) return;
+    if (isServiceTerminalActive()) {
+      event.preventDefault();
+      if (handleServiceTerminalPointerDown(event)) return;
+      if (event.button !== 0) return;
+      if (document.pointerLockElement !== canvas) updatePointerFromEvent(event);
+      updateHoverTarget();
+      activateInteractive(getHoveredInteractive());
+      return;
+    }
     if (isInputLocked()) {
       event.preventDefault();
       return;
@@ -251,7 +274,11 @@ export function createOperatorInputRuntime({
       return;
     }
     if (event.button !== 0) return;
-    if (document.pointerLockElement !== canvas) updatePointerFromEvent(event);
+    if (document.pointerLockElement !== canvas) {
+      event.preventDefault();
+      requestPointerLock();
+      return;
+    }
     updateHoverTarget();
     const target = getHoveredInteractive();
     const levelPrefabKey = target?.userData.levelPrefabKey ?? "";
@@ -288,7 +315,7 @@ export function createOperatorInputRuntime({
 
   function handleCanvasClick() {
     unlockAudio();
-    if (isInputLocked() || isUiOpen()) return;
+    if (isInputLocked() || isUiOpen() || isServiceTerminalActive()) return;
     if (document.pointerLockElement !== canvas) requestPointerLock();
   }
 

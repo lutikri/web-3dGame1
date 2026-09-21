@@ -47,6 +47,8 @@ test("core viewport fails loudly when the authored shutter mesh is missing", () 
 test("status viewport button targets the placed core viewport prefab", () => {
   const button = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
   const alarmSilenceButton = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+  const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial());
+  const viewSocket = new THREE.Object3D();
   const shutter = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
   shutter.name = "SM_CoreViewport1_Shutter1";
   const coreViewport = createCoreViewportRuntime(new Map([[shutter.name, shutter]]));
@@ -55,6 +57,8 @@ test("status viewport button targets the placed core viewport prefab", () => {
     shutterButtonPressRemaining: 0,
     alarmSilenceButton,
     alarmSilenced: false,
+    screenMesh,
+    viewSocket,
   };
   const panelRuntime = { statusViewport };
   const instances = new Map([
@@ -69,7 +73,9 @@ test("status viewport button targets the placed core viewport prefab", () => {
   }, panelRuntime, interactive), true);
   assert.equal(button.userData.shutterTargetKey, "room:CoreViewport1");
   assert.equal(alarmSilenceButton.userData.kind, "alarmSilenceButton");
-  assert.equal(interactive.length, 2);
+  assert.equal(screenMesh.userData.kind, "screenFocus");
+  assert.equal(screenMesh.userData.screenFocusRuntime, statusViewport);
+  assert.equal(interactive.length, 3);
   assert.equal(activateStatusViewportShutter(button, instances), true);
   assert.equal(coreViewport.targetProgress, 1);
   assert.equal(statusViewport.shutterButtonPressRemaining, 0.16);
