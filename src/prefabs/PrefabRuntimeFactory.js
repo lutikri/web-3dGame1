@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-terminal-content";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-terminal-content";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift-terminal-content";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-terminal-content";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-terminal-content";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-terminal-content";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift-terminal-content";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-terminal-content";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift-terminal-content";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-terminal-content";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-terminal-content";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-arrival-intro";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-arrival-intro";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-arrival-intro";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-arrival-intro";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-arrival-intro";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-arrival-intro";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-arrival-intro";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-arrival-intro";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-arrival-intro";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-arrival-intro";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-arrival-intro";
 
 export function createPrefabRuntimeFactory({
   config,

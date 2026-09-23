@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shift-terminal-content";
-import { applyLocalization, translate } from "./Localization.js?v=shift-terminal-content";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shift-terminal-content";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shift-terminal-content";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shift-terminal-content";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=shift-terminal-content";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shift-terminal-content";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=level-arrival-intro";
+import { applyLocalization, translate } from "./Localization.js?v=level-arrival-intro";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=level-arrival-intro";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=level-arrival-intro";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=level-arrival-intro";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=level-arrival-intro";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=level-arrival-intro";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=shift-terminal-content";
-import { createAppPanelController } from "./AppPanelController.js?v=shift-terminal-content";
-import { createAppRouter } from "./AppRouter.js?v=shift-terminal-content";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shift-terminal-content";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shift-terminal-content";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shift-terminal-content";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shift-terminal-content";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shift-terminal-content";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shift-terminal-content";
+} from "./AppPersistence.js?v=level-arrival-intro";
+import { createAppPanelController } from "./AppPanelController.js?v=level-arrival-intro";
+import { createAppRouter } from "./AppRouter.js?v=level-arrival-intro";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=level-arrival-intro";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=level-arrival-intro";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=level-arrival-intro";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=level-arrival-intro";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=level-arrival-intro";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=level-arrival-intro";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=level-arrival-intro";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=level-arrival-intro";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -72,13 +74,20 @@ export function createAppShell({ gameApi }) {
   let currentPanel = null;
   let previousPanel = "main-menu";
   let transitionActive = false;
+  let routeInputLocked = false;
   let initialRouteHandled = false;
   let activeGameplayLevelId = null;
   let briefingPanel = null;
+  const levelArrivalSequence = createLevelArrivalSequence({
+    root: document.querySelector("#levelArrivalOverlay"),
+    soundConfig: SOUND_REGISTRY.UI_LevelIntro1,
+    getMasterVolume: () => Number(settings.masterVolume ?? 100) / 100,
+  });
   const panelController = createAppPanelController({
     overlay,
     panels,
     onBeforeShow: () => {
+      levelArrivalSequence.cancel();
       hideBriefing(true);
       gameApi.closeServiceTerminal?.({ restorePointerLock: false });
       introTutorialFlow.stop();
@@ -108,9 +117,13 @@ export function createAppShell({ gameApi }) {
     releaseInput: () => gameApi.releasePointerLock?.(),
     onStateChange: (active) => {
       transitionActive = active;
-      gameApi.setSceneAudioBlocked?.(active);
       updateInputLock();
     },
+    onInputLockChange: (locked) => {
+      routeInputLocked = locked;
+      updateInputLock();
+    },
+    onSceneAudioBlockedChange: (blocked) => gameApi.setSceneAudioBlocked?.(blocked),
   });
   const introTutorialFlow = createIntroTutorialFlow({
     hintQueue: tutorialHintQueue,
@@ -406,9 +419,11 @@ export function createAppShell({ gameApi }) {
     } else if (action === "back") {
       showPanel(previousPanel || "main-menu");
     } else if (action === "restart") {
+      let showBriefingAfterArrival = false;
       const transition = runRouteTransition({
         title: translate("loading.restartingShift"),
         status: translate("loading.resettingCore"),
+        arrivalLevelId: activeGameplayLevelId,
         action: async ({ setProgress }) => {
           gameApi.hideShiftResults?.({ immediate: true });
           hideOverlay();
@@ -416,12 +431,14 @@ export function createAppShell({ gameApi }) {
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
           if (shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)) {
             await preloadLevelBriefing(activeGameplayLevelId);
-            showLevelBriefing(activeGameplayLevelId);
+            showBriefingAfterArrival = true;
           }
         },
       });
       transition.then((restarted) => {
-        if (restarted && activeGameplayLevelId) maybeStartLevelTutorial(activeGameplayLevelId);
+        if (!restarted || !activeGameplayLevelId) return;
+        if (showBriefingAfterArrival) showLevelBriefing(activeGameplayLevelId);
+        maybeStartLevelTutorial(activeGameplayLevelId);
       });
     } else if (action === "quick-level-select") {
       showPanel("level-select");
@@ -439,8 +456,14 @@ export function createAppShell({ gameApi }) {
     }
   }
 
-  async function runRouteTransition({ title, status = translate("loading.preparing"), action }) {
-    return router.transition({ title, status, action });
+  async function runRouteTransition({ title, status = translate("loading.preparing"), action, arrivalLevelId = null }) {
+    const presentation = arrivalLevelId
+      ? (callbacks) => levelArrivalSequence.play(
+        getLevelArrivalConfig(arrivalLevelId, document.documentElement.lang),
+        callbacks,
+      )
+      : null;
+    return router.transition({ title, status, action, presentation });
   }
 
   function startLevel(levelId, { force = false } = {}) {
@@ -449,9 +472,11 @@ export function createAppShell({ gameApi }) {
     if (!level?.playable || (!force && !isLevelUnlocked(levelId))) return false;
     gameApi.setMenuAudioActive?.(false);
 
+    let showBriefingAfterArrival = false;
     const transition = runRouteTransition({
       title: getLevelTitle(levelId),
       status: translate("loading.loadingShift"),
+      arrivalLevelId: levelId,
       action: async ({ setProgress }) => {
         gameApi.hideShiftResults?.();
         hideOverlay();
@@ -459,12 +484,14 @@ export function createAppShell({ gameApi }) {
         activeGameplayLevelId = levelId;
         if (shouldAutoShowLevelBriefing(LEVELS, levelId)) {
           await preloadLevelBriefing(levelId);
-          showLevelBriefing(levelId);
+          showBriefingAfterArrival = true;
         }
       },
     });
     transition.then((entered) => {
-      if (entered) maybeStartLevelTutorial(levelId);
+      if (!entered) return;
+      if (showBriefingAfterArrival) showLevelBriefing(levelId);
+      maybeStartLevelTutorial(levelId);
     });
     return transition;
   }
@@ -655,7 +682,7 @@ export function createAppShell({ gameApi }) {
 
   function updateInputLock() {
     const uiBlocked = Boolean(
-      transitionActive || briefingPanel.isActive() || isOpen(),
+      routeInputLocked || briefingPanel.isActive() || isOpen(),
     );
     gameApi.setInputLocked?.(uiBlocked);
     subtitleQueue.setBlocked(

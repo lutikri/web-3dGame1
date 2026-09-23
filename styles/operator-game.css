@@ -77,6 +77,7 @@
 
 :root {
   --layer-route-loading: 130;
+  --layer-level-arrival: 140;
   --layer-preflight: 200;
   --layer-system-modal: 210;
   --layer-screen-transition: 220;
@@ -2111,6 +2112,119 @@ body.app-ui-open #lockButton {
 
 .route-loading-overlay.is-loading .loading-panel {
   opacity: 1;
+}
+
+.level-arrival-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-level-arrival);
+  overflow: hidden;
+  color: rgba(235, 238, 232, 0.92);
+  pointer-events: auto;
+  font-family: "Cascadia Mono", "Segoe UI Mono", Consolas, "DejaVu Sans Mono", monospace;
+}
+
+.level-arrival-overlay[hidden] { display: none; }
+
+.level-arrival-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 1;
+  transition: opacity 0.9s cubic-bezier(0.16, 0.74, 0.24, 1);
+}
+
+.level-arrival-overlay.is-revealing-world::before { opacity: 0; }
+.level-arrival-overlay.is-input-live { pointer-events: none; }
+
+.level-arrival-status {
+  position: absolute;
+  left: clamp(50px, 4.2vw, 82px);
+  bottom: clamp(48px, 5.2vh, 78px);
+  display: grid;
+  gap: clamp(4px, 0.45vh, 8px);
+  min-width: min(440px, 75vw);
+  font-size: clamp(11px, 0.78vw, 15px);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transition: opacity 0.22s ease-out;
+}
+
+.level-arrival-status span {
+  min-height: 1.25em;
+  opacity: 0;
+}
+
+.level-arrival-status span.is-visible { opacity: 1; }
+.level-arrival-status span.is-accent { color: #91c98d; }
+.level-arrival-overlay.is-revealing-world .level-arrival-status { opacity: 0; }
+
+.level-arrival-title {
+  position: absolute;
+  left: clamp(52px, 8vw, 154px);
+  top: 58%;
+  width: min(84vw, 1260px);
+  opacity: 0;
+  transform: translateY(10px);
+  clip-path: inset(0 100% 0 0);
+}
+
+.level-arrival-title h1 {
+  margin: 0;
+  color: rgba(245, 246, 241, 0.96);
+  font: 900 clamp(40px, 5vw, 90px) / 0.98 "Bahnschrift Condensed", "Arial Narrow", sans-serif;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+}
+
+.level-arrival-title > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45em 1.25em;
+  margin-top: clamp(12px, 1.4vh, 20px);
+  color: rgba(231, 235, 226, 0.78);
+  font-size: clamp(11px, 0.85vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.72);
+}
+
+.level-arrival-overlay.is-title-visible .level-arrival-title {
+  animation: level-arrival-title-in 160ms steps(2, end) forwards;
+}
+
+.level-arrival-overlay.is-title-fading .level-arrival-title {
+  opacity: 0;
+  transform: translateY(4px);
+  clip-path: inset(0);
+  transition: opacity 0.72s ease-out, transform 0.72s ease-out;
+  animation: none;
+}
+
+body.level-arrival-world-reveal #scene {
+  animation: level-arrival-exposure 0.95s cubic-bezier(0.16, 0.74, 0.24, 1) both;
+}
+
+@keyframes level-arrival-title-in {
+  0% { opacity: 0; transform: translateY(10px); clip-path: inset(0 100% 0 0); }
+  55% { opacity: 1; transform: translateY(0); clip-path: inset(0 26% 0 0); }
+  72% { opacity: 0.76; transform: translateY(0); clip-path: inset(0 8% 0 0); }
+  100% { opacity: 1; transform: translateY(0); clip-path: inset(0); }
+}
+
+@keyframes level-arrival-exposure {
+  from { filter: brightness(0.58) contrast(1.16); }
+  to { filter: brightness(1) contrast(1); }
+}
+
+@media (max-aspect-ratio: 4 / 3) {
+  .level-arrival-title { left: 7vw; top: 56%; width: 86vw; }
+  .level-arrival-title > div { display: grid; }
 }
 
 .loading-stage {

@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-terminal-content";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-terminal-content";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-terminal-content";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-terminal-content";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-terminal-content";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-terminal-content";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-terminal-content";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-terminal-content";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-arrival-intro";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-arrival-intro";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-arrival-intro";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-arrival-intro";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-arrival-intro";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-arrival-intro";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-arrival-intro";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-arrival-intro";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

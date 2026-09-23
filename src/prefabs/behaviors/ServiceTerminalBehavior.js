@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=shift-terminal-content";
+} from "./ServiceTerminalCanvasRenderer.js?v=level-arrival-intro";
 
 export function createServiceTerminalRuntime(
   parts,

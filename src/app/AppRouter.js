@@ -1,11 +1,23 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=shift-terminal-content";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=level-arrival-intro";
 
-export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
+export function createAppRouter({
+  overlay,
+  percent,
+  title,
+  status,
+  barFill,
+  releaseInput,
+  onStateChange,
+  onInputLockChange,
+  onSceneAudioBlockedChange,
+}) {
   let active = false;
 
-  async function transition({ title: routeTitle, status: routeStatus, action }) {
+  async function transition({ title: routeTitle, status: routeStatus, action, presentation }) {
     if (active) return false;
     active = true;
+    onInputLockChange?.(true);
+    onSceneAudioBlockedChange?.(true);
     onStateChange?.(true);
     releaseInput?.();
     showCurtain();
@@ -15,13 +27,28 @@ export function createAppRouter({ overlay, percent, title, status, barFill, rele
     await action?.({ setProgress, setStatus });
     setProgress(100);
     await wait(80);
-    overlay?.classList.add("is-revealing");
-    overlay?.classList.remove("is-loading");
-    title?.classList.remove("is-visible");
-    await wait(200);
-    hideCurtain();
-    await wait(500);
+    if (presentation) {
+      overlay?.classList.add("is-revealing");
+      overlay?.classList.remove("is-loading");
+      title?.classList.remove("is-visible");
+      await presentation({
+        onCovered: () => {
+          onSceneAudioBlockedChange?.(false);
+          hideCurtain();
+        },
+        onInputReady: () => onInputLockChange?.(false),
+      });
+    } else {
+      overlay?.classList.add("is-revealing");
+      overlay?.classList.remove("is-loading");
+      title?.classList.remove("is-visible");
+      await wait(200);
+      hideCurtain();
+      await wait(500);
+    }
     active = false;
+    onInputLockChange?.(false);
+    onSceneAudioBlockedChange?.(false);
     onStateChange?.(false);
     return true;
   }

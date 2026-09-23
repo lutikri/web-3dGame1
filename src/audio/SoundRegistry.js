@@ -120,6 +120,7 @@ export const SOUND_REGISTRY = {
   Panel_KnobTick3: { path: "assets/sounds/interaction/Panel_KnobTick3.ogg", volume: 0.15, refDistance: 0.35, maxDistance: 2.4 },
   UI_Hint1: { path: "assets/sounds/ui/UI_Hint1.ogg", volume: 0.46 },
   UI_Hint2: { path: "assets/sounds/ui/UI_Hint2.ogg", volume: 0.46 },
+  UI_LevelIntro1: { path: "assets/sounds/ui/UI_LevelIntro1.ogg", volume: 0.58 },
   UI_PaperSlide1: { path: "assets/sounds/ui/UI_PaperSlide1.ogg", volume: 0.42 },
   UI_PaperSlide2: { path: "assets/sounds/ui/UI_PaperSlide2.ogg", volume: 0.42 },
   UI_PaperSlide3: { path: "assets/sounds/ui/UI_PaperSlide3.ogg", volume: 0.42 },

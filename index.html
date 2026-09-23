@@ -93,6 +93,18 @@
           </div>
         </div>
       </div>
+      <div id="levelArrivalOverlay" class="level-arrival-overlay" aria-live="polite" hidden>
+        <div class="level-arrival-status" aria-label="Arrival status">
+          <span data-arrival-line></span>
+          <span data-arrival-line></span>
+          <span data-arrival-line></span>
+          <span data-arrival-line></span>
+        </div>
+        <div class="level-arrival-title">
+          <h1 data-arrival-title></h1>
+          <div><span data-arrival-subtitle-top></span><span data-arrival-subtitle-bottom></span></div>
+        </div>
+      </div>
       <div id="briefingOverlay" class="briefing-overlay" hidden>
         <div id="briefingSheetFrame" class="briefing-sheet-frame">
           <img id="briefingImage" alt="" draggable="false" />
@@ -289,6 +301,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=shift-terminal-content"></script>
+    <script type="module" src="src/main.js?v=level-arrival-intro"></script>
   </body>
 </html>

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=shift-terminal-content";
+} from "./panels/StatusScreenMaterial.js?v=level-arrival-intro";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

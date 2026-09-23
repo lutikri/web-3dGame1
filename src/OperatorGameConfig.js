@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=shift-terminal-content";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=shift-terminal-content";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=shift-terminal-content";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=shift-terminal-content";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=level-arrival-intro";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=level-arrival-intro";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=level-arrival-intro";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=level-arrival-intro";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
