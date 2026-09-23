@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=terminal-icons";
-import { applyLocalization, translate } from "./Localization.js?v=terminal-icons";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=terminal-icons";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=terminal-icons";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=terminal-icons";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=terminal-icons";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=terminal-icons";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shift-terminal-content";
+import { applyLocalization, translate } from "./Localization.js?v=shift-terminal-content";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shift-terminal-content";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shift-terminal-content";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shift-terminal-content";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=shift-terminal-content";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shift-terminal-content";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=terminal-icons";
-import { createAppPanelController } from "./AppPanelController.js?v=terminal-icons";
-import { createAppRouter } from "./AppRouter.js?v=terminal-icons";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=terminal-icons";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=terminal-icons";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=terminal-icons";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=terminal-icons";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=terminal-icons";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=terminal-icons";
+} from "./AppPersistence.js?v=shift-terminal-content";
+import { createAppPanelController } from "./AppPanelController.js?v=shift-terminal-content";
+import { createAppRouter } from "./AppRouter.js?v=shift-terminal-content";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shift-terminal-content";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shift-terminal-content";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shift-terminal-content";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shift-terminal-content";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shift-terminal-content";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shift-terminal-content";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

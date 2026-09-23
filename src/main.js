@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=terminal-icons";
-import { applyLocalization } from "./app/Localization.js?v=terminal-icons";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=terminal-icons";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=terminal-icons";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=terminal-icons";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=terminal-icons";
+import { createPreflight } from "./app/Preflight.js?v=shift-terminal-content";
+import { applyLocalization } from "./app/Localization.js?v=shift-terminal-content";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=shift-terminal-content";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=shift-terminal-content";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=shift-terminal-content";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift-terminal-content";
 
-const APP_BUILD_REVISION = "terminal-icons";
+const APP_BUILD_REVISION = "shift-terminal-content";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=terminal-icons`);
+await import(`./OperatorGame.js?v=shift-terminal-content`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=terminal-icons`);
+const { createAppShell } = await import(`./app/AppShell.js?v=shift-terminal-content`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=terminal-icons`
+    `./runtime/RuntimeSmoke.js?v=shift-terminal-content`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=terminal-icons";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=shift-terminal-content";
 
 export function createOperatorMovementRuntime({
   config,

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=terminal-icons";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-icons";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-icons";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=terminal-icons";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-icons";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=terminal-icons";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=terminal-icons";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shift-terminal-content";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-terminal-content";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-terminal-content";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shift-terminal-content";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-terminal-content";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shift-terminal-content";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shift-terminal-content";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

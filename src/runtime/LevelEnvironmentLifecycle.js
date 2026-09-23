@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=terminal-icons";
+import { LevelRuntime } from "./LevelRuntime.js?v=shift-terminal-content";
 
 export class LevelEnvironmentLifecycle {
   constructor({

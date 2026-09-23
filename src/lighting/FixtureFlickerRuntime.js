@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=terminal-icons";
+} from "./FluorescentBehavior.js?v=shift-terminal-content";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

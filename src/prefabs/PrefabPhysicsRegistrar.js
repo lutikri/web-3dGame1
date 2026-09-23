@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=terminal-icons";
+} from "./behaviors/DeskDrawerBehavior.js?v=shift-terminal-content";
 
 export function createPrefabPhysicsRegistrar({
   physics,

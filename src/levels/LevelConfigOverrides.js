@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=terminal-icons";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shift-terminal-content";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

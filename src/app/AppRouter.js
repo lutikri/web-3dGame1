@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=terminal-icons";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=shift-terminal-content";
 
 export function createAppRouter({ overlay, percent, title, status, barFill, releaseInput, onStateChange }) {
   let active = false;

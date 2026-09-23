@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=terminal-icons";
+import { translateRequired } from "./Localization.js?v=shift-terminal-content";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

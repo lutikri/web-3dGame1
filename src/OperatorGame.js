@@ -3,145 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=terminal-icons";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shift-terminal-content";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=terminal-icons";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=terminal-icons";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=terminal-icons";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=terminal-icons";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=terminal-icons";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=terminal-icons";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=terminal-icons";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=terminal-icons";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=terminal-icons";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=terminal-icons";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=terminal-icons";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=terminal-icons";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=terminal-icons";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=terminal-icons";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=terminal-icons";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=terminal-icons";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=terminal-icons";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=terminal-icons";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=terminal-icons";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=terminal-icons";
+} from "./game/ShiftReport.js?v=shift-terminal-content";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shift-terminal-content";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shift-terminal-content";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shift-terminal-content";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shift-terminal-content";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shift-terminal-content";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shift-terminal-content";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shift-terminal-content";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shift-terminal-content";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shift-terminal-content";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shift-terminal-content";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shift-terminal-content";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shift-terminal-content";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shift-terminal-content";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shift-terminal-content";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shift-terminal-content";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shift-terminal-content";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shift-terminal-content";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shift-terminal-content";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shift-terminal-content";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=terminal-icons";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=terminal-icons";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=terminal-icons";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=terminal-icons";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=terminal-icons";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=terminal-icons";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=terminal-icons";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=terminal-icons";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=terminal-icons";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=terminal-icons";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=terminal-icons";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=terminal-icons";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=terminal-icons";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=terminal-icons";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shift-terminal-content";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shift-terminal-content";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shift-terminal-content";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shift-terminal-content";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shift-terminal-content";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shift-terminal-content";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shift-terminal-content";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shift-terminal-content";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shift-terminal-content";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shift-terminal-content";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shift-terminal-content";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shift-terminal-content";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shift-terminal-content";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shift-terminal-content";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=terminal-icons";
+} from "./config/GraphicsQualityProfiles.js?v=shift-terminal-content";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=terminal-icons";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=terminal-icons";
-import { createStatusScreen } from "./StatusScreen.js?v=terminal-icons";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=terminal-icons";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=terminal-icons";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=terminal-icons";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=terminal-icons";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=terminal-icons";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=terminal-icons";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=terminal-icons";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=terminal-icons";
+} from "./scene/TextureStreaming.js?v=shift-terminal-content";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shift-terminal-content";
+import { createStatusScreen } from "./StatusScreen.js?v=shift-terminal-content";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shift-terminal-content";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift-terminal-content";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shift-terminal-content";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shift-terminal-content";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shift-terminal-content";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shift-terminal-content";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shift-terminal-content";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shift-terminal-content";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=terminal-icons";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=terminal-icons";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=terminal-icons";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=shift-terminal-content";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shift-terminal-content";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shift-terminal-content";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=terminal-icons";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=terminal-icons";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=terminal-icons";
-import { AssetCache } from "./runtime/AssetCache.js?v=terminal-icons";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=terminal-icons";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=terminal-icons";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=terminal-icons";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=terminal-icons";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=terminal-icons";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=terminal-icons";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=terminal-icons";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=terminal-icons";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=terminal-icons";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=terminal-icons";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=terminal-icons";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=terminal-icons";
+} from "./lighting/FluorescentBehavior.js?v=shift-terminal-content";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shift-terminal-content";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shift-terminal-content";
+import { AssetCache } from "./runtime/AssetCache.js?v=shift-terminal-content";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shift-terminal-content";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shift-terminal-content";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shift-terminal-content";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shift-terminal-content";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shift-terminal-content";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shift-terminal-content";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shift-terminal-content";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shift-terminal-content";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shift-terminal-content";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shift-terminal-content";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shift-terminal-content";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shift-terminal-content";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=terminal-icons";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=terminal-icons";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=terminal-icons";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=terminal-icons";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=terminal-icons";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=terminal-icons";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=terminal-icons";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=terminal-icons";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=terminal-icons";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=terminal-icons";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=terminal-icons";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=terminal-icons";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=terminal-icons";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=terminal-icons";
-import { PlayerController } from "./player/PlayerController.js?v=terminal-icons";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=terminal-icons";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=terminal-icons";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=terminal-icons";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=terminal-icons";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=terminal-icons";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=terminal-icons";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=terminal-icons";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=terminal-icons";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=terminal-icons";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=terminal-icons";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=terminal-icons";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=terminal-icons";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=terminal-icons";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=terminal-icons";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=terminal-icons";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=terminal-icons";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=terminal-icons";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=terminal-icons";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=terminal-icons";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=terminal-icons";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=terminal-icons";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=terminal-icons";
+} from "./scene/InteriorObjectRegistry.js?v=shift-terminal-content";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shift-terminal-content";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shift-terminal-content";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shift-terminal-content";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shift-terminal-content";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shift-terminal-content";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shift-terminal-content";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shift-terminal-content";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shift-terminal-content";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shift-terminal-content";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shift-terminal-content";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shift-terminal-content";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shift-terminal-content";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shift-terminal-content";
+import { PlayerController } from "./player/PlayerController.js?v=shift-terminal-content";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shift-terminal-content";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shift-terminal-content";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shift-terminal-content";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shift-terminal-content";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shift-terminal-content";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shift-terminal-content";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shift-terminal-content";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shift-terminal-content";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shift-terminal-content";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shift-terminal-content";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shift-terminal-content";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shift-terminal-content";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shift-terminal-content";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shift-terminal-content";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shift-terminal-content";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shift-terminal-content";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shift-terminal-content";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shift-terminal-content";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shift-terminal-content";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=shift-terminal-content";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shift-terminal-content";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shift-terminal-content";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=terminal-icons";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shift-terminal-content";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -2176,7 +2176,7 @@ const operatorInputRuntime = createOperatorInputRuntime({
     else if (target?.userData.kind === "slidingDrawer") prefabPhysicsRegistrar.toggleDeskDrawer(target);
     else if (target?.userData.kind === "serviceTerminal" || target?.userData.kind === "screenFocus") {
       serviceTerminalInteractionRuntime.activate(target, {
-        levelId: target.userData.levelId ?? activeLevelId,
+        levelId: activeLevelId,
         prefabName: target.userData.levelPrefabKey?.split(":").slice(1).join(":") ?? "",
       });
     } else if (target?.userData.kind === "viewportShutterButton"

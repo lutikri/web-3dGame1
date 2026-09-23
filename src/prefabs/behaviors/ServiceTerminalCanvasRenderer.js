@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=terminal-icons";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=shift-terminal-content";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;
@@ -34,6 +34,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   texture.generateMipmaps = false;
 
   const state = {
+    levelId: "exploring-around",
     language: "en",
     activeTab: "brief",
     activeDocumentId: null,
@@ -378,6 +379,17 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     return true;
   }
 
+  function setLevelId(levelId) {
+    const normalized = typeof levelId === "string" && levelId ? levelId : "exploring-around";
+    if (state.levelId === normalized) return false;
+    state.levelId = normalized;
+    state.activeDocumentId = null;
+    state.guideIndex = 0;
+    state.documentScroll = 0;
+    draw();
+    return true;
+  }
+
   function loadImage(path) {
     if (images.has(path)) return images.get(path);
     const image = new Image();
@@ -400,7 +412,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   }
 
   function content() {
-    return getServiceTerminalContent("exploring-around", state.language);
+    return getServiceTerminalContent(state.levelId, state.language);
   }
 
   function dispose() {
@@ -422,6 +434,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     activateAt,
     scroll,
     back,
+    setLevelId,
     setLanguage,
     dispose,
     isDocumentOpen: () => Boolean(state.activeDocumentId),

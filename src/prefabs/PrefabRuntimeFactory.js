@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-icons";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-icons";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-icons";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-icons";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=terminal-icons";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-icons";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-icons";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-icons";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=terminal-icons";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-icons";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-icons";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-terminal-content";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-terminal-content";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift-terminal-content";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-terminal-content";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-terminal-content";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-terminal-content";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift-terminal-content";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-terminal-content";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift-terminal-content";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-terminal-content";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-terminal-content";
 
 export function createPrefabRuntimeFactory({
   config,

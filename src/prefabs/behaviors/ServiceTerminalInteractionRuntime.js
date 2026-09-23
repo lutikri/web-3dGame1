@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=terminal-icons";
+} from "./ServiceTerminalBehavior.js?v=shift-terminal-content";
 
 const smoothstep = (value) => value * value * (3 - 2 * value);
 
@@ -71,6 +71,7 @@ export function createServiceTerminalInteractionRuntime({
   function activate(target, request = {}) {
     const runtime = getFocusRuntime(target);
     if (!runtime || now() < reentryAllowedAt) return false;
+    runtime.renderer?.setLevelId?.(request.levelId);
     if (!focusedRuntime) return enterFocus(runtime, request);
     if (focusedRuntime !== runtime || phase !== "active") return focusedRuntime === runtime;
     if (!runtime.renderer) return true;
@@ -98,6 +99,7 @@ export function createServiceTerminalInteractionRuntime({
 
   function enterFocus(runtime, request) {
     if (!runtime?.viewSocket) return false;
+    runtime.renderer?.setLevelId?.(request.levelId);
     runtime.setLanguage?.(getLanguage());
     focusedRuntime = runtime;
     focusedRequest = request;

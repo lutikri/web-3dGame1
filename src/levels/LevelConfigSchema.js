@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=terminal-icons";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shift-terminal-content";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

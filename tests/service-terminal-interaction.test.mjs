@@ -12,6 +12,7 @@ function createHarness() {
   const terminalRenderer = {
     canvas: { width: 1600, height: 900 },
     state: { activeTab: "brief", activeDocumentId: null, guideIndex: 0, documentScroll: 0 },
+    setLevelId: (levelId) => calls.push(["level", levelId]),
     draw: () => calls.push("draw"),
     updateHover: (x, y) => x >= 0 && y >= 0 ? "tab:guide" : null,
     activateAt: (x, y) => {
@@ -119,6 +120,12 @@ test("terminal activation reuses the resolved aim UV while the camera is leaning
     harness.calls.find((call) => Array.isArray(call) && call[0] === "activate"),
     ["activate", 1200, 225],
   );
+});
+
+test("terminal focus applies the current gameplay shift before drawing content", () => {
+  const harness = createHarness();
+  harness.runtime.activate(harness.target, { levelId: "fuel-problems" });
+  assert.deepEqual(harness.calls[0], ["level", "fuel-problems"]);
 });
 
 test("terminal escape closes its document and exits screen focus", () => {
