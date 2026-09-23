@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=early-menu-track";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=terminal-icons";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

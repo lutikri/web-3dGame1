@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=early-menu-track";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=early-menu-track";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=early-menu-track";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=early-menu-track";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=early-menu-track";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=early-menu-track";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=early-menu-track";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=early-menu-track";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=early-menu-track";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=early-menu-track";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=early-menu-track";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-icons";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-icons";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=terminal-icons";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-icons";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=terminal-icons";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-icons";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=terminal-icons";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-icons";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=terminal-icons";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-icons";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-icons";
 
 export function createPrefabRuntimeFactory({
   config,

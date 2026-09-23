@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=early-menu-track";
+} from "../prefabs/PrefabMarkerResolver.js?v=terminal-icons";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=early-menu-track";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=early-menu-track";
+} from "../levels/LevelConfigOverrides.js?v=terminal-icons";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=terminal-icons";
 
 export function createLevelSceneBuilder({
   scene,

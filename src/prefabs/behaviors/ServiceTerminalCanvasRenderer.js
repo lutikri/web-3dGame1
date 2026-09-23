@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=early-menu-track";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=terminal-icons";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;
@@ -86,7 +86,9 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
         context.fillStyle = COLORS.orange;
         context.fillRect(18, y, 7, 72);
       }
-      drawNavGlyph(53, y + 36, index);
+      if (!drawImageIcon(copy.assets.icons?.[id], 53, y + 36, 52, selected ? 1 : 0.82)) {
+        drawNavGlyph(53, y + 36, index);
+      }
       text(copy.tabs[id], 95, y + 45, 25, selected ? 800 : 650);
       region(action, 18, y, SIDEBAR_WIDTH - 36, 72);
     });
@@ -149,7 +151,8 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
       context.fillRect(rightX + 20, y, rightWidth - 40, 62);
       context.strokeStyle = COLORS.rule;
       context.strokeRect(rightX + 20, y, rightWidth - 40, 62);
-      text(attachment.title, rightX + 39, y + 39, 20, 700);
+      drawImageIcon(content().assets.icons?.[attachment.icon], rightX + 51, y + 31, 42, 0.82);
+      text(attachment.title, rightX + 82, y + 39, 17, 700);
       text("›", rightX + rightWidth - 39, y + 40, 33, 400, COLORS.ink, "right");
       region(action, rightX + 20, y, rightWidth - 40, 62);
     });
@@ -383,6 +386,17 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     image.src = path;
     images.set(path, image);
     return image;
+  }
+
+  function drawImageIcon(path, centerX, centerY, size, alpha = 1) {
+    if (!path) return false;
+    const image = loadImage(path);
+    if (!image?.complete || !image.naturalWidth) return false;
+    context.save();
+    context.globalAlpha = alpha;
+    context.drawImage(image, centerX - size / 2, centerY - size / 2, size, size);
+    context.restore();
+    return true;
   }
 
   function content() {

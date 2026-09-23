@@ -1,6 +1,13 @@
 const SERVICE_TERMINAL_ASSETS = {
   logo: "assets/ui/service-terminal/terragen-systems-logo.png",
   siteImage: "assets/ui/service-terminal/site-12-facility.jpg",
+  icons: {
+    brief: "assets/ui/service-terminal/icons/shift-brief.svg",
+    guide: "assets/ui/service-terminal/icons/operations-guide.svg",
+    reports: "assets/ui/service-terminal/icons/shift-reports.svg",
+    archive: "assets/ui/service-terminal/icons/archive.svg",
+    notices: "assets/ui/service-terminal/icons/notices.svg",
+  },
 };
 
 const TERMINAL_CONTENT = {
@@ -39,12 +46,14 @@ const TERMINAL_CONTENT = {
         {
           id: "technical-brief",
           title: "ARCHIVED TECHNICAL BRIEF",
+          icon: "reports",
           type: "archivedDocument",
           pages: ["assets/ui/briefings/Intro1-us.png"],
         },
         {
           id: "load-profile",
           title: "LOAD PROFILE",
+          icon: "guide",
           type: "loadProfile",
           heading: "FCU-16 / LOAD PROFILE",
           points: [
@@ -140,12 +149,14 @@ const TERMINAL_CONTENT = {
         {
           id: "technical-brief",
           title: "АРХИВНЫЙ ТЕХ. БРИФ",
+          icon: "reports",
           type: "archivedDocument",
           pages: ["assets/ui/briefings/Intro1-ru.png", "assets/ui/briefings/Intro1_2-ru.png"],
         },
         {
           id: "load-profile",
           title: "ПРОФИЛЬ НАГРУЗКИ",
+          icon: "guide",
           type: "loadProfile",
           heading: "FCU-16 / ПРОФИЛЬ НАГРУЗКИ",
           points: [

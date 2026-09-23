@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=early-menu-track";
+} from "./ServiceTerminalBehavior.js?v=terminal-icons";
 
 const smoothstep = (value) => value * value * (3 - 2 * value);
 

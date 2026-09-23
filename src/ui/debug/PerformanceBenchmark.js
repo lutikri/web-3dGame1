@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=early-menu-track";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=terminal-icons";
 
 const EFFECT_KEYS = [
   "bloom",

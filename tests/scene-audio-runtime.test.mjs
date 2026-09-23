@@ -73,3 +73,51 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
   assert.ok(attached.some(([id, , soundKey, active]) => id === "prefab:room:ClockA:loop" && soundKey === "Clock1_loop" && active));
   assert.ok(loops.some(([id, active]) => id === "Footsteps1_Walk1" && active));
 });
+
+test("scene audio stays inactive behind presentation curtains and suppresses hidden lamp startup", () => {
+  const attached = [];
+  const loops = [];
+  const oneShots = [];
+  let lightFactor = 0;
+  const runtime = new SceneAudioRuntime({
+    config: {
+      camera: { walkSpeed: 2, runSpeed: 4 },
+      levelEnvironments: {
+        room: { prefabs: [{ name: "LampA", light: { fluorescentStartup: true } }] },
+      },
+    },
+    audio: {
+      update: (...args) => loops.push(["update", ...args]),
+      setLoop: (...args) => loops.push(args),
+      setAttachedLoop: (...args) => attached.push(args),
+    },
+    camera: { position: new THREE.Vector3() },
+    getPanel: () => ({ name: "panel" }),
+    keys: new Set(),
+    prefabInstances: new Map([["room:LampA", { root: {}, light: {}, controlPost: null }]]),
+    getViewMode: () => "level",
+    getActiveLevelId: () => "room",
+    resolveEnvironmentId: (id) => id,
+    hasPanel: () => true,
+    getMovementVelocity: () => new THREE.Vector3(),
+    isNoclipEnabled: () => false,
+    getLightFactor: () => lightFactor,
+    getSnapshot: () => ({ mode: "standby" }),
+    coreAudio: { update: (dt, state) => attached.push(["coreAudio", dt, state]) },
+    announcements: { update: (dt, state) => attached.push(["announcements", dt, state]) },
+    playSound: (...args) => oneShots.push(args),
+    presentationBlocked: true,
+  });
+
+  lightFactor = 1;
+  runtime.update(0.016);
+  assert.equal(loops.find(([id]) => id === "update")[3], null);
+  assert.equal(attached.find(([id]) => id === "lamp:room:LampA")[3], false);
+  assert.equal(attached.find(([id]) => id === "coreAudio")[2].active, false);
+  assert.equal(oneShots.length, 0);
+
+  runtime.setPresentationBlocked(false);
+  runtime.update(0.016);
+  assert.equal(oneShots.length, 0);
+  assert.equal(attached.filter(([id]) => id === "lamp:room:LampA").at(-1)[3], true);
+});

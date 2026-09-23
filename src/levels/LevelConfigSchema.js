@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=early-menu-track";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=terminal-icons";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

@@ -3,145 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=early-menu-track";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=terminal-icons";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=early-menu-track";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=early-menu-track";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=early-menu-track";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=early-menu-track";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=early-menu-track";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=early-menu-track";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=early-menu-track";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=early-menu-track";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=early-menu-track";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=early-menu-track";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=early-menu-track";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=early-menu-track";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=early-menu-track";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=early-menu-track";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=early-menu-track";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=early-menu-track";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=early-menu-track";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=early-menu-track";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=early-menu-track";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=early-menu-track";
+} from "./game/ShiftReport.js?v=terminal-icons";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=terminal-icons";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=terminal-icons";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=terminal-icons";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=terminal-icons";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=terminal-icons";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=terminal-icons";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=terminal-icons";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=terminal-icons";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=terminal-icons";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=terminal-icons";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=terminal-icons";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=terminal-icons";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=terminal-icons";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=terminal-icons";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=terminal-icons";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=terminal-icons";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=terminal-icons";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=terminal-icons";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=terminal-icons";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=early-menu-track";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=early-menu-track";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=early-menu-track";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=early-menu-track";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=early-menu-track";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=early-menu-track";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=early-menu-track";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=early-menu-track";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=early-menu-track";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=early-menu-track";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=early-menu-track";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=early-menu-track";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=early-menu-track";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=early-menu-track";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=terminal-icons";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=terminal-icons";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=terminal-icons";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=terminal-icons";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=terminal-icons";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=terminal-icons";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=terminal-icons";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=terminal-icons";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=terminal-icons";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=terminal-icons";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=terminal-icons";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=terminal-icons";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=terminal-icons";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=terminal-icons";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=early-menu-track";
+} from "./config/GraphicsQualityProfiles.js?v=terminal-icons";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=early-menu-track";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=early-menu-track";
-import { createStatusScreen } from "./StatusScreen.js?v=early-menu-track";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=early-menu-track";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=early-menu-track";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=early-menu-track";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=early-menu-track";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=early-menu-track";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=early-menu-track";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=early-menu-track";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=early-menu-track";
+} from "./scene/TextureStreaming.js?v=terminal-icons";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=terminal-icons";
+import { createStatusScreen } from "./StatusScreen.js?v=terminal-icons";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=terminal-icons";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=terminal-icons";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=terminal-icons";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=terminal-icons";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=terminal-icons";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=terminal-icons";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=terminal-icons";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=terminal-icons";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=early-menu-track";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=early-menu-track";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=early-menu-track";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=terminal-icons";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=terminal-icons";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=terminal-icons";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=early-menu-track";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=early-menu-track";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=early-menu-track";
-import { AssetCache } from "./runtime/AssetCache.js?v=early-menu-track";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=early-menu-track";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=early-menu-track";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=early-menu-track";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=early-menu-track";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=early-menu-track";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=early-menu-track";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=early-menu-track";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=early-menu-track";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=early-menu-track";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=early-menu-track";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=early-menu-track";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=early-menu-track";
+} from "./lighting/FluorescentBehavior.js?v=terminal-icons";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=terminal-icons";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=terminal-icons";
+import { AssetCache } from "./runtime/AssetCache.js?v=terminal-icons";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=terminal-icons";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=terminal-icons";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=terminal-icons";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=terminal-icons";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=terminal-icons";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=terminal-icons";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=terminal-icons";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=terminal-icons";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=terminal-icons";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=terminal-icons";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=terminal-icons";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=terminal-icons";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=early-menu-track";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=early-menu-track";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=early-menu-track";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=early-menu-track";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=early-menu-track";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=early-menu-track";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=early-menu-track";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=early-menu-track";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=early-menu-track";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=early-menu-track";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=early-menu-track";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=early-menu-track";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=early-menu-track";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=early-menu-track";
-import { PlayerController } from "./player/PlayerController.js?v=early-menu-track";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=early-menu-track";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=early-menu-track";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=early-menu-track";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=early-menu-track";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=early-menu-track";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=early-menu-track";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=early-menu-track";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=early-menu-track";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=early-menu-track";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=early-menu-track";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=early-menu-track";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=early-menu-track";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=early-menu-track";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=early-menu-track";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=early-menu-track";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=early-menu-track";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=early-menu-track";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=early-menu-track";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=early-menu-track";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=early-menu-track";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=early-menu-track";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=early-menu-track";
+} from "./scene/InteriorObjectRegistry.js?v=terminal-icons";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=terminal-icons";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=terminal-icons";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=terminal-icons";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=terminal-icons";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=terminal-icons";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=terminal-icons";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=terminal-icons";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=terminal-icons";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=terminal-icons";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=terminal-icons";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=terminal-icons";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=terminal-icons";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=terminal-icons";
+import { PlayerController } from "./player/PlayerController.js?v=terminal-icons";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=terminal-icons";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=terminal-icons";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=terminal-icons";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=terminal-icons";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=terminal-icons";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=terminal-icons";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=terminal-icons";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=terminal-icons";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=terminal-icons";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=terminal-icons";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=terminal-icons";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=terminal-icons";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=terminal-icons";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=terminal-icons";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=terminal-icons";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=terminal-icons";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=terminal-icons";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=terminal-icons";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=terminal-icons";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=terminal-icons";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=terminal-icons";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=terminal-icons";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=early-menu-track";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=terminal-icons";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -390,8 +390,8 @@ const panelControlRuntime = new PanelControlRuntime({
   diagnostics: diagnosticRuntime,
   onChanged: () => updateControlTooltip(),
   playSound: (group, object) => object
-    ? audioRuntime.playRandomAttached(object, group, camera.position)
-    : audioRuntime.playRandom(group),
+    ? playSoundGroupAtObject(object, group)
+    : audioRuntime.playRandom(group, { scope: "scene" }),
   runAction: runControlButtonAction,
   toggleRoomLights: () => toggleRoomLights(),
   executeLevelBinding,
@@ -409,6 +409,7 @@ const audioRuntime = new AudioRuntime({
   mix: SOUND_MIX,
   masterVolume: 1,
   suspended: Boolean(bootOptions.firstRun || bootOptions.repeatBoot),
+  blockedScopes: bootOptions.firstRun || bootOptions.repeatBoot ? ["scene"] : [],
 });
 const menuAudioRuntime = new MenuAudioRuntime({ audio: audioRuntime });
 let activeShiftProfile = null;
@@ -1040,6 +1041,7 @@ const sceneAudioRuntime = new SceneAudioRuntime({
   coreAudio: coreAudioRuntime,
   announcements: announcementSystemRuntime,
   playSound: playSoundAtObject,
+  presentationBlocked: Boolean(bootOptions.firstRun || bootOptions.repeatBoot),
 });
 const updateAudioState = sceneAudioRuntime.update;
 const fixtureFlickerRuntime = new FixtureFlickerRuntime({
@@ -1883,11 +1885,11 @@ function getLevelPanelConfig(levelId) {
 }
 
 function playSoundAtObject(object, soundKey, options = {}) {
-  return audioRuntime.playAttached(object, soundKey, camera.position, options);
+  return audioRuntime.playAttached(object, soundKey, camera.position, { ...options, scope: "scene" });
 }
 
 function playSoundGroupAtObject(object, groupKey, options = {}) {
-  return audioRuntime.playRandomAttached(object, groupKey, camera.position, options);
+  return audioRuntime.playRandomAttached(object, groupKey, camera.position, { ...options, scope: "scene" });
 }
 
 function updateNarratorRadios(dt) {
@@ -2343,6 +2345,10 @@ installOperatorGameApi(window, {
   unlockAudio: () => audioRuntime.unlock(),
   isAudioUnlocked: () => audioRuntime.unlocked,
   setMenuAudioActive: (active, options) => menuAudioRuntime.setActive(active, options),
+  setSceneAudioBlocked: (blocked) => {
+    audioRuntime.setScopeBlocked("scene", blocked);
+    sceneAudioRuntime.setPresentationBlocked(blocked);
+  },
   setAudioSuspended: (suspended) => audioRuntime.setSuspended(suspended),
   setBriefingSheetOpener: (callback) => {
     briefingSheetOpener = typeof callback === "function" ? callback : null;

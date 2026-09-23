@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=early-menu-track";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=early-menu-track";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=early-menu-track";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=early-menu-track";
+import { createDebugHub } from "./DebugHub.js?v=terminal-icons";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=terminal-icons";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=terminal-icons";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=terminal-icons";
 
 export class DebugToolsRuntime {
   constructor(options) {

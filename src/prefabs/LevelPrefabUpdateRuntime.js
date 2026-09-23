@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=early-menu-track";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=early-menu-track";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=early-menu-track";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=early-menu-track";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=early-menu-track";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=early-menu-track";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=early-menu-track";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=early-menu-track";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=terminal-icons";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-icons";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-icons";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=terminal-icons";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-icons";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=terminal-icons";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=terminal-icons";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=terminal-icons";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

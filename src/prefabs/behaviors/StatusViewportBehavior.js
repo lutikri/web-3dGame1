@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=early-menu-track";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=early-menu-track";
+} from "../../panels/StatusScreenMaterial.js?v=terminal-icons";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=terminal-icons";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

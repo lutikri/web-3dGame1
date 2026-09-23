@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=early-menu-track";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=terminal-icons";
 
 const DISMISS_MS = 300;
 

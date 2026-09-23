@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=early-menu-track";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=terminal-icons";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

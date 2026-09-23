@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=early-menu-track";
-import { applyLocalization, translate } from "./Localization.js?v=early-menu-track";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=early-menu-track";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=early-menu-track";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=early-menu-track";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=early-menu-track";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=early-menu-track";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=terminal-icons";
+import { applyLocalization, translate } from "./Localization.js?v=terminal-icons";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=terminal-icons";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=terminal-icons";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=terminal-icons";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=terminal-icons";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=terminal-icons";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,15 +14,15 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=early-menu-track";
-import { createAppPanelController } from "./AppPanelController.js?v=early-menu-track";
-import { createAppRouter } from "./AppRouter.js?v=early-menu-track";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=early-menu-track";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=early-menu-track";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=early-menu-track";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=early-menu-track";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=early-menu-track";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=early-menu-track";
+} from "./AppPersistence.js?v=terminal-icons";
+import { createAppPanelController } from "./AppPanelController.js?v=terminal-icons";
+import { createAppRouter } from "./AppRouter.js?v=terminal-icons";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=terminal-icons";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=terminal-icons";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=terminal-icons";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=terminal-icons";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=terminal-icons";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=terminal-icons";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -108,6 +108,7 @@ export function createAppShell({ gameApi }) {
     releaseInput: () => gameApi.releasePointerLock?.(),
     onStateChange: (active) => {
       transitionActive = active;
+      gameApi.setSceneAudioBlocked?.(active);
       updateInputLock();
     },
   });

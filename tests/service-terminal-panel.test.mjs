@@ -17,6 +17,10 @@ test("service terminal content exposes the required data-driven sections in EN a
   assert.equal(english.guide.slides.length, 4);
   assert.equal(english.assets.logo, "assets/ui/service-terminal/terragen-systems-logo.png");
   assert.equal(english.assets.siteImage, "assets/ui/service-terminal/site-12-facility.jpg");
+  assert.deepEqual(Object.keys(english.assets.icons), ["brief", "guide", "reports", "archive", "notices"]);
+  assert.equal(english.assets.icons.brief, "assets/ui/service-terminal/icons/shift-brief.svg");
+  assert.equal(english.assets.icons.notices, "assets/ui/service-terminal/icons/notices.svg");
+  assert.deepEqual(english.brief.attachments.map((entry) => entry.icon), ["reports", "guide"]);
   assert.equal(english.brief.attachments[0].pages[0], "assets/ui/briefings/Intro1-us.png");
   assert.equal(russian.brief.attachments[0].pages.length, 2);
   assert.equal(russian.brief.title, "ПЕРВАЯ КВАЛ.\nСМЕНА");

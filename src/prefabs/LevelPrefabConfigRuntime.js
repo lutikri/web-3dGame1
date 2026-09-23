@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=early-menu-track";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=early-menu-track";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=early-menu-track";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=early-menu-track";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=early-menu-track";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=early-menu-track";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=early-menu-track";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=terminal-icons";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=terminal-icons";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=terminal-icons";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=terminal-icons";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=terminal-icons";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=terminal-icons";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=terminal-icons";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

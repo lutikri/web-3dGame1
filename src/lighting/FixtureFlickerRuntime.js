@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=early-menu-track";
+} from "./FluorescentBehavior.js?v=terminal-icons";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

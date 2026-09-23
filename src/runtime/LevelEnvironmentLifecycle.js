@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=early-menu-track";
+import { LevelRuntime } from "./LevelRuntime.js?v=terminal-icons";
 
 export class LevelEnvironmentLifecycle {
   constructor({

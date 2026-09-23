@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export class AudioRuntime {
-  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1, suspended = false }) {
+  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1, suspended = false, blockedScopes = [] }) {
     this.sounds = sounds;
     this.groups = groups;
     this.mix = {
@@ -25,6 +25,7 @@ export class AudioRuntime {
     this.ambienceVolumes = new Map();
     this.lastGroupChoice = new Map();
     this.unlocked = false;
+    this.blockedScopes = new Set(blockedScopes);
     this.activeLevelId = null;
     this.tmpPoint = new THREE.Vector3();
     this.nextOneShotId = 1;
@@ -101,6 +102,7 @@ export class AudioRuntime {
   }
 
   play(soundKey, options = {}) {
+    if (this.isScopeBlocked(options.scope)) return null;
     const config = this.sounds[soundKey];
     if (!config) {
       console.warn(`[AudioRuntime] Unknown sound "${soundKey}"`);
@@ -125,6 +127,7 @@ export class AudioRuntime {
   }
 
   playAttached(object, soundKey, listenerPosition, options = {}) {
+    if (this.isScopeBlocked(options.scope)) return null;
     if (!object) return this.play(soundKey, options);
     const config = this.sounds[soundKey];
     if (!config) return null;
@@ -135,6 +138,7 @@ export class AudioRuntime {
       id,
       object,
       soundKey,
+      scope: options.scope ?? null,
       levelId: options.levelId ?? object.userData?.levelId ?? null,
       source: null,
       gain: null,
@@ -180,11 +184,13 @@ export class AudioRuntime {
   }
 
   playRandom(groupKey, options = {}) {
+    if (this.isScopeBlocked(options.scope)) return null;
     const soundKey = this.pickRandomSound(groupKey);
     return soundKey ? this.play(soundKey, options) : null;
   }
 
   playRandomAttached(object, groupKey, listenerPosition, options = {}) {
+    if (this.isScopeBlocked(options.scope)) return null;
     const soundKey = this.pickRandomSound(groupKey);
     return soundKey ? this.playAttached(object, soundKey, listenerPosition, options) : null;
   }
@@ -446,6 +452,21 @@ export class AudioRuntime {
     if (this.masterGain) this.masterGain.gain.value = this.suspended ? 0 : this.masterVolume;
   }
 
+  setScopeBlocked(scope, blocked) {
+    if (!scope) return false;
+    if (blocked) {
+      this.blockedScopes.add(scope);
+      this.stopAttachedOneShots((state) => state.scope === scope);
+    } else {
+      this.blockedScopes.delete(scope);
+    }
+    return this.blockedScopes.has(scope);
+  }
+
+  isScopeBlocked(scope) {
+    return Boolean(scope && this.blockedScopes.has(scope));
+  }
+
   setMixVolume(group, value) {
     if (!group || group === "master") {
       this.setMasterVolume(value);
@@ -485,6 +506,7 @@ export class AudioRuntime {
     return {
       activeLevelId: levelId,
       unlocked: this.unlocked,
+      blockedScopes: [...this.blockedScopes].sort(),
       soundKeys: [...soundKeys].sort(),
       loops: this.loops.size,
       attachedLoops: this.attachedLoops.size,
