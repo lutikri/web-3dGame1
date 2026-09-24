@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=level-arrival-intro";
+} from "./FluorescentBehavior.js?v=arrival-first-person";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

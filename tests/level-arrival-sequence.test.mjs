@@ -34,7 +34,11 @@ test("arrival sequence releases input before its title finishes", async () => {
   }).then((result) => { finished = true; return result; });
   await settlePlay();
 
-  harness.clock.runTo(2100);
+  harness.clock.runTo(2399);
+  assert.equal(harness.root.classList.contains("is-revealing-world"), false);
+  assert.equal(inputReady, 0);
+
+  harness.clock.runTo(3000);
   await Promise.resolve();
   assert.equal(harness.covered, 1);
   assert.equal(inputReady, 1);
@@ -42,14 +46,67 @@ test("arrival sequence releases input before its title finishes", async () => {
   assert.equal(harness.root.classList.contains("is-title-visible"), true);
   assert.equal(harness.root.hidden, false);
 
-  harness.clock.runTo(4400);
+  harness.clock.runTo(8139);
+  assert.equal(harness.root.classList.contains("is-title-fading"), false);
+  harness.clock.runTo(8200);
+  assert.equal(harness.root.classList.contains("is-title-fading"), true);
+
+  harness.clock.runTo(9000);
   assert.equal(await completion, true);
   assert.equal(finished, true);
   assert.equal(harness.root.hidden, true);
   assert.equal(inputReady, 1);
 });
 
-test("arrival skip clears timers, stops its sound, and restores input", async () => {
+test("arrival skip preserves a minimum system-text phase before revealing gameplay", async () => {
+  const harness = createHarness();
+  const completion = harness.sequence.play(getLevelArrivalConfig("exploring-around"));
+  await settlePlay();
+
+  harness.clock.runTo(200);
+  assert.equal(harness.sequence.skip(), true);
+  assert.equal(harness.root.classList.contains("is-revealing-world"), false);
+
+  harness.clock.runTo(699);
+  assert.equal(harness.root.classList.contains("is-revealing-world"), false);
+  harness.clock.runTo(700);
+  assert.equal(harness.root.classList.contains("is-revealing-world"), true);
+
+  harness.clock.runTo(1300);
+  assert.equal(harness.root.classList.contains("is-title-visible"), true);
+  assert.equal(harness.sequence.skip(), false);
+
+  harness.clock.runTo(7300);
+  assert.equal(await completion, true);
+});
+
+test("primary click requests first person and advances without dismissing the title", async () => {
+  const harness = createHarness();
+  const completion = harness.sequence.play(getLevelArrivalConfig("exploring-around"));
+  await settlePlay();
+
+  harness.clock.runTo(900);
+  harness.dispatch("pointerdown", {
+    button: 0,
+    preventDefault: () => { throw new Error("arrival should not consume the pointer-lock click"); },
+  });
+  assert.equal(harness.firstPersonRequests, 1);
+  assert.equal(harness.root.classList.contains("is-revealing-world"), true);
+
+  harness.clock.runTo(1500);
+  assert.equal(harness.sequence.isActive(), true);
+  assert.equal(harness.root.hidden, false);
+  assert.equal(harness.root.classList.contains("is-title-visible"), true);
+
+  harness.dispatch("pointerdown", { button: 0 });
+  assert.equal(harness.firstPersonRequests, 1);
+  assert.equal(harness.root.classList.contains("is-title-visible"), true);
+
+  harness.clock.runTo(7500);
+  assert.equal(await completion, true);
+});
+
+test("arrival cancel clears timers, stops its sound, and restores input", async () => {
   const harness = createHarness();
   let inputReady = 0;
   const completion = harness.sequence.play(getLevelArrivalConfig("fuel-problems"), {
@@ -58,7 +115,7 @@ test("arrival skip clears timers, stops its sound, and restores input", async ()
   await settlePlay();
 
   harness.clock.runTo(700);
-  assert.equal(harness.sequence.skip(), true);
+  assert.equal(harness.sequence.cancel(), true);
   assert.equal(await completion, false);
   assert.equal(harness.clock.size(), 0);
   assert.equal(inputReady, 1);
@@ -107,7 +164,15 @@ function createHarness() {
     play() { return Promise.resolve(); }
     pause() { this.paused = true; }
   }
-  const harness = { root, body, clock, audioInstances, covered: 0 };
+  const harness = {
+    root,
+    body,
+    clock,
+    audioInstances,
+    covered: 0,
+    firstPersonRequests: 0,
+    dispatch: (type, event) => listeners.get(type)?.(event),
+  };
   harness.sequence = createLevelArrivalSequence({
     root,
     documentRef,
@@ -118,6 +183,7 @@ function createHarness() {
     clearTimeoutFn: clock.clearTimeout,
     requestAnimationFrameFn: (callback) => callback(),
     randomFn: () => 0,
+    requestFirstPerson: () => { harness.firstPersonRequests += 1; },
   });
   return harness;
 }

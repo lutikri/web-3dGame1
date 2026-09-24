@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=level-arrival-intro";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=arrival-first-person";
 
 const DISMISS_MS = 300;
 

@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=level-arrival-intro";
-import { applyLocalization, translate } from "./Localization.js?v=level-arrival-intro";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=level-arrival-intro";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=level-arrival-intro";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=level-arrival-intro";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=level-arrival-intro";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=level-arrival-intro";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=arrival-first-person";
+import { applyLocalization, translate } from "./Localization.js?v=arrival-first-person";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=arrival-first-person";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=arrival-first-person";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=arrival-first-person";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=arrival-first-person";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=arrival-first-person";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=level-arrival-intro";
-import { createAppPanelController } from "./AppPanelController.js?v=level-arrival-intro";
-import { createAppRouter } from "./AppRouter.js?v=level-arrival-intro";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=level-arrival-intro";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=level-arrival-intro";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=level-arrival-intro";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=level-arrival-intro";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=level-arrival-intro";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=level-arrival-intro";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=level-arrival-intro";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=level-arrival-intro";
+} from "./AppPersistence.js?v=arrival-first-person";
+import { createAppPanelController } from "./AppPanelController.js?v=arrival-first-person";
+import { createAppRouter } from "./AppRouter.js?v=arrival-first-person";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=arrival-first-person";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=arrival-first-person";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=arrival-first-person";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=arrival-first-person";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=arrival-first-person";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=arrival-first-person";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=arrival-first-person";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=arrival-first-person";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -82,6 +82,7 @@ export function createAppShell({ gameApi }) {
     root: document.querySelector("#levelArrivalOverlay"),
     soundConfig: SOUND_REGISTRY.UI_LevelIntro1,
     getMasterVolume: () => Number(settings.masterVolume ?? 100) / 100,
+    requestFirstPerson: () => gameApi.requestPointerLock?.({ allowWhileInputLocked: true }),
   });
   const panelController = createAppPanelController({
     overlay,

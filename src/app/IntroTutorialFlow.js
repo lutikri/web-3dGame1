@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=level-arrival-intro";
+import { translateRequired } from "./Localization.js?v=arrival-first-person";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

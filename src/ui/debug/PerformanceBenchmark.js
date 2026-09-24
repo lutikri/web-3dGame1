@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=level-arrival-intro";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=arrival-first-person";
 
 const EFFECT_KEYS = [
   "bloom",

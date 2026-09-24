@@ -1,4 +1,4 @@
-import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=level-arrival-intro";
+import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=arrival-first-person";
 
 const MONTHS = {
   en: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
@@ -24,6 +24,12 @@ const SYSTEM_COPY = {
   en: { accessLabel: "PERSONNEL ACCESS", status: "ARRIVAL CONFIRMED" },
   ru: { accessLabel: "ДОСТУП ПЕРСОНАЛА", status: "ПРИБЫТИЕ ПОДТВЕРЖДЕНО" },
 };
+
+const MINIMUM_SYSTEM_TEXT_MS = 700;
+const AUTOMATIC_WORLD_REVEAL_MS = 2400;
+const WORLD_REVEAL_TO_TITLE_MS = 600;
+const TITLE_HOLD_MS = 5140;
+const TITLE_FADE_MS = 860;
 
 export function getLevelArrivalConfig(levelId, language = "en") {
   const locale = language === "ru" ? "ru" : "en";
@@ -52,6 +58,7 @@ export function createLevelArrivalSequence({
   clearTimeoutFn = globalThis.clearTimeout?.bind(globalThis),
   requestAnimationFrameFn = globalThis.requestAnimationFrame?.bind(globalThis),
   randomFn = Math.random,
+  requestFirstPerson = () => {},
 } = {}) {
   const elements = root ? {
     lines: [...root.querySelectorAll("[data-arrival-line]")],
@@ -86,21 +93,18 @@ export function createLevelArrivalSequence({
     schedule(current, 500, () => scrambleReveal(current, elements.lines[1], config.accessLabel, 140));
     schedule(current, 640, () => scrambleReveal(current, elements.lines[2], config.dateTime, 140));
     schedule(current, 780, () => scrambleReveal(current, elements.lines[3], config.status, 140));
-    schedule(current, 700, () => { current.canSkip = true; });
-    schedule(current, 1400, () => {
-      root.classList.add("is-revealing-world");
-      documentRef?.body?.classList?.add("level-arrival-world-reveal");
+    schedule(current, MINIMUM_SYSTEM_TEXT_MS, () => {
+      current.canAdvance = true;
+      if (current.advanceRequested) beginWorldReveal(current);
     });
-    schedule(current, 2000, () => releaseInput(current));
-    schedule(current, 2080, () => root.classList.add("is-title-visible"));
-    schedule(current, 3650, () => root.classList.add("is-title-fading"));
-    schedule(current, 4400, () => finish(current, { skipped: false }));
+    schedule(current, AUTOMATIC_WORLD_REVEAL_MS, () => beginWorldReveal(current));
     return current.promise;
   }
 
   function skip() {
-    if (!run?.canSkip) return false;
-    finish(run, { skipped: true });
+    if (!run || run.phase !== "system") return false;
+    run.advanceRequested = true;
+    if (run.canAdvance) beginWorldReveal(run);
     return true;
   }
 
@@ -119,7 +123,9 @@ export function createLevelArrivalSequence({
     const current = {
       timers: new Set(),
       sound: null,
-      canSkip: false,
+      phase: "system",
+      canAdvance: false,
+      advanceRequested: false,
       inputReleased: false,
       onInputReady,
       resolve: null,
@@ -151,10 +157,28 @@ export function createLevelArrivalSequence({
     };
     current.pointerHandler = (event) => {
       if (event.button !== 0) return;
-      if (skip()) event.preventDefault();
+      if (!current.inputReleased) requestFirstPerson();
+      skip();
     };
     documentRef?.addEventListener?.("keydown", current.keyHandler, true);
     documentRef?.addEventListener?.("pointerdown", current.pointerHandler, true);
+  }
+
+  function beginWorldReveal(current) {
+    if (run !== current || current.phase !== "system") return;
+    current.phase = "world";
+    root.classList.add("is-revealing-world");
+    documentRef?.body?.classList?.add("level-arrival-world-reveal");
+    schedule(current, WORLD_REVEAL_TO_TITLE_MS, () => showTitle(current));
+  }
+
+  function showTitle(current) {
+    if (run !== current || current.phase !== "world") return;
+    current.phase = "title";
+    root.classList.add("is-title-visible");
+    releaseInput(current);
+    schedule(current, TITLE_HOLD_MS, () => root.classList.add("is-title-fading"));
+    schedule(current, TITLE_HOLD_MS + TITLE_FADE_MS, () => finish(current, { skipped: false }));
   }
 
   function scrambleReveal(current, element, finalText, durationMs) {

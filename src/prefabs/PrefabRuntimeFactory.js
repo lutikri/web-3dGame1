@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-arrival-intro";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-arrival-intro";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-arrival-intro";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-arrival-intro";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-arrival-intro";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-arrival-intro";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-arrival-intro";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-arrival-intro";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-arrival-intro";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-arrival-intro";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-arrival-intro";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=arrival-first-person";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=arrival-first-person";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=arrival-first-person";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=arrival-first-person";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=arrival-first-person";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=arrival-first-person";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=arrival-first-person";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=arrival-first-person";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=arrival-first-person";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=arrival-first-person";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=arrival-first-person";
 
 export function createPrefabRuntimeFactory({
   config,

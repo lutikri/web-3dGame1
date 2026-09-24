@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=level-arrival-intro";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=level-arrival-intro";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=level-arrival-intro";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=level-arrival-intro";
+import { createDebugHub } from "./DebugHub.js?v=arrival-first-person";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=arrival-first-person";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=arrival-first-person";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=arrival-first-person";
 
 export class DebugToolsRuntime {
   constructor(options) {

@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=level-arrival-intro";
-import { applyLocalization } from "./app/Localization.js?v=level-arrival-intro";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=level-arrival-intro";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=level-arrival-intro";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=level-arrival-intro";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=level-arrival-intro";
+import { createPreflight } from "./app/Preflight.js?v=arrival-first-person";
+import { applyLocalization } from "./app/Localization.js?v=arrival-first-person";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=arrival-first-person";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=arrival-first-person";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=arrival-first-person";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=arrival-first-person";
 
-const APP_BUILD_REVISION = "level-arrival-intro";
+const APP_BUILD_REVISION = "arrival-first-person";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=level-arrival-intro`);
+await import(`./OperatorGame.js?v=arrival-first-person`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=level-arrival-intro`);
+const { createAppShell } = await import(`./app/AppShell.js?v=arrival-first-person`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=level-arrival-intro`
+    `./runtime/RuntimeSmoke.js?v=arrival-first-person`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

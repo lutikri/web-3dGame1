@@ -19,4 +19,14 @@ test("UI typography uses bundled Latin and Cyrillic webfonts", () => {
   });
   assert.match(stylesheet, /font-family: "Cascadia Mono"/);
   assert.match(stylesheet, /font-family: "Bahnschrift Condensed"/);
+  assert.match(stylesheet, /font-family: "Roboto Condensed"/);
+  assert.match(
+    stylesheet,
+    /\.level-arrival-title h1\s*\{[^}]*font-family: "Roboto Condensed"[^}]*letter-spacing: -0\.018em/s,
+  );
+  assert.match(
+    stylesheet,
+    /@keyframes level-arrival-title-in\s*\{[^}]*clip-path: inset\(-0\.18em 100% -0\.2em -0\.08em\)/s,
+  );
+  assert.match(stylesheet, /\[data-arrival-subtitle-bottom\]::before\s*\{[^}]*content: "\/"/s);
 });
