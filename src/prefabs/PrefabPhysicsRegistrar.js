@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=arrival-first-person";
+} from "./behaviors/DeskDrawerBehavior.js?v=tutorial-early-actions";
 
 export function createPrefabPhysicsRegistrar({
   physics,

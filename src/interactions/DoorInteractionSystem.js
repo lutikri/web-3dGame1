@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=arrival-first-person";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=tutorial-early-actions";
 
 export class DoorInteractionSystem {
   constructor({

@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=arrival-first-person";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=tutorial-early-actions";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

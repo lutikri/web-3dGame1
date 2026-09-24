@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=arrival-first-person";
-import { applyLocalization, translate } from "./Localization.js?v=arrival-first-person";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=arrival-first-person";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=arrival-first-person";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=arrival-first-person";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=arrival-first-person";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=arrival-first-person";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=tutorial-early-actions";
+import { applyLocalization, translate } from "./Localization.js?v=tutorial-early-actions";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=tutorial-early-actions";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=tutorial-early-actions";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=tutorial-early-actions";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=tutorial-early-actions";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=tutorial-early-actions";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=arrival-first-person";
-import { createAppPanelController } from "./AppPanelController.js?v=arrival-first-person";
-import { createAppRouter } from "./AppRouter.js?v=arrival-first-person";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=arrival-first-person";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=arrival-first-person";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=arrival-first-person";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=arrival-first-person";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=arrival-first-person";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=arrival-first-person";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=arrival-first-person";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=arrival-first-person";
+} from "./AppPersistence.js?v=tutorial-early-actions";
+import { createAppPanelController } from "./AppPanelController.js?v=tutorial-early-actions";
+import { createAppRouter } from "./AppRouter.js?v=tutorial-early-actions";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=tutorial-early-actions";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=tutorial-early-actions";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=tutorial-early-actions";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=tutorial-early-actions";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=tutorial-early-actions";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=tutorial-early-actions";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=tutorial-early-actions";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=tutorial-early-actions";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -92,7 +92,6 @@ export function createAppShell({ gameApi }) {
       hideBriefing(true);
       gameApi.closeServiceTerminal?.({ restorePointerLock: false });
       introTutorialFlow.stop();
-      levelTutorialRuntime.stop();
       gameApi.releasePointerLock?.();
     },
     onVisibilityChange: ({ open, panelName }) => {
@@ -146,6 +145,13 @@ export function createAppShell({ gameApi }) {
       state?.levelId === activeGameplayLevelId
       && !briefingPanel?.isActive()
       && !transitionActive
+      && !isOpen()
+      && !document.querySelector("#resultsOverlay")?.classList.contains("is-visible")
+    ),
+    canObserve: (state) => Boolean(
+      state?.levelId === activeGameplayLevelId
+      && !routeInputLocked
+      && !briefingPanel?.isActive()
       && !isOpen()
       && !document.querySelector("#resultsOverlay")?.classList.contains("is-visible")
     ),
@@ -317,6 +323,7 @@ export function createAppShell({ gameApi }) {
       hideOverlay();
       await gameApi.startLevel?.({ levelId: fastLoadLevelId, mode: fastLoadLevel.mode });
       activeGameplayLevelId = fastLoadLevelId;
+      maybeStartLevelTutorial(fastLoadLevelId);
       if (!debugConfig.skipBriefing && shouldAutoShowLevelBriefing(LEVELS, fastLoadLevelId)) {
         await preloadLevelBriefing(fastLoadLevelId);
         showLevelBriefing(fastLoadLevelId);
@@ -430,6 +437,7 @@ export function createAppShell({ gameApi }) {
           hideOverlay();
           await gameApi.restartGame?.({ onProgress: setProgress });
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
+          maybeStartLevelTutorial(activeGameplayLevelId);
           if (shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)) {
             await preloadLevelBriefing(activeGameplayLevelId);
             showBriefingAfterArrival = true;
@@ -439,7 +447,6 @@ export function createAppShell({ gameApi }) {
       transition.then((restarted) => {
         if (!restarted || !activeGameplayLevelId) return;
         if (showBriefingAfterArrival) showLevelBriefing(activeGameplayLevelId);
-        maybeStartLevelTutorial(activeGameplayLevelId);
       });
     } else if (action === "quick-level-select") {
       showPanel("level-select");
@@ -483,6 +490,7 @@ export function createAppShell({ gameApi }) {
         hideOverlay();
         await gameApi.startLevel?.({ levelId, mode: level.mode, onProgress: setProgress });
         activeGameplayLevelId = levelId;
+        maybeStartLevelTutorial(levelId);
         if (shouldAutoShowLevelBriefing(LEVELS, levelId)) {
           await preloadLevelBriefing(levelId);
           showBriefingAfterArrival = true;
@@ -492,7 +500,6 @@ export function createAppShell({ gameApi }) {
     transition.then((entered) => {
       if (!entered) return;
       if (showBriefingAfterArrival) showLevelBriefing(levelId);
-      maybeStartLevelTutorial(levelId);
     });
     return transition;
   }
@@ -643,7 +650,6 @@ export function createAppShell({ gameApi }) {
   function hideBriefing(immediate = false, { keepTutorialHints = false } = {}) {
     if (!keepTutorialHints) {
       introTutorialFlow.stop();
-      levelTutorialRuntime.stop();
     }
     briefingPanel.hide(immediate);
   }

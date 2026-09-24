@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=arrival-first-person";
+import { applyAxisRotation } from "./TransformUtils.js?v=tutorial-early-actions";
 
 export class InteriorObjectRegistry {
   constructor(options) {

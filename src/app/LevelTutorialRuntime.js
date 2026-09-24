@@ -1,4 +1,4 @@
-export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, isAllowed }) {
+export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, isAllowed, canObserve }) {
   let state = null;
   let revealTimer = 0;
   let advanceTimer = 0;
@@ -39,19 +39,24 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
   }
 
   function handleKey(event) {
-    if (!active() || event.repeat || state.presentedHintId !== "move") return;
+    if (!observing() || event.repeat) return;
     if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) {
-      complete("moved", true, state.config.postMovementDelaySeconds ?? 5);
+      const delay = state.presentedHintId === "move"
+        ? state.config.postMovementDelaySeconds ?? 5
+        : 0;
+      complete("moved", true, delay);
     }
   }
 
   function handleMouseMove(event) {
-    if (!active() || state.presentedHintId !== "look") return;
-    if (Math.abs(event.movementX) + Math.abs(event.movementY) >= 2) complete("lookedAround");
+    if (!observing()) return;
+    if (Math.abs(event.movementX) + Math.abs(event.movementY) >= 2) {
+      complete("lookedAround", true, state.presentedHintId === "look" ? null : 0);
+    }
   }
 
   function handleHover(detail = {}) {
-    if (!active() || detail.levelId !== state.levelId) return;
+    if (!observing() || detail.levelId !== state.levelId) return;
     const nextKind = detail.kind ?? "none";
     const nextPrefabName = detail.prefabName ?? "";
     if (nextKind === state.hoveredKind && nextPrefabName === state.hoveredPrefabName) return;
@@ -68,8 +73,11 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
   }
 
   function handleInputAction(detail = {}) {
-    if (!active() || detail.levelId !== state.levelId) return;
-    if (detail.action === "lean" && state.presentedHintId === "lean") complete("leanedAtPanel");
+    if (!observing() || detail.levelId !== state.levelId) return;
+    if (
+      detail.action === "lean"
+      && (state.presentedHintId === "lean" || state.milestones.has("controlBoothEntered"))
+    ) complete("leanedAtPanel");
     if (
       detail.action === "primary"
       && state.presentedHintId === "door-hold"
@@ -217,6 +225,10 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
 
   function active() {
     return Boolean(state && isAllowed?.(state));
+  }
+
+  function observing() {
+    return Boolean(state && (canObserve ? canObserve(state) : active()));
   }
 
   return { start, stop, refresh: reconcile, handleKey, handleMouseMove, handleHover, handleInputAction, handleEvent };

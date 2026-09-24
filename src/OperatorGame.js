@@ -3,145 +3,145 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=arrival-first-person";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=tutorial-early-actions";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=arrival-first-person";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=arrival-first-person";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=arrival-first-person";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=arrival-first-person";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=arrival-first-person";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=arrival-first-person";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=arrival-first-person";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=arrival-first-person";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=arrival-first-person";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=arrival-first-person";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=arrival-first-person";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=arrival-first-person";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=arrival-first-person";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=arrival-first-person";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=arrival-first-person";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=arrival-first-person";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=arrival-first-person";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=arrival-first-person";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=arrival-first-person";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=arrival-first-person";
+} from "./game/ShiftReport.js?v=tutorial-early-actions";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=tutorial-early-actions";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=tutorial-early-actions";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=tutorial-early-actions";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=tutorial-early-actions";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=tutorial-early-actions";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=tutorial-early-actions";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=tutorial-early-actions";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=tutorial-early-actions";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=tutorial-early-actions";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=tutorial-early-actions";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=tutorial-early-actions";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=tutorial-early-actions";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=tutorial-early-actions";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=tutorial-early-actions";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=tutorial-early-actions";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=tutorial-early-actions";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=tutorial-early-actions";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=tutorial-early-actions";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=arrival-first-person";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=arrival-first-person";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=arrival-first-person";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=arrival-first-person";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=arrival-first-person";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=arrival-first-person";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=arrival-first-person";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=arrival-first-person";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=arrival-first-person";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=arrival-first-person";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=arrival-first-person";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=arrival-first-person";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=arrival-first-person";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=arrival-first-person";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=tutorial-early-actions";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=tutorial-early-actions";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=tutorial-early-actions";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=tutorial-early-actions";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=tutorial-early-actions";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=tutorial-early-actions";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=tutorial-early-actions";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=tutorial-early-actions";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=tutorial-early-actions";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=tutorial-early-actions";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=tutorial-early-actions";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=tutorial-early-actions";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=tutorial-early-actions";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=arrival-first-person";
+} from "./config/GraphicsQualityProfiles.js?v=tutorial-early-actions";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=arrival-first-person";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=arrival-first-person";
-import { createStatusScreen } from "./StatusScreen.js?v=arrival-first-person";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=arrival-first-person";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=arrival-first-person";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=arrival-first-person";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=arrival-first-person";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=arrival-first-person";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=arrival-first-person";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=arrival-first-person";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=arrival-first-person";
+} from "./scene/TextureStreaming.js?v=tutorial-early-actions";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=tutorial-early-actions";
+import { createStatusScreen } from "./StatusScreen.js?v=tutorial-early-actions";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=tutorial-early-actions";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=tutorial-early-actions";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=tutorial-early-actions";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=tutorial-early-actions";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=tutorial-early-actions";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=tutorial-early-actions";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=tutorial-early-actions";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=tutorial-early-actions";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=arrival-first-person";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=arrival-first-person";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=arrival-first-person";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=tutorial-early-actions";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=tutorial-early-actions";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=tutorial-early-actions";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=arrival-first-person";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=arrival-first-person";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=arrival-first-person";
-import { AssetCache } from "./runtime/AssetCache.js?v=arrival-first-person";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=arrival-first-person";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=arrival-first-person";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=arrival-first-person";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=arrival-first-person";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=arrival-first-person";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=arrival-first-person";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=arrival-first-person";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=arrival-first-person";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=arrival-first-person";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=arrival-first-person";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=arrival-first-person";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=arrival-first-person";
+} from "./lighting/FluorescentBehavior.js?v=tutorial-early-actions";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=tutorial-early-actions";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=tutorial-early-actions";
+import { AssetCache } from "./runtime/AssetCache.js?v=tutorial-early-actions";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=tutorial-early-actions";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=tutorial-early-actions";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=tutorial-early-actions";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=tutorial-early-actions";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=tutorial-early-actions";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=tutorial-early-actions";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=tutorial-early-actions";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=tutorial-early-actions";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=tutorial-early-actions";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=tutorial-early-actions";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=tutorial-early-actions";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=tutorial-early-actions";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=arrival-first-person";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=arrival-first-person";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=arrival-first-person";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=arrival-first-person";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=arrival-first-person";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=arrival-first-person";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=arrival-first-person";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=arrival-first-person";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=arrival-first-person";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=arrival-first-person";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=arrival-first-person";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=arrival-first-person";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=arrival-first-person";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=arrival-first-person";
-import { PlayerController } from "./player/PlayerController.js?v=arrival-first-person";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=arrival-first-person";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=arrival-first-person";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=arrival-first-person";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=arrival-first-person";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=arrival-first-person";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=arrival-first-person";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=arrival-first-person";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=arrival-first-person";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=arrival-first-person";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=arrival-first-person";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=arrival-first-person";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=arrival-first-person";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=arrival-first-person";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=arrival-first-person";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=arrival-first-person";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=arrival-first-person";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=arrival-first-person";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=arrival-first-person";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=arrival-first-person";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=arrival-first-person";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=arrival-first-person";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=arrival-first-person";
+} from "./scene/InteriorObjectRegistry.js?v=tutorial-early-actions";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=tutorial-early-actions";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=tutorial-early-actions";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=tutorial-early-actions";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=tutorial-early-actions";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=tutorial-early-actions";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=tutorial-early-actions";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=tutorial-early-actions";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=tutorial-early-actions";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=tutorial-early-actions";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=tutorial-early-actions";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=tutorial-early-actions";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=tutorial-early-actions";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=tutorial-early-actions";
+import { PlayerController } from "./player/PlayerController.js?v=tutorial-early-actions";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=tutorial-early-actions";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=tutorial-early-actions";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=tutorial-early-actions";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=tutorial-early-actions";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=tutorial-early-actions";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=tutorial-early-actions";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=tutorial-early-actions";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=tutorial-early-actions";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=tutorial-early-actions";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=tutorial-early-actions";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=tutorial-early-actions";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=tutorial-early-actions";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=tutorial-early-actions";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=tutorial-early-actions";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=tutorial-early-actions";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=tutorial-early-actions";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=tutorial-early-actions";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=tutorial-early-actions";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=tutorial-early-actions";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=tutorial-early-actions";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=tutorial-early-actions";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=tutorial-early-actions";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=arrival-first-person";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=tutorial-early-actions";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;

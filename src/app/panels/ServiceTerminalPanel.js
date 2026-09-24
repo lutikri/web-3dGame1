@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=arrival-first-person";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=tutorial-early-actions";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

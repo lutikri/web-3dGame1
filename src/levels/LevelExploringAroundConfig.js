@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=arrival-first-person";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=arrival-first-person";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=arrival-first-person";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=tutorial-early-actions";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=tutorial-early-actions";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=tutorial-early-actions";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

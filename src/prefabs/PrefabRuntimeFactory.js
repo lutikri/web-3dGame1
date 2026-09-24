@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=arrival-first-person";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=arrival-first-person";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=arrival-first-person";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=arrival-first-person";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=arrival-first-person";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=arrival-first-person";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=arrival-first-person";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=arrival-first-person";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=arrival-first-person";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=arrival-first-person";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=arrival-first-person";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=tutorial-early-actions";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=tutorial-early-actions";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=tutorial-early-actions";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=tutorial-early-actions";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=tutorial-early-actions";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=tutorial-early-actions";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=tutorial-early-actions";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=tutorial-early-actions";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=tutorial-early-actions";
 
 export function createPrefabRuntimeFactory({
   config,

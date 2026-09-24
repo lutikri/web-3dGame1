@@ -3,13 +3,13 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=arrival-first-person";
+} from "../prefabs/PrefabMarkerResolver.js?v=tutorial-early-actions";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=arrival-first-person";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=arrival-first-person";
+} from "../levels/LevelConfigOverrides.js?v=tutorial-early-actions";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=tutorial-early-actions";
 
 export function createLevelSceneBuilder({
   scene,

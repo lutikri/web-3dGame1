@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=arrival-first-person";
+} from "./panels/StatusScreenMaterial.js?v=tutorial-early-actions";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

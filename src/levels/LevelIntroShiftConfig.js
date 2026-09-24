@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=arrival-first-person";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=arrival-first-person";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=arrival-first-person";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=arrival-first-person";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=tutorial-early-actions";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=tutorial-early-actions";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=tutorial-early-actions";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=tutorial-early-actions";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

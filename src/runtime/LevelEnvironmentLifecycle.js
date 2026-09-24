@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=arrival-first-person";
+import { LevelRuntime } from "./LevelRuntime.js?v=tutorial-early-actions";
 
 export class LevelEnvironmentLifecycle {
   constructor({

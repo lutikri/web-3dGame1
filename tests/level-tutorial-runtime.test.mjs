@@ -205,3 +205,77 @@ test("brief completion is retained while the briefing UI blocks tutorial present
     globalThis.window = previousWindow;
   }
 });
+
+test("movement and look performed before presentation are retained for the current attempt", () => {
+  const previousWindow = globalThis.window;
+  const timers = createTimerWindow();
+  const hints = [];
+  let presentationAllowed = false;
+  globalThis.window = timers.window;
+  const runtime = createLevelTutorialRuntime({
+    hintQueue: { show: ({ id }) => hints.push(id), clear: () => {} },
+    worldHint: { show: () => {}, clear: () => {} },
+    emitThought: () => {},
+    isAllowed: () => presentationAllowed,
+    canObserve: () => true,
+  });
+  try {
+    runtime.start({ levelId: "exploring-around", config: {
+      enabled: true,
+      spawnHintDelaySeconds: 2,
+      advanceHintDelaySeconds: 0,
+      entryDoorTarget: "serviceDoor_Exit2",
+    } });
+    runtime.handleMouseMove({ movementX: 4, movementY: 0 });
+    runtime.handleKey({ code: "KeyW", repeat: false });
+    timers.runNext();
+    timers.runNext();
+    presentationAllowed = true;
+    runtime.refresh();
+
+    assert.equal(hints.includes("look"), false);
+    assert.equal(hints.includes("move"), false);
+    assert.equal(hints.at(-1), "door-look");
+  } finally {
+    runtime.stop();
+    globalThis.window = previousWindow;
+  }
+});
+
+test("temporarily blocked presentation does not erase completed movement steps", () => {
+  const previousWindow = globalThis.window;
+  const timers = createTimerWindow();
+  const hints = [];
+  let presentationAllowed = true;
+  globalThis.window = timers.window;
+  const runtime = createLevelTutorialRuntime({
+    hintQueue: { show: ({ id }) => hints.push(id), clear: () => {} },
+    worldHint: { show: () => {}, clear: () => {} },
+    emitThought: () => {},
+    isAllowed: () => presentationAllowed,
+    canObserve: () => true,
+  });
+  try {
+    runtime.start({ levelId: "exploring-around", config: {
+      enabled: true,
+      spawnHintDelaySeconds: 0,
+      advanceHintDelaySeconds: 0,
+      entryDoorTarget: "serviceDoor_Exit2",
+    } });
+    timers.runNext();
+    runtime.handleMouseMove({ movementX: 3, movementY: 0 });
+    timers.runNext();
+    runtime.handleKey({ code: "KeyD", repeat: false });
+    presentationAllowed = false;
+    timers.runNext();
+    presentationAllowed = true;
+    runtime.refresh();
+
+    assert.equal(hints.filter((id) => id === "look").length, 1);
+    assert.equal(hints.filter((id) => id === "move").length, 1);
+    assert.equal(hints.at(-1), "door-look");
+  } finally {
+    runtime.stop();
+    globalThis.window = previousWindow;
+  }
+});

@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=arrival-first-person";
+} from "./ServiceTerminalCanvasRenderer.js?v=tutorial-early-actions";
 
 export function createServiceTerminalRuntime(
   parts,

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=arrival-first-person";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=arrival-first-person";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=arrival-first-person";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=arrival-first-person";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=arrival-first-person";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=arrival-first-person";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=arrival-first-person";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=tutorial-early-actions";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=tutorial-early-actions";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=tutorial-early-actions";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=tutorial-early-actions";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=tutorial-early-actions";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
