@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=spawn-bounds-recovery";
+import { LevelRuntime } from "./LevelRuntime.js?v=shift-report-copy";
 
 export class LevelEnvironmentLifecycle {
   constructor({

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=spawn-bounds-recovery";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=spawn-bounds-recovery";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=spawn-bounds-recovery";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=spawn-bounds-recovery";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=spawn-bounds-recovery";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shift-report-copy";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

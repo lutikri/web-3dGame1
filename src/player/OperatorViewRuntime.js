@@ -70,4 +70,15 @@ export class OperatorViewRuntime {
     }
     return true;
   }
+
+  enterShiftReportView() {
+    const reportView = this.config.camera.shiftReportView;
+    if (!reportView?.position || !reportView?.rotationDegrees) return false;
+    this.setViewMode("report");
+    this.clearTransientInput();
+    this.applyCameraPose(reportView.position, reportView.rotationDegrees);
+    this.camera.fov = reportView.fovDegrees ?? this.config.camera.fovDegrees;
+    this.camera.updateProjectionMatrix();
+    return true;
+  }
 }

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=spawn-bounds-recovery";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=shift-report-copy";
 
 export class PanelControlRuntime {
   constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, getTime = () => performance.now() / 1000, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {

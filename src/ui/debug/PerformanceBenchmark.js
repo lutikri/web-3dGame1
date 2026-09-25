@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=spawn-bounds-recovery";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shift-report-copy";
 
 const EFFECT_KEYS = [
   "bloom",

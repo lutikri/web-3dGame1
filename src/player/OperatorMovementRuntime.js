@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=spawn-bounds-recovery";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=shift-report-copy";
 
 export function createOperatorMovementRuntime({
   config,

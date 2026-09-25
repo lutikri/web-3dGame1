@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=spawn-bounds-recovery";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=spawn-bounds-recovery";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=spawn-bounds-recovery";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=spawn-bounds-recovery";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=spawn-bounds-recovery";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=spawn-bounds-recovery";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=spawn-bounds-recovery";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=spawn-bounds-recovery";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=spawn-bounds-recovery";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-report-copy";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift-report-copy";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift-report-copy";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift-report-copy";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-report-copy";
 
 export function createPrefabRuntimeFactory({
   config,

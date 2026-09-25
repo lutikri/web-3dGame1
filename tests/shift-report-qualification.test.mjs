@@ -100,6 +100,28 @@ test("qualification scoring applies its grace period and records per-phase compl
   });
 });
 
+test("shift recorder counts warning and critical entries instead of warning duration", () => {
+  const recorder = createShiftRecorder();
+  const controls = {
+    fuelInjection: 50, magneticField: 50, coolantFlow: 50,
+    ventActive: false, pulseActive: false, shiftProfile,
+  };
+  const base = {
+    mode: "running", elapsed: 20, demandError: 0.1, reactionEfficiency: 70,
+    plasmaTemp: 145, powerOutput: 500, coreStress: 20, thermalSoak: 0,
+    phase: { name: "STABLE BURN" },
+  };
+  updateShiftRecorder(recorder, 1, { ...base, warning: { underDemand: true } }, controls);
+  updateShiftRecorder(recorder, 1, { ...base, warning: { underDemand: true } }, controls);
+  updateShiftRecorder(recorder, 1, {
+    ...base,
+    warning: { underDemand: true, underDemandCritical: true, tempCritical: true },
+  }, controls);
+
+  assert.equal(recorder.warningEvents, 1);
+  assert.equal(recorder.criticalEvents, 2);
+});
+
 test("physical reactor failures are never rewritten as qualification failures", () => {
   const destroyed = terminalSnapshot({ mode: "failed", failureType: "coreDestroyed" });
   assert.equal(evaluateQualificationOutcome(passingRecorder(), destroyed, shiftProfile), destroyed);
@@ -129,6 +151,8 @@ test("qualification shift report exposes the metrics that decide the result", ()
     ["results.stats.gridCompliance", "63%"],
     ["results.stats.phasesPassed", "3 / 4"],
   ]);
+  assert.equal(report.stats.some(([key]) => key === "results.stats.avgEfficiency"), false);
+  assert.equal(report.stats.some(([key]) => key === "results.stats.warningEvents"), true);
 });
 
 test("real qualification simulation rejects static controls and accepts phase tracking", () => {

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=spawn-bounds-recovery";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=spawn-bounds-recovery";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=spawn-bounds-recovery";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=spawn-bounds-recovery";
+import { createDebugHub } from "./DebugHub.js?v=shift-report-copy";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shift-report-copy";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shift-report-copy";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shift-report-copy";
 
 export class DebugToolsRuntime {
   constructor(options) {

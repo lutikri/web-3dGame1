@@ -42,13 +42,18 @@ export class MenuCameraRuntime {
   };
 
   update = (dt) => {
-    if (this.getViewMode() !== "menu") {
+    const viewMode = this.getViewMode();
+    const presentationView = viewMode === "menu"
+      ? this.config.camera.menuView
+      : viewMode === "report"
+        ? this.config.camera.shiftReportView
+        : null;
+    if (!presentationView) {
       this.yawOffset = 0;
       this.pitchOffset = 0;
       return;
     }
-    const menuView = this.config.camera.menuView;
-    const pointerLook = menuView?.pointerLook ?? {};
+    const pointerLook = presentationView.pointerLook ?? {};
     const damping = pointerLook.damping ?? 5;
     const yawTarget = pointerLook.enabled === false
       ? 0
@@ -59,11 +64,11 @@ export class MenuCameraRuntime {
     this.yawOffset = THREE.MathUtils.damp(this.yawOffset, yawTarget, damping, dt);
     this.pitchOffset = THREE.MathUtils.damp(this.pitchOffset, pitchTarget, damping, dt);
 
-    this.camera.position.copy(menuView.position);
+    this.camera.position.copy(presentationView.position);
     this.camera.rotation.order = "YXZ";
-    this.camera.rotation.x = THREE.MathUtils.degToRad(menuView.rotationDegrees.x ?? 0) + this.pitchOffset;
-    this.camera.rotation.y = THREE.MathUtils.degToRad(menuView.rotationDegrees.y ?? 0) + this.yawOffset;
-    this.camera.rotation.z = THREE.MathUtils.degToRad(menuView.rotationDegrees.z ?? 0);
+    this.camera.rotation.x = THREE.MathUtils.degToRad(presentationView.rotationDegrees.x ?? 0) + this.pitchOffset;
+    this.camera.rotation.y = THREE.MathUtils.degToRad(presentationView.rotationDegrees.y ?? 0) + this.yawOffset;
+    this.camera.rotation.z = THREE.MathUtils.degToRad(presentationView.rotationDegrees.z ?? 0);
     this.camera.updateMatrixWorld(true);
   };
 }

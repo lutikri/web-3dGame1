@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=spawn-bounds-recovery";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=shift-report-copy";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=spawn-bounds-recovery";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=shift-report-copy";
 
 const DISMISS_MS = 300;
 

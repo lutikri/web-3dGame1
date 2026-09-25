@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=spawn-bounds-recovery";
+import { applyAxisRotation } from "./TransformUtils.js?v=shift-report-copy";
 
 export class InteriorObjectRegistry {
   constructor(options) {

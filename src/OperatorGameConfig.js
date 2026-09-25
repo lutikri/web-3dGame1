@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=spawn-bounds-recovery";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=spawn-bounds-recovery";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=spawn-bounds-recovery";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=spawn-bounds-recovery";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=shift-report-copy";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=shift-report-copy";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=shift-report-copy";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=shift-report-copy";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -175,6 +175,17 @@ export const CONFIG = {
         yawDegrees: 1.5,
         pitchDegrees: 0.8,
         damping: 5,
+      },
+    },
+    shiftReportView: {
+      position: new THREE.Vector3(-1.96, 1.25, -0.84),
+      rotationDegrees: new THREE.Vector3(4.3, -393, 0),
+      fovDegrees: 55,
+      pointerLook: {
+        enabled: true,
+        yawDegrees: 0.75,
+        pitchDegrees: 0.42,
+        damping: 3.5,
       },
     },
   },

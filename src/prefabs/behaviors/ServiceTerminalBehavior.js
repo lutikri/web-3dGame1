@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=spawn-bounds-recovery";
+} from "./ServiceTerminalCanvasRenderer.js?v=shift-report-copy";
 
 export function createServiceTerminalRuntime(
   parts,

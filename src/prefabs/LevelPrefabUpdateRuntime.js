@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=spawn-bounds-recovery";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=spawn-bounds-recovery";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=spawn-bounds-recovery";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=spawn-bounds-recovery";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=spawn-bounds-recovery";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=spawn-bounds-recovery";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-report-copy";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-report-copy";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

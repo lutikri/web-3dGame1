@@ -4282,3 +4282,284 @@ html.preflight-boot #app {
   background: repeating-linear-gradient(90deg, var(--facility-primary) 0 11px, transparent 11px 14px);
   box-shadow: 0 0 10px rgba(112, 154, 107, 0.18);
 }
+
+/* Shift report: fixed technical dossier over the still-loaded level camera. */
+.results-overlay {
+  --shift-report-scale: 1;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.24) 12%, rgba(0, 0, 0, 0.7) 100%),
+    rgba(0, 5, 3, 0.38);
+  padding: 0;
+  transition: opacity 0.7s ease;
+}
+
+.results-overlay.is-visible {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.24) 12%, rgba(0, 0, 0, 0.7) 100%),
+    rgba(0, 5, 3, 0.38);
+}
+
+.results-panel {
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 1805px;
+  height: 983px;
+  min-height: 0;
+  border: 1px solid rgba(112, 154, 107, 0.2);
+  background: linear-gradient(90deg, rgba(2, 8, 5, 0.82), rgba(2, 8, 5, 0.68));
+  box-shadow: 0 30px 110px rgba(0, 0, 0, 0.42);
+  padding: 30px 40px;
+  color: var(--facility-primary);
+  transform: translate(-50%, -50%) scale(var(--shift-report-scale));
+  transform-origin: center;
+}
+
+.results-header,
+.results-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 36px;
+  padding: 0 2px;
+  border-bottom: 1px solid var(--facility-line);
+  color: var(--facility-primary);
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.055em;
+}
+
+.results-identity {
+  min-height: auto;
+  padding-top: 18px;
+  border: 0;
+  color: var(--facility-muted);
+  font-size: 15px;
+}
+
+.results-panel h1 {
+  margin: 12px 0 8px;
+  color: var(--facility-text);
+  font: 750 70px / 1 "Roboto Condensed", sans-serif;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.results-panel > p {
+  margin: 0;
+  max-width: 1040px;
+  color: var(--facility-primary);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.results-rule {
+  height: 1px;
+  margin: 26px 0 18px;
+  background: var(--facility-line);
+}
+
+.results-report-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1.45fr) minmax(520px, 0.95fr);
+  border: 1px solid var(--facility-line);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.results-performance {
+  min-height: 0;
+  border-right: 1px solid var(--facility-line);
+}
+
+.results-score-block {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--facility-line-soft);
+}
+
+.results-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--facility-text);
+  font-size: 16px;
+  letter-spacing: 0.025em;
+}
+
+.results-section-heading strong {
+  color: var(--facility-primary);
+  font-size: 30px;
+}
+
+.results-compliance-bar {
+  --results-compliance: 0%;
+  height: 22px;
+  margin-top: 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(170, 210, 166, 0.13) 0 12px, transparent 12px 15px),
+    rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.results-compliance-bar i {
+  display: block;
+  width: var(--results-compliance);
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--facility-active) 0 12px, transparent 12px 15px);
+}
+
+.results-phase-segments {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(34px, 1fr);
+  gap: 10px;
+  width: min(360px, 70%);
+  margin-top: 12px;
+}
+
+.results-phase-segments i {
+  height: 22px;
+  border: 1px solid var(--facility-line);
+  background: rgba(112, 154, 107, 0.08);
+}
+
+.results-phase-segments i.is-passed {
+  background: var(--facility-active);
+}
+
+.results-stats,
+.results-key-metrics {
+  display: block;
+}
+
+.results-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 50px;
+  border: 0;
+  border-bottom: 1px solid var(--facility-line-soft);
+  background: transparent;
+  padding: 0 28px;
+}
+
+.results-stat:last-child { border-bottom: 0; }
+
+.results-stat span,
+.results-stat strong {
+  display: inline;
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.results-stat span { color: var(--facility-muted); }
+.results-stat strong { color: var(--facility-text); }
+
+.results-report-side {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  gap: 16px;
+  padding: 16px;
+}
+
+.results-card {
+  box-sizing: border-box;
+  min-height: 0;
+  border: 1px solid var(--facility-line);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.results-card h2 {
+  margin: 0;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--facility-line);
+  color: var(--facility-muted);
+  font: 650 14px var(--facility-font-mono);
+  letter-spacing: 0.035em;
+}
+
+.results-key-metrics .results-stat { padding: 0 18px; }
+
+.results-comment-card {
+  position: relative;
+  min-height: 0;
+  padding-bottom: 44px;
+  overflow: hidden;
+}
+
+.results-comment-card > strong,
+.results-comment-card > p {
+  display: block;
+  margin: 16px 18px 0;
+}
+
+.results-comment-card > strong {
+  color: var(--facility-text);
+  font-size: 14px;
+}
+
+.results-comment-card > p {
+  color: var(--facility-primary);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.results-signature {
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  color: var(--facility-muted);
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.results-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.results-actions button,
+#resultsRestartButton {
+  min-width: 240px;
+  min-height: 56px;
+  border: 1px solid var(--facility-line);
+  background: rgba(3, 12, 8, 0.82);
+  padding: 14px 28px;
+  color: var(--facility-primary);
+  font: 650 16px var(--facility-font-mono);
+}
+
+.results-actions button:first-child {
+  background: var(--facility-text);
+  color: #172018;
+}
+
+body.shift-results-open .crosshair,
+body.shift-results-open #lockButton,
+body.shift-results-open .control-tooltip,
+body.shift-results-open .operator-subtitle,
+body.shift-results-open .tutorial-hint,
+body.shift-results-open .tutorial-world-hint,
+body.shift-results-open .inventory-selector,
+body.shift-results-open .interaction-hold,
+body.shift-results-open .debug-overlay,
+body.shift-results-open .fps-meter,
+body.shift-results-open .texture-loading-indicator {
+  opacity: 0;
+  visibility: hidden;
+}

@@ -116,17 +116,45 @@
       <div id="tutorialHint" class="tutorial-hint" aria-live="polite" hidden></div>
       <div id="tutorialWorldHint" class="tutorial-world-hint" aria-hidden="true" hidden>!</div>
       <div id="resultsOverlay" class="results-overlay" hidden>
-        <div class="results-panel">
+        <div class="results-panel" role="dialog" aria-modal="true" aria-labelledby="resultsProfile">
           <div class="results-header">
             <span data-i18n="results.report">SHIFT REPORT</span>
             <span id="resultsOutcome">--</span>
           </div>
+          <div class="results-identity">
+            <span id="resultsShiftIdentity">SITE-12 / SHIFT</span>
+            <span id="resultsShiftTime">--:--</span>
+          </div>
           <h1 id="resultsProfile" data-i18n="results.profile">OPERATOR PROFILE</h1>
           <p id="resultsSummary" data-i18n="results.awaiting">Awaiting shift data.</p>
-          <div id="resultsStats" class="results-stats"></div>
+          <div class="results-rule" aria-hidden="true"></div>
+          <div class="results-report-grid">
+            <section class="results-performance" aria-label="Performance summary">
+              <div class="results-score-block">
+                <div class="results-section-heading"><span data-i18n="results.stats.gridCompliance">GRID COMPLIANCE</span><strong id="resultsComplianceValue">--</strong></div>
+                <div id="resultsComplianceBar" class="results-compliance-bar" aria-hidden="true"><i></i></div>
+              </div>
+              <div class="results-score-block">
+                <div class="results-section-heading"><span data-i18n="results.stats.phasesPassed">PHASES PASSED</span><strong id="resultsPhaseValue">--</strong></div>
+                <div id="resultsPhaseSegments" class="results-phase-segments" aria-hidden="true"></div>
+              </div>
+              <div id="resultsStats" class="results-stats"></div>
+            </section>
+            <div class="results-report-side">
+              <section class="results-card">
+                <h2 data-i18n="results.keyMetrics">KEY METRICS</h2>
+                <div id="resultsKeyMetrics" class="results-key-metrics"></div>
+              </section>
+              <section class="results-card results-comment-card">
+                <h2 data-i18n="results.serviceComment">SERVICE COMMENT</h2>
+                <p id="resultsOperatorComment"></p>
+                <span class="results-signature">TERRAGEN SYSTEMS<br />SITE-12 OPERATIONS</span>
+              </section>
+            </div>
+          </div>
           <div class="results-actions">
-            <button id="resultsRestartButton" data-app-action="restart" type="button" data-i18n="actions.restart">RESTART</button>
-            <button data-app-action="main-menu" type="button" data-i18n="actions.mainMenu">MAIN MENU</button>
+            <button data-app-action="main-menu" type="button" data-i18n="actions.continue">CONTINUE</button>
+            <button id="resultsRestartButton" data-app-action="restart" type="button" data-i18n="actions.repeatShift">REPEAT SHIFT</button>
           </div>
         </div>
       </div>
@@ -301,6 +329,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=spawn-bounds-recovery"></script>
+    <script type="module" src="src/main.js?v=shift-report-copy"></script>
   </body>
 </html>

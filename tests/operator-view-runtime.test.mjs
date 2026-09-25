@@ -7,7 +7,7 @@ function createHarness() {
   const state = {};
   const camera = new THREE.PerspectiveCamera();
   const runtime = new OperatorViewRuntime({
-    config: { player: {}, camera: { fovDegrees: 72, menuView: { environmentId: "main-room", position: new THREE.Vector3(4, 3, 2), rotationDegrees: { x: -5, y: 90 }, fovDegrees: 55, roomLightsOn: true } }, levelEnvironments: { room: { player: { spawnPosition: new THREE.Vector3(1, 2, 3), rotationDegrees: { x: 12, y: 24 }, controlMode: "walk" } } } },
+    config: { player: {}, camera: { fovDegrees: 72, menuView: { environmentId: "main-room", position: new THREE.Vector3(4, 3, 2), rotationDegrees: { x: -5, y: 90 }, fovDegrees: 55, roomLightsOn: true }, shiftReportView: { position: new THREE.Vector3(-1.96, 1.25, -0.84), rotationDegrees: { x: 4.3, y: -393, z: 0 }, fovDegrees: 55 } }, levelEnvironments: { room: { player: { spawnPosition: new THREE.Vector3(1, 2, 3), rotationDegrees: { x: 12, y: 24 }, controlMode: "walk" } } } },
     camera, keys: new Set(["KeyW"]), pointer: new THREE.Vector2(1, 1), playerPosition: new THREE.Vector3(),
     playerSpawnPosition: new THREE.Vector3(), movementVelocity: new THREE.Vector3(1, 1, 1), movementRuntime: { resetPresentation() {} },
     getActiveLevelId: () => "room", setViewMode: (v) => { state.view = v; }, setControlMode: (v) => { state.control = v; },
@@ -39,4 +39,13 @@ test("operator view runtime applies menu presentation after loading the preview"
   assert.equal(state.warmed, true);
   assert.deepEqual(camera.position.toArray(), [4, 3, 2]);
   assert.equal(camera.fov, 55);
+});
+
+test("operator view runtime applies the fixed in-level shift report camera", () => {
+  const { runtime, state, camera } = createHarness();
+  assert.equal(runtime.enterShiftReportView(), true);
+  assert.equal(state.view, "report");
+  assert.deepEqual(camera.position.toArray(), [-1.96, 1.25, -0.84]);
+  assert.equal(camera.fov, 55);
+  assert.ok(Math.abs(camera.rotation.y - THREE.MathUtils.degToRad(-393)) < 1e-9);
 });

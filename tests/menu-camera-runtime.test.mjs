@@ -33,3 +33,27 @@ test("menu camera applies a damped pointer offset around the authored pose", () 
   runtime.dispose();
   assert.equal(listeners.size, 0);
 });
+
+test("shift report reuses the same anchored pointer camera behavior", () => {
+  const camera = new THREE.PerspectiveCamera();
+  const listeners = new Map();
+  const eventTarget = {
+    innerWidth: 1920,
+    innerHeight: 1080,
+    addEventListener: (type, handler) => listeners.set(type, handler),
+    removeEventListener: (type) => listeners.delete(type),
+  };
+  const config = { camera: { shiftReportView: {
+    position: new THREE.Vector3(-1.96, 1.25, -0.84),
+    rotationDegrees: { x: 4.3, y: -393, z: 0 },
+    pointerLook: { enabled: true, yawDegrees: 0.75, pitchDegrees: 0.42, damping: 100 },
+  } } };
+  const runtime = new MenuCameraRuntime({ camera, config, getViewMode: () => "report", eventTarget });
+  runtime.wire();
+  listeners.get("pointermove")({ clientX: 1920, clientY: 1080 });
+  runtime.update(1);
+
+  assert.deepEqual(camera.position.toArray(), [-1.96, 1.25, -0.84]);
+  assert.ok(THREE.MathUtils.radToDeg(camera.rotation.y) < -393);
+  assert.ok(THREE.MathUtils.radToDeg(camera.rotation.x) < 4.3);
+});

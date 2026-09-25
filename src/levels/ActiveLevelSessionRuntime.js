@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=spawn-bounds-recovery";
+import { LevelSession } from "./LevelSession.js?v=shift-report-copy";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

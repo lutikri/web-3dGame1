@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=spawn-bounds-recovery";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shift-report-copy";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=spawn-bounds-recovery";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=shift-report-copy";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

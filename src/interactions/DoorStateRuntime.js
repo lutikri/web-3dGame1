@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=spawn-bounds-recovery";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=spawn-bounds-recovery";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=shift-report-copy";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=shift-report-copy";
 
 export class DoorStateRuntime {
   constructor(options) {

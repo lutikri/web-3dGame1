@@ -21,6 +21,9 @@ export function createShiftRecorder() {
     ventActivations: 0,
     pulseTime: 0,
     pulseActivations: 0,
+    warningEvents: 0,
+    criticalEvents: 0,
+    previousWarnings: {},
     fuelSum: 0,
     fieldSum: 0,
     coolantSum: 0,
@@ -62,6 +65,7 @@ export function updateShiftRecorder(recorder, dt, snapshot, controls) {
   if (snapshot.warning?.instability) recorder.instabilityTime += dt;
   if (controls.ventActive) recorder.ventTime += dt;
   if (controls.pulseActive) recorder.pulseTime += dt;
+  countWarningEdges(recorder, snapshot.warning);
   updateQualificationRecorder(recorder, dt, snapshot, controls.shiftProfile?.qualification);
 
   recorder.maxTemp = Math.max(recorder.maxTemp, snapshot.plasmaTemp);
@@ -105,6 +109,8 @@ export function getShiftRecorderDebugState(recorder) {
     ventActivations: recorder.ventActivations,
     pulseTime: Number(recorder.pulseTime.toFixed(1)),
     pulseActivations: recorder.pulseActivations,
+    warningEvents: recorder.warningEvents,
+    criticalEvents: recorder.criticalEvents,
     gridCompliance: recorder.qualificationScoredTime > 0
       ? Number((recorder.qualificationCompliantTime / recorder.qualificationScoredTime).toFixed(3))
       : 0,
@@ -235,15 +241,23 @@ export function buildShiftReport(recorder, snapshot) {
   const outputSurgeRatio = recorder.outputSurgeTime / duration;
   const quenchRatio = recorder.quenchTime / duration;
   const movementRate = recorder.knobMovement / duration;
-  const qualificationStats = snapshot.qualification
-    ? [
-        ["results.stats.gridCompliance", `${Math.round(snapshot.qualification.gridCompliance * 100)}%`],
-        [
-          "results.stats.phasesPassed",
-          `${snapshot.qualification.passingPhases} / ${snapshot.qualification.phaseResults.length}`,
-        ],
-      ]
-    : [["results.stats.avgDemandError", `${Math.round(avgDemandError * 100)}%`]];
+  const gridCompliance = snapshot.qualification?.gridCompliance
+    ?? Math.max(0, Math.min(1, 1 - avgDemandError));
+  const passingPhases = snapshot.qualification?.passingPhases ?? 0;
+  const phaseCount = snapshot.qualification?.phaseResults?.length ?? 0;
+  const criticalEvents = recorder.criticalEvents + (snapshot.failureType === "coreDestroyed" ? 1 : 0);
+  const emergencyInterventions = recorder.ventActivations + recorder.pulseActivations;
+  const stabilityKey = snapshot.mode === "complete"
+    && recorder.maxCoreStress <= 92
+    && recorder.instabilityTime <= 0
+    && criticalEvents === 0
+    ? "results.status.acceptable"
+    : "results.status.reviewRequired";
+  const failureReasons = snapshot.qualification?.reasons?.length
+    ? snapshot.qualification.reasons
+    : snapshot.mode === "failed"
+      ? [snapshot.failureType ?? "unknown"]
+      : [];
   const profile = pickOperatorProfile({
     avgDemandError,
     avgEfficiency,
@@ -276,26 +290,37 @@ export function buildShiftReport(recorder, snapshot) {
     profileId: profile.id,
     profile: profile.title,
     summary: profile.summary,
+    failureReasons,
     stats: [
       ["results.stats.shiftTime", formatDuration(snapshot.elapsed)],
-      ...qualificationStats,
-      ["results.stats.avgEfficiency", `${Math.round(avgEfficiency)}%`],
+      ["results.stats.gridCompliance", `${Math.round(gridCompliance * 100)}%`],
+      ["results.stats.phasesPassed", `${passingPhases} / ${phaseCount}`],
+      ["results.stats.stability", stabilityKey],
+      ["results.stats.warningEvents", `${recorder.warningEvents}`],
+      ["results.stats.criticalEvents", `${criticalEvents}`],
+      ["results.stats.emergencyInterventions", `${emergencyInterventions}`],
       ["results.stats.avgOutput", `${Math.round(avgOutput)} MW`],
+      ["results.stats.maxOutput", `${Math.round(recorder.maxOutput)} MW`],
       ["results.stats.maxTemp", `${Math.round(recorder.maxTemp)} MK`],
       ["results.stats.maxCoreStress", `${Math.round(recorder.maxCoreStress)}%`],
-      ["results.stats.maxHeatSoak", `${Math.round(recorder.maxThermalSoak)}%`],
-      ["results.stats.criticalTemp", `${Math.round(tempCriticalRatio * 100)}%`],
-      ["results.stats.outputSurge", `${Math.round(outputSurgeRatio * 100)}%`],
-      ["results.stats.overDemand", `${Math.round(overRatio * 100)}%`],
-      ["results.stats.underDemand", `${Math.round(underRatio * 100)}%`],
-      ["results.stats.coreStall", `${Math.round(quenchRatio * 100)}%`],
-      ["results.stats.ventHeld", `${Math.round((recorder.ventTime / duration) * 100)}%`],
-      ["results.stats.ventPulses", `${recorder.ventActivations}`],
-      ["results.stats.pulseUses", `${recorder.pulseActivations}`],
-      ["results.stats.avgTemp", `${Math.round(avgTemp)} MK`],
-      ["results.stats.controlMotion", `${Math.round(movementRate)}%/s`],
     ],
   };
+}
+
+const WARNING_EVENT_KEYS = [
+  "tempHigh", "fieldWeak", "underDemand", "overDemand", "instability",
+  "coreStall", "thermalSoak", "outputSurge", "coreStress", "fuelBlendUnstable", "fuelFeedInterrupted",
+];
+const CRITICAL_EVENT_KEYS = ["tempCritical", "underDemandCritical", "overDemandCritical", "coreStallCritical"];
+
+function countWarningEdges(recorder, warning = {}) {
+  WARNING_EVENT_KEYS.forEach((key) => {
+    if (warning[key] && !recorder.previousWarnings[key]) recorder.warningEvents += 1;
+  });
+  CRITICAL_EVENT_KEYS.forEach((key) => {
+    if (warning[key] && !recorder.previousWarnings[key]) recorder.criticalEvents += 1;
+  });
+  recorder.previousWarnings = { ...warning };
 }
 
 function pickOperatorProfile(stats) {

@@ -3,146 +3,146 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=spawn-bounds-recovery";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shift-report-copy";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=spawn-bounds-recovery";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=spawn-bounds-recovery";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=spawn-bounds-recovery";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=spawn-bounds-recovery";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=spawn-bounds-recovery";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=spawn-bounds-recovery";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=spawn-bounds-recovery";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=spawn-bounds-recovery";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=spawn-bounds-recovery";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=spawn-bounds-recovery";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=spawn-bounds-recovery";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=spawn-bounds-recovery";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=spawn-bounds-recovery";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=spawn-bounds-recovery";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=spawn-bounds-recovery";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=spawn-bounds-recovery";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=spawn-bounds-recovery";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=spawn-bounds-recovery";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=spawn-bounds-recovery";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=spawn-bounds-recovery";
+} from "./game/ShiftReport.js?v=shift-report-copy";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shift-report-copy";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shift-report-copy";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shift-report-copy";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shift-report-copy";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shift-report-copy";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shift-report-copy";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shift-report-copy";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shift-report-copy";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shift-report-copy";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=shift-report-copy";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shift-report-copy";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shift-report-copy";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shift-report-copy";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shift-report-copy";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shift-report-copy";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shift-report-copy";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shift-report-copy";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shift-report-copy";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shift-report-copy";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shift-report-copy";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=spawn-bounds-recovery";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=spawn-bounds-recovery";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=spawn-bounds-recovery";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=spawn-bounds-recovery";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=spawn-bounds-recovery";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=spawn-bounds-recovery";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=spawn-bounds-recovery";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=spawn-bounds-recovery";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=spawn-bounds-recovery";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=spawn-bounds-recovery";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=spawn-bounds-recovery";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=spawn-bounds-recovery";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=spawn-bounds-recovery";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shift-report-copy";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shift-report-copy";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shift-report-copy";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shift-report-copy";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shift-report-copy";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shift-report-copy";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shift-report-copy";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shift-report-copy";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shift-report-copy";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shift-report-copy";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shift-report-copy";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shift-report-copy";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shift-report-copy";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shift-report-copy";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=spawn-bounds-recovery";
+} from "./config/GraphicsQualityProfiles.js?v=shift-report-copy";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=spawn-bounds-recovery";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=spawn-bounds-recovery";
-import { createStatusScreen } from "./StatusScreen.js?v=spawn-bounds-recovery";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=spawn-bounds-recovery";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=spawn-bounds-recovery";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=spawn-bounds-recovery";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=spawn-bounds-recovery";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=spawn-bounds-recovery";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=spawn-bounds-recovery";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=spawn-bounds-recovery";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=spawn-bounds-recovery";
+} from "./scene/TextureStreaming.js?v=shift-report-copy";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shift-report-copy";
+import { createStatusScreen } from "./StatusScreen.js?v=shift-report-copy";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shift-report-copy";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift-report-copy";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shift-report-copy";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shift-report-copy";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shift-report-copy";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shift-report-copy";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shift-report-copy";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shift-report-copy";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=spawn-bounds-recovery";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=spawn-bounds-recovery";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=spawn-bounds-recovery";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=shift-report-copy";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shift-report-copy";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shift-report-copy";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=spawn-bounds-recovery";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=spawn-bounds-recovery";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=spawn-bounds-recovery";
-import { AssetCache } from "./runtime/AssetCache.js?v=spawn-bounds-recovery";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=spawn-bounds-recovery";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=spawn-bounds-recovery";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=spawn-bounds-recovery";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=spawn-bounds-recovery";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=spawn-bounds-recovery";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=spawn-bounds-recovery";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=spawn-bounds-recovery";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=spawn-bounds-recovery";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=spawn-bounds-recovery";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=spawn-bounds-recovery";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=spawn-bounds-recovery";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=spawn-bounds-recovery";
+} from "./lighting/FluorescentBehavior.js?v=shift-report-copy";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shift-report-copy";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shift-report-copy";
+import { AssetCache } from "./runtime/AssetCache.js?v=shift-report-copy";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shift-report-copy";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shift-report-copy";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shift-report-copy";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shift-report-copy";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shift-report-copy";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shift-report-copy";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shift-report-copy";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shift-report-copy";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shift-report-copy";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shift-report-copy";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shift-report-copy";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shift-report-copy";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=spawn-bounds-recovery";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=spawn-bounds-recovery";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=spawn-bounds-recovery";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=spawn-bounds-recovery";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=spawn-bounds-recovery";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=spawn-bounds-recovery";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=spawn-bounds-recovery";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=spawn-bounds-recovery";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=spawn-bounds-recovery";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=spawn-bounds-recovery";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=spawn-bounds-recovery";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=spawn-bounds-recovery";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=spawn-bounds-recovery";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=spawn-bounds-recovery";
-import { PlayerController } from "./player/PlayerController.js?v=spawn-bounds-recovery";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=spawn-bounds-recovery";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=spawn-bounds-recovery";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=spawn-bounds-recovery";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=spawn-bounds-recovery";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=spawn-bounds-recovery";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=spawn-bounds-recovery";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=spawn-bounds-recovery";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=spawn-bounds-recovery";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=spawn-bounds-recovery";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=spawn-bounds-recovery";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=spawn-bounds-recovery";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=spawn-bounds-recovery";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=spawn-bounds-recovery";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=spawn-bounds-recovery";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=spawn-bounds-recovery";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=spawn-bounds-recovery";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=spawn-bounds-recovery";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=spawn-bounds-recovery";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=spawn-bounds-recovery";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=spawn-bounds-recovery";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=spawn-bounds-recovery";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=spawn-bounds-recovery";
+} from "./scene/InteriorObjectRegistry.js?v=shift-report-copy";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shift-report-copy";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shift-report-copy";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shift-report-copy";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shift-report-copy";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shift-report-copy";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shift-report-copy";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shift-report-copy";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shift-report-copy";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shift-report-copy";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shift-report-copy";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shift-report-copy";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shift-report-copy";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shift-report-copy";
+import { PlayerController } from "./player/PlayerController.js?v=shift-report-copy";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shift-report-copy";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shift-report-copy";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shift-report-copy";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shift-report-copy";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shift-report-copy";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shift-report-copy";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shift-report-copy";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shift-report-copy";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shift-report-copy";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shift-report-copy";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shift-report-copy";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shift-report-copy";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shift-report-copy";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shift-report-copy";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shift-report-copy";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shift-report-copy";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shift-report-copy";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shift-report-copy";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shift-report-copy";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=shift-report-copy";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shift-report-copy";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shift-report-copy";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=spawn-bounds-recovery";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shift-report-copy";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -852,6 +852,7 @@ const shiftResultsController = new ShiftResultsController({
   }),
   releaseControls: releaseAllControlButtons,
   clearZoom: () => { zoomActive = false; },
+  enterReportView: () => operatorViewRuntime.enterShiftReportView(),
 });
 const showShiftResults = shiftResultsController.show;
 const hideShiftResults = shiftResultsController.hide;

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=spawn-bounds-recovery";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=shift-report-copy";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

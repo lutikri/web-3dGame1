@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=spawn-bounds-recovery";
+import { translateRequired } from "./Localization.js?v=shift-report-copy";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

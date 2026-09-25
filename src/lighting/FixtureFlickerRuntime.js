@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=spawn-bounds-recovery";
+} from "./FluorescentBehavior.js?v=shift-report-copy";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

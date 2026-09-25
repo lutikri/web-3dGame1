@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=spawn-bounds-recovery";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=shift-report-copy";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

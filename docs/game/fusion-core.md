@@ -61,27 +61,20 @@ Normal late hot operation does not by itself earn `REDLINE PHILOSOPHER`; require
 
 Canonical profile names remain defined by the shift report implementation; new profiles must be derived from recorded behavior rather than one isolated threshold.
 
-## Primary player-facing report metrics
+## Player-facing Shift Report
 
-The main Shift Report presents only three metrics:
+The primary operational summary presents only the metrics needed to understand the result:
 
-1. `GRID COMPLIANCE`
-   - percentage of scored shift time inside the accepted demand band;
-   - primary measure of whether the operator delivered the assigned power.
+- `GRID COMPLIANCE` — percentage of scored shift time inside the accepted demand band;
+- `PHASES PASSED` — completed scheduled load phases;
+- `STABILITY` — readable overall operating-state classification;
+- `WARNING EVENTS` — entries into warning states, not warning duration;
+- `CRITICAL EVENTS` — entries into critical states;
+- `EMERGENCY INTERVENTIONS` — explicit vent and recovery actions.
 
-2. `OPERATING EFFICIENCY`
-   - average reaction efficiency across the active burn;
-   - summarizes fuel, field, temperature, containment, and useful output quality.
+The secondary column may show shift duration, peak Core Stress, maximum temperature, average output, and peak output. Internal scoring/debug values such as control movement, dump impulses, burn-break percentages, and average efficiency do not return merely to fill screen space.
 
-3. `PEAK CORE STRESS`
-   - maximum Core Stress reached during the shift;
-   - reports the worst mechanical condition and identifies a safety trip.
-
-The report also displays one terminal result:
-
-- `QUALIFICATION PASSED`;
-- `RETRY REQUIRED`;
-- or an equivalent shift-specific completion result.
+The largest result is shift-specific: Qualification, Instrument Reliability Check, and Cost of Running Trial each use their own success/failure title, summary, and service comment. Failure comments name the recorded reasons rather than presenting a generic qualification message.
 
 Detailed recorder values remain available for internal classification and debugging but are not presented as a large player-facing table.
 

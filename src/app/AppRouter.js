@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=spawn-bounds-recovery";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=shift-report-copy";
 
 export function createAppRouter({
   overlay,

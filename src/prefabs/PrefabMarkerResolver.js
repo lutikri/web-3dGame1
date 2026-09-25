@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=spawn-bounds-recovery";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=spawn-bounds-recovery";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=shift-report-copy";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=shift-report-copy";
 
 const MARKER_PREFIX = "PF_";
 

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=spawn-bounds-recovery";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=spawn-bounds-recovery";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shift-report-copy";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=shift-report-copy";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

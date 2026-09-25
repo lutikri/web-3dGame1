@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=spawn-bounds-recovery";
+} from "./behaviors/DeskDrawerBehavior.js?v=shift-report-copy";
 
 export function createPrefabPhysicsRegistrar({
   physics,

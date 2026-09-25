@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=spawn-bounds-recovery";
-import { applyLocalization, translate } from "./Localization.js?v=spawn-bounds-recovery";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=spawn-bounds-recovery";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=spawn-bounds-recovery";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=spawn-bounds-recovery";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=spawn-bounds-recovery";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=spawn-bounds-recovery";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shift-report-copy";
+import { applyLocalization, translate } from "./Localization.js?v=shift-report-copy";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shift-report-copy";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shift-report-copy";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shift-report-copy";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=shift-report-copy";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shift-report-copy";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=spawn-bounds-recovery";
-import { createAppPanelController } from "./AppPanelController.js?v=spawn-bounds-recovery";
-import { createAppRouter } from "./AppRouter.js?v=spawn-bounds-recovery";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=spawn-bounds-recovery";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=spawn-bounds-recovery";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=spawn-bounds-recovery";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=spawn-bounds-recovery";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=spawn-bounds-recovery";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=spawn-bounds-recovery";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=spawn-bounds-recovery";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=spawn-bounds-recovery";
+} from "./AppPersistence.js?v=shift-report-copy";
+import { createAppPanelController } from "./AppPanelController.js?v=shift-report-copy";
+import { createAppRouter } from "./AppRouter.js?v=shift-report-copy";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=shift-report-copy";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shift-report-copy";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=shift-report-copy";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shift-report-copy";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shift-report-copy";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shift-report-copy";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shift-report-copy";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shift-report-copy";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

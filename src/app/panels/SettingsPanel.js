@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=spawn-bounds-recovery";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shift-report-copy";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

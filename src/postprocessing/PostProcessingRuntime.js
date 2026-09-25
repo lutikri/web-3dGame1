@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=spawn-bounds-recovery";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=shift-report-copy";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=spawn-bounds-recovery";
+} from "./PostProcessingShaders.js?v=shift-report-copy";
 
 export class PostProcessingRuntime {
   composer = null;

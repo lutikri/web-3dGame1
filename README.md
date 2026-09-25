@@ -94,7 +94,7 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 ### Now — qualification and onboarding
 
 - [x] Rebalance Qualification so success requires real demand compliance and stable operation
-- [x] Add a meaningful Shift Report: compliance, stability, and critical-event results
+- [x] Add a full-screen, level-backed Shift Report with per-shift copy, compliance, stability, safety events, and operational metrics
 - [x] Make the tutorial event-driven, with fast restart and no repeated tutorial prompts
 - [ ] Finalize tutorial retry and post-qualification **Skip Training** behavior
 
