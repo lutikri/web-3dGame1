@@ -682,6 +682,7 @@ export async function createPhysicsSystem() {
       root,
       body,
       colliders,
+      initialBodyType: bodyType,
       initialPosition: { x: rootPosition.x, y: rootPosition.y, z: rootPosition.z },
       initialRotation: {
         x: rootQuaternion.x,
@@ -983,11 +984,12 @@ export async function createPhysicsSystem() {
     return true;
   }
 
-  function releaseRigidPrefab(key, linearVelocity = null) {
+  function releaseRigidPrefab(key, linearVelocity = null, angularVelocity = null) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
     setRigidPrefabMode(key, "world");
     if (linearVelocity) prefab.body.setLinvel(linearVelocity, true);
+    if (angularVelocity) prefab.body.setAngvel(angularVelocity, true);
     return true;
   }
 
@@ -1010,6 +1012,14 @@ export async function createPhysicsSystem() {
         };
       }
     }
+    prefab.body.setBodyType(
+      prefab.initialBodyType === "fixed"
+        ? RAPIER.RigidBodyType.Fixed
+        : RAPIER.RigidBodyType.Dynamic,
+      true,
+    );
+    removeRigidPrefabGrabConstraint(prefab);
+    prefab.body.setEnabled(prefab.sceneKey === activeSceneKey);
     prefab.body.setTranslation(prefab.initialPosition, true);
     prefab.body.setRotation(prefab.initialRotation, true);
     prefab.body.setLinvel({ x: 0, y: 0, z: 0 }, true);

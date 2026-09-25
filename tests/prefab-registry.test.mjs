@@ -54,6 +54,10 @@ test("core viewport marker resolves to the ten-second shutter behavior", () => {
     instanceName: "CoreViewport1",
     stableName: "CoreViewport1",
   });
+  assert.deepEqual(parsePrefabMarkerName("PF_CoreViewport1001"), {
+    prefabType: "CoreViewport1",
+    instanceName: "001",
+  });
 });
 
 test("flashlight marker resolves to a portable physical equipment item", () => {
@@ -77,6 +81,18 @@ test("flashlight marker resolves to a portable physical equipment item", () => {
   assert.deepEqual(flashlight.item.rotationOffset, [0, 270, 0]);
   assert.equal(flashlight.item.grabDistance, 0.82);
   assert.deepEqual(flashlight.item.grabOffset, [0, -0.22, 0]);
+});
+
+test("loose pipe starts fixed and owns an authored rigid collider", () => {
+  const pipe = createPrefabInstance("LoosePipe1", { name: "QualificationScare01" });
+  assert.equal(pipe.assetPath, "assets/mesh/prefabs/SM_LoosePipe1.glb");
+  assert.equal(pipe.materialKey, "pipes1");
+  assert.equal(pipe.rigidBody.bodyType, "fixed");
+  assert.deepEqual(pipe.rigidBody.colliderNamePrefixes, ["UBX_SM_LoosePipe1"]);
+  assert.deepEqual(parsePrefabMarkerName("PF_LoosePipe1_QualificationScare01"), {
+    prefabType: "LoosePipe1",
+    instanceName: "QualificationScare01",
+  });
 });
 
 test("prefab instances clone registry-owned nested defaults", () => {

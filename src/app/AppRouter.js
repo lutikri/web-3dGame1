@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=tutorial-early-actions";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=debug-shift-outcome";
 
 export function createAppRouter({
   overlay,

@@ -105,6 +105,20 @@ test("physical reactor failures are never rewritten as qualification failures", 
   assert.equal(evaluateQualificationOutcome(passingRecorder(), destroyed, shiftProfile), destroyed);
 });
 
+test("forced qualification pass bypasses recorded metrics but still builds a normal outcome", () => {
+  const outcome = evaluateQualificationOutcome(
+    createShiftRecorder(),
+    terminalSnapshot({ debugForcedOutcome: "complete" }),
+    shiftProfile,
+  );
+
+  assert.equal(outcome.mode, "complete");
+  assert.equal(outcome.qualification.passed, true);
+  assert.equal(outcome.qualification.gridCompliance, 1);
+  assert.equal(outcome.qualification.debugForced, true);
+  assert.equal(outcome.qualification.passingPhases, outcome.qualification.phaseResults.length);
+});
+
 test("qualification shift report exposes the metrics that decide the result", () => {
   const recorder = passingRecorder();
   const outcome = evaluateQualificationOutcome(recorder, terminalSnapshot(), shiftProfile);

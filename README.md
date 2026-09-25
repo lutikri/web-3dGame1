@@ -21,12 +21,13 @@ Read analog gauges, warning lamps, terminal reports, sound, light, and the behav
 | --- | --- |
 | FCU-16 reactor simulation and physical control panel | Playable |
 | Site-12 first-person exploration and interaction | Playable |
-| Qualification Shift | Playable, balance pass in progress |
+| Qualification Shift | Playable with demand-compliance scoring and phase evaluation |
 | Service terminal: brief, guide, reports, archive | Implemented |
 | Main menu, assigned shifts, progression, and save data | Implemented |
 | Real gameplay pause, preflight, and in-game settings | Implemented |
 | First Boot slides, real loading progress, and reusable Site-12 menu environment | Implemented |
-| Observation Port status display and viewport shutter | Implemented; alarm silence pending |
+| Event-driven onboarding and fast shift restart | Implemented; final UX pass ongoing |
+| Observation Port status display, viewport shutter, and alarm silence | Implemented |
 | English and Russian interface | Implemented, content pass ongoing |
 | Bundled Latin/Cyrillic interface fonts | Implemented |
 | Instrument Reliability and Cost of Running trials | In development |
@@ -86,12 +87,15 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 - [x] Reuse the loaded Site-12 environment behind the main menu and subsequent shift entry
 - [x] Observation Port status display and physical viewport shutter
 - [x] Central Announcement System with edge-triggered yellow/red demand alarms
+- [x] Demand-compliance qualification scoring and detailed Shift Report metrics
+- [x] Event-driven movement/tutorial steps retained during the active attempt
+- [x] Fast `ESC -> Restart Shift` without replaying tutorial hints, the opening brief, or introductory VO
 
 ### Now — qualification and onboarding
 
-- [ ] Rebalance Qualification so success requires real demand compliance and stable operation
-- [ ] Add a meaningful Shift Report: compliance, stability, and critical-event results
-- [ ] Make the tutorial event-driven, with fast restart and no repeated mandatory narration
+- [x] Rebalance Qualification so success requires real demand compliance and stable operation
+- [x] Add a meaningful Shift Report: compliance, stability, and critical-event results
+- [x] Make the tutorial event-driven, with fast restart and no repeated tutorial prompts
 - [ ] Finalize tutorial retry and post-qualification **Skip Training** behavior
 
 ### Next — complete the three-shift vertical slice
@@ -102,7 +106,7 @@ The goal is not to keep every gauge low. Late phases deliberately push the react
 
 ### Later — world presentation and polish
 
-- [ ] Complete the Observation Port `ALARM SILENCE` integration; the viewport shutter is already operational
+- [ ] Polish remaining contextual hints and immersive terminal/screen interaction feedback
 - [ ] Optionally replace the reused Site-12 menu environment with a dedicated personnel-accommodation scene
 - [ ] Final presentation, accessibility, performance, and compatibility pass
 

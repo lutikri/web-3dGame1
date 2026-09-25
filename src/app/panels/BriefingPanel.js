@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=tutorial-early-actions";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=debug-shift-outcome";
 
 const DISMISS_MS = 300;
 

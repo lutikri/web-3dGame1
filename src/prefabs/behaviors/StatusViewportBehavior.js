@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=tutorial-early-actions";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=tutorial-early-actions";
+} from "../../panels/StatusScreenMaterial.js?v=debug-shift-outcome";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=debug-shift-outcome";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

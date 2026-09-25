@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=tutorial-early-actions";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=debug-shift-outcome";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

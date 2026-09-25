@@ -112,6 +112,7 @@ export const SOUND_REGISTRY = {
   MessageRU_WelcomeTrip1: { path: "assets/sounds/narration/MessageRU_WelcomeTrip1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_WelcomeElevator1: { path: "assets/sounds/narration/MessageRU_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MotorSmall1: { path: "assets/sounds/interaction/MotorSmall1.ogg", volume: 0.56, refDistance: 0.55, maxDistance: 3 },
+  MetalPipeImpactFall1: { path: "assets/sounds/interaction/MetalPipeImpactFall1.ogg", volume: 0.9, refDistance: 0.8, maxDistance: 10 },
   Panel1_SfxLoop1: { path: "assets/sounds/machinery/Panel1_SfxLoop1.ogg", loop: true, volume: 0.18 },
   SFX_Panel1_DemandRed1: { path: "assets/sounds/machinery/SFX_Panel1_DemandRed1.ogg", volume: 0.37, refDistance: 0.8, maxDistance: 5.5 },
   SFX_Panel1_DemandYellow1: { path: "assets/sounds/machinery/SFX_Panel1_DemandYellow1.ogg", volume: 0.4, refDistance: 0.8, maxDistance: 5.5 },

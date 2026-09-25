@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=tutorial-early-actions";
+import { LevelSession } from "./LevelSession.js?v=debug-shift-outcome";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

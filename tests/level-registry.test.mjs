@@ -1,10 +1,35 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   LEVEL_DEFINITIONS,
   getLevelEnvironmentId,
   getPlayableLevels,
 } from "../src/levels/LevelRegistry.js";
+
+function readGlbJson(relativePath) {
+  const buffer = readFileSync(new URL(relativePath, import.meta.url));
+  const jsonLength = buffer.readUInt32LE(12);
+  return JSON.parse(buffer.subarray(20, 20 + jsonLength).toString().replace(/\0+$/, ""));
+}
+
+test("facility GLB preserves runtime material slot names without embedding source images", () => {
+  const glb = readGlbJson("../assets/mesh/environment/SM_Interior2.glb");
+  const materialNames = (glb.materials ?? []).map(({ name }) => name);
+  const assignedPrimitiveCount = glb.meshes.reduce(
+    (count, mesh) => count + mesh.primitives.filter(({ material }) => material !== undefined).length,
+    0,
+  );
+
+  assert.deepEqual(materialNames, [
+    "M_Pipes1", "MI_COL", "M_Desk1", "M_ControlPost1", "M_Beams",
+    "M_TrimTiles1", "M_Details1", "M_InteriorCab", "M_Posters1",
+    "M_Posters2", "M_Rock1", "M_Signs1", "M_TrimConcrete1",
+  ]);
+  assert.ok(assignedPrimitiveCount > 400);
+  assert.equal((glb.images ?? []).length, 0);
+  assert.equal((glb.textures ?? []).length, 0);
+});
 
 test("registered playable levels have isolated prefab names", () => {
   getPlayableLevels().forEach((level) => {
@@ -63,6 +88,23 @@ test("exploring around keeps the corridor trigger repeatable for the physical re
   assert.deepEqual(
     LEVEL_DEFINITIONS["exploring-around"].environment.repeatableTriggerSequences,
     ["MainCorridorEntrance"],
+  );
+});
+
+test("qualification owns a completion-gated one-shot exit pipe scare", () => {
+  const environment = LEVEL_DEFINITIONS["exploring-around"].environment;
+  const scare = environment.triggerSequences.find(({ name }) => name === "QualificationExitScare");
+  assert.deepEqual(scare.trigger, { markerName: "TRGVOL_ControlboothExit", once: true });
+  assert.deepEqual(scare.condition, { levelId: "exploring-around", shiftMode: "complete" });
+  assert.equal(scare.actions[0].action, "releaseRigidPrefab");
+  assert.equal(scare.actions[0].target, "LoosePipe1_QualificationScare01");
+  assert.equal(scare.actions[1].soundKey, "MetalPipeImpactFall1");
+  assert.equal(scare.actions[1].delaySeconds, 0.64);
+  assert.equal(
+    environment.prefabMarkerReferences.some(({ name, prefabType }) => (
+      name === "LoosePipe1_QualificationScare01" && prefabType === "LoosePipe1"
+    )),
+    true,
   );
 });
 

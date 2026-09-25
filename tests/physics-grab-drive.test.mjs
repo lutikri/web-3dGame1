@@ -94,6 +94,36 @@ test("prismatic prefab part remains dynamic and is limited to its authored trave
   assert.ok(travel < 0.48);
 });
 
+test("releasing an authored fixed rigid prefab applies linear and angular scare velocity", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const root = new THREE.Group();
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1, 0.2));
+  root.add(collider);
+  const prefab = physics.createRigidPrefab({
+    key: "pipe", sceneKey: "room", root, colliderMeshes: [collider], bodyType: "fixed",
+  });
+
+  assert.equal(prefab.body.isFixed(), true);
+  assert.equal(physics.releaseRigidPrefab(
+    "pipe",
+    { x: 0, y: -0.35, z: 0 },
+    { x: 1.2, y: 0.4, z: 2.1 },
+  ), true);
+  assert.equal(prefab.body.isDynamic(), true);
+  const linear = prefab.body.linvel();
+  const angular = prefab.body.angvel();
+  assert.ok(Math.abs(linear.y + 0.35) < 1e-6);
+  assert.ok(Math.abs(angular.x - 1.2) < 1e-6);
+  assert.ok(Math.abs(angular.y - 0.4) < 1e-6);
+  assert.ok(Math.abs(angular.z - 2.1) < 1e-6);
+
+  assert.equal(physics.resetRigidPrefab("pipe"), true);
+  assert.equal(prefab.body.isFixed(), true);
+  assert.deepEqual({ ...prefab.body.linvel() }, { x: 0, y: 0, z: 0 });
+  assert.deepEqual({ ...prefab.body.angvel() }, { x: 0, y: 0, z: 0 });
+});
+
 test("character stance resizes its Rapier capsule and refuses blocked standing", async () => {
   const physics = await createPhysicsSystem();
   physics.createCharacter({

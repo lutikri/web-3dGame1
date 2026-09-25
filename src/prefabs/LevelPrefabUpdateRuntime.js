@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=tutorial-early-actions";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=tutorial-early-actions";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=tutorial-early-actions";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=tutorial-early-actions";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=tutorial-early-actions";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=tutorial-early-actions";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=debug-shift-outcome";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-shift-outcome";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-shift-outcome";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=debug-shift-outcome";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-shift-outcome";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=debug-shift-outcome";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=debug-shift-outcome";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=debug-shift-outcome";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

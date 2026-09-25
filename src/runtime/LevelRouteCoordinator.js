@@ -13,7 +13,7 @@ export class LevelRouteCoordinator {
     return this.enterMenuView();
   };
 
-  enterLevel = async ({ levelId, mode, onProgress }) => {
+  enterLevel = async ({ levelId, mode, onProgress, replayNarration = true }) => {
     const reportProgress = createMonotonicProgressReporter(onProgress);
     this.stopEditing();
     reportProgress(8);
@@ -36,6 +36,7 @@ export class LevelRouteCoordinator {
     this.resetFuelBlend({ config });
     this.setShiftProfile(config.shiftProfile ?? null);
     this.resetLevelRuntime();
+    this.configureTriggerSequences?.({ replayNarration });
     this.resetRecorder();
     this.resetThoughts?.();
     this.resetCore();
@@ -53,7 +54,7 @@ export class LevelRouteCoordinator {
     });
     console.info(formatWarmupTiming(loadedLevelId, warmupTiming));
     reportProgress(94);
-    if (config.narration?.autoStart !== false) this.scheduleNarration(levelId);
+    if (replayNarration && config.narration?.autoStart !== false) this.scheduleNarration(levelId);
     reportProgress(98);
     return true;
   };

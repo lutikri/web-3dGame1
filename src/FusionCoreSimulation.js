@@ -78,6 +78,26 @@ export function createFusionCoreSimulation() {
       return getSnapshot(state);
     },
 
+    forceOutcome(outcome) {
+      const normalized = outcome === "pass" || outcome === "complete"
+        ? "complete"
+        : outcome === "fail" || outcome === "failed"
+          ? "failed"
+          : null;
+      if (!normalized || state.mode === "complete" || state.mode === "failed") return null;
+      state.mode = normalized;
+      state.elapsed = TOTAL_TIME;
+      state.startupRemaining = 0;
+      state.failureType = normalized === "complete" ? null : "qualityFailure";
+      state.status = normalized === "complete" ? "SHIFT COMPLETE" : "OUTPUT QUALITY BELOW LIMIT";
+      state.debugForcedOutcome = normalized;
+      if (normalized === "complete") {
+        state.averageEfficiency = Math.max(100, state.averageEfficiency);
+        state.reactionEfficiency = Math.max(100, state.reactionEfficiency);
+      }
+      return getSnapshot(state);
+    },
+
     update(dt, controls) {
       if (state.mode === "starting") {
         state.startupRemaining = Math.max(0, state.startupRemaining - Math.max(0, dt));
@@ -152,6 +172,7 @@ function createInitialState() {
     fuelBlend: normalizeFuelBlend(null),
     averageEfficiency: 0,
     efficiencySamples: 0,
+    debugForcedOutcome: null,
   };
 }
 
@@ -449,6 +470,7 @@ function getSnapshot(state) {
     failureType: state.failureType,
     resetPending: state.resetPending,
     averageEfficiency: state.averageEfficiency,
+    debugForcedOutcome: state.debugForcedOutcome,
     status: state.status,
     warning: { ...state.warning },
     fuelBlend: state.fuelBlend ? { ...state.fuelBlend } : normalizeFuelBlend(null),

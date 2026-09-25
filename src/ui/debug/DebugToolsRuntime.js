@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=tutorial-early-actions";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=tutorial-early-actions";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=tutorial-early-actions";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=tutorial-early-actions";
+import { createDebugHub } from "./DebugHub.js?v=debug-shift-outcome";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=debug-shift-outcome";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=debug-shift-outcome";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=debug-shift-outcome";
 
 export class DebugToolsRuntime {
   constructor(options) {

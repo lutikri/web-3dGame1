@@ -24,3 +24,15 @@ test("level sound catalog preloads tutorial presentation audio", () => {
     soundRegistry: { Footsteps1_Walk1: {}, UI_Hint2: {} },
   }), ["Footsteps1_Walk1", "UI_Hint2"]);
 });
+
+test("level sound catalog preloads sounds authored by trigger actions", () => {
+  const soundRegistry = { MetalPipeImpactFall1: {} };
+  const keys = collectLevelSoundKeys({
+    levelId: "qualification",
+    environment: {
+      triggerSequences: [{ actions: [{ soundKey: "MetalPipeImpactFall1" }] }],
+    },
+    soundRegistry,
+  });
+  assert.deepEqual(keys, ["MetalPipeImpactFall1"]);
+});

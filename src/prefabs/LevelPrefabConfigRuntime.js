@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=tutorial-early-actions";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=tutorial-early-actions";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=tutorial-early-actions";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=tutorial-early-actions";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=tutorial-early-actions";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=debug-shift-outcome";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-shift-outcome";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-shift-outcome";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=debug-shift-outcome";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-shift-outcome";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=debug-shift-outcome";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=debug-shift-outcome";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

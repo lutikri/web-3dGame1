@@ -714,6 +714,23 @@ const PREFAB_DEFINITIONS = {
       canSleep: true,
     },
   },
+  LoosePipe1: {
+    assetPath: "assets/mesh/prefabs/SM_LoosePipe1.glb",
+    rootName: "SM_LoosePipe1",
+    materialKey: "pipes1",
+    behavior: "staticProp",
+    rigidBody: {
+      enabled: true,
+      bodyType: "fixed",
+      colliderNamePrefixes: ["UBX_SM_LoosePipe1"],
+      density: 180,
+      linearDamping: 0.32,
+      angularDamping: 0.48,
+      friction: 0.72,
+      restitution: 0.04,
+      canSleep: true,
+    },
+  },
   analogClock: {
     assetPath: "assets/mesh/prefabs/SM_Clock1.glb",
     materialKey: "clock1",

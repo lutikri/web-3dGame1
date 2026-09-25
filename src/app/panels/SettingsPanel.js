@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=tutorial-early-actions";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=debug-shift-outcome";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

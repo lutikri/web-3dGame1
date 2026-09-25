@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=tutorial-early-actions";
+} from "./FluorescentBehavior.js?v=debug-shift-outcome";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

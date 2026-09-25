@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=tutorial-early-actions";
-import { applyLocalization, translate } from "./Localization.js?v=tutorial-early-actions";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=tutorial-early-actions";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=tutorial-early-actions";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=tutorial-early-actions";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=tutorial-early-actions";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=tutorial-early-actions";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=debug-shift-outcome";
+import { applyLocalization, translate } from "./Localization.js?v=debug-shift-outcome";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=debug-shift-outcome";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=debug-shift-outcome";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=debug-shift-outcome";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=debug-shift-outcome";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=debug-shift-outcome";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=tutorial-early-actions";
-import { createAppPanelController } from "./AppPanelController.js?v=tutorial-early-actions";
-import { createAppRouter } from "./AppRouter.js?v=tutorial-early-actions";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=tutorial-early-actions";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=tutorial-early-actions";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=tutorial-early-actions";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=tutorial-early-actions";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=tutorial-early-actions";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=tutorial-early-actions";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=tutorial-early-actions";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=tutorial-early-actions";
+} from "./AppPersistence.js?v=debug-shift-outcome";
+import { createAppPanelController } from "./AppPanelController.js?v=debug-shift-outcome";
+import { createAppRouter } from "./AppRouter.js?v=debug-shift-outcome";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=debug-shift-outcome";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=debug-shift-outcome";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=debug-shift-outcome";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=debug-shift-outcome";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=debug-shift-outcome";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=debug-shift-outcome";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=debug-shift-outcome";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=debug-shift-outcome";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -427,26 +427,26 @@ export function createAppShell({ gameApi }) {
     } else if (action === "back") {
       showPanel(previousPanel || "main-menu");
     } else if (action === "restart") {
-      let showBriefingAfterArrival = false;
-      const transition = runRouteTransition({
+      const attemptPresentation = resolveLevelAttemptPresentation("restart");
+      levelTutorialRuntime.stop();
+      runRouteTransition({
         title: translate("loading.restartingShift"),
         status: translate("loading.resettingCore"),
         arrivalLevelId: activeGameplayLevelId,
         action: async ({ setProgress }) => {
           gameApi.hideShiftResults?.({ immediate: true });
           hideOverlay();
-          await gameApi.restartGame?.({ onProgress: setProgress });
+          await gameApi.restartGame?.({ onProgress: setProgress, replayNarration: false });
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
-          maybeStartLevelTutorial(activeGameplayLevelId);
-          if (shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)) {
+          if (attemptPresentation.startTutorial) maybeStartLevelTutorial(activeGameplayLevelId);
+          if (
+            attemptPresentation.autoShowBriefing
+            && shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)
+          ) {
             await preloadLevelBriefing(activeGameplayLevelId);
-            showBriefingAfterArrival = true;
+            showLevelBriefing(activeGameplayLevelId);
           }
         },
-      });
-      transition.then((restarted) => {
-        if (!restarted || !activeGameplayLevelId) return;
-        if (showBriefingAfterArrival) showLevelBriefing(activeGameplayLevelId);
       });
     } else if (action === "quick-level-select") {
       showPanel("level-select");
@@ -480,6 +480,7 @@ export function createAppShell({ gameApi }) {
     if (!level?.playable || (!force && !isLevelUnlocked(levelId))) return false;
     gameApi.setMenuAudioActive?.(false);
 
+    const attemptPresentation = resolveLevelAttemptPresentation("menu");
     let showBriefingAfterArrival = false;
     const transition = runRouteTransition({
       title: getLevelTitle(levelId),
@@ -490,8 +491,11 @@ export function createAppShell({ gameApi }) {
         hideOverlay();
         await gameApi.startLevel?.({ levelId, mode: level.mode, onProgress: setProgress });
         activeGameplayLevelId = levelId;
-        maybeStartLevelTutorial(levelId);
-        if (shouldAutoShowLevelBriefing(LEVELS, levelId)) {
+        if (attemptPresentation.startTutorial) maybeStartLevelTutorial(levelId);
+        if (
+          attemptPresentation.autoShowBriefing
+          && shouldAutoShowLevelBriefing(LEVELS, levelId)
+        ) {
           await preloadLevelBriefing(levelId);
           showBriefingAfterArrival = true;
         }
@@ -581,6 +585,8 @@ export function createAppShell({ gameApi }) {
     const [command, ...args] = String(commandLine).trim().split(/\s+/).filter(Boolean);
     const levelId = args[0];
     if (!command || command === "help") return getConsoleHelp();
+    const forcedShiftOutcome = resolveForcedShiftOutcomeCommand(command, args);
+    if (forcedShiftOutcome) return forceShiftOutcome(forcedShiftOutcome);
     const cinematicQuality = resolveCinematicQualityCommand(command, args);
     if (cinematicQuality) return gameApi.setCinematicPostProcessingQuality?.(cinematicQuality) ?? null;
     if (command === "complete") return completeLevel(levelId);
@@ -602,6 +608,8 @@ export function createAppShell({ gameApi }) {
       "og('goto intro-elevator')",
       "og('goto intro-shift')",
       "og('reset progress')",
+      "og('shift pass')",
+      "og('shift fail')",
       "og('progress')",
       "og('levels')",
       "og('cinematic max')",
@@ -610,7 +618,15 @@ export function createAppShell({ gameApi }) {
       "og.complete('intro-shift')",
       "og.goto('fuel-problems')",
       "og.resetProgress()",
+      "og.shiftPass()",
+      "og.shiftFail()",
     ];
+  }
+
+  function forceShiftOutcome(outcome) {
+    const result = gameApi.forceShiftOutcome?.(outcome) ?? null;
+    if (result) console.info(`[OperatorGame] Forced ${result.levelId}: ${result.outcome}`);
+    return result;
   }
 
   function installDevConsoleCommands() {
@@ -625,6 +641,8 @@ export function createAppShell({ gameApi }) {
       progress: getProgressSnapshot,
       levels: listConsoleLevels,
       cinematic: (quality = "max") => gameApi.setCinematicPostProcessingQuality?.(quality),
+      shiftPass: () => forceShiftOutcome("complete"),
+      shiftFail: () => forceShiftOutcome("failed"),
     });
     window.og = og;
     window.operatorGameConsole = og;
@@ -643,6 +661,9 @@ export function createAppShell({ gameApi }) {
       getProgress: getProgressSnapshot,
       listLevels: listConsoleLevels,
       runCommand: runConsoleCommand,
+      forceShiftOutcome,
+      shiftPass: () => forceShiftOutcome("complete"),
+      shiftFail: () => forceShiftOutcome("failed"),
     };
     console.info("[OperatorGame] Dev console commands ready. Try og('help').");
   }
@@ -733,6 +754,12 @@ export function resolveCinematicQualityCommand(command, args = []) {
   return null;
 }
 
+export function resolveForcedShiftOutcomeCommand(command, args = []) {
+  if (command === "shift" && (args[0] === "pass" || args[0] === "complete")) return "complete";
+  if (command === "shift" && (args[0] === "fail" || args[0] === "failed")) return "failed";
+  return null;
+}
+
 export function resolvePauseShortcutAction({ panelOpen, currentPanel, previousPanel, activeGameplayLevelId }) {
   if (panelOpen) {
     if (currentPanel === "pause") return "resume";
@@ -744,5 +771,13 @@ export function resolvePauseShortcutAction({ panelOpen, currentPanel, previousPa
 
 export function shouldAutoShowLevelBriefing(levels, levelId) {
   return levels?.[levelId]?.autoShowBriefing !== false;
+}
+
+export function resolveLevelAttemptPresentation(entryKind = "menu") {
+  const restarting = entryKind === "restart";
+  return {
+    startTutorial: !restarting,
+    autoShowBriefing: !restarting,
+  };
 }
 

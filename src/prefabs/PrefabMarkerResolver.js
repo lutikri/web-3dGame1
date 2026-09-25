@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=tutorial-early-actions";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=tutorial-early-actions";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=debug-shift-outcome";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=debug-shift-outcome";
 
 const MARKER_PREFIX = "PF_";
 
@@ -11,6 +11,13 @@ export function parsePrefabMarkerName(name) {
     const shorthandType = name.slice(MARKER_PREFIX.length);
     if (getPrefabDefinition(shorthandType)) {
       return { prefabType: shorthandType, instanceName: shorthandType, stableName: shorthandType };
+    }
+    const legacyNumericSuffix = shorthandType.match(/^(.*?)(\d{3})$/);
+    if (legacyNumericSuffix && getPrefabDefinition(legacyNumericSuffix[1])) {
+      return {
+        prefabType: legacyNumericSuffix[1],
+        instanceName: legacyNumericSuffix[2],
+      };
     }
     throw new Error(`[PrefabMarker] "${name}" must use PF_<prefabType>_<instanceName>`);
   }

@@ -117,6 +117,33 @@ export function evaluateQualificationOutcome(recorder, snapshot, shiftProfile = 
   const isQualityTerminal = snapshot?.mode === "complete" || snapshot?.failureType === "qualityFailure";
   if (!config || !isQualityTerminal) return snapshot;
 
+  if (snapshot.debugForcedOutcome === "complete") {
+    const excluded = new Set(config.excludedPhaseNames ?? []);
+    const phaseResults = (shiftProfile?.phases ?? [])
+      .filter((phase) => !excluded.has(phase.name))
+      .map((phase) => ({ name: phase.name, compliance: 1 }));
+    return {
+      ...snapshot,
+      mode: "complete",
+      failureType: null,
+      qualification: {
+        passed: true,
+        reasons: [],
+        gridCompliance: 1,
+        averageEfficiency: 100,
+        peakCoreStress: recorder.maxCoreStress,
+        criticalTempRatio: 0,
+        coreStallRatio: 0,
+        instabilityRatio: 0,
+        maxSevereDemandStreakSeconds: 0,
+        passingPhases: phaseResults.length,
+        requiredPassingPhases: Number(config.minPassingPhases ?? 3),
+        phaseResults,
+        debugForced: true,
+      },
+    };
+  }
+
   const duration = Math.max(1, recorder.elapsed);
   const scoredTime = Math.max(0, recorder.qualificationScoredTime);
   const gridCompliance = scoredTime > 0 ? recorder.qualificationCompliantTime / scoredTime : 0;

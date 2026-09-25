@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=tutorial-early-actions";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=tutorial-early-actions";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=tutorial-early-actions";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=tutorial-early-actions";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=tutorial-early-actions";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=tutorial-early-actions";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=tutorial-early-actions";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=tutorial-early-actions";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=tutorial-early-actions";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=tutorial-early-actions";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=tutorial-early-actions";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=debug-shift-outcome";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-shift-outcome";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=debug-shift-outcome";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-shift-outcome";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=debug-shift-outcome";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-shift-outcome";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=debug-shift-outcome";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=debug-shift-outcome";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=debug-shift-outcome";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=debug-shift-outcome";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=debug-shift-outcome";
 
 export function createPrefabRuntimeFactory({
   config,

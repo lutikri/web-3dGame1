@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=tutorial-early-actions";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=tutorial-early-actions";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=tutorial-early-actions";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=debug-shift-outcome";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=debug-shift-outcome";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=debug-shift-outcome";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -147,6 +147,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
           target: "Barrier1_1",
           relativeTo: "narrationEnd",
           offsetSeconds: -0.8,
+          restartDelaySeconds: 0.6,
         },
       ],
     },
@@ -158,6 +159,28 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
       name: "ControlBooth",
       trigger: { markerName: "TRGVOL_ControlBooth_1", once: true },
       narration: "panelTutorial",
+    },
+    {
+      name: "QualificationExitScare",
+      trigger: { markerName: "TRGVOL_ControlboothExit", once: true },
+      condition: { levelId: "exploring-around", shiftMode: "complete" },
+      actions: [
+        {
+          action: "releaseRigidPrefab",
+          target: "LoosePipe1_QualificationScare01",
+          linearVelocity: { x: 0, y: -0.35, z: 0 },
+          angularVelocity: { x: 1.2, y: 0.4, z: 2.1 },
+        },
+        {
+          action: "playSoundAtPrefab",
+          target: "LoosePipe1_QualificationScare01",
+          soundKey: "MetalPipeImpactFall1",
+          delaySeconds: 0.44,
+          volume: 1.4,
+          refDistance: 10.8,
+          maxDistance: 40,
+        },
+      ],
     },
   ],
   repeatableTriggerSequences: ["MainCorridorEntrance"],
@@ -187,6 +210,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   ],
   prefabMarkerReferences: [
     { name: "fluorescentLamp_TutorialCabin", prefabType: "fluorescentLamp" },
+    { name: "LoosePipe1_QualificationScare01", prefabType: "LoosePipe1" },
   ],
   prefabs: [],
   lighting: {

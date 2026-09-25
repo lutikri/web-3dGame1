@@ -10,6 +10,7 @@ function createCoordinator({ loaded = "room" } = {}) {
     sessions: { reset: record("sessionReset"), start: record("sessionStart") },
     setShiftProfile: record("shiftProfile"),
     resetLevelRuntime: record("resetLevel"),
+    configureTriggerSequences: record("sequenceAttempt"),
     resetShift: record("resetShift"),
     enterMenuView: record("menu", true),
     stopEditing: record("stopEditing"),
@@ -51,7 +52,7 @@ test("level route coordinator composes a complete level entry", async () => {
   }), true);
   assert.deepEqual(calls.map(([name]) => name), [
     "stopEditing", "route", "sessionStart", "levelView", "doors", "activate", "lights",
-    "roomLights", "diagnostics", "fuelReset", "shiftProfile", "resetLevel", "recorder",
+    "roomLights", "diagnostics", "fuelReset", "shiftProfile", "resetLevel", "sequenceAttempt", "recorder",
     "thoughtsReset", "coreReset", "fuelStop", "completion", "status", "warmup", "narration",
   ]);
   assert.equal(progress[0], 8);
@@ -59,6 +60,20 @@ test("level route coordinator composes a complete level entry", async () => {
   assert.ok(progress.some((value) => value > 8 && value < 68));
   assert.ok(progress.some((value) => value > 76 && value < 94));
   assert.ok(progress.every((value, index) => index === 0 || value > progress[index - 1]));
+});
+
+test("level restart suppresses repeated entry narration for every shift", async () => {
+  const { coordinator, calls } = createCoordinator();
+  await coordinator.enterLevel({
+    levelId: "qualification",
+    mode: "tutorial",
+    replayNarration: false,
+  });
+  assert.deepEqual(
+    calls.find(([name]) => name === "sequenceAttempt"),
+    ["sequenceAttempt", { replayNarration: false }],
+  );
+  assert.equal(calls.some(([name]) => name === "narration"), false);
 });
 
 test("level route coordinator aborts when the requested environment was not loaded", async () => {

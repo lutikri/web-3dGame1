@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=tutorial-early-actions";
+} from "./ServiceTerminalCanvasRenderer.js?v=debug-shift-outcome";
 
 export function createServiceTerminalRuntime(
   parts,

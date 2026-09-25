@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=tutorial-early-actions";
+import { translateRequired } from "./Localization.js?v=debug-shift-outcome";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

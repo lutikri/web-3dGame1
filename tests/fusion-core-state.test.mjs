@@ -34,3 +34,19 @@ test("fusion core does not advance its operating simulation during startup", () 
   });
   assert.equal(core.getSnapshot().elapsed, 1);
 });
+
+test("fusion core debug outcome reaches a terminal state from any active attempt", () => {
+  const passed = createFusionCoreSimulation();
+  const passSnapshot = passed.forceOutcome("pass");
+  assert.equal(passSnapshot.mode, "complete");
+  assert.equal(passSnapshot.failureType, null);
+  assert.equal(passSnapshot.debugForcedOutcome, "complete");
+  assert.equal(passed.forceOutcome("fail"), null);
+
+  const failed = createFusionCoreSimulation();
+  failed.start({ delaySeconds: 18 });
+  const failSnapshot = failed.forceOutcome("fail");
+  assert.equal(failSnapshot.mode, "failed");
+  assert.equal(failSnapshot.failureType, "qualityFailure");
+  assert.equal(failSnapshot.debugForcedOutcome, "failed");
+});

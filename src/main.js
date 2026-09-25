@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=tutorial-early-actions";
-import { applyLocalization } from "./app/Localization.js?v=tutorial-early-actions";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=tutorial-early-actions";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=tutorial-early-actions";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=tutorial-early-actions";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=tutorial-early-actions";
+import { createPreflight } from "./app/Preflight.js?v=debug-shift-outcome";
+import { applyLocalization } from "./app/Localization.js?v=debug-shift-outcome";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=debug-shift-outcome";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=debug-shift-outcome";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=debug-shift-outcome";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=debug-shift-outcome";
 
-const APP_BUILD_REVISION = "tutorial-early-actions";
+const APP_BUILD_REVISION = "debug-shift-outcome";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=tutorial-early-actions`);
+await import(`./OperatorGame.js?v=debug-shift-outcome`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=tutorial-early-actions`);
+const { createAppShell } = await import(`./app/AppShell.js?v=debug-shift-outcome`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=tutorial-early-actions`
+    `./runtime/RuntimeSmoke.js?v=debug-shift-outcome`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

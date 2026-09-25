@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=tutorial-early-actions";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=debug-shift-outcome";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

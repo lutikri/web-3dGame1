@@ -22,6 +22,11 @@ export function collectLevelSoundKeys({ levelId, environment, runtimeSoundKeys =
   keys.add("Footsteps1_Walk1");
   if (environment?.tutorial?.enabled) keys.add("UI_Hint2");
   if (hasOperatorPanel) PANEL_SOUNDS.forEach((key) => keys.add(key));
+  (environment?.triggerSequences ?? []).forEach((sequence) => {
+    (sequence.actions ?? []).forEach((action) => {
+      if (action.soundKey) keys.add(action.soundKey);
+    });
+  });
   (environment?.prefabs ?? []).forEach((prefab) => {
     if (prefab.light) LAMP_SOUNDS.forEach((key) => keys.add(key));
     if (prefab.radio) RADIO_SOUNDS.forEach((key) => keys.add(key));
