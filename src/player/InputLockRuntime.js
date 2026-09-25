@@ -23,12 +23,12 @@ export class InputLockRuntime {
     return true;
   }
 
-  suspend() {
+  suspend({ exitPointerLock = true } = {}) {
     const wasLocked = this.locked;
     this.locked = true;
     this.keys.clear();
     this.movementVelocity.set(0, 0, 0);
-    this.exitPointerLock();
+    if (exitPointerLock) this.exitPointerLock();
     return wasLocked;
   }
 

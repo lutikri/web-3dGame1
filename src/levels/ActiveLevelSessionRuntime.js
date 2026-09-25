@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=viewport-shutter-target";
+import { LevelSession } from "./LevelSession.js?v=spawn-bounds-recovery";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

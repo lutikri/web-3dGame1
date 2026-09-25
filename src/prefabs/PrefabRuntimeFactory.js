@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=viewport-shutter-target";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=viewport-shutter-target";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=viewport-shutter-target";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=viewport-shutter-target";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=viewport-shutter-target";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=viewport-shutter-target";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=viewport-shutter-target";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=viewport-shutter-target";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=viewport-shutter-target";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=viewport-shutter-target";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=viewport-shutter-target";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=spawn-bounds-recovery";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=spawn-bounds-recovery";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=spawn-bounds-recovery";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=spawn-bounds-recovery";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=spawn-bounds-recovery";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=spawn-bounds-recovery";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=spawn-bounds-recovery";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=spawn-bounds-recovery";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=spawn-bounds-recovery";
 
 export function createPrefabRuntimeFactory({
   config,

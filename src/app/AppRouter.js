@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=viewport-shutter-target";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=spawn-bounds-recovery";
 
 export function createAppRouter({
   overlay,

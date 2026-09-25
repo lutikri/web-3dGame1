@@ -870,7 +870,7 @@ export async function createPhysicsSystem() {
     return true;
   }
 
-  function driveRigidPrefab(key, targetPosition, _targetRotation, options = {}) {
+  function driveRigidPrefab(key, targetPosition, targetRotation, options = {}) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab || !targetPosition || !prefab.body.isEnabled()) return false;
     if (!prefab.grabConstraint) createRigidPrefabGrabConstraint(prefab);
@@ -882,6 +882,15 @@ export async function createPhysicsSystem() {
       options.maxAnchorSpeed,
     );
     prefab.grabConstraint.anchorBody.setNextKinematicTranslation(next);
+    if (targetRotation) {
+      prefab.body.setRotation({
+        x: targetRotation.x,
+        y: targetRotation.y,
+        z: targetRotation.z,
+        w: targetRotation.w,
+      }, true);
+      prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    }
     prefab.body.wakeUp();
     return true;
   }
@@ -1026,6 +1035,17 @@ export async function createPhysicsSystem() {
     prefab.body.setAngvel({ x: 0, y: 0, z: 0 }, true);
     prefab.body.wakeUp();
     return true;
+  }
+
+  function resetOutOfBoundsRigidPrefabs(minimumY = -10) {
+    const threshold = Number.isFinite(Number(minimumY)) ? Number(minimumY) : -10;
+    const resetKeys = [];
+    rigidPrefabs.forEach((prefab, key) => {
+      if (!prefab.body.isEnabled() || prefab.sceneKey !== activeSceneKey) return;
+      if (prefab.body.translation().y >= threshold) return;
+      if (resetRigidPrefab(key)) resetKeys.push(key);
+    });
+    return resetKeys;
   }
 
   function unloadScene(key) {
@@ -1198,6 +1218,7 @@ export async function createPhysicsSystem() {
     releaseRigidPrefab,
     removeRigidPrefab,
     resetRigidPrefab,
+    resetOutOfBoundsRigidPrefabs,
     setDoorEnabled,
     configureDoorRestMotor,
     setDoorDragTarget,

@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=viewport-shutter-target";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=spawn-bounds-recovery";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

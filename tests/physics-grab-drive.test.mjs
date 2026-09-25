@@ -19,6 +19,35 @@ test("grab anchor advances toward the carry point without teleporting", () => {
   assert.deepEqual(next.toArray(), [0.2, 0, 0]);
 });
 
+test("physical grab drive holds the requested orientation", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const root = new THREE.Group();
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.2));
+  root.add(collider);
+  const prefab = physics.createRigidPrefab({
+    key: "room:lamp",
+    sceneKey: "room",
+    root,
+    colliderMeshes: [collider],
+    density: 10,
+  });
+  const targetRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.2, 0.6, -0.15));
+
+  physics.setRigidPrefabMode("room:lamp", "grabbed");
+  assert.equal(physics.driveRigidPrefab(
+    "room:lamp",
+    new THREE.Vector3(0, 1, -0.7),
+    targetRotation,
+    { dt: 1 / 60 },
+  ), true);
+
+  const rotation = prefab.body.rotation();
+  const actual = new THREE.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
+  assert.ok(actual.angleTo(targetRotation) < 1e-3);
+  assert.deepEqual({ ...prefab.body.angvel() }, { x: 0, y: 0, z: 0 });
+});
+
 test("equipped rigid prefab sweep stops before static walls", async () => {
   const physics = await createPhysicsSystem();
   const wallRoot = new THREE.Group();
@@ -122,6 +151,24 @@ test("releasing an authored fixed rigid prefab applies linear and angular scare 
   assert.equal(prefab.body.isFixed(), true);
   assert.deepEqual({ ...prefab.body.linvel() }, { x: 0, y: 0, z: 0 });
   assert.deepEqual({ ...prefab.body.angvel() }, { x: 0, y: 0, z: 0 });
+});
+
+test("out-of-bounds rigid prefabs return to their authored transforms", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const root = new THREE.Group();
+  root.position.set(1, 2, 3);
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2));
+  root.add(collider);
+  const prefab = physics.createRigidPrefab({
+    key: "room:prop", sceneKey: "room", root, colliderMeshes: [collider], bodyType: "dynamic",
+  });
+  prefab.body.setTranslation({ x: 8, y: -20, z: 9 }, true);
+  prefab.body.setLinvel({ x: 1, y: -5, z: 2 }, true);
+
+  assert.deepEqual(physics.resetOutOfBoundsRigidPrefabs(-8), ["room:prop"]);
+  assert.deepEqual({ ...prefab.body.translation() }, { x: 1, y: 2, z: 3 });
+  assert.deepEqual({ ...prefab.body.linvel() }, { x: 0, y: 0, z: 0 });
 });
 
 test("character stance resizes its Rapier capsule and refuses blocked standing", async () => {

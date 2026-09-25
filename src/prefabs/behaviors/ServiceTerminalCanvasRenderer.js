@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=viewport-shutter-target";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=spawn-bounds-recovery";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

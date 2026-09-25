@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=viewport-shutter-target";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=spawn-bounds-recovery";
 
 const EFFECT_KEYS = [
   "bloom",

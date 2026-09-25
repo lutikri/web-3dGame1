@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=viewport-shutter-target";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=spawn-bounds-recovery";
 
 const DISMISS_MS = 300;
 

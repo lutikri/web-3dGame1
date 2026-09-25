@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=viewport-shutter-target";
+import { translateRequired } from "./Localization.js?v=spawn-bounds-recovery";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

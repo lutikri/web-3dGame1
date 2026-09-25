@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=viewport-shutter-target";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=viewport-shutter-target";
+} from "../../panels/StatusScreenMaterial.js?v=spawn-bounds-recovery";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=spawn-bounds-recovery";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

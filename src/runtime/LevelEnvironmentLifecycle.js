@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=viewport-shutter-target";
+import { LevelRuntime } from "./LevelRuntime.js?v=spawn-bounds-recovery";
 
 export class LevelEnvironmentLifecycle {
   constructor({

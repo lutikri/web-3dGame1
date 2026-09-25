@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=viewport-shutter-target";
-import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=viewport-shutter-target";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=viewport-shutter-target";
+import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=spawn-bounds-recovery";
+import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=spawn-bounds-recovery";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=spawn-bounds-recovery";
 
 const elevatorStart = new THREE.Vector3(0.8082548379898071, 35.64804458618164, -2.094832181930542);
 

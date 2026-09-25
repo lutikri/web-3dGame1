@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=viewport-shutter-target";
+} from "./FluorescentBehavior.js?v=spawn-bounds-recovery";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

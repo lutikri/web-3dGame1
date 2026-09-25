@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=viewport-shutter-target";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=viewport-shutter-target";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=viewport-shutter-target";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=viewport-shutter-target";
+import { createDebugHub } from "./DebugHub.js?v=spawn-bounds-recovery";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=spawn-bounds-recovery";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=spawn-bounds-recovery";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=spawn-bounds-recovery";
 
 export class DebugToolsRuntime {
   constructor(options) {

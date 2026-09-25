@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=viewport-shutter-target";
+} from "./ServiceTerminalCanvasRenderer.js?v=spawn-bounds-recovery";
 
 export function createServiceTerminalRuntime(
   parts,

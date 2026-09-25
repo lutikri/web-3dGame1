@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=viewport-shutter-target";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=viewport-shutter-target";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=viewport-shutter-target";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=viewport-shutter-target";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=viewport-shutter-target";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=viewport-shutter-target";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=viewport-shutter-target";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=viewport-shutter-target";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=spawn-bounds-recovery";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=spawn-bounds-recovery";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=spawn-bounds-recovery";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=spawn-bounds-recovery";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=spawn-bounds-recovery";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=spawn-bounds-recovery";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=spawn-bounds-recovery";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=spawn-bounds-recovery";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

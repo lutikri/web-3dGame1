@@ -33,3 +33,11 @@ test("input lock runtime temporarily suspends and restores prior state", () => {
   assert.equal(runtime.restore(false), false);
   assert.deepEqual(calls, ["pointer"]);
 });
+
+test("temporary world recovery can retain pointer lock", () => {
+  const calls = [];
+  const runtime = createRuntime(calls);
+  assert.equal(runtime.suspend({ exitPointerLock: false }), false);
+  assert.equal(runtime.isLocked(), true);
+  assert.deepEqual(calls, []);
+});

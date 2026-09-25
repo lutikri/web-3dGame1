@@ -33,7 +33,7 @@ function createFixture({ activationType = "none", rigidPosition = new THREE.Vect
     parts: new Map([["Target", target]]),
     rigidPrefabKey: "level:Item1",
   });
-  return { runtime, root, target, calls, interactive };
+  return { runtime, root, target, camera, calls, interactive };
 }
 
 test("physical grab drives a dynamic body and releases it without setting its pose", () => {
@@ -51,6 +51,30 @@ test("physical grab drives a dynamic body and releases it without setting its po
   assert.ok(calls.some(([type]) => type === "release"));
   assert.equal(calls.some(([type]) => type === "pose"), false);
   assert.equal(calls.some(([type]) => type === "drop"), false);
+});
+
+test("physical grab preserves its authored camera-relative orientation while the player turns", () => {
+  const { runtime, root, target, camera, calls } = createFixture();
+  root.rotation.set(0.15, 0.4, -0.1);
+  root.updateMatrixWorld(true);
+  const initialObjectRotation = root.getWorldQuaternion(new THREE.Quaternion());
+
+  runtime.beginPrimary(target);
+  runtime.releasePrimary();
+  runtime.update(1 / 60);
+
+  const firstDrive = calls.find(([type]) => type === "drive");
+  assert.ok(firstDrive);
+  assert.ok(firstDrive[3].angleTo(initialObjectRotation) < 1e-8);
+
+  camera.rotation.set(-0.1, 0.65, 0);
+  camera.updateMatrixWorld(true);
+  runtime.update(1 / 60);
+
+  const cameraRotation = camera.getWorldQuaternion(new THREE.Quaternion());
+  const expectedTurnedRotation = cameraRotation.multiply(initialObjectRotation);
+  const latestDrive = calls.filter(([type]) => type === "drive").at(-1);
+  assert.ok(latestDrive[3].angleTo(expectedTurnedRotation) < 1e-8);
 });
 
 test("portable spotlight target remains parented to the moving flashlight", () => {
@@ -133,6 +157,22 @@ test("equipped items request a swept kinematic pose", () => {
   assert.equal(poseCall[4], true);
   assert.equal(poseCall[5].sweep, true);
   assert.ok(poseCall[5].sweepOrigin?.isVector3);
+});
+
+test("dropping equipped items releases their last swept pose instead of teleporting through walls", () => {
+  const { runtime, target, calls } = createFixture();
+
+  runtime.beginPrimary(target);
+  runtime.update(0.6);
+  runtime.releasePrimary();
+  runtime.beginSelection();
+  runtime.moveSelection(1);
+  runtime.commitSelection();
+  calls.length = 0;
+  runtime.dropHandled({ throwStrength: 0.5 });
+
+  assert.ok(calls.some(([type, , velocity]) => type === "release" && velocity?.length() > 0));
+  assert.equal(calls.some(([type]) => type === "drop"), false);
 });
 
 test("equipment separated from its carry pose drops from inventory in place", () => {

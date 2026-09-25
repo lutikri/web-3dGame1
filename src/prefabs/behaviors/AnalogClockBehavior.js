@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=viewport-shutter-target";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=spawn-bounds-recovery";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=viewport-shutter-target";
-import { applyLocalization } from "./app/Localization.js?v=viewport-shutter-target";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=viewport-shutter-target";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=viewport-shutter-target";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=viewport-shutter-target";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=viewport-shutter-target";
+import { createPreflight } from "./app/Preflight.js?v=spawn-bounds-recovery";
+import { applyLocalization } from "./app/Localization.js?v=spawn-bounds-recovery";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=spawn-bounds-recovery";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=spawn-bounds-recovery";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=spawn-bounds-recovery";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=spawn-bounds-recovery";
 
-const APP_BUILD_REVISION = "viewport-shutter-target";
+const APP_BUILD_REVISION = "spawn-bounds-recovery";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=viewport-shutter-target`);
+await import(`./OperatorGame.js?v=spawn-bounds-recovery`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=viewport-shutter-target`);
+const { createAppShell } = await import(`./app/AppShell.js?v=spawn-bounds-recovery`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=viewport-shutter-target`
+    `./runtime/RuntimeSmoke.js?v=spawn-bounds-recovery`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=viewport-shutter-target";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=spawn-bounds-recovery";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

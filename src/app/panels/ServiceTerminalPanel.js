@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=viewport-shutter-target";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=spawn-bounds-recovery";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

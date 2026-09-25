@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=viewport-shutter-target";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=spawn-bounds-recovery";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -83,6 +83,15 @@ export function createItemInteractionRuntime({
 
   function applyItemState(item, state, context) {
     item.data.equippedSeparationSeconds = 0;
+    if (state === ITEM_STATES.GRABBED) {
+      camera.updateWorldMatrix(true, false);
+      item.root.updateWorldMatrix(true, false);
+      const cameraQuaternion = camera.getWorldQuaternion(new THREE.Quaternion());
+      const objectQuaternion = item.root.getWorldQuaternion(new THREE.Quaternion());
+      item.data.grabRotationOffset = cameraQuaternion.invert().multiply(objectQuaternion);
+    } else if (context.previousState === ITEM_STATES.GRABBED) {
+      item.data.grabRotationOffset = null;
+    }
     const hidden = state === ITEM_STATES.INVENTORY || state === ITEM_STATES.SPECIAL_VIEW;
     item.root.visible = !hidden;
     const rigidKey = item.runtime.rigidPrefabKey;
@@ -111,8 +120,8 @@ export function createItemInteractionRuntime({
       physics.releaseRigidPrefab(rigidKey, getThrowVelocity(context.throwStrength));
       return;
     }
-    if (context.previousState === ITEM_STATES.EQUIPPED && context.releaseInPlace) {
-      physics.releaseRigidPrefab(rigidKey);
+    if (context.previousState === ITEM_STATES.EQUIPPED) {
+      physics.releaseRigidPrefab(rigidKey, getThrowVelocity(context.throwStrength));
       return;
     }
     const pose = getDropPose(item);
@@ -170,7 +179,9 @@ export function createItemInteractionRuntime({
       cameraOffset.set(item.grabOffset.x, item.grabOffset.y, -item.grabDistance).applyQuaternion(worldQuaternion);
     }
     const position = worldPosition.clone().add(cameraOffset);
-    const targetQuaternion = worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
+    const targetQuaternion = state === ITEM_STATES.GRABBED && item.data.grabRotationOffset
+      ? worldQuaternion.clone().multiply(item.data.grabRotationOffset)
+      : worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
     if (state === ITEM_STATES.EQUIPPED && item.equippedMotion) {
       const presentation = getLocomotionPresentation();
       targetQuaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(

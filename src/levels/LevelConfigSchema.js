@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=viewport-shutter-target";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=spawn-bounds-recovery";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

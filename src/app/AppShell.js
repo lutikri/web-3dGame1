@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=viewport-shutter-target";
-import { applyLocalization, translate } from "./Localization.js?v=viewport-shutter-target";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=viewport-shutter-target";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=viewport-shutter-target";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=viewport-shutter-target";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=viewport-shutter-target";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=viewport-shutter-target";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=spawn-bounds-recovery";
+import { applyLocalization, translate } from "./Localization.js?v=spawn-bounds-recovery";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=spawn-bounds-recovery";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=spawn-bounds-recovery";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=spawn-bounds-recovery";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=spawn-bounds-recovery";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=spawn-bounds-recovery";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=viewport-shutter-target";
-import { createAppPanelController } from "./AppPanelController.js?v=viewport-shutter-target";
-import { createAppRouter } from "./AppRouter.js?v=viewport-shutter-target";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=viewport-shutter-target";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=viewport-shutter-target";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=viewport-shutter-target";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=viewport-shutter-target";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=viewport-shutter-target";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=viewport-shutter-target";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=viewport-shutter-target";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=viewport-shutter-target";
+} from "./AppPersistence.js?v=spawn-bounds-recovery";
+import { createAppPanelController } from "./AppPanelController.js?v=spawn-bounds-recovery";
+import { createAppRouter } from "./AppRouter.js?v=spawn-bounds-recovery";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=spawn-bounds-recovery";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=spawn-bounds-recovery";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=spawn-bounds-recovery";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=spawn-bounds-recovery";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=spawn-bounds-recovery";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=spawn-bounds-recovery";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=spawn-bounds-recovery";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=spawn-bounds-recovery";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

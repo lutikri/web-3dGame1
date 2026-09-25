@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=viewport-shutter-target";
+} from "./panels/StatusScreenMaterial.js?v=spawn-bounds-recovery";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

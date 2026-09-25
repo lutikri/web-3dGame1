@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   getDoorLatchBaseDegrees,
   getDoorLatchRestDegrees,
-} from "../prefabs/behaviors/DoorLatchBehavior.js?v=viewport-shutter-target";
+} from "../prefabs/behaviors/DoorLatchBehavior.js?v=spawn-bounds-recovery";
 
 export class DoorInteractionSystem {
   constructor({

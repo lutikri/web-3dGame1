@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=viewport-shutter-target";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=viewport-shutter-target";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=viewport-shutter-target";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=viewport-shutter-target";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=spawn-bounds-recovery";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=spawn-bounds-recovery";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=spawn-bounds-recovery";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=spawn-bounds-recovery";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {
@@ -37,6 +37,14 @@ export const CONFIG = {
     stance: {
       crouchHeight: 1.12,
       crouchEyeHeight: 0.92,
+    },
+    outOfBounds: {
+      playerMinimumY: -4,
+      propMinimumY: -8,
+      propCheckIntervalSeconds: 0.25,
+      coverDurationMs: 320,
+      coverHoldMs: 120,
+      revealDurationMs: 520,
     },
     collision: {
       cameraRadius: 0.12,

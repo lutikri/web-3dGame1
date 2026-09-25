@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=viewport-shutter-target";
+import { applyAxisRotation } from "./TransformUtils.js?v=spawn-bounds-recovery";
 
 export class InteriorObjectRegistry {
   constructor(options) {
