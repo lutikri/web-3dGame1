@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=debug-shift-outcome";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=viewport-shutter-target";
 
 const DISMISS_MS = 300;
 

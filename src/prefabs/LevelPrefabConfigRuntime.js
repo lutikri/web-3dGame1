@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=debug-shift-outcome";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-shift-outcome";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-shift-outcome";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=debug-shift-outcome";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-shift-outcome";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=debug-shift-outcome";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=debug-shift-outcome";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=viewport-shutter-target";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=viewport-shutter-target";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=viewport-shutter-target";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=viewport-shutter-target";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=viewport-shutter-target";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=viewport-shutter-target";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=viewport-shutter-target";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

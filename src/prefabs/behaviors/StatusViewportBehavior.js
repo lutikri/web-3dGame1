@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=debug-shift-outcome";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=debug-shift-outcome";
+} from "../../panels/StatusScreenMaterial.js?v=viewport-shutter-target";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=viewport-shutter-target";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;
@@ -208,9 +208,29 @@ export function registerStatusViewportInteraction(levelId, prefabConfig, runtime
   return registered;
 }
 
-export function activateStatusViewportShutter(button, prefabInstances) {
+export function activateStatusViewportShutter(button, prefabInstances, { warn = console.warn } = {}) {
   if (button?.userData.kind !== "viewportShutterButton") return false;
-  const viewport = prefabInstances.get(button.userData.shutterTargetKey)?.coreViewport;
+  const targetKey = button.userData.shutterTargetKey;
+  let viewport = prefabInstances.get(targetKey)?.coreViewport;
+  if (!viewport) {
+    const levelPrefix = `${button.userData.levelId}:`;
+    const available = [...prefabInstances.entries()]
+      .filter(([key, runtime]) => key.startsWith(levelPrefix) && runtime?.coreViewport)
+      .map(([key, runtime]) => ({ key, viewport: runtime.coreViewport }));
+    if (available.length === 1) {
+      viewport = available[0].viewport;
+      warn(
+        `[StatusViewport] Shutter target "${targetKey}" is stale;`
+        + ` using the only available core viewport "${available[0].key}".`,
+      );
+    } else {
+      warn(
+        `[StatusViewport] Shutter target "${targetKey}" is unavailable.`
+        + ` Available core viewports: ${available.map(({ key }) => key).join(", ") || "none"}`,
+      );
+      return false;
+    }
+  }
   if (!requestCoreViewportToggle(viewport)) return false;
   const statusViewport = prefabInstances.get(button.userData.levelPrefabKey)?.statusViewport;
   if (statusViewport) statusViewport.shutterButtonPressRemaining = 0.16;

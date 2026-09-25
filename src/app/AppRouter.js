@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=debug-shift-outcome";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=viewport-shutter-target";
 
 export function createAppRouter({
   overlay,

@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=debug-shift-outcome";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=debug-shift-outcome";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=debug-shift-outcome";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=debug-shift-outcome";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=debug-shift-outcome";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=debug-shift-outcome";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=debug-shift-outcome";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=debug-shift-outcome";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=debug-shift-outcome";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=debug-shift-outcome";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=debug-shift-outcome";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=viewport-shutter-target";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=viewport-shutter-target";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=viewport-shutter-target";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=viewport-shutter-target";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=viewport-shutter-target";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=viewport-shutter-target";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=viewport-shutter-target";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=viewport-shutter-target";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=viewport-shutter-target";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=viewport-shutter-target";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=viewport-shutter-target";
 
 export function createPrefabRuntimeFactory({
   config,

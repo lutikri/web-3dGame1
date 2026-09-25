@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=debug-shift-outcome";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=debug-shift-outcome";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=viewport-shutter-target";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=viewport-shutter-target";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=debug-shift-outcome";
+} from "./UiAudioInteractionRuntime.js?v=viewport-shutter-target";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=debug-shift-outcome";
+} from "../config/GraphicsHardwareTiers.js?v=viewport-shutter-target";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=debug-shift-outcome";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=viewport-shutter-target";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

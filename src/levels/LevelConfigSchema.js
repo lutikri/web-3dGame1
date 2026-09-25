@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=debug-shift-outcome";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=viewport-shutter-target";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

@@ -6,6 +6,7 @@ import {
   getLevelEnvironmentId,
   getPlayableLevels,
 } from "../src/levels/LevelRegistry.js";
+import { getPendingPrefabOverrides } from "../src/levels/LevelConfigOverrides.js";
 
 function readGlbJson(relativePath) {
   const buffer = readFileSync(new URL(relativePath, import.meta.url));
@@ -99,12 +100,25 @@ test("qualification owns a completion-gated one-shot exit pipe scare", () => {
   assert.equal(scare.actions[0].action, "releaseRigidPrefab");
   assert.equal(scare.actions[0].target, "LoosePipe1_QualificationScare01");
   assert.equal(scare.actions[1].soundKey, "MetalPipeImpactFall1");
-  assert.equal(scare.actions[1].delaySeconds, 0.64);
+  assert.equal(scare.actions[1].delaySeconds, 0.44);
   assert.equal(
     environment.prefabMarkerReferences.some(({ name, prefabType }) => (
       name === "LoosePipe1_QualificationScare01" && prefabType === "LoosePipe1"
     )),
     true,
+  );
+});
+
+test("qualification status viewport targets the migrated observation shutter instance", () => {
+  const environment = LEVEL_DEFINITIONS["exploring-around"].environment;
+  const overrides = getPendingPrefabOverrides(environment.prefabs);
+  const coreViewport = overrides.find(({ name }) => name === "CoreViewport1_ObservationCoreViewport1");
+  const statusViewport = overrides.find(({ name }) => name === "PanelStatusViewport1_PanelStatusViewport2");
+
+  assert.ok(coreViewport, "migrated core viewport override is missing");
+  assert.equal(
+    statusViewport?.statusViewport?.shutterTargetPrefabName,
+    "CoreViewport1_ObservationCoreViewport1",
   );
 });
 

@@ -372,7 +372,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "travelDurationSeconds": 10,
         "startsOpen": false
       },
-      "name": "CoreViewport1",
+      "name": "CoreViewport1_ObservationCoreViewport1",
       "placementOffset": {
         "position": {
           "x": 0,
@@ -1832,7 +1832,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "screenMeshName": "SM_PanelViewStatus1_Screen",
         "shutterButtonMeshName": "SM_PanelViewStatus1_Button_ViewShutter",
         "shutterPrefabName": "CoreViewport1",
-        "shutterTargetPrefabName": "CoreViewport1",
+        "shutterTargetPrefabName": "CoreViewport1_ObservationCoreViewport1",
         "shutterButtonLabel": "VIEWPORT SHUTTER",
         "shutterButtonMaxDistance": 1.85,
         "shutterButtonPressAxis": "y",

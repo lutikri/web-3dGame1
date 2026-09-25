@@ -4,7 +4,7 @@ from __future__ import annotations
 bl_info = {
     "name": "TGLOBAL Site-12 Authoring",
     "author": "TGLOBAL ST / Codex",
-    "version": (0, 2, 0),
+    "version": (0, 2, 1),
     "blender": (4, 3, 0),
     "location": "View3D > Sidebar > TGLOBAL",
     "description": "Site-12 level, prefab, collider, validation and GLB export tools",
@@ -928,15 +928,29 @@ class SITE12_OT_OpenPrefabDefinition(Operator):
         target_scene["tg_return_scene"] = context.scene.name
         if instance:
             target_scene["tg_return_instance"] = instance.name
+        if context.area and context.area.type == "VIEW_3D" and getattr(context.space_data, "local_view", None):
+            bpy.ops.view3d.localview(frame_selected=False)
         context.window.scene = target_scene
         bpy.ops.object.select_all(action="DESELECT")
+        editable_objects = [
+            obj for obj in definition.all_objects
+            if obj.name in context.view_layer.objects
+        ]
+        for obj in editable_objects:
+            is_collider = obj.name.upper().startswith(("UBX_", "UCX_", "USP_", "UCP_")) or obj.get("tg_kind") == "collider"
+            if not is_collider:
+                obj.hide_viewport = False
+            obj.hide_set(False)
+            if not obj.hide_viewport:
+                obj.select_set(True)
         visual = next((obj for obj in definition.all_objects if obj.get("tg_kind") == "prefab_visual"), None)
         visual = visual or next((obj for obj in definition.all_objects if obj.type == "MESH" and not obj.name.upper().startswith(("UBX_", "UCX_", "USP_", "UCP_"))), None)
         if visual and visual.name in context.view_layer.objects:
-            visual.hide_viewport = False
-            visual.hide_set(False)
-            visual.select_set(True)
             context.view_layer.objects.active = visual
+        if editable_objects and context.area and context.area.type == "VIEW_3D":
+            bpy.ops.view3d.localview(frame_selected=False)
+            bpy.ops.view3d.view_selected(use_all_regions=False)
+        target_scene["tg_edit_definition"] = definition.name
         self.report({"INFO"}, f"Editing {definition.name}")
         return {"FINISHED"}
 
@@ -953,6 +967,8 @@ class SITE12_OT_ReturnToLevel(Operator):
             self.report({"ERROR"}, "No level return target is recorded")
             return {"CANCELLED"}
         instance_name = context.scene.get("tg_return_instance", "")
+        if context.area and context.area.type == "VIEW_3D" and getattr(context.space_data, "local_view", None):
+            bpy.ops.view3d.localview(frame_selected=False)
         context.window.scene = target_scene
         bpy.ops.object.select_all(action="DESELECT")
         instance = bpy.data.objects.get(instance_name)

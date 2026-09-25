@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=debug-shift-outcome";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=viewport-shutter-target";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

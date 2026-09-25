@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=debug-shift-outcome";
-import { applyLocalization, translate } from "./Localization.js?v=debug-shift-outcome";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=debug-shift-outcome";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=debug-shift-outcome";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=debug-shift-outcome";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=debug-shift-outcome";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=debug-shift-outcome";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=viewport-shutter-target";
+import { applyLocalization, translate } from "./Localization.js?v=viewport-shutter-target";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=viewport-shutter-target";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=viewport-shutter-target";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=viewport-shutter-target";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=viewport-shutter-target";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=viewport-shutter-target";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=debug-shift-outcome";
-import { createAppPanelController } from "./AppPanelController.js?v=debug-shift-outcome";
-import { createAppRouter } from "./AppRouter.js?v=debug-shift-outcome";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=debug-shift-outcome";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=debug-shift-outcome";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=debug-shift-outcome";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=debug-shift-outcome";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=debug-shift-outcome";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=debug-shift-outcome";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=debug-shift-outcome";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=debug-shift-outcome";
+} from "./AppPersistence.js?v=viewport-shutter-target";
+import { createAppPanelController } from "./AppPanelController.js?v=viewport-shutter-target";
+import { createAppRouter } from "./AppRouter.js?v=viewport-shutter-target";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=viewport-shutter-target";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=viewport-shutter-target";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=viewport-shutter-target";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=viewport-shutter-target";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=viewport-shutter-target";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=viewport-shutter-target";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=viewport-shutter-target";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=viewport-shutter-target";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

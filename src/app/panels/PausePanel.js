@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=debug-shift-outcome";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=viewport-shutter-target";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

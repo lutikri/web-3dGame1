@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=debug-shift-outcome";
+} from "./behaviors/DeskDrawerBehavior.js?v=viewport-shutter-target";
 
 export function createPrefabPhysicsRegistrar({
   physics,

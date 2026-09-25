@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=debug-shift-outcome";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=debug-shift-outcome";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=debug-shift-outcome";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=debug-shift-outcome";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=viewport-shutter-target";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=viewport-shutter-target";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=viewport-shutter-target";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=viewport-shutter-target";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

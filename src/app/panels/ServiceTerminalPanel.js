@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=debug-shift-outcome";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=viewport-shutter-target";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

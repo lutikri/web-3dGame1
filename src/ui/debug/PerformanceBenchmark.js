@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=debug-shift-outcome";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=viewport-shutter-target";
 
 const EFFECT_KEYS = [
   "bloom",

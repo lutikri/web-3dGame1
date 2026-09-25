@@ -94,3 +94,40 @@ test("status viewport button maps authored Blender Z to the glTF local Y axis", 
   assert.ok(Math.abs(direction.y) > 0.7);
   assert.ok(Math.abs(direction.z) > 0.7);
 });
+
+test("status viewport recovers a stale shutter target when the level has one core viewport", () => {
+  const button = new THREE.Object3D();
+  button.userData.kind = "viewportShutterButton";
+  button.userData.levelId = "room";
+  button.userData.shutterTargetKey = "room:OldViewportName";
+  const messages = [];
+  const viewport = { targetProgress: 0 };
+  const instances = new Map([
+    ["room:CoreViewport1_ObservationCoreViewport1", { coreViewport: viewport }],
+  ]);
+
+  assert.equal(activateStatusViewportShutter(button, instances, {
+    warn: (message) => messages.push(message),
+  }), true);
+  assert.equal(viewport.targetProgress, 1);
+  assert.match(messages[0], /room:OldViewportName/);
+  assert.match(messages[0], /room:CoreViewport1_ObservationCoreViewport1/);
+});
+
+test("status viewport refuses to guess between multiple core viewports", () => {
+  const button = new THREE.Object3D();
+  button.userData.kind = "viewportShutterButton";
+  button.userData.levelId = "room";
+  button.userData.shutterTargetKey = "room:OldViewportName";
+  const messages = [];
+  const instances = new Map([
+    ["room:CoreViewport_A", { coreViewport: {} }],
+    ["room:CoreViewport_B", { coreViewport: {} }],
+  ]);
+
+  assert.equal(activateStatusViewportShutter(button, instances, {
+    warn: (message) => messages.push(message),
+  }), false);
+  assert.match(messages[0], /room:CoreViewport_A/);
+  assert.match(messages[0], /room:CoreViewport_B/);
+});
