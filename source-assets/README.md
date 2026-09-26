@@ -8,6 +8,7 @@ Runtime code must not load files from this directory. Anything used by the brows
 
 ```text
 audio/                         WAV exports and imported original audio
+audio/runtime-sources/         category-organized source mirror for every shipped runtime sound
 audio/imported-mp3/            old/original MP3 references, not runtime files
 textures/                      exported PNG texture sets for runtime compression
 substance/current/             active Substance Painter projects
@@ -24,10 +25,16 @@ reference/downloaded-models/   downloaded/reference model experiments
 ## Export flow
 
 ```text
-source-assets/audio/*.wav       -> tools/convert-runtime-audio.bat -> assets/sounds/<category>/*.ogg
+source-assets/audio/runtime-sources/ -> npm run audio:normalize -> assets/sounds/<category>/*.ogg
 source-assets/textures/T_*.png  -> tools/generate-runtime-textures.bat -> assets/runtime-textures/*.ktx2
 source-assets/scenes/blender/   -> manual GLB export -> assets/mesh/<category>/
 ```
+
+`audio/runtime-sources/manifest.csv` maps every runtime OGG to its canonical
+source copy and records whether only a lossy source is currently available.
+`npm run audio:audit` measures the canonical sources without modifying them.
+`npm run audio:normalize` uses the checked-in category profiles, stages every
+output, and replaces runtime OGG files only after all conversions succeed.
 
 ## Cleanup rule
 

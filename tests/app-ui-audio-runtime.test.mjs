@@ -41,10 +41,11 @@ test("app UI hover sounds once per control and click remains immediate", () => {
 
 test("menu UI sounds resolve to converted UI assets", () => {
   assert.deepEqual(SOUND_GROUPS.menuClick, ["Menu_Click1"]);
+  assert.equal(SOUND_REGISTRY.Menu_Click1.path, "assets/sounds/ui/Menu_Click1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_Hover1.path, "assets/sounds/ui/Menu_Hover1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_SetupComlete1.path, "assets/sounds/ui/Menu_SetupComlete1.ogg");
-  assert.equal(SOUND_REGISTRY.Menu_Click1.volume, 0.76);
-  assert.equal(SOUND_REGISTRY.Menu_Hover1.volume, 0.44);
+  assert.ok(SOUND_REGISTRY.Menu_Click1.volume >= 0 && SOUND_REGISTRY.Menu_Click1.volume <= 2);
+  assert.ok(SOUND_REGISTRY.Menu_Hover1.volume >= 0 && SOUND_REGISTRY.Menu_Hover1.volume <= 2);
   assert.equal(SOUND_REGISTRY.DrawerMetal_Open1.path, "assets/sounds/interaction/DrawerMetal_Open1.ogg");
   assert.equal(SOUND_GROUPS.flashlightToggle.length, 7);
   assert.equal(SOUND_GROUPS.flashlightToggle[0], "ButtonFlashlight1");

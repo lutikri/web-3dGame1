@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=shift-report-copy";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=shift-report-copy";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=shift-report-copy";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=audio-debug-search";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=audio-debug-search";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=audio-debug-search";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

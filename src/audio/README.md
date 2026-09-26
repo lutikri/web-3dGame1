@@ -18,11 +18,28 @@ assets/sounds/player/
 assets/sounds/ui/
 ```
 
-Source WAV files live in `source-assets/audio/` and are converted with:
+Canonical source files live in the ignored
+`source-assets/audio/runtime-sources/<category>/` mirror. Most are WAV; entries
+marked `lossy-source-only` in its manifest are preserved MP3 originals.
 
-```bat
-tools/convert-runtime-audio.bat
+Audit and conversion commands:
+
+```text
+npm run audio:audit
+npm run audio:normalize
+npm run audio:audit:runtime
 ```
+
+Normalization is role-aware: narration, menu music, ambience, machinery beds,
+alarms, interactions, and short UI transients use separate loudness or peak
+targets. Runtime `volume`, distance attenuation, and mix settings remain in
+`SoundRegistry.js` and are intentionally not baked into source files.
+
+The Debug Workspace `AUDIO` page shows active voices and sounds played during
+the last eight seconds. Use `EDIT` or the registry search to pin a sound before
+tuning it. Per-sound `volume` is a global trim, including loops whose gameplay
+volume changes dynamically. `SAVE CONFIGS TO PROJECT` writes audio tuning to
+`src/generated/AudioOverrides.js` through the local development server.
 
 Naming conventions:
 

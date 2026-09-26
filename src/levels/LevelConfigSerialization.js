@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shift-report-copy";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=audio-debug-search";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

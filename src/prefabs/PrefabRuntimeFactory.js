@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-report-copy";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift-report-copy";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift-report-copy";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift-report-copy";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-report-copy";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=audio-debug-search";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=audio-debug-search";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=audio-debug-search";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=audio-debug-search";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=audio-debug-search";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=audio-debug-search";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=audio-debug-search";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=audio-debug-search";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=audio-debug-search";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=audio-debug-search";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=audio-debug-search";
 
 export function createPrefabRuntimeFactory({
   config,

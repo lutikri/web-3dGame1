@@ -69,6 +69,128 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       ]
     }
   },
+  "shiftProfile": {
+    "defaultEvents": false,
+    "transitionSeconds": 9,
+    "demandWander": {
+      "enabled": false
+    },
+    "phases": [
+      {
+        "name": "FIELD PRECHARGE",
+        "start": 0,
+        "end": 24,
+        "temp": [
+          20,
+          55
+        ],
+        "powerTemp": [
+          25,
+          70
+        ],
+        "output": [
+          0,
+          250
+        ],
+        "containmentMin": 75,
+        "demand": 140
+      },
+      {
+        "name": "PLASMA IGNITION",
+        "start": 24,
+        "end": 52,
+        "temp": [
+          75,
+          105
+        ],
+        "powerTemp": [
+          85,
+          120
+        ],
+        "output": [
+          300,
+          550
+        ],
+        "containmentMin": 65,
+        "demand": 430
+      },
+      {
+        "name": "STABLE BURN",
+        "start": 52,
+        "end": 90,
+        "temp": [
+          100,
+          135
+        ],
+        "powerTemp": [
+          118,
+          148
+        ],
+        "output": [
+          500,
+          750
+        ],
+        "containmentMin": 70,
+        "demand": 650
+      },
+      {
+        "name": "DEMAND SURGE",
+        "start": 90,
+        "end": 135,
+        "temp": [
+          125,
+          155
+        ],
+        "powerTemp": [
+          150,
+          166
+        ],
+        "output": [
+          750,
+          950
+        ],
+        "containmentMin": 60,
+        "demand": 850
+      },
+      {
+        "name": "SUSTAINED HIGH LOAD",
+        "start": 135,
+        "end": 180,
+        "temp": [
+          138,
+          162
+        ],
+        "powerTemp": [
+          158,
+          172
+        ],
+        "output": [
+          850,
+          1100
+        ],
+        "containmentMin": 55,
+        "demand": 980
+      }
+    ],
+    "qualification": {
+      "graceSeconds": 12,
+      "demandToleranceRatio": 0.12,
+      "severeDemandToleranceRatio": 0.25,
+      "minGridComplianceRatio": 0.45,
+      "minAverageEfficiency": 62,
+      "maxPeakCoreStress": 92,
+      "maxCriticalTempRatio": 0.15,
+      "maxCoreStallRatio": 0.12,
+      "maxInstabilityRatio": 0.12,
+      "maxSevereDemandStreakSeconds": 42,
+      "minPhaseComplianceRatio": 0.45,
+      "minPassingPhases": 2,
+      "minPhaseScoredSeconds": 8,
+      "excludedPhaseNames": [
+        "FIELD PRECHARGE"
+      ]
+    }
+  },
   "narration": {
     "autoStart": false,
     "welcome": {
@@ -142,7 +264,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "action": "unlockBarrierGate",
           "target": "Barrier1_1",
           "relativeTo": "narrationEnd",
-          "offsetSeconds": -0.8
+          "offsetSeconds": -0.8,
+          "restartDelaySeconds": 0.6
         }
       ]
     },
@@ -160,6 +283,42 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "once": true
       },
       "narration": "panelTutorial"
+    },
+    {
+      "name": "QualificationExitScare",
+      "trigger": {
+        "markerName": "TRGVOL_ControlboothExit",
+        "once": true
+      },
+      "condition": {
+        "levelId": "exploring-around",
+        "shiftMode": "complete"
+      },
+      "actions": [
+        {
+          "action": "releaseRigidPrefab",
+          "target": "LoosePipe1_QualificationScare01",
+          "linearVelocity": {
+            "x": 0,
+            "y": -0.35,
+            "z": 0
+          },
+          "angularVelocity": {
+            "x": 1.2,
+            "y": 0.4,
+            "z": 2.1
+          }
+        },
+        {
+          "action": "playSoundAtPrefab",
+          "target": "LoosePipe1_QualificationScare01",
+          "soundKey": "MetalPipeImpactFall1",
+          "delaySeconds": 0.44,
+          "volume": 1.4,
+          "refDistance": 10.8,
+          "maxDistance": 40
+        }
+      ]
     }
   ],
   "repeatableTriggerSequences": [
@@ -202,6 +361,10 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "name": "fluorescentLamp_TutorialCabin",
       "prefabType": "fluorescentLamp"
+    },
+    {
+      "name": "LoosePipe1_QualificationScare01",
+      "prefabType": "LoosePipe1"
     }
   ],
   "prefabs": [
@@ -483,12 +646,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "state": {
         "latched": true
       },
-      "name": "DoorBulk1_4001",
+      "name": "DoorBulk1_4_001",
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": -3.5762786865234375e-7,
-          "z": 0.05648255832591875
+          "y": 0,
+          "z": 0
         },
         "rotation": {
           "isEuler": true,
@@ -533,12 +696,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "state": {
         "latched": true
       },
-      "name": "DoorBulk1_5001",
+      "name": "DoorBulk1_5_001",
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": -3.5762786865234375e-7,
-          "z": -0.05539016051924511
+          "y": 0,
+          "z": 0
         },
         "rotation": {
           "isEuler": true,
@@ -772,7 +935,70 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "retryChance": 0.35
         }
       },
-      "name": "fluorescentLamp_Corridor1001",
+      "name": "fluorescentLamp_1",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_Corridor1",
       "placementOffset": {
         "position": {
           "x": 0,
@@ -1732,14 +1958,14 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "light": {
         "enabled": true,
         "color": "#fff0cf",
-        "intensity": 2,
-        "distance": 4,
-        "decay": 1.2,
+        "intensity": 2.5,
+        "distance": 6,
+        "decay": 2,
         "parentName": "SM_LampDome1",
         "localOffset": {
-          "x": 0.0007149569379157021,
-          "y": -0.0770367646843663,
-          "z": -0.00033419247937191394
+          "x": 0,
+          "y": 0,
+          "z": 0
         },
         "castShadow": false,
         "shadowMapSize": 512,
@@ -1765,17 +1991,53 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "exponent": 1
         },
         "flicker": {
-          "enabled": true,
-          "minIntervalSeconds": 90,
+          "enabled": false,
+          "minIntervalSeconds": 35,
           "maxIntervalSeconds": 110,
           "retryChance": 0.35
         }
       },
-      "name": "LampDome1_EntHall2001",
+      "name": "LampDome1_EntHall2_001",
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": 2.384185791015625e-7,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "rootName": "SM_LoosePipe1",
+      "rigidBody": {
+        "enabled": true,
+        "bodyType": "fixed",
+        "colliderNamePrefixes": [
+          "UBX_SM_LoosePipe1"
+        ],
+        "density": 180,
+        "linearDamping": 0.32,
+        "angularDamping": 0.48,
+        "friction": 0.72,
+        "restitution": 0.04,
+        "canSleep": true
+      },
+      "name": "LoosePipe1_QualificationScare01",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
           "z": 0
         },
         "rotation": {
@@ -1830,13 +2092,23 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "statusViewport": {
         "screenMeshName": "SM_PanelViewStatus1_Screen",
+        "viewSocketName": "SOCKET_ScreenView",
+        "screenFocusMaxDistance": 1.85,
+        "focusFovDegrees": 52,
+        "enterDurationSeconds": 0.42,
+        "exitDurationSeconds": 0.32,
         "shutterButtonMeshName": "SM_PanelViewStatus1_Button_ViewShutter",
+        "alarmSilenceButtonMeshName": "SM_PanelViewStatus1_Indicator_AlarmSilence",
         "shutterPrefabName": "CoreViewport1",
         "shutterTargetPrefabName": "CoreViewport1_ObservationCoreViewport1",
         "shutterButtonLabel": "VIEWPORT SHUTTER",
         "shutterButtonMaxDistance": 1.85,
         "shutterButtonPressAxis": "y",
         "shutterButtonPressDistance": -0.006,
+        "alarmSilenceButtonLabel": "ALARM SILENCE",
+        "alarmSilenceButtonMaxDistance": 1.85,
+        "alarmSilenceButtonPressAxis": "y",
+        "alarmSilenceButtonPressDistance": -0.006,
         "updateIntervalSeconds": 1,
         "screen": {
           "flipX": true,
@@ -2038,7 +2310,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       }
     },
     {
-      "name": "radio_CorridorEntry1001",
+      "name": "radio_CorridorEntry1_001",
       "placementOffset": {
         "position": {
           "x": 0,
@@ -2226,8 +2498,12 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "serviceTerminal": {
         "screenMeshName": "SM_Terminal_Screen",
+        "viewSocketName": "SOCKET_TerminalView",
         "maxDistance": 2.15,
         "controlLabel": "SERVICE TERMINAL",
+        "focusFovDegrees": 52,
+        "enterDurationSeconds": 0.42,
+        "exitDurationSeconds": 0.32,
         "textureWidth": 1600,
         "textureHeight": 900,
         "emissiveColor": 16776693,

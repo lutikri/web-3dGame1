@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift-report-copy";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift-report-copy";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=audio-debug-search";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=audio-debug-search";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=audio-debug-search";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=audio-debug-search";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=audio-debug-search";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=audio-debug-search";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=audio-debug-search";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=audio-debug-search";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

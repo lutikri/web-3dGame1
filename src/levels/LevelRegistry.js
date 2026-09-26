@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=shift-report-copy";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=shift-report-copy";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=shift-report-copy";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=shift-report-copy";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=audio-debug-search";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=audio-debug-search";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=audio-debug-search";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=audio-debug-search";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();

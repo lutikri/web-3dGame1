@@ -1,7 +1,16 @@
 import * as THREE from "three";
 
 export class AudioRuntime {
-  constructor({ sounds, groups = {}, mix = {}, masterVolume = 1, suspended = false, blockedScopes = [] }) {
+  constructor({
+    sounds,
+    groups = {},
+    mix = {},
+    masterVolume = 1,
+    suspended = false,
+    blockedScopes = [],
+    now = () => globalThis.performance?.now?.() ?? Date.now(),
+    recentSeconds = 8,
+  }) {
     this.sounds = sounds;
     this.groups = groups;
     this.mix = {
@@ -20,6 +29,7 @@ export class AudioRuntime {
     this.masterGain = null;
     this.bufferPromises = new Map();
     this.loops = new Map();
+    this.oneShots = new Map();
     this.attachedLoops = new Map();
     this.attachedOneShots = new Map();
     this.ambienceVolumes = new Map();
@@ -29,6 +39,9 @@ export class AudioRuntime {
     this.activeLevelId = null;
     this.tmpPoint = new THREE.Vector3();
     this.nextOneShotId = 1;
+    this.now = now;
+    this.recentSeconds = recentSeconds;
+    this.playbackHistory = [];
   }
 
   unlock() {
@@ -61,11 +74,13 @@ export class AudioRuntime {
       id: `${levelId}:${object.uuid}`,
       levelId,
       soundKey,
+      debugType: "ambience",
       box,
       objectName: object.name,
       targetVolume: 0,
       currentVolume: 0,
-      baseVolume: config.volume ?? 1,
+      authoredVolume: null,
+      baseVolume: this.resolveConfiguredVolume(soundKey),
       fadeSeconds: 2.5,
       fadeDistance: config.fadeDistance ?? 2,
     }));
@@ -73,6 +88,11 @@ export class AudioRuntime {
   }
 
   disposeLevel(levelId) {
+    [...this.oneShots.entries()].forEach(([key, state]) => {
+      if (state.levelId !== levelId) return;
+      this.stopOneShotState(state);
+      this.oneShots.delete(key);
+    });
     [...this.ambienceVolumes.entries()].forEach(([key, state]) => {
       if (state.levelId !== levelId) return;
       this.stopLoopState(state);
@@ -110,19 +130,44 @@ export class AudioRuntime {
     }
     const context = this.getContext();
     if (!context) return null;
+    const id = options.id ?? `oneshot:${this.nextOneShotId++}:${soundKey}`;
+    const state = {
+      id,
+      soundKey,
+      scope: options.scope ?? null,
+      levelId: options.levelId ?? null,
+      source: null,
+      gain: null,
+      ended: false,
+      authoredVolume: options.volume ?? null,
+      baseVolume: this.resolveConfiguredVolume(soundKey, options.volume),
+    };
+    this.oneShots.set(id, state);
     this.loadBuffer(soundKey)
       .then((buffer) => {
-        if (!buffer) return;
+        if (!buffer || state.ended) return;
         const source = context.createBufferSource();
         const gain = context.createGain();
         source.buffer = buffer;
         source.loop = Boolean(options.loop ?? config.loop);
         source.playbackRate.value = options.playbackRate ?? 1;
-        gain.gain.value = THREE.MathUtils.clamp((options.volume ?? config.volume ?? 1) * this.getSoundMixVolume(soundKey), 0, 1);
+        gain.gain.value = THREE.MathUtils.clamp(state.baseVolume * this.getSoundMixVolume(soundKey), 0, 1);
         source.connect(gain).connect(this.masterGain);
+        source.onended = () => {
+          state.ended = true;
+          if (state.source === source) state.source = null;
+          if (state.gain === gain) state.gain = null;
+          this.oneShots.delete(id);
+        };
+        state.source = source;
+        state.gain = gain;
         source.start();
+        this.recordPlayback(soundKey, "one-shot");
       })
-      .catch((error) => console.warn(`[AudioRuntime] Failed to play "${soundKey}"`, error));
+      .catch((error) => {
+        this.oneShots.delete(id);
+        console.warn(`[AudioRuntime] Failed to play "${soundKey}"`, error);
+      });
     return true;
   }
 
@@ -143,17 +188,20 @@ export class AudioRuntime {
       source: null,
       gain: null,
       ended: false,
-      baseVolume: options.volume ?? config.volume ?? 1,
+      authoredVolume: options.volume ?? null,
+      baseVolume: this.resolveConfiguredVolume(soundKey, options.volume),
       refDistance: options.refDistance ?? config.refDistance ?? 0.75,
       maxDistance: options.maxDistance ?? config.maxDistance ?? 5,
       fadeSeconds: options.fadeSeconds ?? 0.08,
       currentVolume: 0,
       targetVolume: 0,
+      distanceFactor: 1,
     };
     object.updateWorldMatrix(true, false);
     const worldPosition = object.getWorldPosition(this.tmpPoint);
     const distance = listenerPosition ? worldPosition.distanceTo(listenerPosition) : 0;
     const distanceFactor = 1 - THREE.MathUtils.smoothstep(distance, state.refDistance, state.maxDistance);
+    state.distanceFactor = distanceFactor;
     state.currentVolume = state.baseVolume * distanceFactor;
     state.targetVolume = state.currentVolume;
     this.attachedOneShots.set(id, state);
@@ -175,6 +223,7 @@ export class AudioRuntime {
         state.source = source;
         state.gain = gain;
         source.start();
+        this.recordPlayback(soundKey, "attached-one-shot");
       })
       .catch((error) => {
         this.attachedOneShots.delete(id);
@@ -213,15 +262,19 @@ export class AudioRuntime {
       state = this.createLoopState({
         id: soundKey,
         soundKey,
+        debugType: "loop",
         currentVolume: 0,
         targetVolume: 0,
-        baseVolume: config.volume ?? 1,
+        authoredVolume: options.volume ?? null,
+        baseVolume: this.resolveConfiguredVolume(soundKey, options.volume),
         fadeSeconds: config.fadeSeconds ?? options.fadeSeconds ?? 0.4,
       });
       this.loops.set(soundKey, state);
     }
     state.active = Boolean(active);
-    state.targetVolume = active ? (options.volume ?? state.baseVolume) : 0;
+    state.authoredVolume = options.volume ?? null;
+    state.baseVolume = this.resolveConfiguredVolume(soundKey, options.volume);
+    state.targetVolume = active ? state.baseVolume : 0;
     state.fadeSeconds = options.fadeSeconds ?? config.fadeSeconds ?? state.fadeSeconds;
     state.targetPlaybackRate = options.playbackRate ?? state.targetPlaybackRate ?? 1;
     if (active) this.ensureLoopPlaying(state);
@@ -238,10 +291,12 @@ export class AudioRuntime {
         id,
         object,
         soundKey,
+        debugType: "attached-loop",
         levelId: options.levelId ?? object.userData?.levelId ?? null,
         currentVolume: 0,
         targetVolume: 0,
-        baseVolume: options.volume ?? config.volume ?? 1,
+        authoredVolume: options.volume ?? null,
+        baseVolume: this.resolveConfiguredVolume(soundKey, options.volume),
         fadeSeconds: options.fadeSeconds ?? config.fadeSeconds ?? 0.35,
         refDistance: options.refDistance ?? config.refDistance ?? 0.7,
         maxDistance: options.maxDistance ?? config.maxDistance ?? 4,
@@ -250,7 +305,8 @@ export class AudioRuntime {
     }
     state.object = object;
     state.levelId = options.levelId ?? object.userData?.levelId ?? state.levelId;
-    state.baseVolume = options.volume ?? state.baseVolume;
+    state.authoredVolume = options.volume ?? null;
+    state.baseVolume = this.resolveConfiguredVolume(soundKey, options.volume);
     state.fadeSeconds = options.fadeSeconds ?? state.fadeSeconds;
     state.refDistance = options.refDistance ?? state.refDistance;
     state.maxDistance = options.maxDistance ?? state.maxDistance;
@@ -261,6 +317,7 @@ export class AudioRuntime {
   }
 
   update(dt, listenerPosition, levelId = this.activeLevelId) {
+    this.prunePlaybackHistory();
     this.updateAmbienceVolumes(dt, listenerPosition, levelId);
     this.loops.forEach((state) => this.fadeLoopState(state, dt));
     this.attachedLoops.forEach((state) => this.updateAttachedLoop(state, dt, listenerPosition, levelId));
@@ -297,6 +354,7 @@ export class AudioRuntime {
       const worldPosition = state.object.getWorldPosition(this.tmpPoint);
       const distance = worldPosition.distanceTo(listenerPosition);
       const fade = 1 - THREE.MathUtils.smoothstep(distance, state.refDistance, state.maxDistance);
+      state.distanceFactor = fade;
       target = state.baseVolume * fade;
     }
     state.targetVolume = target;
@@ -312,6 +370,7 @@ export class AudioRuntime {
       const worldPosition = state.object.getWorldPosition(this.tmpPoint);
       const distance = worldPosition.distanceTo(listenerPosition);
       const fade = 1 - THREE.MathUtils.smoothstep(distance, state.refDistance, state.maxDistance);
+      state.distanceFactor = fade;
       target = state.baseVolume * fade;
     }
     state.targetVolume = target;
@@ -366,6 +425,7 @@ export class AudioRuntime {
         state.source = source;
         state.gain = gain;
         source.start();
+        this.recordPlayback(state.soundKey, state.debugType ?? "loop");
       })
       .catch((error) => {
         state.startPromise = null;
@@ -456,6 +516,11 @@ export class AudioRuntime {
     if (!scope) return false;
     if (blocked) {
       this.blockedScopes.add(scope);
+      [...this.oneShots.entries()].forEach(([key, state]) => {
+        if (state.scope !== scope) return;
+        this.stopOneShotState(state);
+        this.oneShots.delete(key);
+      });
       this.stopAttachedOneShots((state) => state.scope === scope);
     } else {
       this.blockedScopes.delete(scope);
@@ -481,6 +546,9 @@ export class AudioRuntime {
     this.loops.forEach((state) => {
       if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
     });
+    this.oneShots.forEach((state) => {
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.baseVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
     this.attachedLoops.forEach((state) => {
       if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp((state.currentVolume ?? 0) * this.getSoundMixVolume(state.soundKey), 0, 1);
     });
@@ -500,19 +568,120 @@ export class AudioRuntime {
       soundKeys.add(state.soundKey);
     };
     this.loops.forEach(collectLoop);
+    this.oneShots.forEach(collectLoop);
     this.attachedLoops.forEach(collectLoop);
     this.attachedOneShots.forEach(collectLoop);
     this.ambienceVolumes.forEach(collectLoop);
+    const recentSounds = this.getRecentSounds(levelId);
+    recentSounds.forEach((entry) => soundKeys.add(entry.soundKey));
     return {
       activeLevelId: levelId,
       unlocked: this.unlocked,
       blockedScopes: [...this.blockedScopes].sort(),
       soundKeys: [...soundKeys].sort(),
+      recentSounds,
       loops: this.loops.size,
       attachedLoops: this.attachedLoops.size,
       ambienceVolumes: this.ambienceVolumes.size,
-      oneShots: this.attachedOneShots.size,
+      oneShots: this.oneShots.size + this.attachedOneShots.size,
     };
+  }
+
+  refreshSoundConfig(soundKey = null) {
+    const matches = (state) => !soundKey || state.soundKey === soundKey;
+    const refreshBase = (state) => {
+      if (!matches(state)) return;
+      state.baseVolume = this.resolveConfiguredVolume(state.soundKey, state.authoredVolume);
+    };
+    this.oneShots.forEach((state) => {
+      refreshBase(state);
+      if (state.gain) state.gain.gain.value = THREE.MathUtils.clamp(state.baseVolume * this.getSoundMixVolume(state.soundKey), 0, 1);
+    });
+    this.loops.forEach((state) => {
+      refreshBase(state);
+      if (state.active && matches(state)) state.targetVolume = state.baseVolume;
+    });
+    this.attachedLoops.forEach(refreshBase);
+    this.attachedOneShots.forEach((state) => {
+      refreshBase(state);
+      if (!matches(state)) return;
+      state.currentVolume = state.baseVolume * (state.distanceFactor ?? 1);
+      state.targetVolume = state.currentVolume;
+    });
+    this.ambienceVolumes.forEach(refreshBase);
+    this.refreshMix();
+  }
+
+  resolveConfiguredVolume(soundKey, authoredVolume = null) {
+    const config = this.sounds[soundKey] ?? {};
+    const configuredValue = Number(config.volume ?? 1);
+    const configured = Number.isFinite(configuredValue) ? configuredValue : 1;
+    if (authoredVolume == null) return configured;
+    const defaultValue = Number(config.__defaultVolume ?? configured);
+    const defaultVolume = Number.isFinite(defaultValue) ? Math.max(0.0001, defaultValue) : 1;
+    const authoredValue = Number(authoredVolume);
+    return (Number.isFinite(authoredValue) ? authoredValue : defaultVolume) * configured / defaultVolume;
+  }
+
+  preview(soundKey) {
+    return this.play(soundKey, { loop: false });
+  }
+
+  recordPlayback(soundKey, type) {
+    this.playbackHistory.push({ soundKey, type, playedAt: this.now() });
+    this.prunePlaybackHistory();
+  }
+
+  prunePlaybackHistory() {
+    const cutoff = this.now() - this.recentSeconds * 1000;
+    this.playbackHistory = this.playbackHistory.filter((entry) => entry.playedAt >= cutoff);
+  }
+
+  getRecentSounds(levelId = this.activeLevelId) {
+    this.prunePlaybackHistory();
+    const now = this.now();
+    const entries = new Map();
+    this.playbackHistory.forEach((event) => {
+      const entry = entries.get(event.soundKey) ?? {
+        soundKey: event.soundKey,
+        category: this.getSoundCategory(event.soundKey),
+        activeVoices: 0,
+        recentPlays: 0,
+        lastPlayedAt: event.playedAt,
+        types: new Set(),
+      };
+      entry.recentPlays += 1;
+      entry.lastPlayedAt = Math.max(entry.lastPlayedAt, event.playedAt);
+      entry.types.add(event.type);
+      entries.set(event.soundKey, entry);
+    });
+    const collectActive = (state, type) => {
+      if (!state?.soundKey || !state.source) return;
+      if (state.levelId && levelId && state.levelId !== levelId) return;
+      const entry = entries.get(state.soundKey) ?? {
+        soundKey: state.soundKey,
+        category: this.getSoundCategory(state.soundKey),
+        activeVoices: 0,
+        recentPlays: 0,
+        lastPlayedAt: now,
+        types: new Set(),
+      };
+      entry.activeVoices += 1;
+      entry.types.add(type);
+      entries.set(state.soundKey, entry);
+    };
+    this.oneShots.forEach((state) => collectActive(state, "one-shot"));
+    this.loops.forEach((state) => collectActive(state, "loop"));
+    this.attachedOneShots.forEach((state) => collectActive(state, "attached-one-shot"));
+    this.attachedLoops.forEach((state) => collectActive(state, "attached-loop"));
+    this.ambienceVolumes.forEach((state) => collectActive(state, "ambience"));
+    return [...entries.values()]
+      .map((entry) => ({
+        ...entry,
+        types: [...entry.types].sort(),
+        ageSeconds: Math.max(0, (now - entry.lastPlayedAt) / 1000),
+      }))
+      .sort((a, b) => b.activeVoices - a.activeVoices || b.lastPlayedAt - a.lastPlayedAt || a.soundKey.localeCompare(b.soundKey));
   }
 
   getSoundMixVolume(soundKey) {

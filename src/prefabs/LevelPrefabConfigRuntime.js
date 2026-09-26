@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shift-report-copy";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift-report-copy";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift-report-copy";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shift-report-copy";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift-report-copy";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shift-report-copy";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shift-report-copy";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=audio-debug-search";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=audio-debug-search";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=audio-debug-search";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=audio-debug-search";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=audio-debug-search";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=audio-debug-search";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=audio-debug-search";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

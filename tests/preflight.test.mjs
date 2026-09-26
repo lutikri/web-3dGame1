@@ -9,6 +9,7 @@ import {
   recommendGraphicsProfile,
 } from "../src/app/Preflight.js";
 import { isHighEndGraphicsAdapter } from "../src/config/GraphicsHardwareTiers.js";
+import { SOUND_REGISTRY } from "../src/audio/SoundRegistry.js";
 
 test("preflight distinguishes discrete, integrated, software, and hidden adapters", () => {
   assert.equal(classifyGraphicsAdapter("ANGLE (NVIDIA GeForce RTX 4070 Direct3D11)"), "discrete");
@@ -122,10 +123,10 @@ test("preflight owns and disposes its native UI button audio", () => {
   listeners.get("click")(eventFor(setupControl));
   runtime.playCorporateIntro();
   assert.deepEqual(played, [
-    ["assets/sounds/ui/Menu_Click1.ogg", 0.76],
-    ["assets/sounds/ui/Menu_Hover1.ogg", 0.44],
-    ["assets/sounds/ui/Menu_SetupComlete1.ogg", 0.78],
-    ["assets/sounds/ui/TCorporateIntro1.ogg", 0.82],
+    [SOUND_REGISTRY.Menu_Click1.path, SOUND_REGISTRY.Menu_Click1.volume],
+    [SOUND_REGISTRY.Menu_Hover1.path, SOUND_REGISTRY.Menu_Hover1.volume],
+    [SOUND_REGISTRY.Menu_SetupComlete1.path, SOUND_REGISTRY.Menu_SetupComlete1.volume],
+    [SOUND_REGISTRY.TCorporateIntro1.path, SOUND_REGISTRY.TCorporateIntro1.volume],
   ]);
 
   runtime.dispose();

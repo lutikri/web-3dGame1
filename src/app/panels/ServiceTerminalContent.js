@@ -3,7 +3,7 @@ import {
   resolveTerminalShiftId,
   TERMINAL_SHIFT_CONFIG,
   TERMINAL_STATIC_REPORTS,
-} from "./ServiceTerminalShiftConfig.js?v=shift-report-copy";
+} from "./ServiceTerminalShiftConfig.js?v=audio-debug-search";
 
 const SERVICE_TERMINAL_ASSETS = {
   logo: "assets/ui/service-terminal/terragen-systems-logo.png",

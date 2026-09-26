@@ -1,3 +1,5 @@
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=audio-debug-search";
+
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {
     path: "assets/sounds/ambience/AmbienceLoop_EntryHall1.ogg",
@@ -152,3 +154,30 @@ export const SOUND_MIX = {
   player: 1,
   ui: 1,
 };
+
+captureDefaultVolumes(SOUND_REGISTRY);
+applyAudioOverrides(SOUND_REGISTRY, SOUND_MIX, AUDIO_OVERRIDES);
+
+function captureDefaultVolumes(registry) {
+  Object.values(registry).forEach((sound) => {
+    Object.defineProperty(sound, "__defaultVolume", {
+      value: sound.volume ?? 1,
+      enumerable: false,
+      configurable: false,
+      writable: false,
+    });
+  });
+}
+
+function applyAudioOverrides(registry, mix, overrides = {}) {
+  Object.entries(overrides.mix ?? {}).forEach(([key, value]) => {
+    if (key in mix && Number.isFinite(Number(value))) mix[key] = Number(value);
+  });
+  Object.entries(overrides.sounds ?? {}).forEach(([soundKey, tuning]) => {
+    const target = registry[soundKey];
+    if (!target || !tuning || typeof tuning !== "object") return;
+    ["volume", "refDistance", "maxDistance", "fadeDistance", "fadeSeconds"].forEach((key) => {
+      if (key in tuning && Number.isFinite(Number(tuning[key]))) target[key] = Number(tuning[key]);
+    });
+  });
+}

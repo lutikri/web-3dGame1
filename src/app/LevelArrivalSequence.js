@@ -1,4 +1,4 @@
-import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=shift-report-copy";
+import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=audio-debug-search";
 
 const MONTHS = {
   en: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],

@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const { URL } = require("node:url");
-const { resolveConfigSaveTarget } = require("./config-save-target.cjs");
+const { createConfigSaveTargets, resolveConfigSaveTarget } = require("./config-save-target.cjs");
 
 const root = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT ?? 5173);
@@ -12,16 +12,7 @@ const watchedDirs = ["src", "styles", "assets"];
 const watchedFiles = ["index.html", "README.md", "AGENTS.md"];
 const ignoredWatchPaths = [path.resolve(root, "source-assets")];
 const watchedFileStates = new Map();
-const configSaveTargets = {
-  postProcessing: {
-    filePath: path.join(root, "src", "generated", "PostProcessingOverrides.js"),
-    exportName: "POST_PROCESSING_OVERRIDES",
-  },
-  globalScene: {
-    filePath: path.join(root, "src", "generated", "GlobalSceneOverrides.js"),
-    exportName: "GLOBAL_SCENE_OVERRIDES",
-  },
-};
+const configSaveTargets = createConfigSaveTargets(root);
 const liveReloadScript = `
 <script>
 (() => {

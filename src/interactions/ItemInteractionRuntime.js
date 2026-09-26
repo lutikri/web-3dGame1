@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=shift-report-copy";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=audio-debug-search";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();

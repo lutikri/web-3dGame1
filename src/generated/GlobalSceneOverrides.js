@@ -326,7 +326,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "pitchLimitDegrees": 72,
     "leanPitchLimitDegrees": 88,
     "walkSpeed": 1.2,
-    "runSpeed": 2.85,
+    "runSpeed": 2.1,
     "crouchSpeed": 0.85,
     "operatorMovement": {
       "acceleration": 7,
@@ -337,20 +337,20 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "leanDown": 0.025,
       "leanDamping": 4,
       "bodyRig": {
-        "freeHeadYawDegrees": 18,
+        "freeHeadYawDegrees": 25,
         "stationaryBodyTurnFrequency": 5,
         "movingBodyTurnFrequency": 6,
         "fastBodyTurnFrequency": 8,
         "stationaryTurnStepDegrees": 20,
         "stationaryTurnStepInterval": 0.34,
-        "walkStrideLength": 1.34,
-        "runStrideLength": 1.55,
+        "walkStrideLength": 0.87,
+        "runStrideLength": 1.37,
         "crouchStrideLength": 0.86,
         "walkReferenceSpeed": 1.65,
-        "strafeTranslation": 0.007,
+        "strafeTranslation": 0.06,
         "strafeRollDegrees": 0.45,
         "strafeSpringFrequency": 10,
-        "strafeSpringDamping": 1,
+        "strafeSpringDamping": 0.55,
         "forwardAccelerationScale": 0.0012,
         "forwardWeightLimit": 0.012,
         "forwardWeightFrequency": 12,
@@ -369,18 +369,18 @@ export const GLOBAL_SCENE_OVERRIDES = {
         "bodyGaitVertical": 0.012,
         "cameraGaitSide": 0.0065,
         "cameraGaitVertical": 0.0055,
-        "cameraGaitRollDegrees": 0.16,
+        "cameraGaitRollDegrees": 0.25,
         "cameraGaitPitchDegrees": 0.23,
         "heldGaitSide": 0.0125,
         "heldGaitVertical": 0.0075,
         "heldGaitRollDegrees": 1.45,
         "heldGaitPitchDegrees": 1.05,
         "heldMassScale": 0.65,
-        "walkHeelCompressionImpulse": 0.012,
-        "runHeelCompressionImpulse": 0.022,
+        "walkHeelCompressionImpulse": 0.037,
+        "runHeelCompressionImpulse": 0.3,
         "turnFootCompressionImpulse": 0.008,
         "turnWeightImpulse": 0.008,
-        "heelSpringFrequency": 10,
+        "heelSpringFrequency": 8.8,
         "turnWeightFrequency": 10,
         "stanceSpringFrequency": 4.9,
         "stepVerticalStabilization": 0.3,
@@ -425,6 +425,25 @@ export const GLOBAL_SCENE_OVERRIDES = {
         "yawDegrees": 1.5,
         "pitchDegrees": 0.8,
         "damping": 5
+      }
+    },
+    "shiftReportView": {
+      "position": {
+        "x": -1.96,
+        "y": 1.25,
+        "z": -0.84
+      },
+      "rotationDegrees": {
+        "x": 4.3,
+        "y": -393,
+        "z": 0
+      },
+      "fovDegrees": 55,
+      "pointerLook": {
+        "enabled": true,
+        "yawDegrees": 0.75,
+        "pitchDegrees": 0.42,
+        "damping": 3.5
       }
     }
   }

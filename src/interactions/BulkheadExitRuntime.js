@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=shift-report-copy";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=audio-debug-search";
 
 export class BulkheadExitRuntime {
   constructor({ config, interactive, playSound, getGameMode, emitThought, getResults, showResults, refreshTooltip }) {

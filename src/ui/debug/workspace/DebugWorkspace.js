@@ -2,13 +2,13 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=shift-report-copy";
+} from "../../../levels/LevelConfigSerialization.js?v=audio-debug-search";
 import {
   applyPrefabPlacementOffset,
   createPrefabPlacementOffset,
   isSocketGeneratedPrefab,
   resetPrefabToAuthoredPlacement,
-} from "../../../prefabs/PrefabPlacementMetadata.js?v=shift-report-copy";
+} from "../../../prefabs/PrefabPlacementMetadata.js?v=audio-debug-search";
 
 const PREFAB_GROUP_ORDER = ["elevator", "operatorPanel", "fluorescentLamp", "radio", "serviceDoor", "bulkheadDoor"];
 const PREFAB_TYPE_ALIASES = { DoorBulk1: "bulkheadDoor" };
@@ -25,6 +25,9 @@ const MATERIAL_TUNING_KEYS = [
   "alphaMapContrast",
   "roomLightControlled",
 ];
+const AUDIO_TUNING_KEYS = ["volume", "refDistance", "maxDistance", "fadeDistance", "fadeSeconds"];
+const AUDIO_RECENT_SLOT_COUNT = 12;
+const AUDIO_RECENT_REFRESH_MS = 250;
 const POST_FX_QUALITY_SECTIONS = new Set(["gtao", "ssgi", "ssr", "screenSpaceShadows"]);
 const ENUMS = {
   method: ["off", "fxaa", "smaa"],
@@ -84,6 +87,8 @@ export function createDebugProjectSavePayload({
   decalConfig,
   cameraConfig,
   postProcessingConfig,
+  soundRegistry,
+  soundMix,
 }) {
   const config = {
     globalScene: {
@@ -99,6 +104,16 @@ export function createDebugProjectSavePayload({
       camera: cloneSerializable(cameraConfig ?? {}),
     },
     postProcessing: cloneSerializable(postProcessingConfig ?? {}),
+    audio: {
+      mix: cloneSerializable(soundMix ?? {}),
+      sounds: Object.fromEntries(Object.entries(soundRegistry ?? {}).map(([soundKey, sound]) => {
+        const tuning = {};
+        AUDIO_TUNING_KEYS.forEach((property) => {
+          if (property in sound) tuning[property] = cloneSerializable(sound[property]);
+        });
+        return [soundKey, tuning];
+      })),
+    },
   };
   if (decalConfig != null) config.globalScene.decals = cloneSerializable(decalConfig);
   if (environment?.saveKind) config[environment.saveKind] = createLevelOverrideSnapshot(environment);
@@ -127,6 +142,7 @@ export function createDebugWorkspace({
   applyPostProcessing,
   rebuildPostProcessing,
   applyAudioMix,
+  previewSound,
   applyMaterialConfig,
   togglePositionGizmo,
 }) {
@@ -139,6 +155,10 @@ export function createDebugWorkspace({
   const lastSelectedByLevel = new Map();
   const selectionControllers = new Map();
   const statusState = { status: "ready" };
+  let audioRecentTimer = null;
+  let audioRecentSlots = [];
+  let audioSearch = "";
+  let selectedAudioSoundKey = null;
 
   function makeGui(title, right) {
     const gui = new GUI({ title, width: 350 });
@@ -241,6 +261,7 @@ export function createDebugWorkspace({
   }
 
   function rebuildProperties() {
+    stopAudioRecentMonitor();
     propertiesGui?.destroy();
     propertiesGui = makeGui("PROPERTIES", 8);
     const { kind, levelId, key } = parseDebugWorkspaceSelection(selectedId);
@@ -649,12 +670,97 @@ export function createDebugWorkspace({
     propertiesGui.title("PROPERTIES — AUDIO");
     const state = getAudioDebugState?.() ?? {};
     const keys = new Set(getSceneSoundKeys?.(activeLevelId) ?? state.soundKeys ?? []);
+    if (!soundRegistry[selectedAudioSoundKey]) {
+      selectedAudioSoundKey = state.recentSounds?.[0]?.soundKey
+        ?? [...keys].find((key) => soundRegistry[key])
+        ?? Object.keys(soundRegistry).sort(naturalCompare)[0]
+        ?? null;
+    }
+
+    const finder = propertiesGui.addFolder("FIND SOUND");
+    const searchState = { search: audioSearch };
+    finder.add(searchState, "search").name("SEARCH + ENTER").onFinishChange((value) => {
+      audioSearch = String(value ?? "").trim();
+      rebuildProperties();
+    });
+    const candidates = getAudioSearchCandidates(audioSearch, keys, soundRegistry);
+    const results = finder.addFolder(`${audioSearch ? "RESULTS" : "SCENE SOUNDS"} — ${candidates.length}`);
+    candidates.slice(0, 32).forEach((soundKey) => {
+      action(results, soundKey, () => {
+        selectedAudioSoundKey = soundKey;
+        rebuildProperties();
+      });
+    });
+    if (candidates.length > 32) action(results, `TYPE MORE — ${candidates.length - 32} HIDDEN`, () => {});
+    if (!audioSearch) results.close();
+
+    if (selectedAudioSoundKey && soundRegistry[selectedAudioSoundKey]) {
+      const selected = propertiesGui.addFolder(`SELECTED SOUND — ${selectedAudioSoundKey}`);
+      AUDIO_TUNING_KEYS.forEach((property) => addAutoController(
+        selected,
+        soundRegistry[selectedAudioSoundKey],
+        property,
+        () => applyAudioMix?.(selectedAudioSoundKey),
+      ));
+      action(selected, "PLAY", () => previewSound?.(selectedAudioSoundKey));
+    }
+
+    const recent = propertiesGui.addFolder("RECENT / ACTIVE — 8 SEC");
+    audioRecentSlots = Array.from({ length: AUDIO_RECENT_SLOT_COUNT }, (_, index) => {
+      const slot = { soundKey: "—", status: "", type: "" };
+      const folder = recent.addFolder(`SLOT ${String(index + 1).padStart(2, "0")}`);
+      folder.add(slot, "soundKey").name("SOUND").listen().disable();
+      folder.add(slot, "status").name("STATUS").listen().disable();
+      folder.add(slot, "type").name("TYPE").listen().disable();
+      action(folder, "EDIT", () => {
+        if (!soundRegistry[slot.soundKey]) return;
+        selectedAudioSoundKey = slot.soundKey;
+        rebuildProperties();
+      });
+      action(folder, "PLAY", () => slot.soundKey !== "—" && previewSound?.(slot.soundKey));
+      folder.close();
+      return { folder, slot, soundKey: null };
+    });
+    updateAudioRecentMonitor();
+    startAudioRecentMonitor();
     addObjectFolder(propertiesGui.addFolder("MIX"), soundMix, applyAudioMix);
-    const sounds = propertiesGui.addFolder(`SCENE SOUNDS — ${keys.size}`);
-    [...keys].filter((key) => soundRegistry[key]).sort(naturalCompare).forEach((key) => {
-      const folder = sounds.addFolder(key);
-      ["volume", "refDistance", "maxDistance", "fadeDistance", "fadeSeconds"]
-        .forEach((property) => addAutoController(folder, soundRegistry[key], property, applyAudioMix));
+    action(propertiesGui, "SAVE CONFIGS TO PROJECT", saveProject);
+  }
+
+  function startAudioRecentMonitor() {
+    if (!visible || selectedId !== "global:audio" || audioRecentTimer) return;
+    audioRecentTimer = globalThis.setInterval(updateAudioRecentMonitor, AUDIO_RECENT_REFRESH_MS);
+  }
+
+  function stopAudioRecentMonitor() {
+    if (audioRecentTimer) globalThis.clearInterval(audioRecentTimer);
+    audioRecentTimer = null;
+    audioRecentSlots = [];
+  }
+
+  function updateAudioRecentMonitor() {
+    const entries = getAudioDebugState?.().recentSounds ?? [];
+    audioRecentSlots.forEach((record, index) => {
+      const entry = entries[index];
+      const shown = Boolean(entry && soundRegistry[entry.soundKey]);
+      if (record.folder.show && record.folder.hide) {
+        if (shown) record.folder.show();
+        else record.folder.hide();
+      } else {
+        record.folder.domElement.style.display = shown ? "" : "none";
+      }
+      if (!shown) {
+        record.soundKey = null;
+        return;
+      }
+      if (record.soundKey !== entry.soundKey) {
+        record.soundKey = entry.soundKey;
+        record.slot.soundKey = entry.soundKey;
+      }
+      record.slot.status = entry.activeVoices > 0
+        ? `PLAYING ×${entry.activeVoices}`
+        : `${entry.ageSeconds.toFixed(1)}s AGO ×${entry.recentPlays}`;
+      record.slot.type = entry.types.join(" / ").toUpperCase();
     });
   }
 
@@ -718,6 +824,8 @@ export function createDebugWorkspace({
         decalConfig,
         cameraConfig,
         postProcessingConfig,
+        soundRegistry,
+        soundMix,
       });
       const response = await fetch("/__save-config", {
         method: "POST",
@@ -751,6 +859,11 @@ export function createDebugWorkspace({
   function setVisible(nextVisible) {
     visible = Boolean(nextVisible);
     [masterGui, propertiesGui].forEach((gui) => visible ? gui?.show() : gui?.hide());
+    if (visible) startAudioRecentMonitor();
+    else if (audioRecentTimer) {
+      globalThis.clearInterval(audioRecentTimer);
+      audioRecentTimer = null;
+    }
     return visible;
   }
 
@@ -763,6 +876,7 @@ export function createDebugWorkspace({
   }
 
   function destroy() {
+    stopAudioRecentMonitor();
     masterGui?.destroy();
     propertiesGui?.destroy();
   }
@@ -802,7 +916,22 @@ function naturalCompare(a, b) {
   return String(a).localeCompare(String(b), undefined, { numeric: true });
 }
 
+export function getAudioSearchCandidates(query, sceneKeys, soundRegistry) {
+  const normalized = String(query ?? "").trim().toLowerCase();
+  const tokens = normalized.split(/[^a-z0-9а-яё]+/i).filter(Boolean);
+  const source = tokens.length ? Object.keys(soundRegistry ?? {}) : [...(sceneKeys ?? [])];
+  return source
+    .filter((soundKey) => {
+      const sound = soundRegistry?.[soundKey];
+      if (!sound) return false;
+      const haystack = `${soundKey} ${sound.path ?? ""}`.toLowerCase();
+      return tokens.every((token) => haystack.includes(token));
+    })
+    .sort(naturalCompare);
+}
+
 function getAutoNumberRange(key, value) {
+  if (/volume/i.test(key)) return [0, 2, 0.01];
   if (/alphaMapContrast/i.test(key)) return [0, 4, 0.01];
   if (/bias|temperature|tint|barrel|fisheye|brightness/i.test(key)) return [-2, 2, 0.001];
   if (/sample|spp|steps|iterations|maxTextureSize/i.test(key)) return [0, Math.max(64, value * 4), 1];

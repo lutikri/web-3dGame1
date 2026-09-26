@@ -5,6 +5,7 @@ import {
   compareDebugPrefabs,
   createDebugProjectSavePayload,
   getCoreViewportDebugProperties,
+  getAudioSearchCandidates,
   getOperatorPanelScreenDebugProperties,
   getStatusViewportDebugProperties,
   getSuspendedLampDebugProperties,
@@ -73,6 +74,15 @@ test("debug workspace resolves a material selection to its material key", () => 
   });
 });
 
+test("audio workspace searches the full registry by sound name and category path", () => {
+  const registry = {
+    Menu_Click1: { path: "assets/sounds/ui/Menu_Click1.ogg" },
+    DoorBulk1_Open1: { path: "assets/sounds/interaction/DoorBulk1_Open1.ogg" },
+  };
+  assert.deepEqual(getAudioSearchCandidates("UI click", new Set(), registry), ["Menu_Click1"]);
+  assert.deepEqual(getAudioSearchCandidates("", new Set(["DoorBulk1_Open1"]), registry), ["DoorBulk1_Open1"]);
+});
+
 test("debug workspace groups Blender bulkhead aliases and uses natural name order", () => {
   const prefabs = [
     { prefabType: "DoorBulk1", name: "DoorBulk1_10" },
@@ -103,6 +113,10 @@ test("debug workspace project save batches level, materials, and post processing
     decalConfig: { opacity: 0.8 },
     cameraConfig: { walkSpeed: 1.65, operatorMovement: { bodyRig: { heldMassScale: 1.45 } } },
     postProcessingConfig: { enabled: true },
+    soundRegistry: {
+      hum: { path: "ignored.ogg", loop: true, volume: 0.2, refDistance: 0.5 },
+    },
+    soundMix: { master: 1, machinery: 0.8 },
   });
 
   assert.equal(payload.kind, "allConfigs");
@@ -114,4 +128,8 @@ test("debug workspace project save batches level, materials, and post processing
     decals: { opacity: 0.8 },
   });
   assert.deepEqual(payload.config.postProcessing, { enabled: true });
+  assert.deepEqual(payload.config.audio, {
+    mix: { master: 1, machinery: 0.8 },
+    sounds: { hum: { volume: 0.2, refDistance: 0.5 } },
+  });
 });

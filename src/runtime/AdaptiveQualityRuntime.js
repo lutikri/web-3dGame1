@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=shift-report-copy";
+import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=audio-debug-search";
 
 export class AdaptiveQualityRuntime {
   constructor({

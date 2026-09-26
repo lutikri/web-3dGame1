@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=shift-report-copy";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shift-report-copy";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shift-report-copy";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shift-report-copy";
+import { createDebugHub } from "./DebugHub.js?v=audio-debug-search";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=audio-debug-search";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=audio-debug-search";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=audio-debug-search";
 
 export class DebugToolsRuntime {
   constructor(options) {
@@ -54,6 +54,7 @@ export class DebugToolsRuntime {
       applyPostProcessing: this.applyPostProcessing,
       rebuildPostProcessing: this.rebuildPostProcessing,
       applyAudioMix: this.applyAudioMix,
+      previewSound: this.previewSound,
       applyMaterialConfig: this.applyMaterialConfig,
       togglePositionGizmo: this.togglePositionGizmo,
     });

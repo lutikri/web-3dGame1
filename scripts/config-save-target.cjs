@@ -1,5 +1,22 @@
 const path = require("node:path");
 
+function createConfigSaveTargets(root) {
+  return {
+    postProcessing: {
+      filePath: path.join(root, "src", "generated", "PostProcessingOverrides.js"),
+      exportName: "POST_PROCESSING_OVERRIDES",
+    },
+    globalScene: {
+      filePath: path.join(root, "src", "generated", "GlobalSceneOverrides.js"),
+      exportName: "GLOBAL_SCENE_OVERRIDES",
+    },
+    audio: {
+      filePath: path.join(root, "src", "generated", "AudioOverrides.js"),
+      exportName: "AUDIO_OVERRIDES",
+    },
+  };
+}
+
 function resolveConfigSaveTarget(root, kind, staticTargets) {
   if (staticTargets[kind]) return staticTargets[kind];
   if (!/^[a-z][A-Za-z0-9]*$/.test(kind)) return null;
@@ -12,4 +29,4 @@ function resolveConfigSaveTarget(root, kind, staticTargets) {
   };
 }
 
-module.exports = { resolveConfigSaveTarget };
+module.exports = { createConfigSaveTargets, resolveConfigSaveTarget };

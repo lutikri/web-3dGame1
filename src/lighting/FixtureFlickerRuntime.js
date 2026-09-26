@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=shift-report-copy";
+} from "./FluorescentBehavior.js?v=audio-debug-search";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {
