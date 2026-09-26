@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=random-speech";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

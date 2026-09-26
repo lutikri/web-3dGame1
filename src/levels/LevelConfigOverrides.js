@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=shift2-outcome-vo";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=random-speech";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

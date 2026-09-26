@@ -1,4 +1,4 @@
-import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=shift2-outcome-vo";
+import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=random-speech";
 
 const MONTHS = {
   en: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],

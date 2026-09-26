@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=shift2-outcome-vo";
-import { applyLocalization } from "./app/Localization.js?v=shift2-outcome-vo";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=shift2-outcome-vo";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=shift2-outcome-vo";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift2-outcome-vo";
+import { createPreflight } from "./app/Preflight.js?v=random-speech";
+import { applyLocalization } from "./app/Localization.js?v=random-speech";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=random-speech";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=random-speech";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=random-speech";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=random-speech";
 
-const APP_BUILD_REVISION = "shift2-outcome-vo";
+const APP_BUILD_REVISION = "random-speech";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=shift2-outcome-vo`);
+await import(`./OperatorGame.js?v=random-speech`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=shift2-outcome-vo`);
+const { createAppShell } = await import(`./app/AppShell.js?v=random-speech`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=shift2-outcome-vo`
+    `./runtime/RuntimeSmoke.js?v=random-speech`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

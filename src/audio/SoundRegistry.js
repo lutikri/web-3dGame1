@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=shift2-outcome-vo";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=random-speech";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {
@@ -108,6 +108,10 @@ export const SOUND_REGISTRY = {
   MessageEN_WelcomeElevator1: { path: "assets/sounds/narration/MessageEN_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageEN_InstrumentReliabilityPassed1: { path: "assets/sounds/narration/MessageEN_InstrumentReliabilityPassed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageEN_InstrumentReliabilityFailed1: { path: "assets/sounds/narration/MessageEN_InstrumentReliabilityFailed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_RandomLoreDifficulties1: { path: "assets/sounds/narration/MessageEN_RandomLoreDifficulties1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_RandomLoreModernization1: { path: "assets/sounds/narration/MessageEN_RandomLoreModernization1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_RandomWorkSupervision1: { path: "assets/sounds/narration/MessageEN_RandomWorkSupervision1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_RandomStructureNoises1: { path: "assets/sounds/narration/MessageEN_RandomStructureNoises1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_Welcome1: { path: "assets/sounds/narration/MessageRU_Welcome1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_FaultsIntro1: { path: "assets/sounds/narration/MessageRU_FaultsIntro1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_WelcomePanelTutorial1: { path: "assets/sounds/narration/MessageRU_WelcomePanelTutorial1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
@@ -117,6 +121,10 @@ export const SOUND_REGISTRY = {
   MessageRU_WelcomeElevator1: { path: "assets/sounds/narration/MessageRU_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_InstrumentReliabilityPassed1: { path: "assets/sounds/narration/MessageRU_InstrumentReliabilityPassed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_InstrumentReliabilityFailed1: { path: "assets/sounds/narration/MessageRU_InstrumentReliabilityFailed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_RandomLoreDifficulties1: { path: "assets/sounds/narration/MessageRU_RandomLoreDifficulties1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_RandomLoreModernization1: { path: "assets/sounds/narration/MessageRU_RandomLoreModernization1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_RandomWorkSupervision1: { path: "assets/sounds/narration/MessageRU_RandomWorkSupervision1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_RandomStructureNoises1: { path: "assets/sounds/narration/MessageRU_RandomStructureNoises1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MotorSmall1: { path: "assets/sounds/interaction/MotorSmall1.ogg", volume: 0.56, refDistance: 0.55, maxDistance: 3 },
   MetalPipeImpactFall1: { path: "assets/sounds/interaction/MetalPipeImpactFall1.ogg", volume: 0.9, refDistance: 0.8, maxDistance: 10 },
   Panel1_SfxLoop1: { path: "assets/sounds/machinery/Panel1_SfxLoop1.ogg", loop: true, volume: 0.18 },

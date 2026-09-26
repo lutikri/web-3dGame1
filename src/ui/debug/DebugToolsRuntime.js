@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=shift2-outcome-vo";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shift2-outcome-vo";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shift2-outcome-vo";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shift2-outcome-vo";
+import { createDebugHub } from "./DebugHub.js?v=random-speech";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=random-speech";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=random-speech";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=random-speech";
 
 export class DebugToolsRuntime {
   constructor(options) {

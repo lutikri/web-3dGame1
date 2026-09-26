@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=shift2-outcome-vo";
+import { LevelSession } from "./LevelSession.js?v=random-speech";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift2-outcome-vo";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift2-outcome-vo";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift2-outcome-vo";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift2-outcome-vo";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift2-outcome-vo";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift2-outcome-vo";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=random-speech";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=random-speech";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=random-speech";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=random-speech";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=random-speech";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=random-speech";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=random-speech";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=random-speech";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

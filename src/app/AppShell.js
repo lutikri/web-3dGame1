@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shift2-outcome-vo";
-import { applyLocalization, translate } from "./Localization.js?v=shift2-outcome-vo";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shift2-outcome-vo";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shift2-outcome-vo";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shift2-outcome-vo";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=shift2-outcome-vo";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shift2-outcome-vo";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=random-speech";
+import { applyLocalization, translate } from "./Localization.js?v=random-speech";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=random-speech";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=random-speech";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=random-speech";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=random-speech";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=random-speech";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=shift2-outcome-vo";
-import { createAppPanelController } from "./AppPanelController.js?v=shift2-outcome-vo";
-import { createAppRouter } from "./AppRouter.js?v=shift2-outcome-vo";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=shift2-outcome-vo";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shift2-outcome-vo";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=shift2-outcome-vo";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shift2-outcome-vo";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shift2-outcome-vo";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shift2-outcome-vo";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shift2-outcome-vo";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shift2-outcome-vo";
+} from "./AppPersistence.js?v=random-speech";
+import { createAppPanelController } from "./AppPanelController.js?v=random-speech";
+import { createAppRouter } from "./AppRouter.js?v=random-speech";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=random-speech";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=random-speech";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=random-speech";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=random-speech";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=random-speech";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=random-speech";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=random-speech";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=random-speech";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

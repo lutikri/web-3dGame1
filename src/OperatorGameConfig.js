@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=shift2-outcome-vo";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=shift2-outcome-vo";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=shift2-outcome-vo";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=shift2-outcome-vo";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=random-speech";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=random-speech";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=random-speech";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=random-speech";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

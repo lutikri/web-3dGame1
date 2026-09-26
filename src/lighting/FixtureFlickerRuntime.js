@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=shift2-outcome-vo";
+} from "./FluorescentBehavior.js?v=random-speech";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

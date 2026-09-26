@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=shift2-outcome-vo";
+import { applyAxisRotation } from "./TransformUtils.js?v=random-speech";
 
 export class InteriorObjectRegistry {
   constructor(options) {

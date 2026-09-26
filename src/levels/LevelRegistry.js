@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=shift2-outcome-vo";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=shift2-outcome-vo";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=shift2-outcome-vo";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=shift2-outcome-vo";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=random-speech";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=random-speech";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=random-speech";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=random-speech";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
@@ -258,6 +258,63 @@ function createUnexpectedStuffConfig() {
           subtitlePath: "assets/sounds/narration/MessageRU_FaultsIntro1.srt",
           duration: 26.52,
         },
+      },
+      randomSpeech: {
+        enabled: true,
+        checkIntervalSeconds: 8,
+        chance: 0.3,
+        cooldownRangeSeconds: [55, 88],
+        recentHistorySize: 2,
+        lines: [
+          {
+            id: "lore-difficulties",
+            shift: "unexpected-stuff",
+            minTime: 34,
+            maxTime: 140,
+            weight: 0.9,
+            cooldown: 130,
+            once: true,
+            reactor: { modes: ["running"] },
+            en: { soundKey: "MessageEN_RandomLoreDifficulties1", duration: 9.71 },
+            ru: { soundKey: "MessageRU_RandomLoreDifficulties1", duration: 8.71 },
+          },
+          {
+            id: "lore-modernization",
+            shift: "unexpected-stuff",
+            minTime: 52,
+            maxTime: 166,
+            weight: 1,
+            cooldown: 130,
+            once: true,
+            reactor: { modes: ["running"] },
+            en: { soundKey: "MessageEN_RandomLoreModernization1", duration: 9.94 },
+            ru: { soundKey: "MessageRU_RandomLoreModernization1", duration: 8.81 },
+          },
+          {
+            id: "work-supervision",
+            shift: "unexpected-stuff",
+            minTime: 44,
+            maxTime: 166,
+            weight: 1.2,
+            cooldown: 130,
+            once: true,
+            reactor: { modes: ["running"] },
+            en: { soundKey: "MessageEN_RandomWorkSupervision1", duration: 9.94 },
+            ru: { soundKey: "MessageRU_RandomWorkSupervision1", duration: 9.68 },
+          },
+          {
+            id: "structure-noises",
+            shift: "unexpected-stuff",
+            minTime: 26,
+            maxTime: 124,
+            weight: 0.65,
+            cooldown: 105,
+            once: true,
+            reactor: { modes: ["running"] },
+            en: { soundKey: "MessageEN_RandomStructureNoises1", duration: 7.57 },
+            ru: { soundKey: "MessageRU_RandomStructureNoises1", duration: 7.64 },
+          },
+        ],
       },
     },
     triggerSequences: (baseConfig.triggerSequences ?? []).map((sequence) => {

@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=shift2-outcome-vo";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=random-speech";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

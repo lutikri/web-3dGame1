@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=shift2-outcome-vo";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift2-outcome-vo";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=shift2-outcome-vo";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift2-outcome-vo";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=shift2-outcome-vo";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=random-speech";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=random-speech";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=random-speech";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=random-speech";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=random-speech";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=random-speech";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=random-speech";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

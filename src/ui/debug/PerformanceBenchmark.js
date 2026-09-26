@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=random-speech";
 
 const EFFECT_KEYS = [
   "bloom",

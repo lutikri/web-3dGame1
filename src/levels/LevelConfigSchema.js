@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shift2-outcome-vo";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=random-speech";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

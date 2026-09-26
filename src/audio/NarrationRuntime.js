@@ -4,6 +4,7 @@ export function createNarrationRuntime({
   getRadioRuntime,
   getConfiguredLine,
   playLine,
+  stopLine = () => {},
   startRadioSpeech,
   resetRadio,
   prefabInstances = null,
@@ -20,6 +21,8 @@ export function createNarrationRuntime({
   const timers = new Set();
   const subtitleCache = new Map();
   let playedLevelId = null;
+  let activePlayback = null;
+  let playbackToken = 0;
 
   function scheduleWelcome(levelId = getActiveLevelId()) {
     if (playedLevelId === levelId) return false;
@@ -51,18 +54,36 @@ export function createNarrationRuntime({
     const line = await resolveLine(configured ?? (lineKey === "welcome" ? getFallbackLine(language) : null));
     if (!line?.soundKey) return false;
     if (getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return false;
+    return startPlayback({ lineKey, line, levelId, runtimes, priority: "event" });
+  }
+
+  async function playRandomNarration(lineKey, line, levelId = getActiveLevelId()) {
+    const runtimes = findLevelRadioRuntimes(prefabInstances, getLevelEnvironmentId(levelId));
+    if (!runtimes.length || getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return false;
+    const resolved = await resolveLine(line);
+    if (!resolved?.soundKey || getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return false;
+    return startPlayback({ lineKey, line: resolved, levelId, runtimes, priority: "random" });
+  }
+
+  function startPlayback({ lineKey, line, levelId, runtimes, priority }) {
+    if (activePlayback) {
+      if (priority !== "event" || activePlayback.priority === "event") return false;
+      interruptPlayback();
+    }
+    const token = ++playbackToken;
+    activePlayback = { token, lineKey, levelId, priority };
     runtimes.forEach((runtime) => {
       startRadioSpeech(runtime.radio, line.duration);
-      playLine(runtime, line, levelId);
+      playLine(runtime, line, levelId, token);
     });
-    onStarted({ levelId, line: lineKey, duration: line.duration });
+    onStarted({ levelId, line: lineKey, duration: line.duration, priority });
     schedule(() => {
-      if (getActiveLevelId() === levelId) onEnded({ levelId, line: lineKey });
+      finishPlayback(token);
     }, line.duration);
     const subtitleIdBase = `narrator-${lineKey}-${levelId}-${Date.now()}`;
     line.subtitles.forEach((subtitle, index) => {
       schedule(() => {
-        if (getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return;
+        if (!isPlaybackCurrent(token) || getActiveLevelId() !== levelId || !isPlaybackAllowed(levelId)) return;
         dispatchSubtitle({
           id: `${subtitleIdBase}-${index}`,
           text: subtitle.text,
@@ -75,10 +96,34 @@ export function createNarrationRuntime({
     return line;
   }
 
+  function finishPlayback(token) {
+    if (!isPlaybackCurrent(token)) return;
+    const playback = activePlayback;
+    activePlayback = null;
+    if (getActiveLevelId() === playback.levelId) {
+      onEnded({ levelId: playback.levelId, line: playback.lineKey, priority: playback.priority });
+    }
+  }
+
+  function interruptPlayback() {
+    if (!activePlayback) return false;
+    const playback = activePlayback;
+    activePlayback = null;
+    stopLine(playback);
+    findLevelRadioRuntimes(prefabInstances, getLevelEnvironmentId(playback.levelId))
+      .forEach((runtime) => resetRadio(runtime?.radio));
+    return true;
+  }
+
+  function isPlaybackCurrent(token) {
+    return activePlayback?.token === token;
+  }
+
   function clear(radioRuntimes = []) {
     timers.forEach((timer) => window.clearTimeout(timer));
     timers.clear();
     playedLevelId = null;
+    interruptPlayback();
     for (const runtime of radioRuntimes) resetRadio(runtime?.radio);
   }
 
@@ -113,7 +158,16 @@ export function createNarrationRuntime({
     return subtitleCache.get(path);
   }
 
-  return { scheduleWelcome, playWelcome, playNarration, clear, getRadioRuntime, getConfiguredLine };
+  return {
+    scheduleWelcome,
+    playWelcome,
+    playNarration,
+    playRandomNarration,
+    clear,
+    isPlaying: () => Boolean(activePlayback),
+    getRadioRuntime,
+    getConfiguredLine,
+  };
 }
 
 export function findLevelRadioRuntimes(prefabInstances, environmentId) {

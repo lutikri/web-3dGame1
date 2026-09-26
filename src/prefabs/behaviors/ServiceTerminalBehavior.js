@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=shift2-outcome-vo";
+} from "./ServiceTerminalCanvasRenderer.js?v=random-speech";
 
 export function createServiceTerminalRuntime(
   parts,

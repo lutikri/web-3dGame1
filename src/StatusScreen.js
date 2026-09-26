@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=shift2-outcome-vo";
+} from "./panels/StatusScreenMaterial.js?v=random-speech";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

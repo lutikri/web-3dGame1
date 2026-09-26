@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift2-outcome-vo";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift2-outcome-vo";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift2-outcome-vo";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift2-outcome-vo";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift2-outcome-vo";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift2-outcome-vo";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift2-outcome-vo";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift2-outcome-vo";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift2-outcome-vo";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=random-speech";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=random-speech";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=random-speech";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=random-speech";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=random-speech";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=random-speech";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=random-speech";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=random-speech";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=random-speech";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=random-speech";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=random-speech";
 
 export function createPrefabRuntimeFactory({
   config,

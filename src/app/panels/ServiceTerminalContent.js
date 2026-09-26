@@ -3,7 +3,7 @@ import {
   resolveTerminalShiftId,
   TERMINAL_SHIFT_CONFIG,
   TERMINAL_STATIC_REPORTS,
-} from "./ServiceTerminalShiftConfig.js?v=shift2-outcome-vo";
+} from "./ServiceTerminalShiftConfig.js?v=random-speech";
 
 const SERVICE_TERMINAL_ASSETS = {
   logo: "assets/ui/service-terminal/terragen-systems-logo.png",

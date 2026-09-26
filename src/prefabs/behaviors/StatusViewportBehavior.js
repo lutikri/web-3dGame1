@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=shift2-outcome-vo";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=shift2-outcome-vo";
+} from "../../panels/StatusScreenMaterial.js?v=random-speech";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=random-speech";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

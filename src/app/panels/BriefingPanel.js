@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=shift2-outcome-vo";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=random-speech";
 
 const DISMISS_MS = 300;
 

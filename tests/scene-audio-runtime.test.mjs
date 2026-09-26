@@ -30,6 +30,17 @@ test("instrument reliability outcomes resolve to dedicated Shift 2 narration", (
     "assets/sounds/narration/MessageRU_InstrumentReliabilityFailed1.ogg");
 });
 
+test("instrument reliability random speech resolves to runtime narration assets", () => {
+  assert.equal(SOUND_REGISTRY.MessageEN_RandomLoreDifficulties1.path,
+    "assets/sounds/narration/MessageEN_RandomLoreDifficulties1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageRU_RandomLoreModernization1.path,
+    "assets/sounds/narration/MessageRU_RandomLoreModernization1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageEN_RandomWorkSupervision1.path,
+    "assets/sounds/narration/MessageEN_RandomWorkSupervision1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageRU_RandomStructureNoises1.path,
+    "assets/sounds/narration/MessageRU_RandomStructureNoises1.ogg");
+});
+
 test("scene audio runtime composes panel, movement, prefab, and core loops", () => {
   const attached = [];
   const loops = [];

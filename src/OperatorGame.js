@@ -3,146 +3,147 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shift2-outcome-vo";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=random-speech";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=shift2-outcome-vo";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shift2-outcome-vo";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shift2-outcome-vo";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shift2-outcome-vo";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shift2-outcome-vo";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shift2-outcome-vo";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shift2-outcome-vo";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shift2-outcome-vo";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shift2-outcome-vo";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shift2-outcome-vo";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=shift2-outcome-vo";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shift2-outcome-vo";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shift2-outcome-vo";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shift2-outcome-vo";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shift2-outcome-vo";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shift2-outcome-vo";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shift2-outcome-vo";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shift2-outcome-vo";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shift2-outcome-vo";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shift2-outcome-vo";
+} from "./game/ShiftReport.js?v=random-speech";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=random-speech";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=random-speech";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=random-speech";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=random-speech";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=random-speech";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=random-speech";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=random-speech";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=random-speech";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=random-speech";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=random-speech";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=random-speech";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=random-speech";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=random-speech";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=random-speech";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=random-speech";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=random-speech";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=random-speech";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=random-speech";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=random-speech";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=random-speech";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shift2-outcome-vo";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shift2-outcome-vo";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shift2-outcome-vo";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shift2-outcome-vo";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shift2-outcome-vo";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shift2-outcome-vo";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shift2-outcome-vo";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shift2-outcome-vo";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shift2-outcome-vo";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shift2-outcome-vo";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shift2-outcome-vo";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shift2-outcome-vo";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shift2-outcome-vo";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=random-speech";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=random-speech";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=random-speech";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=random-speech";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=random-speech";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=random-speech";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=random-speech";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=random-speech";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=random-speech";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=random-speech";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=random-speech";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=random-speech";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=random-speech";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=random-speech";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
+} from "./config/GraphicsQualityProfiles.js?v=random-speech";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=shift2-outcome-vo";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shift2-outcome-vo";
-import { createStatusScreen } from "./StatusScreen.js?v=shift2-outcome-vo";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shift2-outcome-vo";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift2-outcome-vo";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shift2-outcome-vo";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shift2-outcome-vo";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shift2-outcome-vo";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shift2-outcome-vo";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shift2-outcome-vo";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shift2-outcome-vo";
+} from "./scene/TextureStreaming.js?v=random-speech";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=random-speech";
+import { createStatusScreen } from "./StatusScreen.js?v=random-speech";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=random-speech";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=random-speech";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=random-speech";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=random-speech";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=random-speech";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=random-speech";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=random-speech";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=random-speech";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=shift2-outcome-vo";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shift2-outcome-vo";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shift2-outcome-vo";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=random-speech";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=random-speech";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=random-speech";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=shift2-outcome-vo";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shift2-outcome-vo";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shift2-outcome-vo";
-import { AssetCache } from "./runtime/AssetCache.js?v=shift2-outcome-vo";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shift2-outcome-vo";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shift2-outcome-vo";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shift2-outcome-vo";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shift2-outcome-vo";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shift2-outcome-vo";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shift2-outcome-vo";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shift2-outcome-vo";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shift2-outcome-vo";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shift2-outcome-vo";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shift2-outcome-vo";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shift2-outcome-vo";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shift2-outcome-vo";
+} from "./lighting/FluorescentBehavior.js?v=random-speech";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=random-speech";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=random-speech";
+import { AssetCache } from "./runtime/AssetCache.js?v=random-speech";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=random-speech";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=random-speech";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=random-speech";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=random-speech";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=random-speech";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=random-speech";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=random-speech";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=random-speech";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=random-speech";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=random-speech";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=random-speech";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=random-speech";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=shift2-outcome-vo";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shift2-outcome-vo";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shift2-outcome-vo";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shift2-outcome-vo";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shift2-outcome-vo";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shift2-outcome-vo";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shift2-outcome-vo";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shift2-outcome-vo";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shift2-outcome-vo";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shift2-outcome-vo";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shift2-outcome-vo";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shift2-outcome-vo";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shift2-outcome-vo";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shift2-outcome-vo";
-import { PlayerController } from "./player/PlayerController.js?v=shift2-outcome-vo";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shift2-outcome-vo";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shift2-outcome-vo";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shift2-outcome-vo";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shift2-outcome-vo";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shift2-outcome-vo";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shift2-outcome-vo";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shift2-outcome-vo";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shift2-outcome-vo";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shift2-outcome-vo";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shift2-outcome-vo";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shift2-outcome-vo";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shift2-outcome-vo";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shift2-outcome-vo";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shift2-outcome-vo";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shift2-outcome-vo";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shift2-outcome-vo";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shift2-outcome-vo";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shift2-outcome-vo";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shift2-outcome-vo";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=shift2-outcome-vo";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shift2-outcome-vo";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shift2-outcome-vo";
+} from "./scene/InteriorObjectRegistry.js?v=random-speech";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=random-speech";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=random-speech";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=random-speech";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=random-speech";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=random-speech";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=random-speech";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=random-speech";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=random-speech";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=random-speech";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=random-speech";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=random-speech";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=random-speech";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=random-speech";
+import { PlayerController } from "./player/PlayerController.js?v=random-speech";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=random-speech";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=random-speech";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=random-speech";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=random-speech";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=random-speech";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=random-speech";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=random-speech";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=random-speech";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=random-speech";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=random-speech";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=random-speech";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=random-speech";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=random-speech";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=random-speech";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=random-speech";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=random-speech";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=random-speech";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=random-speech";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=random-speech";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=random-speech";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=random-speech";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=random-speech";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=random-speech";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shift2-outcome-vo";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=random-speech";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1013,12 +1014,16 @@ const narrationRuntime = createNarrationRuntime({
     operatorViewMode === "level" &&
     !inputLockRuntime.isLocked() &&
     !document.body.classList.contains("app-ui-open"),
-  playLine: (runtime, line, levelId) =>
+  playLine: (runtime, line, levelId, playbackToken) =>
     playSoundAtObject(runtime.root, line.soundKey, {
+      id: `narration:${levelId}:${playbackToken}:${runtime.root.uuid}`,
       levelId,
       refDistance: runtime.radio.refDistance ?? 1,
       maxDistance: runtime.radio.maxDistance ?? 16,
     }),
+  stopLine: ({ levelId, token }) => audioRuntime.stopAttachedOneShots(
+    (state) => state.levelId === levelId && state.id?.startsWith(`narration:${levelId}:${token}:`),
+  ),
   startRadioSpeech: startNarratorRadioSpeech,
   resetRadio: resetNarratorRadioRuntime,
   onStarted: (detail) => activeLevelSessionRuntime.emit("narrationStarted", detail),
@@ -1026,6 +1031,20 @@ const narrationRuntime = createNarrationRuntime({
     activeLevelSessionRuntime.emit("narrationEnded", detail);
     shiftCompletionRuntime.onNarrationEnded(detail.line);
   },
+});
+const randomSpeechRuntime = new RandomSpeechRuntime({
+  getActiveLevelId: () => activeLevelId,
+  getLevelConfig: (levelId) => CONFIG.levelEnvironments?.[getLevelEnvironmentId(levelId)],
+  getShiftElapsed: () => latestSnapshot.elapsed,
+  getCoreSnapshot: () => latestSnapshot,
+  getLanguage: () => document.documentElement.lang,
+  isPlaybackAllowed: (levelId) =>
+    activeLevelId === levelId &&
+    operatorViewMode === "level" &&
+    !inputLockRuntime.isLocked() &&
+    !document.body.classList.contains("app-ui-open"),
+  isNarrationActive: () => narrationRuntime.isPlaying(),
+  playNarration: (lineKey, line, levelId) => narrationRuntime.playRandomNarration(lineKey, line, levelId),
 });
 const sceneFeedbackMath = createSceneFeedbackMath({
   config: CONFIG,
@@ -1546,6 +1565,7 @@ const animationLoop = new AnimationLoop({
     updateLevelPrefabLights,
     (dt) => pointLightPoolRuntime.update(dt),
     updateLevelPrefabClocks,
+    (dt) => randomSpeechRuntime.update(dt),
     updateAudioState,
     updateNarratorRadios,
     (dt) => physicsSystem?.step(dt),
@@ -1951,6 +1971,7 @@ function updateNarratorRadios(dt) {
 }
 
 function clearNarratorTimers() {
+  randomSpeechRuntime.reset();
   narrationRuntime.clear(levelPrefabInstances.values());
 }
 

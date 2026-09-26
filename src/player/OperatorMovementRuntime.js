@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=shift2-outcome-vo";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=random-speech";
 
 export function createOperatorMovementRuntime({
   config,

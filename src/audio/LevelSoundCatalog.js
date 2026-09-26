@@ -29,6 +29,11 @@ export function collectLevelSoundKeys({ levelId, environment, runtimeSoundKeys =
       if (action.soundKey) keys.add(action.soundKey);
     });
   });
+  (environment?.narration?.randomSpeech?.lines ?? []).forEach((line) => {
+    Object.values(line ?? {}).forEach((localized) => {
+      if (localized?.soundKey) keys.add(localized.soundKey);
+    });
+  });
   (environment?.prefabs ?? []).forEach((prefab) => {
     if (prefab.light) LAMP_SOUNDS.forEach((key) => keys.add(key));
     if (prefab.radio) RADIO_SOUNDS.forEach((key) => keys.add(key));
