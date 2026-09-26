@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=audio-debug-search";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=audio-debug-search";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=audio-debug-search";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=audio-debug-search";
+import { createDebugHub } from "./DebugHub.js?v=shift2-outcome-vo";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=shift2-outcome-vo";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=shift2-outcome-vo";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=shift2-outcome-vo";
 
 export class DebugToolsRuntime {
   constructor(options) {

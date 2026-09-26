@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=audio-debug-search";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=shift2-outcome-vo";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=audio-debug-search";
+} from "./PostProcessingShaders.js?v=shift2-outcome-vo";
 
 export class PostProcessingRuntime {
   composer = null;

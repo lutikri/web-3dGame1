@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=audio-debug-search";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=shift2-outcome-vo";
 
 export function createAppRouter({
   overlay,

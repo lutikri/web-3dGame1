@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=audio-debug-search";
+} from "./ServiceTerminalCanvasRenderer.js?v=shift2-outcome-vo";
 
 export function createServiceTerminalRuntime(
   parts,

@@ -13,6 +13,8 @@ const RADIO_SOUNDS = [
   "MessageEN_WelcomePassed1", "MessageRU_WelcomePassed1",
   "MessageEN_WelcomeInnsuficient1", "MessageRU_WelcomeInnsuficient1",
   "MessageEN_WelcomeTrip1", "MessageRU_WelcomeTrip1",
+  "MessageEN_InstrumentReliabilityPassed1", "MessageRU_InstrumentReliabilityPassed1",
+  "MessageEN_InstrumentReliabilityFailed1", "MessageRU_InstrumentReliabilityFailed1",
 ];
 const BULKHEAD_SOUNDS = ["DoorBulk1_Open1", "DoorBulk1_Close1", "DoorBulk1_LatchCrank1"];
 const SERVICE_DOOR_SOUNDS = ["DoorPushbar_Open1", "DoorPushbar_Close1"];

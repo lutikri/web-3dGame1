@@ -181,6 +181,15 @@ test("instrument reliability shift reuses the facility with its own brief, intro
       duration: 26.52,
     },
   });
+  assert.deepEqual(environment.narration.passed, {
+    en: { soundKey: "MessageEN_InstrumentReliabilityPassed1", duration: 17.5 },
+    ru: { soundKey: "MessageRU_InstrumentReliabilityPassed1", duration: 12.2 },
+  });
+  assert.deepEqual(environment.narration.insufficient, {
+    en: { soundKey: "MessageEN_InstrumentReliabilityFailed1", duration: 16.5 },
+    ru: { soundKey: "MessageRU_InstrumentReliabilityFailed1", duration: 14.8 },
+  });
+  assert.deepEqual(environment.narration.trip, environment.narration.insufficient);
   const failedLights = environment.prefabStatePolicies.at(-1);
   assert.equal(failedLights.overrides.light.enabled, false);
   assert.deepEqual(failedLights.prefabTypes, ["fluorescentLamp"]);

@@ -19,6 +19,17 @@ test("demand announcement sounds resolve to converted panel audio", () => {
     "assets/sounds/machinery/SFX_Panel1_DemandRed1.ogg");
 });
 
+test("instrument reliability outcomes resolve to dedicated Shift 2 narration", () => {
+  assert.equal(SOUND_REGISTRY.MessageEN_InstrumentReliabilityPassed1.path,
+    "assets/sounds/narration/MessageEN_InstrumentReliabilityPassed1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageRU_InstrumentReliabilityPassed1.path,
+    "assets/sounds/narration/MessageRU_InstrumentReliabilityPassed1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageEN_InstrumentReliabilityFailed1.path,
+    "assets/sounds/narration/MessageEN_InstrumentReliabilityFailed1.ogg");
+  assert.equal(SOUND_REGISTRY.MessageRU_InstrumentReliabilityFailed1.path,
+    "assets/sounds/narration/MessageRU_InstrumentReliabilityFailed1.ogg");
+});
+
 test("scene audio runtime composes panel, movement, prefab, and core loops", () => {
   const attached = [];
   const loops = [];

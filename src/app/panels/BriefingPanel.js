@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=audio-debug-search";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=shift2-outcome-vo";
 
 const DISMISS_MS = 300;
 

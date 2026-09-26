@@ -3,146 +3,146 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=audio-debug-search";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=shift2-outcome-vo";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=audio-debug-search";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=audio-debug-search";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=audio-debug-search";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=audio-debug-search";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=audio-debug-search";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=audio-debug-search";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=audio-debug-search";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=audio-debug-search";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=audio-debug-search";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=audio-debug-search";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=audio-debug-search";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=audio-debug-search";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=audio-debug-search";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=audio-debug-search";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=audio-debug-search";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=audio-debug-search";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=audio-debug-search";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=audio-debug-search";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=audio-debug-search";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=audio-debug-search";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=audio-debug-search";
+} from "./game/ShiftReport.js?v=shift2-outcome-vo";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=shift2-outcome-vo";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=shift2-outcome-vo";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=shift2-outcome-vo";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=shift2-outcome-vo";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=shift2-outcome-vo";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=shift2-outcome-vo";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=shift2-outcome-vo";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=shift2-outcome-vo";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=shift2-outcome-vo";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=shift2-outcome-vo";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=shift2-outcome-vo";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=shift2-outcome-vo";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=shift2-outcome-vo";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=shift2-outcome-vo";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=shift2-outcome-vo";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=shift2-outcome-vo";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=shift2-outcome-vo";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=shift2-outcome-vo";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=shift2-outcome-vo";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=audio-debug-search";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=audio-debug-search";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=audio-debug-search";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=audio-debug-search";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=audio-debug-search";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=audio-debug-search";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=audio-debug-search";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=audio-debug-search";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=audio-debug-search";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=audio-debug-search";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=audio-debug-search";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=audio-debug-search";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=audio-debug-search";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=audio-debug-search";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=shift2-outcome-vo";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=shift2-outcome-vo";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=shift2-outcome-vo";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=shift2-outcome-vo";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=shift2-outcome-vo";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=shift2-outcome-vo";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=shift2-outcome-vo";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=shift2-outcome-vo";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=shift2-outcome-vo";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=shift2-outcome-vo";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=shift2-outcome-vo";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=shift2-outcome-vo";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=shift2-outcome-vo";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=audio-debug-search";
+} from "./config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=audio-debug-search";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=audio-debug-search";
-import { createStatusScreen } from "./StatusScreen.js?v=audio-debug-search";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=audio-debug-search";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=audio-debug-search";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=audio-debug-search";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=audio-debug-search";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=audio-debug-search";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=audio-debug-search";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=audio-debug-search";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=audio-debug-search";
+} from "./scene/TextureStreaming.js?v=shift2-outcome-vo";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=shift2-outcome-vo";
+import { createStatusScreen } from "./StatusScreen.js?v=shift2-outcome-vo";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=shift2-outcome-vo";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift2-outcome-vo";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=shift2-outcome-vo";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=shift2-outcome-vo";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=shift2-outcome-vo";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=shift2-outcome-vo";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=shift2-outcome-vo";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=shift2-outcome-vo";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=audio-debug-search";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=audio-debug-search";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=audio-debug-search";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=shift2-outcome-vo";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=shift2-outcome-vo";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=shift2-outcome-vo";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=audio-debug-search";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=audio-debug-search";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=audio-debug-search";
-import { AssetCache } from "./runtime/AssetCache.js?v=audio-debug-search";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=audio-debug-search";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=audio-debug-search";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=audio-debug-search";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=audio-debug-search";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=audio-debug-search";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=audio-debug-search";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=audio-debug-search";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=audio-debug-search";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=audio-debug-search";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=audio-debug-search";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=audio-debug-search";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=audio-debug-search";
+} from "./lighting/FluorescentBehavior.js?v=shift2-outcome-vo";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=shift2-outcome-vo";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=shift2-outcome-vo";
+import { AssetCache } from "./runtime/AssetCache.js?v=shift2-outcome-vo";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=shift2-outcome-vo";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=shift2-outcome-vo";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=shift2-outcome-vo";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=shift2-outcome-vo";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=shift2-outcome-vo";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=shift2-outcome-vo";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=shift2-outcome-vo";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=shift2-outcome-vo";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=shift2-outcome-vo";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=shift2-outcome-vo";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=shift2-outcome-vo";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=shift2-outcome-vo";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=audio-debug-search";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=audio-debug-search";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=audio-debug-search";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=audio-debug-search";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=audio-debug-search";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=audio-debug-search";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=audio-debug-search";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=audio-debug-search";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=audio-debug-search";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=audio-debug-search";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=audio-debug-search";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=audio-debug-search";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=audio-debug-search";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=audio-debug-search";
-import { PlayerController } from "./player/PlayerController.js?v=audio-debug-search";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=audio-debug-search";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=audio-debug-search";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=audio-debug-search";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=audio-debug-search";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=audio-debug-search";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=audio-debug-search";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=audio-debug-search";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=audio-debug-search";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=audio-debug-search";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=audio-debug-search";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=audio-debug-search";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=audio-debug-search";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=audio-debug-search";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=audio-debug-search";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=audio-debug-search";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=audio-debug-search";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=audio-debug-search";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=audio-debug-search";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=audio-debug-search";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=audio-debug-search";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=audio-debug-search";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=audio-debug-search";
+} from "./scene/InteriorObjectRegistry.js?v=shift2-outcome-vo";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=shift2-outcome-vo";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=shift2-outcome-vo";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=shift2-outcome-vo";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=shift2-outcome-vo";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=shift2-outcome-vo";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=shift2-outcome-vo";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=shift2-outcome-vo";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=shift2-outcome-vo";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=shift2-outcome-vo";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=shift2-outcome-vo";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=shift2-outcome-vo";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=shift2-outcome-vo";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=shift2-outcome-vo";
+import { PlayerController } from "./player/PlayerController.js?v=shift2-outcome-vo";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=shift2-outcome-vo";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=shift2-outcome-vo";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=shift2-outcome-vo";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=shift2-outcome-vo";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=shift2-outcome-vo";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=shift2-outcome-vo";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=shift2-outcome-vo";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=shift2-outcome-vo";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=shift2-outcome-vo";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=shift2-outcome-vo";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=shift2-outcome-vo";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=shift2-outcome-vo";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=shift2-outcome-vo";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=shift2-outcome-vo";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=shift2-outcome-vo";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=shift2-outcome-vo";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=shift2-outcome-vo";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=shift2-outcome-vo";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=shift2-outcome-vo";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=shift2-outcome-vo";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=shift2-outcome-vo";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=shift2-outcome-vo";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=audio-debug-search";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=shift2-outcome-vo";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;

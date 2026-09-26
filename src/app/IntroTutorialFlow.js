@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=audio-debug-search";
+import { translateRequired } from "./Localization.js?v=shift2-outcome-vo";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

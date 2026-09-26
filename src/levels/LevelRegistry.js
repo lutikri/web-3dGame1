@@ -1,7 +1,7 @@
-import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=audio-debug-search";
-import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=audio-debug-search";
-import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=audio-debug-search";
-import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=audio-debug-search";
+import { LEVEL_EXPLORING_AROUND_CONFIG } from "./LevelExploringAroundConfig.js?v=shift2-outcome-vo";
+import { LEVEL_INTRO_ELEVATOR_CONFIG } from "./LevelIntroElevatorConfig.js?v=shift2-outcome-vo";
+import { LEVEL_INTRO_SHIFT_CONFIG } from "./LevelIntroShiftConfig.js?v=shift2-outcome-vo";
+import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=shift2-outcome-vo";
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
@@ -235,6 +235,18 @@ function createUnexpectedStuffConfig() {
     },
     narration: {
       ...baseConfig.narration,
+      passed: {
+        en: { soundKey: "MessageEN_InstrumentReliabilityPassed1", duration: 17.5 },
+        ru: { soundKey: "MessageRU_InstrumentReliabilityPassed1", duration: 12.2 },
+      },
+      insufficient: {
+        en: { soundKey: "MessageEN_InstrumentReliabilityFailed1", duration: 16.5 },
+        ru: { soundKey: "MessageRU_InstrumentReliabilityFailed1", duration: 14.8 },
+      },
+      trip: {
+        en: { soundKey: "MessageEN_InstrumentReliabilityFailed1", duration: 16.5 },
+        ru: { soundKey: "MessageRU_InstrumentReliabilityFailed1", duration: 14.8 },
+      },
       faultsIntro: {
         en: {
           soundKey: "MessageEN_FaultsIntro1",

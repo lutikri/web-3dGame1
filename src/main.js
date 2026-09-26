@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=audio-debug-search";
-import { applyLocalization } from "./app/Localization.js?v=audio-debug-search";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=audio-debug-search";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=audio-debug-search";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=audio-debug-search";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=audio-debug-search";
+import { createPreflight } from "./app/Preflight.js?v=shift2-outcome-vo";
+import { applyLocalization } from "./app/Localization.js?v=shift2-outcome-vo";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=shift2-outcome-vo";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=shift2-outcome-vo";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=shift2-outcome-vo";
 
-const APP_BUILD_REVISION = "audio-debug-search";
+const APP_BUILD_REVISION = "shift2-outcome-vo";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=audio-debug-search`);
+await import(`./OperatorGame.js?v=shift2-outcome-vo`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=audio-debug-search`);
+const { createAppShell } = await import(`./app/AppShell.js?v=shift2-outcome-vo`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=audio-debug-search`
+    `./runtime/RuntimeSmoke.js?v=shift2-outcome-vo`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=audio-debug-search";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=shift2-outcome-vo";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

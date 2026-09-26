@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=audio-debug-search";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=shift2-outcome-vo";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

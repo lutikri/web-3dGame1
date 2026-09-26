@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=audio-debug-search";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=shift2-outcome-vo";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

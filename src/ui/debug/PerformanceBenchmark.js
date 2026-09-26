@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=audio-debug-search";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=shift2-outcome-vo";
 
 const EFFECT_KEYS = [
   "bloom",

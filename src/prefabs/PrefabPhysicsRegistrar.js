@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=audio-debug-search";
+} from "./behaviors/DeskDrawerBehavior.js?v=shift2-outcome-vo";
 
 export function createPrefabPhysicsRegistrar({
   physics,

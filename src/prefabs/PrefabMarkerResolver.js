@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=audio-debug-search";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=audio-debug-search";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=shift2-outcome-vo";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=shift2-outcome-vo";
 
 const MARKER_PREFIX = "PF_";
 

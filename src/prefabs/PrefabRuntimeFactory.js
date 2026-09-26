@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=audio-debug-search";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=audio-debug-search";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=audio-debug-search";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=audio-debug-search";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=audio-debug-search";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=audio-debug-search";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=audio-debug-search";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=audio-debug-search";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=audio-debug-search";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=audio-debug-search";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=audio-debug-search";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=shift2-outcome-vo";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=shift2-outcome-vo";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=shift2-outcome-vo";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=shift2-outcome-vo";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=shift2-outcome-vo";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=shift2-outcome-vo";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=shift2-outcome-vo";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=shift2-outcome-vo";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=shift2-outcome-vo";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=shift2-outcome-vo";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=shift2-outcome-vo";
 
 export function createPrefabRuntimeFactory({
   config,

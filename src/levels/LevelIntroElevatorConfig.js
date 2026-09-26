@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=audio-debug-search";
-import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=audio-debug-search";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=audio-debug-search";
+import { LEVEL_INTRO_ELEVATOR_OVERRIDES } from "../generated/LevelIntroElevatorOverrides.js?v=shift2-outcome-vo";
+import { LEVEL_CONFIG_SCHEMA_VERSION } from "./LevelConfigSchema.js?v=shift2-outcome-vo";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=shift2-outcome-vo";
 
 const elevatorStart = new THREE.Vector3(0.8082548379898071, 35.64804458618164, -2.094832181930542);
 

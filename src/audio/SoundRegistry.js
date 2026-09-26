@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=audio-debug-search";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=shift2-outcome-vo";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {
@@ -106,6 +106,8 @@ export const SOUND_REGISTRY = {
   MessageEN_WelcomeInnsuficient1: { path: "assets/sounds/narration/MessageEN_WelcomeInnsuficient1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageEN_WelcomeTrip1: { path: "assets/sounds/narration/MessageEN_WelcomeTrip1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageEN_WelcomeElevator1: { path: "assets/sounds/narration/MessageEN_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_InstrumentReliabilityPassed1: { path: "assets/sounds/narration/MessageEN_InstrumentReliabilityPassed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageEN_InstrumentReliabilityFailed1: { path: "assets/sounds/narration/MessageEN_InstrumentReliabilityFailed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_Welcome1: { path: "assets/sounds/narration/MessageRU_Welcome1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_FaultsIntro1: { path: "assets/sounds/narration/MessageRU_FaultsIntro1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_WelcomePanelTutorial1: { path: "assets/sounds/narration/MessageRU_WelcomePanelTutorial1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
@@ -113,6 +115,8 @@ export const SOUND_REGISTRY = {
   MessageRU_WelcomeInnsuficient1: { path: "assets/sounds/narration/MessageRU_WelcomeInnsuficient1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_WelcomeTrip1: { path: "assets/sounds/narration/MessageRU_WelcomeTrip1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MessageRU_WelcomeElevator1: { path: "assets/sounds/narration/MessageRU_WelcomeElevator1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_InstrumentReliabilityPassed1: { path: "assets/sounds/narration/MessageRU_InstrumentReliabilityPassed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
+  MessageRU_InstrumentReliabilityFailed1: { path: "assets/sounds/narration/MessageRU_InstrumentReliabilityFailed1.ogg", volume: 0.9, maxDistance: 3.8, refDistance: 0.7 },
   MotorSmall1: { path: "assets/sounds/interaction/MotorSmall1.ogg", volume: 0.56, refDistance: 0.55, maxDistance: 3 },
   MetalPipeImpactFall1: { path: "assets/sounds/interaction/MetalPipeImpactFall1.ogg", volume: 0.9, refDistance: 0.8, maxDistance: 10 },
   Panel1_SfxLoop1: { path: "assets/sounds/machinery/Panel1_SfxLoop1.ogg", loop: true, volume: 0.18 },

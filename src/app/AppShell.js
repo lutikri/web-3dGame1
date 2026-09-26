@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=audio-debug-search";
-import { applyLocalization, translate } from "./Localization.js?v=audio-debug-search";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=audio-debug-search";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=audio-debug-search";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=audio-debug-search";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=audio-debug-search";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=audio-debug-search";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=shift2-outcome-vo";
+import { applyLocalization, translate } from "./Localization.js?v=shift2-outcome-vo";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=shift2-outcome-vo";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=shift2-outcome-vo";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=shift2-outcome-vo";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=shift2-outcome-vo";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=shift2-outcome-vo";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=audio-debug-search";
-import { createAppPanelController } from "./AppPanelController.js?v=audio-debug-search";
-import { createAppRouter } from "./AppRouter.js?v=audio-debug-search";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=audio-debug-search";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=audio-debug-search";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=audio-debug-search";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=audio-debug-search";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=audio-debug-search";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=audio-debug-search";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=audio-debug-search";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=audio-debug-search";
+} from "./AppPersistence.js?v=shift2-outcome-vo";
+import { createAppPanelController } from "./AppPanelController.js?v=shift2-outcome-vo";
+import { createAppRouter } from "./AppRouter.js?v=shift2-outcome-vo";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=shift2-outcome-vo";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=shift2-outcome-vo";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=shift2-outcome-vo";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=shift2-outcome-vo";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=shift2-outcome-vo";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=shift2-outcome-vo";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=shift2-outcome-vo";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=shift2-outcome-vo";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
