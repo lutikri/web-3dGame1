@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=random-speech";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=random-speech";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=random-speech";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=facility-activity";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=facility-activity";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=facility-activity";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=facility-activity";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -24,6 +25,7 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
     fogNear: 1,
     fogFar: 18,
   },
+  facilityActivity: createFacilityActivityConfig(),
   behaviors: {
     fans: {
       "SM_Fan.002": {

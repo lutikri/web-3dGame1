@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=random-speech";
-import { applyLocalization } from "./app/Localization.js?v=random-speech";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=random-speech";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=random-speech";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=random-speech";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=random-speech";
+import { createPreflight } from "./app/Preflight.js?v=facility-activity";
+import { applyLocalization } from "./app/Localization.js?v=facility-activity";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=facility-activity";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=facility-activity";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=facility-activity";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=facility-activity";
 
-const APP_BUILD_REVISION = "random-speech";
+const APP_BUILD_REVISION = "facility-activity";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=random-speech`);
+await import(`./OperatorGame.js?v=facility-activity`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=random-speech`);
+const { createAppShell } = await import(`./app/AppShell.js?v=facility-activity`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=random-speech`
+    `./runtime/RuntimeSmoke.js?v=facility-activity`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

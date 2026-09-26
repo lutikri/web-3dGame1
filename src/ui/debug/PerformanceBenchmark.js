@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=random-speech";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=facility-activity";
 
 const EFFECT_KEYS = [
   "bloom",

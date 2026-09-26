@@ -34,6 +34,9 @@ export function collectLevelSoundKeys({ levelId, environment, runtimeSoundKeys =
       if (localized?.soundKey) keys.add(localized.soundKey);
     });
   });
+  (environment?.facilityActivity?.sounds ?? []).forEach((sound) => {
+    if (sound.file) keys.add(sound.file);
+  });
   (environment?.prefabs ?? []).forEach((prefab) => {
     if (prefab.light) LAMP_SOUNDS.forEach((key) => keys.add(key));
     if (prefab.radio) RADIO_SOUNDS.forEach((key) => keys.add(key));

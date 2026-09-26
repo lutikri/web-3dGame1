@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=random-speech";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=random-speech";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=random-speech";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=random-speech";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=random-speech";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=random-speech";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=random-speech";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=facility-activity";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=facility-activity";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=facility-activity";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=facility-activity";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=facility-activity";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=facility-activity";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=facility-activity";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

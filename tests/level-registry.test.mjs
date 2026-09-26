@@ -216,3 +216,13 @@ test("facility observation and control booth bulkheads start unlatched in both f
     });
   });
 });
+
+test("playable facility environments receive independent distant-activity configurations", () => {
+  const qualification = LEVEL_DEFINITIONS["exploring-around"].environment.facilityActivity;
+  const reliability = LEVEL_DEFINITIONS["unexpected-stuff"].environment.facilityActivity;
+  const cost = LEVEL_DEFINITIONS["fuel-problems"].environment.facilityActivity;
+  assert.equal(qualification.uncannyChance, 0.04);
+  assert.equal(qualification.events.some(({ id }) => id === "elevator-transfer"), true);
+  assert.notEqual(qualification, reliability);
+  assert.notEqual(reliability, cost);
+});

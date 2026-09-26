@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=random-speech";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=random-speech";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=random-speech";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=random-speech";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=facility-activity";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=facility-activity";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=facility-activity";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=facility-activity";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=facility-activity";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);
@@ -28,6 +29,7 @@ const LEVEL_INTRO_SHIFT_DEFAULTS = {
     fogNear: 1,
     fogFar: 10,
   },
+  facilityActivity: createFacilityActivityConfig(),
   behaviors: {
     fans: {
       "SM_Fan.002": {

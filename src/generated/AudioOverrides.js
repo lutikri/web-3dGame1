@@ -193,6 +193,36 @@ export const AUDIO_OVERRIDES = {
     "DoorPushbar_Open1": {
       "volume": 0.72
     },
+    "DistantSpinDown1": {
+      "volume": 1,
+      "refDistance": 3.5,
+      "maxDistance": 32
+    },
+    "DistantWhistleMachinery1": {
+      "volume": 1,
+      "refDistance": 3.5,
+      "maxDistance": 35
+    },
+    "DistantBassLurking1": {
+      "volume": 1.94,
+      "refDistance": 5,
+      "maxDistance": 46
+    },
+    "DistantMetalScreech1": {
+      "volume": 1,
+      "refDistance": 4,
+      "maxDistance": 38
+    },
+    "DistantHugeMetalMove1": {
+      "volume": 1,
+      "refDistance": 4.5,
+      "maxDistance": 42
+    },
+    "DistantElevatorGears1": {
+      "volume": 1,
+      "refDistance": 4.5,
+      "maxDistance": 42
+    },
     "DrawerMetal_Close1": {
       "volume": 0.58,
       "refDistance": 0.5,
@@ -269,6 +299,36 @@ export const AUDIO_OVERRIDES = {
       "refDistance": 0.7,
       "maxDistance": 3.8
     },
+    "MessageEN_InstrumentReliabilityPassed1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageEN_InstrumentReliabilityFailed1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageEN_RandomLoreDifficulties1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageEN_RandomLoreModernization1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageEN_RandomWorkSupervision1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageEN_RandomStructureNoises1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
     "MessageRU_Welcome1": {
       "volume": 0.9,
       "refDistance": 0.7,
@@ -300,6 +360,36 @@ export const AUDIO_OVERRIDES = {
       "maxDistance": 3.8
     },
     "MessageRU_WelcomeElevator1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_InstrumentReliabilityPassed1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_InstrumentReliabilityFailed1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_RandomLoreDifficulties1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_RandomLoreModernization1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_RandomWorkSupervision1": {
+      "volume": 0.9,
+      "refDistance": 0.7,
+      "maxDistance": 3.8
+    },
+    "MessageRU_RandomStructureNoises1": {
       "volume": 0.9,
       "refDistance": 0.7,
       "maxDistance": 3.8

@@ -41,6 +41,15 @@ test("instrument reliability random speech resolves to runtime narration assets"
     "assets/sounds/narration/MessageRU_RandomStructureNoises1.ogg");
 });
 
+test("facility activity sounds resolve to converted distant machinery assets", () => {
+  assert.equal(SOUND_REGISTRY.DistantSpinDown1.path, "assets/sounds/machinery/DistantSpinDown1.ogg");
+  assert.equal(SOUND_REGISTRY.DistantWhistleMachinery1.path, "assets/sounds/machinery/DistantWhistleMachinery1.ogg");
+  assert.equal(SOUND_REGISTRY.DistantBassLurking1.path, "assets/sounds/machinery/DistantBassLurking1.ogg");
+  assert.equal(SOUND_REGISTRY.DistantMetalScreech1.path, "assets/sounds/machinery/DistantMetalScreech1.ogg");
+  assert.equal(SOUND_REGISTRY.DistantHugeMetalMove1.path, "assets/sounds/machinery/DistantHugeMetalMove1.ogg");
+  assert.equal(SOUND_REGISTRY.DistantElevatorGears1.path, "assets/sounds/machinery/DistantElevatorGears1.ogg");
+});
+
 test("scene audio runtime composes panel, movement, prefab, and core loops", () => {
   const attached = [];
   const loops = [];

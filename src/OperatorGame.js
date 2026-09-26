@@ -3,147 +3,148 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=random-speech";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=facility-activity";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=random-speech";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=random-speech";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=random-speech";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=random-speech";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=random-speech";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=random-speech";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=random-speech";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=random-speech";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=random-speech";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=random-speech";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=random-speech";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=random-speech";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=random-speech";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=random-speech";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=random-speech";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=random-speech";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=random-speech";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=random-speech";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=random-speech";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=random-speech";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=random-speech";
+} from "./game/ShiftReport.js?v=facility-activity";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=facility-activity";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=facility-activity";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=facility-activity";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=facility-activity";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=facility-activity";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=facility-activity";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=facility-activity";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=facility-activity";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=facility-activity";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=facility-activity";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=facility-activity";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=facility-activity";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=facility-activity";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=facility-activity";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=facility-activity";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=facility-activity";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=facility-activity";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=facility-activity";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=facility-activity";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=facility-activity";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=random-speech";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=random-speech";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=random-speech";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=random-speech";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=random-speech";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=random-speech";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=random-speech";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=random-speech";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=random-speech";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=random-speech";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=random-speech";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=random-speech";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=random-speech";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=random-speech";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=facility-activity";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=facility-activity";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=facility-activity";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=facility-activity";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=facility-activity";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=facility-activity";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=facility-activity";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=facility-activity";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=facility-activity";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=facility-activity";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=facility-activity";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=facility-activity";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=facility-activity";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=facility-activity";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=random-speech";
+} from "./config/GraphicsQualityProfiles.js?v=facility-activity";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=random-speech";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=random-speech";
-import { createStatusScreen } from "./StatusScreen.js?v=random-speech";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=random-speech";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=random-speech";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=random-speech";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=random-speech";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=random-speech";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=random-speech";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=random-speech";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=random-speech";
+} from "./scene/TextureStreaming.js?v=facility-activity";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=facility-activity";
+import { createStatusScreen } from "./StatusScreen.js?v=facility-activity";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=facility-activity";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=facility-activity";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=facility-activity";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=facility-activity";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=facility-activity";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=facility-activity";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=facility-activity";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=facility-activity";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=random-speech";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=random-speech";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=random-speech";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=facility-activity";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=facility-activity";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=facility-activity";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=random-speech";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=random-speech";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=random-speech";
-import { AssetCache } from "./runtime/AssetCache.js?v=random-speech";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=random-speech";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=random-speech";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=random-speech";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=random-speech";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=random-speech";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=random-speech";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=random-speech";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=random-speech";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=random-speech";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=random-speech";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=random-speech";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=random-speech";
+} from "./lighting/FluorescentBehavior.js?v=facility-activity";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=facility-activity";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=facility-activity";
+import { AssetCache } from "./runtime/AssetCache.js?v=facility-activity";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=facility-activity";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=facility-activity";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=facility-activity";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=facility-activity";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=facility-activity";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=facility-activity";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=facility-activity";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=facility-activity";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=facility-activity";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=facility-activity";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=facility-activity";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=facility-activity";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=random-speech";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=random-speech";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=random-speech";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=random-speech";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=random-speech";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=random-speech";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=random-speech";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=random-speech";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=random-speech";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=random-speech";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=random-speech";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=random-speech";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=random-speech";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=random-speech";
-import { PlayerController } from "./player/PlayerController.js?v=random-speech";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=random-speech";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=random-speech";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=random-speech";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=random-speech";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=random-speech";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=random-speech";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=random-speech";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=random-speech";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=random-speech";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=random-speech";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=random-speech";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=random-speech";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=random-speech";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=random-speech";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=random-speech";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=random-speech";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=random-speech";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=random-speech";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=random-speech";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=random-speech";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=random-speech";
-import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=random-speech";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=random-speech";
+} from "./scene/InteriorObjectRegistry.js?v=facility-activity";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=facility-activity";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=facility-activity";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=facility-activity";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=facility-activity";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=facility-activity";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=facility-activity";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=facility-activity";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=facility-activity";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=facility-activity";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=facility-activity";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=facility-activity";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=facility-activity";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=facility-activity";
+import { PlayerController } from "./player/PlayerController.js?v=facility-activity";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=facility-activity";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=facility-activity";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=facility-activity";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=facility-activity";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=facility-activity";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=facility-activity";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=facility-activity";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=facility-activity";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=facility-activity";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=facility-activity";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=facility-activity";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=facility-activity";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=facility-activity";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=facility-activity";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=facility-activity";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=facility-activity";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=facility-activity";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=facility-activity";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=facility-activity";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=facility-activity";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=facility-activity";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=facility-activity";
+import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=facility-activity";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=facility-activity";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=random-speech";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=facility-activity";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1046,6 +1047,31 @@ const randomSpeechRuntime = new RandomSpeechRuntime({
   isNarrationActive: () => narrationRuntime.isPlaying(),
   playNarration: (lineKey, line, levelId) => narrationRuntime.playRandomNarration(lineKey, line, levelId),
 });
+const facilityActivityRuntime = new FacilityActivityRuntime({
+  getActiveLevelId: () => activeLevelId,
+  getLevelConfig: (levelId) => CONFIG.levelEnvironments?.[getLevelEnvironmentId(levelId)],
+  getEnvironmentRoot: (levelId) => levelEnvironmentModels.get(getLevelEnvironmentId(levelId)),
+  getShiftElapsed: () => latestSnapshot.elapsed,
+  getCoreSnapshot: () => latestSnapshot,
+  isPlaybackAllowed: (levelId) =>
+    activeLevelId === levelId &&
+    operatorViewMode === "level" &&
+    !inputLockRuntime.isLocked() &&
+    !document.body.classList.contains("app-ui-open"),
+  isBlocked: () => {
+    const snapshot = latestSnapshot;
+    return narrationRuntime.isPlaying()
+      || shiftCompletionRuntime.terminalElapsed >= 0
+      || ["complete", "failed", "startupFault"].includes(snapshot.mode)
+      || Boolean(snapshot.warning?.coreStall)
+      || snapshot.coreStress >= 92
+      || snapshot.plasmaTemp >= 160;
+  },
+  playSound: playSoundAtObject,
+  stopActivity: (levelId) => audioRuntime.stopAttachedOneShots(
+    (state) => state.levelId === levelId && state.id?.startsWith("facility:"),
+  ),
+});
 const sceneFeedbackMath = createSceneFeedbackMath({
   config: CONFIG,
   getTime: () => testTime,
@@ -1566,6 +1592,7 @@ const animationLoop = new AnimationLoop({
     (dt) => pointLightPoolRuntime.update(dt),
     updateLevelPrefabClocks,
     (dt) => randomSpeechRuntime.update(dt),
+    (dt) => facilityActivityRuntime.update(dt),
     updateAudioState,
     updateNarratorRadios,
     (dt) => physicsSystem?.step(dt),
@@ -1971,6 +1998,7 @@ function updateNarratorRadios(dt) {
 }
 
 function clearNarratorTimers() {
+  facilityActivityRuntime.reset();
   randomSpeechRuntime.reset();
   narrationRuntime.clear(levelPrefabInstances.values());
 }

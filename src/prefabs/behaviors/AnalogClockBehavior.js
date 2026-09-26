@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=random-speech";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=facility-activity";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

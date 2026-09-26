@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=random-speech";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=facility-activity";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

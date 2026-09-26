@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=random-speech";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=random-speech";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=random-speech";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=random-speech";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=random-speech";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=random-speech";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=random-speech";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=random-speech";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=random-speech";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=random-speech";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=random-speech";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=facility-activity";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=facility-activity";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=facility-activity";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=facility-activity";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=facility-activity";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=facility-activity";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=facility-activity";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=facility-activity";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=facility-activity";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=facility-activity";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=facility-activity";
 
 export function createPrefabRuntimeFactory({
   config,

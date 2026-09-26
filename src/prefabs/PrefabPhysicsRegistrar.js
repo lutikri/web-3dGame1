@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=random-speech";
+} from "./behaviors/DeskDrawerBehavior.js?v=facility-activity";
 
 export function createPrefabPhysicsRegistrar({
   physics,

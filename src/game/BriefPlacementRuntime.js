@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=random-speech";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=random-speech";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=facility-activity";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=facility-activity";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

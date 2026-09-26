@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=random-speech";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=random-speech";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=random-speech";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=random-speech";
+import { createDebugHub } from "./DebugHub.js?v=facility-activity";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=facility-activity";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=facility-activity";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=facility-activity";
 
 export class DebugToolsRuntime {
   constructor(options) {

@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=random-speech";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=facility-activity";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=random-speech";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=facility-activity";
 
 const DISMISS_MS = 300;
 

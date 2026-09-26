@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=random-speech";
-import { applyLocalization, translate } from "./Localization.js?v=random-speech";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=random-speech";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=random-speech";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=random-speech";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=random-speech";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=random-speech";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=facility-activity";
+import { applyLocalization, translate } from "./Localization.js?v=facility-activity";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=facility-activity";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=facility-activity";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=facility-activity";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=facility-activity";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=facility-activity";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=random-speech";
-import { createAppPanelController } from "./AppPanelController.js?v=random-speech";
-import { createAppRouter } from "./AppRouter.js?v=random-speech";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=random-speech";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=random-speech";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=random-speech";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=random-speech";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=random-speech";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=random-speech";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=random-speech";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=random-speech";
+} from "./AppPersistence.js?v=facility-activity";
+import { createAppPanelController } from "./AppPanelController.js?v=facility-activity";
+import { createAppRouter } from "./AppRouter.js?v=facility-activity";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=facility-activity";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=facility-activity";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=facility-activity";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=facility-activity";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=facility-activity";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=facility-activity";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=facility-activity";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=facility-activity";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

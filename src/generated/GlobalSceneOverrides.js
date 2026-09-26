@@ -326,7 +326,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "pitchLimitDegrees": 72,
     "leanPitchLimitDegrees": 88,
     "walkSpeed": 1.2,
-    "runSpeed": 2.1,
+    "runSpeed": 2.65,
     "crouchSpeed": 0.85,
     "operatorMovement": {
       "acceleration": 7,
@@ -347,7 +347,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
         "runStrideLength": 1.37,
         "crouchStrideLength": 0.86,
         "walkReferenceSpeed": 1.65,
-        "strafeTranslation": 0.06,
+        "strafeTranslation": 0.031,
         "strafeRollDegrees": 0.45,
         "strafeSpringFrequency": 10,
         "strafeSpringDamping": 0.55,

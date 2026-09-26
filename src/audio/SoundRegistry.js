@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=random-speech";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=facility-activity";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {
@@ -84,6 +84,12 @@ export const SOUND_REGISTRY = {
   DoorBulk1_Open1: { path: "assets/sounds/interaction/DoorBulk1_Open1.ogg", volume: 0.3 },
   DoorPushbar_Close1: { path: "assets/sounds/interaction/DoorPushbar_Close1.ogg", volume: 0.72 },
   DoorPushbar_Open1: { path: "assets/sounds/interaction/DoorPushbar_Open1.ogg", volume: 0.72 },
+  DistantSpinDown1: { path: "assets/sounds/machinery/DistantSpinDown1.ogg", volume: 0.42, refDistance: 3.5, maxDistance: 32 },
+  DistantWhistleMachinery1: { path: "assets/sounds/machinery/DistantWhistleMachinery1.ogg", volume: 0.31, refDistance: 3.5, maxDistance: 35 },
+  DistantBassLurking1: { path: "assets/sounds/machinery/DistantBassLurking1.ogg", volume: 0.18, refDistance: 5, maxDistance: 46 },
+  DistantMetalScreech1: { path: "assets/sounds/machinery/DistantMetalScreech1.ogg", volume: 0.25, refDistance: 4, maxDistance: 38 },
+  DistantHugeMetalMove1: { path: "assets/sounds/machinery/DistantHugeMetalMove1.ogg", volume: 0.27, refDistance: 4.5, maxDistance: 42 },
+  DistantElevatorGears1: { path: "assets/sounds/machinery/DistantElevatorGears1.ogg", volume: 0.28, refDistance: 4.5, maxDistance: 42 },
   DrawerMetal_Close1: { path: "assets/sounds/interaction/DrawerMetal_Close1.ogg", volume: 0.58, refDistance: 0.5, maxDistance: 3.2 },
   DrawerMetal_Open1: { path: "assets/sounds/interaction/DrawerMetal_Open1.ogg", volume: 0.58, refDistance: 0.5, maxDistance: 3.2 },
   Footsteps1_Walk1: { path: "assets/sounds/player/Footsteps1_Walk1.ogg", loop: true, volume: 0.44 },

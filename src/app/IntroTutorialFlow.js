@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=random-speech";
+import { translateRequired } from "./Localization.js?v=facility-activity";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

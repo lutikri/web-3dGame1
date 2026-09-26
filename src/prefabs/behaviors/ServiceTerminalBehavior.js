@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=random-speech";
+} from "./ServiceTerminalCanvasRenderer.js?v=facility-activity";
 
 export function createServiceTerminalRuntime(
   parts,

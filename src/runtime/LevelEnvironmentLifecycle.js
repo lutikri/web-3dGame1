@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=random-speech";
+import { LevelRuntime } from "./LevelRuntime.js?v=facility-activity";
 
 export class LevelEnvironmentLifecycle {
   constructor({
