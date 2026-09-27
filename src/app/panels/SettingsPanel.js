@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=facility-activity";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=level-rigid-bodies";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

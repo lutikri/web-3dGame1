@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=facility-activity";
+import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=level-rigid-bodies";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -72,6 +72,43 @@ export function createItemInteractionRuntime({
     levelItems.add(item.id);
     itemIdsByLevel.set(levelId, levelItems);
     if (item.activationType === "toggleLight") initializeLightState(item, config.defaultOn);
+    return true;
+  }
+
+  function registerLevelRigidBody({ id, levelId, root, target, physicsKey, label = "RIGID BODY" } = {}) {
+    if (!id || !levelId || !root || !target || !physicsKey) return false;
+    target.userData.kind = "levelRigidBody";
+    target.userData.levelId = levelId;
+    target.userData.levelRigidPhysicsKey = physicsKey;
+    target.userData.controlLabel = label;
+    target.userData.maxInteractionDistance = 1.6;
+    if (!interactive.includes(target)) interactive.push(target);
+    inventory.register({
+      id,
+      target,
+      root,
+      runtime: { root, rigidPrefabKey: physicsKey },
+      levelId,
+      label,
+      icon: "prop",
+      portable: false,
+      activationMode: "none",
+      activationType: "none",
+      grabDistance: 1.05,
+      grabOffset: new THREE.Vector3(),
+      equippedOffset: new THREE.Vector3(),
+      rotationOffset: new THREE.Euler(),
+      data: {},
+    });
+    const levelItems = itemIdsByLevel.get(levelId) ?? new Set();
+    levelItems.add(id);
+    itemIdsByLevel.set(levelId, levelItems);
+    return true;
+  }
+
+  function unregisterLevelRigidBody(id) {
+    inventory.unregister(id);
+    itemIdsByLevel.forEach((ids) => ids.delete(id));
     return true;
   }
 
@@ -280,6 +317,8 @@ export function createItemInteractionRuntime({
 
   return {
     register,
+    registerLevelRigidBody,
+    unregisterLevelRigidBody,
     update: (dt) => inventory.update(dt),
     beginPrimary: (target) => inventory.beginPrimary(target),
     releasePrimary: () => inventory.releasePrimary(),

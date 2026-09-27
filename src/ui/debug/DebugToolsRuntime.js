@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=facility-activity";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=facility-activity";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=facility-activity";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=facility-activity";
+import { createDebugHub } from "./DebugHub.js?v=level-rigid-bodies";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=level-rigid-bodies";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=level-rigid-bodies";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=level-rigid-bodies";
 
 export class DebugToolsRuntime {
   constructor(options) {

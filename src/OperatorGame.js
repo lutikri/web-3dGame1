@@ -3,148 +3,149 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=facility-activity";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=level-rigid-bodies";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=facility-activity";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=facility-activity";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=facility-activity";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=facility-activity";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=facility-activity";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=facility-activity";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=facility-activity";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=facility-activity";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=facility-activity";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=facility-activity";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=facility-activity";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=facility-activity";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=facility-activity";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=facility-activity";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=facility-activity";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=facility-activity";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=facility-activity";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=facility-activity";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=facility-activity";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=facility-activity";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=facility-activity";
+} from "./game/ShiftReport.js?v=level-rigid-bodies";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=level-rigid-bodies";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=level-rigid-bodies";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=level-rigid-bodies";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=level-rigid-bodies";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=level-rigid-bodies";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=level-rigid-bodies";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=level-rigid-bodies";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=level-rigid-bodies";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=level-rigid-bodies";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=level-rigid-bodies";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=level-rigid-bodies";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=level-rigid-bodies";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=level-rigid-bodies";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=level-rigid-bodies";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=level-rigid-bodies";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=level-rigid-bodies";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=level-rigid-bodies";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=level-rigid-bodies";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=level-rigid-bodies";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=level-rigid-bodies";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=facility-activity";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=facility-activity";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=facility-activity";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=facility-activity";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=facility-activity";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=facility-activity";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=facility-activity";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=facility-activity";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=facility-activity";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=facility-activity";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=facility-activity";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=facility-activity";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=facility-activity";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=facility-activity";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=level-rigid-bodies";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=level-rigid-bodies";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=level-rigid-bodies";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=level-rigid-bodies";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=level-rigid-bodies";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=level-rigid-bodies";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=level-rigid-bodies";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=level-rigid-bodies";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=level-rigid-bodies";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=level-rigid-bodies";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=level-rigid-bodies";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=level-rigid-bodies";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=level-rigid-bodies";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=level-rigid-bodies";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=facility-activity";
+} from "./config/GraphicsQualityProfiles.js?v=level-rigid-bodies";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=facility-activity";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=facility-activity";
-import { createStatusScreen } from "./StatusScreen.js?v=facility-activity";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=facility-activity";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=facility-activity";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=facility-activity";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=facility-activity";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=facility-activity";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=facility-activity";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=facility-activity";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=facility-activity";
+} from "./scene/TextureStreaming.js?v=level-rigid-bodies";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=level-rigid-bodies";
+import { createStatusScreen } from "./StatusScreen.js?v=level-rigid-bodies";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=level-rigid-bodies";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=level-rigid-bodies";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=level-rigid-bodies";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=level-rigid-bodies";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=level-rigid-bodies";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=level-rigid-bodies";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=level-rigid-bodies";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=level-rigid-bodies";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=facility-activity";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=facility-activity";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=facility-activity";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=level-rigid-bodies";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=level-rigid-bodies";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=level-rigid-bodies";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=facility-activity";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=facility-activity";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=facility-activity";
-import { AssetCache } from "./runtime/AssetCache.js?v=facility-activity";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=facility-activity";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=facility-activity";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=facility-activity";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=facility-activity";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=facility-activity";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=facility-activity";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=facility-activity";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=facility-activity";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=facility-activity";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=facility-activity";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=facility-activity";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=facility-activity";
+} from "./lighting/FluorescentBehavior.js?v=level-rigid-bodies";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=level-rigid-bodies";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=level-rigid-bodies";
+import { AssetCache } from "./runtime/AssetCache.js?v=level-rigid-bodies";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=level-rigid-bodies";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=level-rigid-bodies";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=level-rigid-bodies";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=level-rigid-bodies";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=level-rigid-bodies";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=level-rigid-bodies";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=level-rigid-bodies";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=level-rigid-bodies";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=level-rigid-bodies";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=level-rigid-bodies";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=level-rigid-bodies";
+import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=level-rigid-bodies";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=level-rigid-bodies";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=facility-activity";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=facility-activity";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=facility-activity";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=facility-activity";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=facility-activity";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=facility-activity";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=facility-activity";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=facility-activity";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=facility-activity";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=facility-activity";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=facility-activity";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=facility-activity";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=facility-activity";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=facility-activity";
-import { PlayerController } from "./player/PlayerController.js?v=facility-activity";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=facility-activity";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=facility-activity";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=facility-activity";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=facility-activity";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=facility-activity";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=facility-activity";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=facility-activity";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=facility-activity";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=facility-activity";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=facility-activity";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=facility-activity";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=facility-activity";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=facility-activity";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=facility-activity";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=facility-activity";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=facility-activity";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=facility-activity";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=facility-activity";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=facility-activity";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=facility-activity";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=facility-activity";
-import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=facility-activity";
-import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=facility-activity";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=facility-activity";
+} from "./scene/InteriorObjectRegistry.js?v=level-rigid-bodies";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=level-rigid-bodies";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=level-rigid-bodies";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=level-rigid-bodies";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=level-rigid-bodies";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=level-rigid-bodies";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=level-rigid-bodies";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=level-rigid-bodies";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=level-rigid-bodies";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=level-rigid-bodies";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=level-rigid-bodies";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=level-rigid-bodies";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=level-rigid-bodies";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=level-rigid-bodies";
+import { PlayerController } from "./player/PlayerController.js?v=level-rigid-bodies";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=level-rigid-bodies";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=level-rigid-bodies";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=level-rigid-bodies";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=level-rigid-bodies";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=level-rigid-bodies";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=level-rigid-bodies";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=level-rigid-bodies";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=level-rigid-bodies";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=level-rigid-bodies";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=level-rigid-bodies";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=level-rigid-bodies";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=level-rigid-bodies";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=level-rigid-bodies";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=level-rigid-bodies";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=level-rigid-bodies";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=level-rigid-bodies";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=level-rigid-bodies";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=level-rigid-bodies";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=level-rigid-bodies";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=level-rigid-bodies";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=level-rigid-bodies";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=level-rigid-bodies";
+import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=level-rigid-bodies";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=level-rigid-bodies";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=facility-activity";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=level-rigid-bodies";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -460,6 +461,7 @@ const doorInteractionSystem = new DoorInteractionSystem({
   onDoorOpened: doorStateRuntime.onDoorOpened,
 });
 doorStateRuntime.attach(doorInteractionSystem);
+let levelRigidBodyRuntime = null;
 const levelSceneBuilder = createLevelSceneBuilder({
   scene,
   loadSceneAsset,
@@ -478,6 +480,10 @@ const levelSceneBuilder = createLevelSceneBuilder({
   collisionModels: levelCollisionModels,
   prefabInstances: levelPrefabInstances,
   lightingZones: lightingZoneRuntime,
+  registerLevelRigidBodies: (levelRuntime, levelId, environmentRoot) => {
+    const entries = levelRigidBodyRuntime?.registerLevel(levelId, environmentRoot) ?? [];
+    if (entries.length) levelRuntime.defer(() => levelRigidBodyRuntime?.unregisterLevel(levelId));
+  },
   getLanguage: () => document.documentElement.lang,
 });
 const levelAssetCache = new AssetCache({
@@ -833,6 +839,10 @@ const itemInteractionRuntime = createItemInteractionRuntime({
     document.body.style.setProperty("--hold-progress", String(progress * 100));
     document.body.classList.toggle("hold-interaction-active", active);
   },
+});
+levelRigidBodyRuntime = new LevelRigidBodyRuntime({
+  physics: physicsSystem,
+  itemInteraction: itemInteractionRuntime,
 });
 function updateHoverTarget() {
   const target = interactionHoverRuntime.update();

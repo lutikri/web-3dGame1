@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=facility-activity";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=facility-activity";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=facility-activity";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=facility-activity";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=facility-activity";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=facility-activity";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=facility-activity";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=facility-activity";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=facility-activity";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=facility-activity";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=facility-activity";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-bodies";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-bodies";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-rigid-bodies";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-bodies";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-bodies";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-bodies";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-rigid-bodies";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-bodies";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-rigid-bodies";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-bodies";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-bodies";
 
 export function createPrefabRuntimeFactory({
   config,

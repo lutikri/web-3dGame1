@@ -67,6 +67,6 @@ test("active menu audio can switch between progression policy and normal rotatio
 test("menu sound definitions use converted runtime OGG assets", () => {
   assert.equal(SOUND_REGISTRY.Menu_Ambience1.path, "assets/sounds/ambience/Menu_Ambience1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_Musical3_rare.loop, true);
-  assert.equal(SOUND_REGISTRY.Menu_Musical1.volume, 0.476);
-  assert.equal(SOUND_REGISTRY.Menu_Musical6.volume, 0.476);
+  assert.equal(SOUND_REGISTRY.Menu_Musical1.volume, 0.24);
+  assert.equal(SOUND_REGISTRY.Menu_Musical6.volume, 0.24);
 });

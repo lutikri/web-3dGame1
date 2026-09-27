@@ -27,27 +27,27 @@ export const AUDIO_OVERRIDES = {
       "fadeSeconds": 1.2
     },
     "Menu_Musical1": {
-      "volume": 0.476,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Musical2": {
-      "volume": 0.476,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Musical3_rare": {
-      "volume": 0.476,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Musical4": {
-      "volume": 0.476,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Musical5": {
-      "volume": 1,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Musical6": {
-      "volume": 0.476,
+      "volume": 0.24,
       "fadeSeconds": 1.8
     },
     "Menu_Click1": {
@@ -57,7 +57,7 @@ export const AUDIO_OVERRIDES = {
       "volume": 0.3
     },
     "Menu_SetupComlete1": {
-      "volume": 0.78
+      "volume": 0.24
     },
     "TCorporateIntro1": {
       "volume": 0.82

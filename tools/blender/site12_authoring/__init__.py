@@ -4,7 +4,7 @@ from __future__ import annotations
 bl_info = {
     "name": "TGLOBAL Site-12 Authoring",
     "author": "TGLOBAL ST / Codex",
-    "version": (0, 2, 1),
+    "version": (0, 3, 1),
     "blender": (4, 3, 0),
     "location": "View3D > Sidebar > TGLOBAL",
     "description": "Site-12 level, prefab, collider, validation and GLB export tools",
@@ -155,7 +155,7 @@ def _prefab_definition_for_type(prefab_type):
 
 
 def _canonical_prefab_marker_name(name, prefab_type, instance_id="Instance01"):
-    name = str(name or "")
+    name = re.sub(r"\.(\d+)$", r"_\1", str(name or ""))
     prefab_type = _safe_identifier(prefab_type, "UnknownPrefab")
     prefix = f"PF_{prefab_type}"
     if name == prefix or name.startswith(f"{prefix}_"):
@@ -284,6 +284,205 @@ def _collider_children(obj):
         if child.name.upper().startswith(("UBX_", "UCX_", "USP_", "UCP_")) or child.get("tg_kind") == "collider":
             result.append(child)
     return result
+
+
+def _level_rigid_root(active):
+    current = active
+    while current is not None:
+        if current.name.startswith("RB_") and current.get("tg_kind") == "level_rigid_body":
+            return current
+        current = current.parent
+    return None
+
+
+def _default_rigid_id(obj):
+    name = obj.name.removeprefix("SM_").removesuffix("_FIN")
+    return _safe_identifier(name, "RigidProp01")
+
+
+def _next_level_rigid_id(root):
+    """Return a readable, unused stable ID for a copy of ``root``."""
+    source_id = _safe_identifier(
+        root.get("tg_rigid_id") or root.name.removeprefix("RB_"),
+        "RigidProp01",
+    )
+    match = re.match(r"^(.*?)(?:_(\d+))?$", source_id)
+    stem = match.group(1) or source_id
+    index = int(match.group(2) or 1) + 1
+    used_ids = {
+        str(candidate.get("tg_rigid_id"))
+        for candidate in bpy.data.objects
+        if candidate.get("tg_kind") == "level_rigid_body"
+    }
+    while True:
+        candidate = f"{stem}_{index:02d}"
+        if candidate not in used_ids and bpy.data.objects.get(f"RB_{candidate}") is None:
+            return candidate
+        index += 1
+
+
+def _set_level_rigid_metadata(root, *, rigid_id, body_type, mass, pushable, draggable,
+                              carryable, persistent, friction, restitution,
+                              linear_damping, angular_damping, start_locked, beat_tag):
+    root["tg_kind"] = "level_rigid_body"
+    root["tg_rigid_id"] = _safe_identifier(rigid_id, "RigidProp01")
+    root["tg_rigid_body_type"] = body_type
+    root["tg_rigid_mass"] = max(0.05, float(mass))
+    root["tg_rigid_pushable"] = bool(pushable)
+    root["tg_rigid_draggable"] = bool(draggable)
+    root["tg_rigid_carryable"] = bool(carryable)
+    root["tg_rigid_persistent"] = bool(persistent)
+    root["tg_rigid_friction"] = max(0.0, float(friction))
+    root["tg_rigid_restitution"] = max(0.0, float(restitution))
+    root["tg_rigid_linear_damping"] = max(0.0, float(linear_damping))
+    root["tg_rigid_angular_damping"] = max(0.0, float(angular_damping))
+    root["tg_rigid_start_locked"] = bool(start_locked)
+    root["tg_rigid_beat_tag"] = str(beat_tag or "")
+
+
+def make_level_rigid_body(
+    obj,
+    *,
+    rigid_id="",
+    scene=None,
+    body_type="dynamic",
+    mass=6.0,
+    pushable=True,
+    draggable=True,
+    carryable=False,
+    persistent=False,
+    friction=0.75,
+    restitution=0.02,
+    linear_damping=0.8,
+    angular_damping=1.2,
+    start_locked=False,
+    beat_tag="",
+):
+    if obj is None or obj.type != "MESH":
+        raise ValueError("Make RB requires one active visible mesh object")
+    if _level_rigid_root(obj):
+        raise ValueError(f'"{obj.name}" is already part of a level rigid body')
+    scene = scene or bpy.context.scene
+    collections = setup_scene_collections(scene, reparent_legacy=False)
+    colliders = _collider_children(obj)
+    if not colliders:
+        raise ValueError("Make RB requires an existing child collider; use Create Box Collider first")
+
+    rigid_id = _safe_identifier(rigid_id or _default_rigid_id(obj), "RigidProp01")
+    root_name = f"RB_{rigid_id}"
+    conflict = bpy.data.objects.get(root_name)
+    if conflict:
+        raise ValueError(f'Object "{root_name}" already exists')
+
+    bpy.context.view_layer.update()
+    original_parent = obj.parent
+    original_world = obj.matrix_world.copy()
+    root = bpy.data.objects.new(root_name, None)
+    root.empty_display_type = "CUBE"
+    root.empty_display_size = max(0.2, max(obj.dimensions, default=0.5) * 0.2)
+    _link_object(collections["level_export"], root)
+    root.parent = original_parent
+    root.matrix_world = original_world
+    obj.parent = root
+    obj.matrix_world = original_world
+
+    for index, collider in enumerate(colliders, start=1):
+        collider.name = f"UBX_{rigid_id}_{index:02d}"
+        if collider.data:
+            collider.data.name = collider.name
+        collider["tg_kind"] = "collider"
+        # Collider helpers remain easy to hide through 20_COLLIDERS, but RB
+        # colliders must also be selected by the level GLB exporter.
+        _link_object(collections["level_export"], collider)
+
+    _set_level_rigid_metadata(
+        root,
+        rigid_id=rigid_id,
+        body_type=body_type,
+        mass=mass,
+        pushable=pushable,
+        draggable=draggable,
+        carryable=carryable,
+        persistent=persistent,
+        friction=friction,
+        restitution=restitution,
+        linear_damping=linear_damping,
+        angular_damping=angular_damping,
+        start_locked=start_locked,
+        beat_tag=beat_tag,
+    )
+    root["tg_rigid_visual_name"] = obj.name
+    bpy.context.view_layer.objects.active = root
+    obj.select_set(False)
+    root.select_set(True)
+    return root
+
+
+def duplicate_level_rigid_body(root, *, rigid_id="", offset=(0.4, 0.0, 0.0), scene=None):
+    """Duplicate a unique RB hierarchy while keeping mesh data linked.
+
+    This mirrors Blender's linked duplicate semantics for an authored level
+    prop: transform and runtime tags belong to the new RB root, whereas visual
+    and collider geometry stay shared until an artist explicitly makes it
+    unique.
+    """
+    if root is None or root.get("tg_kind") != "level_rigid_body":
+        raise ValueError("Duplicate RB requires a selected level rigid body")
+    scene = scene or bpy.context.scene
+    collections = setup_scene_collections(scene, reparent_legacy=False)
+    rigid_id = _safe_identifier(rigid_id or _next_level_rigid_id(root), "RigidProp02")
+    root_name = f"RB_{rigid_id}"
+    if bpy.data.objects.get(root_name):
+        raise ValueError(f'Object "{root_name}" already exists')
+
+    source_nodes = [root, *root.children_recursive]
+    copies = {}
+    for source in source_nodes:
+        duplicate = source.copy()
+        # Object.copy normally shares data, but keeping this explicit makes the
+        # instance-style contract clear and protects it from future changes.
+        if source.data:
+            duplicate.data = source.data
+        copies[source] = duplicate
+        source_collections = list(source.users_collection)
+        if not source_collections:
+            source_collections = [collections["level_export"]]
+        for collection in source_collections:
+            _link_object(collection, duplicate)
+
+    for source, duplicate in copies.items():
+        duplicate.parent = copies.get(source.parent, source.parent)
+        duplicate.matrix_parent_inverse = source.matrix_parent_inverse.copy()
+        duplicate.matrix_basis = source.matrix_basis.copy()
+
+    duplicate_root = copies[root]
+    duplicate_root.name = root_name
+    duplicate_root.matrix_world = Matrix.Translation(offset) @ root.matrix_world
+    duplicate_root["tg_rigid_id"] = rigid_id
+
+    duplicate_colliders = _collider_children(duplicate_root)
+    for index, collider in enumerate(duplicate_colliders, start=1):
+        collider.name = f"UBX_{rigid_id}_{index:02d}"
+        collider["tg_kind"] = "collider"
+        _link_object(collections["level_export"], collider)
+
+    duplicate_visual = next(
+        (
+            candidate for candidate in duplicate_root.children_recursive
+            if candidate.type == "MESH" and candidate not in duplicate_colliders
+        ),
+        None,
+    )
+    if duplicate_visual is None:
+        raise ValueError(f'"{root.name}" has no visual mesh to duplicate')
+    duplicate_root["tg_rigid_visual_name"] = duplicate_visual.name
+
+    bpy.context.view_layer.update()
+    for selected in bpy.context.selected_objects:
+        selected.select_set(False)
+    duplicate_root.select_set(True)
+    bpy.context.view_layer.objects.active = duplicate_root
+    return duplicate_root
 
 
 def create_box_collider_for_object(obj, scene=None):
@@ -814,6 +1013,125 @@ class SITE12_OT_CreateBoxCollider(Operator):
         return {"FINISHED"}
 
 
+class SITE12_OT_MakeLevelRigidBody(Operator):
+    bl_idname = "site12.make_level_rigid_body"
+    bl_label = "Make RB"
+    bl_description = "Mark the selected level mesh and its existing child colliders as one dynamic level rigid body"
+    bl_options = {"REGISTER", "UNDO"}
+
+    rigid_id: StringProperty(name="Stable ID", default="RigidProp01")
+    body_type: EnumProperty(
+        name="Body Type",
+        items=(("dynamic", "Dynamic", "Simulated body"), ("fixed", "Fixed", "Static until scripted release"), ("kinematic", "Kinematic", "Runtime driven body")),
+        default="dynamic",
+    )
+    mass: bpy.props.FloatProperty(name="Mass (kg)", default=6.0, min=0.05)
+    pushable: BoolProperty(name="Pushable", default=True)
+    draggable: BoolProperty(name="Draggable", default=True)
+    carryable: BoolProperty(name="Carryable", default=False)
+    persistent: BoolProperty(name="Persistent", default=False)
+    friction: bpy.props.FloatProperty(name="Friction", default=0.75, min=0.0, max=2.0)
+    restitution: bpy.props.FloatProperty(name="Bounciness", default=0.02, min=0.0, max=1.0)
+    linear_damping: bpy.props.FloatProperty(name="Linear Damping", default=0.8, min=0.0, max=20.0)
+    angular_damping: bpy.props.FloatProperty(name="Angular Damping", default=1.2, min=0.0, max=20.0)
+    start_locked: BoolProperty(name="Start Locked", default=False)
+    beat_tag: StringProperty(name="Beat Tag", default="")
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.active_object and context.active_object.type == "MESH" and not _level_rigid_root(context.active_object))
+
+    def invoke(self, context, _event):
+        self.rigid_id = _default_rigid_id(context.active_object)
+        return context.window_manager.invoke_props_dialog(self, width=420)
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.prop(self, "rigid_id")
+        layout.prop(self, "body_type")
+        layout.prop(self, "mass")
+        row = layout.row(align=True)
+        row.prop(self, "pushable")
+        row.prop(self, "draggable")
+        row = layout.row(align=True)
+        row.prop(self, "carryable")
+        row.prop(self, "persistent")
+        layout.prop(self, "friction")
+        layout.prop(self, "restitution")
+        layout.prop(self, "linear_damping")
+        layout.prop(self, "angular_damping")
+        layout.prop(self, "start_locked")
+        layout.prop(self, "beat_tag")
+
+    def execute(self, context):
+        try:
+            root = make_level_rigid_body(
+                context.active_object,
+                rigid_id=self.rigid_id,
+                scene=context.scene,
+                body_type=self.body_type,
+                mass=self.mass,
+                pushable=self.pushable,
+                draggable=self.draggable,
+                carryable=self.carryable,
+                persistent=self.persistent,
+                friction=self.friction,
+                restitution=self.restitution,
+                linear_damping=self.linear_damping,
+                angular_damping=self.angular_damping,
+                start_locked=self.start_locked,
+                beat_tag=self.beat_tag,
+            )
+        except ValueError as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
+        self.report({"INFO"}, f"Created {root.name}")
+        return {"FINISHED"}
+
+
+class SITE12_OT_DuplicateLevelRigidBody(Operator):
+    bl_idname = "site12.duplicate_level_rigid_body"
+    bl_label = "Duplicate RB"
+    bl_description = "Create a linked-geometry copy with a new level rigid-body ID"
+    bl_options = {"REGISTER", "UNDO"}
+
+    rigid_id: StringProperty(name="New Stable ID", default="RigidProp02")
+    offset: bpy.props.FloatVectorProperty(
+        name="World Offset (m)",
+        default=(0.4, 0.0, 0.0),
+        subtype="TRANSLATION",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return _level_rigid_root(context.active_object) is not None
+
+    def invoke(self, context, _event):
+        root = _level_rigid_root(context.active_object)
+        self.rigid_id = _next_level_rigid_id(root)
+        return context.window_manager.invoke_props_dialog(self, width=420)
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.label(text="Visual and collider mesh data stay linked.", icon="LINKED")
+        layout.prop(self, "rigid_id")
+        layout.prop(self, "offset")
+
+    def execute(self, context):
+        try:
+            root = duplicate_level_rigid_body(
+                _level_rigid_root(context.active_object),
+                rigid_id=self.rigid_id,
+                offset=self.offset,
+                scene=context.scene,
+            )
+        except ValueError as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
+        self.report({"INFO"}, f"Duplicated {root.name}")
+        return {"FINISHED"}
+
+
 class SITE12_OT_MakeRigidPrefab(Operator):
     bl_idname = "site12.make_rigid_prefab"
     bl_label = "Create Rigid Prefab"
@@ -1073,6 +1391,7 @@ class SITE12_PT_Authoring(Panel):
         layout = self.layout
         settings = context.scene.site12_authoring
         active = context.active_object
+        rigid_root = _level_rigid_root(active)
         instance, definition = resolve_prefab_context(active)
         layout.operator("site12.setup_scene", icon="OUTLINER_COLLECTION")
         layout.operator("site12.migrate_legacy_prefabs", icon="FILE_REFRESH")
@@ -1082,7 +1401,27 @@ class SITE12_PT_Authoring(Panel):
         box.label(text="Selected Object", icon="OBJECT_DATA")
         box.label(text=active.name if active else "Nothing selected")
         box.prop(settings, "colliders_visible", toggle=True)
-        if definition:
+        if rigid_root:
+            box = layout.box()
+            box.label(text="Level Rigid Body", icon="PHYSICS")
+            box.label(text=rigid_root.name)
+            box.operator("site12.duplicate_level_rigid_body", icon="DUPLICATE")
+            box.prop(rigid_root, '["tg_rigid_id"]', text="Stable ID")
+            box.prop(rigid_root, '["tg_rigid_body_type"]', text="Body Type")
+            box.prop(rigid_root, '["tg_rigid_mass"]', text="Mass (kg)")
+            row = box.row(align=True)
+            row.prop(rigid_root, '["tg_rigid_pushable"]', text="Pushable")
+            row.prop(rigid_root, '["tg_rigid_draggable"]', text="Draggable")
+            row = box.row(align=True)
+            row.prop(rigid_root, '["tg_rigid_carryable"]', text="Carryable")
+            row.prop(rigid_root, '["tg_rigid_persistent"]', text="Persistent")
+            box.prop(rigid_root, '["tg_rigid_friction"]', text="Friction")
+            box.prop(rigid_root, '["tg_rigid_restitution"]', text="Bounciness")
+            box.prop(rigid_root, '["tg_rigid_linear_damping"]', text="Linear Damping")
+            box.prop(rigid_root, '["tg_rigid_angular_damping"]', text="Angular Damping")
+            box.prop(rigid_root, '["tg_rigid_start_locked"]', text="Start Locked")
+            box.prop(rigid_root, '["tg_rigid_beat_tag"]', text="Beat Tag")
+        elif definition:
             box = layout.box()
             box.label(text="Prefab", icon="PACKAGE")
             box.label(text=f"Definition: {definition.name}")
@@ -1100,8 +1439,8 @@ class SITE12_PT_Authoring(Panel):
             box.operator("site12.export_active_prefab", icon="EXPORT")
         else:
             create = layout.row()
-            create.enabled = bool(active and active.type == "MESH")
-            create.operator("site12.make_rigid_prefab", icon="PACKAGE")
+            create.enabled = bool(active and active.type == "MESH" and _collider_children(active))
+            create.operator("site12.make_level_rigid_body", icon="PHYSICS")
             if active and active.type == "MESH":
                 layout.operator("site12.create_box_collider", icon="MESH_CUBE")
             if active and active.type == "EMPTY" and active.instance_type == "COLLECTION":
@@ -1122,6 +1461,8 @@ CLASSES = (
     SITE12_PG_Settings,
     SITE12_OT_SetupScene,
     SITE12_OT_CreateBoxCollider,
+    SITE12_OT_MakeLevelRigidBody,
+    SITE12_OT_DuplicateLevelRigidBody,
     SITE12_OT_MakeRigidPrefab,
     SITE12_OT_MigrateLegacyPrefabs,
     SITE12_OT_RepairPrefabNames,

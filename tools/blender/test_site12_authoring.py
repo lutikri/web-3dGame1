@@ -42,6 +42,51 @@ def main():
     assert_true(collider.parent == obj, "collider is not parented")
     assert_true(collider.name.startswith("UBX_SM_TestPipe"), "collider name is invalid")
 
+    rigid_mesh = bpy.data.meshes.new("SM_TestCrate")
+    rigid_mesh.from_pydata(
+        [(-0.5, -0.5, -0.5), (0.5, -0.5, -0.5), (0.5, 0.5, -0.5), (-0.5, 0.5, -0.5),
+         (-0.5, -0.5, 0.5), (0.5, -0.5, 0.5), (0.5, 0.5, 0.5), (-0.5, 0.5, 0.5)],
+        [],
+        [(0, 1, 2, 3), (4, 7, 6, 5), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (4, 0, 3, 7)],
+    )
+    rigid_mesh.update()
+    rigid_visual = bpy.data.objects.new("SM_TestCrate", rigid_mesh)
+    collections["level_export"].objects.link(rigid_visual)
+    rigid_visual.location = (-3.0, 1.0, 2.0)
+    site12_authoring.create_box_collider_for_object(rigid_visual, scene)
+    rigid_root = site12_authoring.make_level_rigid_body(
+        rigid_visual,
+        rigid_id="TestCrate01",
+        scene=scene,
+        mass=12.5,
+        draggable=True,
+        persistent=True,
+    )
+    assert_true(rigid_root.name == "RB_TestCrate01", "level rigid root was not named")
+    assert_true(rigid_visual.parent == rigid_root, "level rigid visual is not parented to RB root")
+    assert_true(rigid_root.get("tg_kind") == "level_rigid_body", "level rigid metadata is missing")
+    assert_true(rigid_root.get("tg_rigid_mass") == 12.5, "level rigid mass was not stored")
+    assert_true(site12_authoring._level_rigid_root(rigid_visual) == rigid_root, "visual does not resolve its RB root")
+    assert_true(site12_authoring._level_rigid_root(next(iter(rigid_visual.children))) == rigid_root, "collider does not resolve its RB root")
+
+    rigid_copy = site12_authoring.duplicate_level_rigid_body(
+        rigid_root,
+        rigid_id="TestCrate02",
+        offset=(1.5, 0.0, 0.0),
+        scene=scene,
+    )
+    rigid_copy_visual = next(
+        child for child in rigid_copy.children_recursive
+        if child.type == "MESH" and child.get("tg_kind") != "collider"
+    )
+    rigid_copy_collider = next(iter(site12_authoring._collider_children(rigid_copy)))
+    rigid_source_collider = next(iter(site12_authoring._collider_children(rigid_root)))
+    assert_true(rigid_copy.name == "RB_TestCrate02", "duplicated RB root was not named")
+    assert_true(rigid_copy.get("tg_rigid_id") == "TestCrate02", "duplicated RB ID was not stored")
+    assert_true(rigid_copy_visual.data == rigid_visual.data, "duplicated RB visual data is not linked")
+    assert_true(rigid_copy_collider.data == rigid_source_collider.data, "duplicated RB collider data is not linked")
+    assert_true(round(rigid_copy.location.x - rigid_root.location.x, 3) == 1.5, "duplicated RB offset was not applied")
+
     instance, definition = site12_authoring.convert_object_to_rigid_prefab(
         obj,
         prefab_type="TestPipe1",
@@ -61,6 +106,10 @@ def main():
 
     errors, _warnings = site12_authoring.validate_scene(scene)
     assert_true(not errors, "validation failed: " + "; ".join(errors))
+
+    level_output = os.path.join(tempfile.gettempdir(), "site12_authoring_level_rigid_smoke.glb")
+    site12_authoring.export_level(scene, level_output)
+    assert_true(os.path.isfile(level_output) and os.path.getsize(level_output) > 0, "level rigid export failed")
 
     legacy_definition = bpy.data.collections.new("SM_LegacyRadio")
     bpy.data.scenes[site12_authoring.PREFAB_LIBRARY_SCENE].collection.children.link(legacy_definition)
@@ -99,9 +148,19 @@ def main():
     migrated_chair["tg_marker_name"] = "PF_Chair1_TestChair"
     repaired, conflicts = site12_authoring.repair_prefab_instance_names(scene)
     assert_true(not conflicts, "GLB-safe prefab-name repair reported a conflict")
-    assert_true(("PF_Chair1_TestChair.001", "PF_Chair1_TestChair_001") in repaired, "Blender numeric suffix was not repaired")
+    assert_true(("PF_Chair1_TestChair.001", "PF_Chair1_TestChair_001") in repaired, f"Blender numeric suffix was not repaired: {repaired}")
     assert_true(migrated_chair.name == "PF_Chair1_TestChair_001", "repaired prefab name is not GLB-safe")
     assert_true(migrated_chair.get("tg_marker_name") == migrated_chair.name, "marker metadata was not synchronized")
+
+    bpy.ops.import_scene.gltf(filepath=level_output)
+    exported_rigids = {
+        candidate.get("tg_rigid_id"): candidate
+        for candidate in bpy.data.objects
+        if candidate.get("tg_rigid_id") in {"TestCrate01", "TestCrate02"}
+    }
+    assert_true(set(exported_rigids) == {"TestCrate01", "TestCrate02"}, "duplicated RB metadata was not exported")
+    assert_true(exported_rigids["TestCrate01"].get("tg_rigid_persistent") is True, "level rigid persistence tag was not exported")
+    assert_true("UBX_TestCrate02_01" in bpy.data.objects, "duplicated RB collider was not exported")
 
     output = os.path.join(tempfile.gettempdir(), "site12_authoring_smoke.glb")
     site12_authoring.export_prefab_definition(definition, output)

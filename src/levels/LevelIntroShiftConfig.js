@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=facility-activity";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=facility-activity";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=facility-activity";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=facility-activity";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=facility-activity";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=level-rigid-bodies";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=level-rigid-bodies";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=level-rigid-bodies";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=level-rigid-bodies";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=level-rigid-bodies";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

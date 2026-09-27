@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=facility-activity";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=facility-activity";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=facility-activity";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=facility-activity";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=level-rigid-bodies";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=level-rigid-bodies";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=level-rigid-bodies";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=level-rigid-bodies";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

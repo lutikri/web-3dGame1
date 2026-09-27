@@ -1,4 +1,4 @@
-import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=facility-activity";
+import { applySavedPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=level-rigid-bodies";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

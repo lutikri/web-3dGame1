@@ -44,6 +44,43 @@ export async function createPhysicsSystem() {
   let character = null;
   let characterSpec = null;
 
+  function createRigidBodyDesc(bodyType, { linearDamping, angularDamping, canSleep }) {
+    if (bodyType === "fixed") return RAPIER.RigidBodyDesc.fixed();
+    if (bodyType === "kinematic") return RAPIER.RigidBodyDesc.kinematicPositionBased();
+    return RAPIER.RigidBodyDesc.dynamic()
+      .setLinearDamping(linearDamping)
+      .setAngularDamping(angularDamping)
+      .setCanSleep(canSleep);
+  }
+
+  function getRigidBodyType(bodyType) {
+    if (bodyType === "fixed") return RAPIER.RigidBodyType.Fixed;
+    if (bodyType === "kinematic") return RAPIER.RigidBodyType.KinematicPositionBased;
+    return RAPIER.RigidBodyType.Dynamic;
+  }
+
+  function describePrefabCollider(mesh, inverseRoot) {
+    if (!mesh.geometry?.attributes?.position) return null;
+    mesh.updateWorldMatrix(true, false);
+    const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
+    mesh.geometry.computeBoundingBox();
+    const box = mesh.geometry.boundingBox;
+    if (!box) return null;
+    const center = box.getCenter(new THREE.Vector3()).applyMatrix4(colliderInRoot);
+    const size = box.getSize(new THREE.Vector3());
+    const relativePosition = new THREE.Vector3();
+    const rotation = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    colliderInRoot.decompose(relativePosition, rotation, scale);
+    const halfExtents = size.multiply(scale).multiplyScalar(0.5);
+    return {
+      center,
+      rotation,
+      halfExtents,
+      volume: Math.max(0.000001, 8 * Math.abs(halfExtents.x * halfExtents.y * halfExtents.z)),
+    };
+  }
+
   function addStaticScene(key, root) {
     removeStaticScene(key);
     sceneColliders.set(key, []);
@@ -619,6 +656,7 @@ export async function createPhysicsSystem() {
     root,
     colliderMeshes = [],
     bodyType = "dynamic",
+    mass = null,
     density = 80,
     linearDamping = 0.8,
     angularDamping = 1.4,
@@ -632,43 +670,31 @@ export async function createPhysicsSystem() {
     const rootQuaternion = new THREE.Quaternion();
     const rootScale = new THREE.Vector3();
     root.matrixWorld.decompose(rootPosition, rootQuaternion, rootScale);
-    const desc =
-      bodyType === "fixed"
-        ? RAPIER.RigidBodyDesc.fixed()
-        : RAPIER.RigidBodyDesc.dynamic()
-            .setLinearDamping(linearDamping)
-            .setAngularDamping(angularDamping)
-            .setCanSleep(canSleep);
+    const desc = createRigidBodyDesc(bodyType, { linearDamping, angularDamping, canSleep });
     const body = world.createRigidBody(
       desc
         .setTranslation(rootPosition.x, rootPosition.y, rootPosition.z)
         .setRotation(rootQuaternion),
     );
     const inverseRoot = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    const colliderSpecs = colliderMeshes
+      .map((mesh) => ({ mesh, spec: describePrefabCollider(mesh, inverseRoot) }))
+      .filter(({ spec }) => spec);
+    const totalVolume = colliderSpecs.reduce((total, { spec }) => total + spec.volume, 0);
+    const resolvedDensity = Number.isFinite(Number(mass)) && Number(mass) > 0 && totalVolume > 0
+      ? Number(mass) / totalVolume
+      : density;
     const colliders = [];
-    colliderMeshes.forEach((mesh) => {
-      if (!mesh.geometry?.attributes?.position) return;
-      mesh.updateWorldMatrix(true, false);
-      const colliderInRoot = new THREE.Matrix4().multiplyMatrices(inverseRoot, mesh.matrixWorld);
-      mesh.geometry.computeBoundingBox();
-      const box = mesh.geometry.boundingBox;
-      if (!box) return;
-      const center = box.getCenter(new THREE.Vector3()).applyMatrix4(colliderInRoot);
-      const size = box.getSize(new THREE.Vector3());
-      const relativePosition = new THREE.Vector3();
-      const relativeQuaternion = new THREE.Quaternion();
-      const relativeScale = new THREE.Vector3();
-      colliderInRoot.decompose(relativePosition, relativeQuaternion, relativeScale);
-      size.multiply(relativeScale).multiplyScalar(0.5);
+    colliderSpecs.forEach(({ spec }) => {
       const collider = world.createCollider(
         RAPIER.ColliderDesc.cuboid(
-          Math.max(Math.abs(size.x), 0.01),
-          Math.max(Math.abs(size.y), 0.01),
-          Math.max(Math.abs(size.z), 0.01),
+          Math.max(Math.abs(spec.halfExtents.x), 0.01),
+          Math.max(Math.abs(spec.halfExtents.y), 0.01),
+          Math.max(Math.abs(spec.halfExtents.z), 0.01),
         )
-          .setTranslation(center.x, center.y, center.z)
-          .setRotation(relativeQuaternion)
-          .setDensity(density)
+          .setTranslation(spec.center.x, spec.center.y, spec.center.z)
+          .setRotation(spec.rotation)
+          .setDensity(resolvedDensity)
           .setFriction(friction)
           .setRestitution(restitution),
         body,
@@ -851,6 +877,10 @@ export async function createPhysicsSystem() {
       prefab.body.setEnabled(false);
       return true;
     }
+    // A fixed authored body can be released by a scripted event (for example,
+    // the qualification pipe scare).  "world" therefore always means an
+    // active simulated body; resetRigidPrefab is responsible for restoring
+    // the authored fixed/kinematic state.
     const bodyType = mode === "equipped"
       ? RAPIER.RigidBodyType.KinematicPositionBased
       : RAPIER.RigidBodyType.Dynamic;
@@ -1021,12 +1051,7 @@ export async function createPhysicsSystem() {
         };
       }
     }
-    prefab.body.setBodyType(
-      prefab.initialBodyType === "fixed"
-        ? RAPIER.RigidBodyType.Fixed
-        : RAPIER.RigidBodyType.Dynamic,
-      true,
-    );
+    prefab.body.setBodyType(getRigidBodyType(prefab.initialBodyType), true);
     removeRigidPrefabGrabConstraint(prefab);
     prefab.body.setEnabled(prefab.sceneKey === activeSceneKey);
     prefab.body.setTranslation(prefab.initialPosition, true);

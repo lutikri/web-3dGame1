@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=facility-activity";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=level-rigid-bodies";
 
 const EFFECT_KEYS = [
   "bloom",

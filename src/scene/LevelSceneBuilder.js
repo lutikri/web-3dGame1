@@ -3,13 +3,14 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=facility-activity";
+} from "../prefabs/PrefabMarkerResolver.js?v=level-rigid-bodies";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=facility-activity";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=facility-activity";
+} from "../levels/LevelConfigOverrides.js?v=level-rigid-bodies";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=level-rigid-bodies";
+import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=level-rigid-bodies";
 
 export function createLevelSceneBuilder({
   scene,
@@ -25,6 +26,7 @@ export function createLevelSceneBuilder({
   collisionModels,
   prefabInstances,
   lightingZones,
+  registerLevelRigidBodies = () => {},
   getLanguage = () => "en",
 }) {
   return {
@@ -37,6 +39,7 @@ export function createLevelSceneBuilder({
       scene.add(prefabGroup);
 
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig, timings);
+      registerLevelRigidBodies(levelRuntime, levelId, environmentModels.get(levelId));
       reportProgress(onProgress, 0.2);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
       const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);
@@ -83,6 +86,12 @@ export function createLevelSceneBuilder({
         object.visible = false;
         return;
       }
+      // Dynamic level RB colliders are needed by Rapier after the render
+      // model loads. Keep them in the hierarchy but never draw them.
+      if (object.isMesh && isLevelRigidDescendant(object, model) && /^U(?:BX|CX|SP|CP)_/i.test(object.name)) {
+        object.visible = false;
+        return;
+      }
       if (
         object.isMesh &&
         excludedNameParts.some((part) => object.name.toLowerCase().includes(String(part).toLowerCase()))
@@ -119,6 +128,11 @@ export function createLevelSceneBuilder({
     const excludedMeshSet = new Set();
     model.traverse((object) => {
       if (!object.isMesh) return;
+      if (isLevelRigidDescendant(object, model)) {
+        excludedMeshes.push(object);
+        excludedMeshSet.add(object);
+        return;
+      }
       const excluded = excludedNameParts.some((part) =>
         object.name.toLowerCase().includes(String(part).toLowerCase()),
       );

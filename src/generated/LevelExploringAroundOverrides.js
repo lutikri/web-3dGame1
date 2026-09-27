@@ -738,7 +738,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": 3.948807716369629e-7,
+          "y": 0,
           "z": 0
         },
         "rotation": {
@@ -829,7 +829,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": 3.0547380447387695e-7,
+          "y": 0,
           "z": 0
         },
         "rotation": {
@@ -854,8 +854,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": -3.5762786865234375e-7,
-          "z": 0.05349528886123878
+          "y": 0,
+          "z": 0
         },
         "rotation": {
           "isEuler": true,
@@ -903,8 +903,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "name": "DoorBulk1_5",
       "placementOffset": {
         "position": {
-          "x": -0.06377378060471628,
-          "y": -3.5762786865234375e-7,
+          "x": 0,
+          "y": 0,
           "z": 0
         },
         "rotation": {

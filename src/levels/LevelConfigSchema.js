@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=facility-activity";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=level-rigid-bodies";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

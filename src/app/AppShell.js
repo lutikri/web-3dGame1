@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=facility-activity";
-import { applyLocalization, translate } from "./Localization.js?v=facility-activity";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=facility-activity";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=facility-activity";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=facility-activity";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=facility-activity";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=facility-activity";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=level-rigid-bodies";
+import { applyLocalization, translate } from "./Localization.js?v=level-rigid-bodies";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=level-rigid-bodies";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=level-rigid-bodies";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=level-rigid-bodies";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=level-rigid-bodies";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=level-rigid-bodies";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=facility-activity";
-import { createAppPanelController } from "./AppPanelController.js?v=facility-activity";
-import { createAppRouter } from "./AppRouter.js?v=facility-activity";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=facility-activity";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=facility-activity";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=facility-activity";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=facility-activity";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=facility-activity";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=facility-activity";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=facility-activity";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=facility-activity";
+} from "./AppPersistence.js?v=level-rigid-bodies";
+import { createAppPanelController } from "./AppPanelController.js?v=level-rigid-bodies";
+import { createAppRouter } from "./AppRouter.js?v=level-rigid-bodies";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=level-rigid-bodies";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=level-rigid-bodies";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=level-rigid-bodies";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=level-rigid-bodies";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=level-rigid-bodies";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=level-rigid-bodies";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=level-rigid-bodies";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=level-rigid-bodies";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

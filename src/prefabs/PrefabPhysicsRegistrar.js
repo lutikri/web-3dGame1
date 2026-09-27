@@ -1,7 +1,7 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=facility-activity";
+} from "./behaviors/DeskDrawerBehavior.js?v=level-rigid-bodies";
 
 export function createPrefabPhysicsRegistrar({
   physics,
