@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=level-rigid-bodies";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=level-rigid-persistence";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

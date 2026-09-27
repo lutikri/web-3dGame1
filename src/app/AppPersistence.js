@@ -3,6 +3,7 @@ const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const PREFLIGHT_RETURN_TO_MENU_KEY = "operatorGame.preflight.returnToMenu";
 const DEVELOPMENT_NOTICE_STORAGE_KEY = "operatorGame.developmentNotice.v1";
+const LEVEL_RIGID_BODIES_STORAGE_KEY = "operatorGame.levelRigidBodies.v1";
 
 const DEFAULT_SETTINGS = Object.freeze({
   fov: 72,
@@ -42,9 +43,49 @@ export function saveProgress(progress, storage = localStorage) {
 
 export function clearProgressStorage(storage = localStorage, session = sessionStorage) {
   storage.removeItem(PROGRESS_STORAGE_KEY);
+  clearLevelRigidBodyStorage(storage);
   Object.keys(session)
     .filter((key) => key.startsWith("operatorGame.levelSession."))
     .forEach((key) => session.removeItem(key));
+}
+
+export function loadLevelRigidBodyStates(storage = getLocalStorage()) {
+  try {
+    const parsed = JSON.parse(storage.getItem(LEVEL_RIGID_BODIES_STORAGE_KEY) ?? "{}");
+    if (!isRecord(parsed)) return {};
+    return Object.fromEntries(Object.entries(parsed)
+      .filter(([, states]) => isRecord(states))
+      .map(([levelId, states]) => [levelId, normalizeRigidBodyStates(states)]));
+  } catch {
+    return {};
+  }
+}
+
+export function saveLevelRigidBodyStates(levelId, states, storage = getLocalStorage()) {
+  const normalizedLevelId = String(levelId ?? "").trim();
+  if (!normalizedLevelId) return false;
+  const allStates = loadLevelRigidBodyStates(storage);
+  const normalizedStates = normalizeRigidBodyStates(states);
+  if (Object.keys(normalizedStates).length) {
+    allStates[normalizedLevelId] = { ...(allStates[normalizedLevelId] ?? {}), ...normalizedStates };
+  }
+  else delete allStates[normalizedLevelId];
+  storage.setItem(LEVEL_RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
+  return true;
+}
+
+export function clearLevelRigidBodyStorage(storage = getLocalStorage()) {
+  storage.removeItem(LEVEL_RIGID_BODIES_STORAGE_KEY);
+}
+
+export function clearLevelRigidBodyStates(levelId, storage = getLocalStorage()) {
+  const normalizedLevelId = String(levelId ?? "").trim();
+  if (!normalizedLevelId) return false;
+  const allStates = loadLevelRigidBodyStates(storage);
+  if (!(normalizedLevelId in allStates)) return false;
+  delete allStates[normalizedLevelId];
+  storage.setItem(LEVEL_RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
+  return true;
 }
 
 export function loadSettings(storage = localStorage) {
@@ -110,3 +151,46 @@ function clampNumber(value, min, max, fallback) {
 function isRecord(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
+
+function normalizeRigidBodyStates(source) {
+  if (!isRecord(source)) return {};
+  return Object.fromEntries(Object.entries(source)
+    .map(([id, state]) => [String(id).trim(), normalizeRigidBodyState(state)])
+    .filter(([id, state]) => id && state));
+}
+
+function normalizeRigidBodyState(source) {
+  if (!isRecord(source)) return null;
+  const position = normalizeVector3(source.position);
+  const rotation = normalizeQuaternion(source.rotation);
+  if (!position || !rotation) return null;
+  return {
+    position,
+    rotation,
+    linearVelocity: normalizeVector3(source.linearVelocity) ?? { x: 0, y: 0, z: 0 },
+    angularVelocity: normalizeVector3(source.angularVelocity) ?? { x: 0, y: 0, z: 0 },
+    sleeping: Boolean(source.sleeping),
+  };
+}
+
+function normalizeVector3(source) {
+  if (!isRecord(source)) return null;
+  const vector = { x: Number(source.x), y: Number(source.y), z: Number(source.z) };
+  return Object.values(vector).every(Number.isFinite) ? vector : null;
+}
+
+function normalizeQuaternion(source) {
+  if (!isRecord(source)) return null;
+  const quaternion = { x: Number(source.x), y: Number(source.y), z: Number(source.z), w: Number(source.w) };
+  return Object.values(quaternion).every(Number.isFinite) ? quaternion : null;
+}
+
+function getLocalStorage() {
+  return globalThis.localStorage ?? EMPTY_STORAGE;
+}
+
+const EMPTY_STORAGE = Object.freeze({
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+});

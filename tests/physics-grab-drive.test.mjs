@@ -171,6 +171,33 @@ test("out-of-bounds rigid prefabs return to their authored transforms", async ()
   assert.deepEqual({ ...prefab.body.linvel() }, { x: 0, y: 0, z: 0 });
 });
 
+test("rigid prefab state round-trips transform, velocity, and sleep state", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const root = new THREE.Group();
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2));
+  root.add(collider);
+  physics.createRigidPrefab({
+    key: "room:persistent-prop", sceneKey: "room", root, colliderMeshes: [collider], bodyType: "dynamic",
+  });
+  const state = {
+    position: { x: 2, y: 3, z: 4 },
+    rotation: { x: 0, y: 0, z: 0, w: 1 },
+    linearVelocity: { x: 0.2, y: 0.3, z: 0.4 },
+    angularVelocity: { x: 0.5, y: 0.6, z: 0.7 },
+    sleeping: false,
+  };
+  assert.equal(physics.restoreRigidPrefabState("room:persistent-prop", state), true);
+  const restored = physics.getRigidPrefabState("room:persistent-prop");
+  assert.deepEqual(restored.position, state.position);
+  assert.deepEqual(restored.rotation, state.rotation);
+  ["x", "y", "z"].forEach((axis) => {
+    assert.ok(Math.abs(restored.linearVelocity[axis] - state.linearVelocity[axis]) < 1e-6);
+    assert.ok(Math.abs(restored.angularVelocity[axis] - state.angularVelocity[axis]) < 1e-6);
+  });
+  assert.equal(restored.sleeping, false);
+});
+
 test("character stance resizes its Rapier capsule and refuses blocked standing", async () => {
   const physics = await createPhysicsSystem();
   physics.createCharacter({

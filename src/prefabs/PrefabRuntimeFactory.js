@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-bodies";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-bodies";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-rigid-bodies";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-bodies";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-bodies";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-bodies";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-rigid-bodies";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-bodies";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-rigid-bodies";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-bodies";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-bodies";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-persistence";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-rigid-persistence";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-persistence";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-persistence";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-persistence";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-rigid-persistence";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-persistence";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-rigid-persistence";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-persistence";
 
 export function createPrefabRuntimeFactory({
   config,

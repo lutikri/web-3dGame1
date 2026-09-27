@@ -1,4 +1,4 @@
-import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=level-rigid-bodies";
+import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=level-rigid-persistence";
 
 const MONTHS = {
   en: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],

@@ -21,6 +21,18 @@ export function computeSweepLimitedPosition(start, target, timeOfImpact = 1) {
   );
 }
 
+function isRigidPrefabState(state) {
+  const vector = (value) => value && [value.x, value.y, value.z].every(Number.isFinite);
+  return Boolean(
+    state
+    && vector(state.position)
+    && vector(state.linearVelocity ?? { x: 0, y: 0, z: 0 })
+    && vector(state.angularVelocity ?? { x: 0, y: 0, z: 0 })
+    && state.rotation
+    && [state.rotation.x, state.rotation.y, state.rotation.z, state.rotation.w].every(Number.isFinite),
+  );
+}
+
 export async function createPhysicsSystem() {
   const { default: RAPIER } = await import("@dimforge/rapier3d-compat");
   const originalWarn = console.warn;
@@ -1013,6 +1025,35 @@ export async function createPhysicsSystem() {
     return new THREE.Vector3(position.x, position.y, position.z);
   }
 
+  function getRigidPrefabState(key) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab) return null;
+    const position = prefab.body.translation();
+    const rotation = prefab.body.rotation();
+    const linearVelocity = prefab.body.linvel();
+    const angularVelocity = prefab.body.angvel();
+    return {
+      position: { x: position.x, y: position.y, z: position.z },
+      rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w },
+      linearVelocity: { x: linearVelocity.x, y: linearVelocity.y, z: linearVelocity.z },
+      angularVelocity: { x: angularVelocity.x, y: angularVelocity.y, z: angularVelocity.z },
+      sleeping: prefab.body.isSleeping(),
+    };
+  }
+
+  function restoreRigidPrefabState(key, state) {
+    const prefab = rigidPrefabs.get(key);
+    if (!prefab || !isRigidPrefabState(state)) return false;
+    removeRigidPrefabGrabConstraint(prefab);
+    prefab.body.setTranslation(state.position, true);
+    prefab.body.setRotation(state.rotation, true);
+    prefab.body.setLinvel(state.linearVelocity ?? { x: 0, y: 0, z: 0 }, true);
+    prefab.body.setAngvel(state.angularVelocity ?? { x: 0, y: 0, z: 0 }, true);
+    if (state.sleeping) prefab.body.sleep();
+    else prefab.body.wakeUp();
+    return true;
+  }
+
   function dropRigidPrefab(key, position, rotation, linearVelocity = null) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
@@ -1239,6 +1280,8 @@ export async function createPhysicsSystem() {
     driveRigidPrefab,
     setRigidPrefabPose,
     getRigidPrefabPosition,
+    getRigidPrefabState,
+    restoreRigidPrefabState,
     dropRigidPrefab,
     releaseRigidPrefab,
     removeRigidPrefab,

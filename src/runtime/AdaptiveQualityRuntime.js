@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=level-rigid-bodies";
+import { getGraphicsQualityProfile, resolveGraphicsPixelRatio } from "../config/GraphicsQualityProfiles.js?v=level-rigid-persistence";
 
 export class AdaptiveQualityRuntime {
   constructor({

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=level-rigid-bodies";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=level-rigid-persistence";
 
 export class BulkheadExitRuntime {
   constructor({ config, interactive, playSound, getGameMode, emitThought, getResults, showResults, refreshTooltip }) {

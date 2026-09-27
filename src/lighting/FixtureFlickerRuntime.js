@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=level-rigid-bodies";
+} from "./FluorescentBehavior.js?v=level-rigid-persistence";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

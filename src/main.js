@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=level-rigid-bodies";
-import { applyLocalization } from "./app/Localization.js?v=level-rigid-bodies";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=level-rigid-bodies";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=level-rigid-bodies";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=level-rigid-bodies";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=level-rigid-bodies";
+import { createPreflight } from "./app/Preflight.js?v=level-rigid-persistence";
+import { applyLocalization } from "./app/Localization.js?v=level-rigid-persistence";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=level-rigid-persistence";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=level-rigid-persistence";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=level-rigid-persistence";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=level-rigid-persistence";
 
-const APP_BUILD_REVISION = "level-rigid-bodies";
+const APP_BUILD_REVISION = "level-rigid-persistence";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=level-rigid-bodies`);
+await import(`./OperatorGame.js?v=level-rigid-persistence`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=level-rigid-bodies`);
+const { createAppShell } = await import(`./app/AppShell.js?v=level-rigid-persistence`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=level-rigid-bodies`
+    `./runtime/RuntimeSmoke.js?v=level-rigid-persistence`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

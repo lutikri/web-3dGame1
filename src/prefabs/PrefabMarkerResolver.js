@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=level-rigid-bodies";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=level-rigid-bodies";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=level-rigid-persistence";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=level-rigid-persistence";
 
 const MARKER_PREFIX = "PF_";
 

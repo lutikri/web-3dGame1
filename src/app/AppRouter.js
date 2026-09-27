@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=level-rigid-bodies";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=level-rigid-persistence";
 
 export function createAppRouter({
   overlay,

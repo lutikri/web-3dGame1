@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=level-rigid-bodies";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=level-rigid-persistence";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

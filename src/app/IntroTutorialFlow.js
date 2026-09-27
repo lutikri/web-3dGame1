@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=level-rigid-bodies";
+import { translateRequired } from "./Localization.js?v=level-rigid-persistence";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

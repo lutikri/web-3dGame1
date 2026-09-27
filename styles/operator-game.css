@@ -4223,6 +4223,16 @@ html.preflight-boot #app {
   background: var(--facility-selected);
 }
 
+.settings-action-button-danger {
+  border-color: rgba(198, 123, 104, 0.62);
+  color: #dbad9b;
+}
+
+.settings-action-button-danger:hover {
+  border-color: #e3a48e;
+  background: rgba(145, 56, 42, 0.22);
+}
+
 .loading-panel {
   background: var(--facility-surface);
 }

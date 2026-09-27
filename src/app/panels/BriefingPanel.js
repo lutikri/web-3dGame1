@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=level-rigid-bodies";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=level-rigid-persistence";
 
 const DISMISS_MS = 300;
 

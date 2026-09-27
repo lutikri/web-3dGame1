@@ -25,7 +25,7 @@
 - Пройти все три смены end-to-end с чистого сохранения: briefing, success/fail, restart, Shift Report, unlocks, persistence и RU/EN.
 - Финально откалибровать Qualification по прохождениям новых игроков и проверить понятность причины провала.
 - Завершить визуальный аудит оставшихся prompts/frontend-экранов и проверить `16:9`, `16:10`, ultrawide, `1366×768` и browser zoom.
-- Определить сохранение инвентаря и только явно помеченных persistent rigid bodies между переходами.
+- Определить сохранение инвентаря между переходами.
 
 ### Частично и не по первоначальному плану
 
@@ -203,6 +203,8 @@ Qualification
 - Контент хранить как data-driven записи с условиями видимости, локализацией RU/EN и стабильными ID; canvas renderer не должен содержать сюжетные условия.
 
 ## P1. Простые физические объекты и сохранение состояния
+
+- [x] Явно помеченные `Persistent` authored `RB_*` и rigidbody-prefab instances сохраняют transform, linear/angular velocity и sleep state отдельно по stable level/instance ID. Смена или reload браузера восстанавливает состояние; restart shift, `RESET OBJECTS` и `RESET PROGRESS` возвращают объекты к authored transforms.
 
 - Ввести авторский marker/metadata contract для простых level rigid bodies. Объект интерьера, помеченный как `RB`, использует собственную видимую mesh и дочерний collider, регистрируется как dynamic body и может быть толкнут или перетащен игроком.
 - Поддержать минимум параметров: стабильный ID, масса, collider source, friction, restitution, linear/angular damping, возможность drag и флаг persistence.

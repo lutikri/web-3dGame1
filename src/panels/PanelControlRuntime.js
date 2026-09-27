@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=level-rigid-bodies";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=level-rigid-persistence";
 
 export class PanelControlRuntime {
   constructor({ config, knobs, buttons, auxiliaryButtons, diagnostics, onChanged, playSound = () => {}, getTime = () => performance.now() / 1000, runAction = () => {}, toggleRoomLights = () => {}, executeLevelBinding = () => {}, emitLevelEvent = () => {}, log = () => {} }) {

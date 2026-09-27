@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=level-rigid-bodies";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=level-rigid-persistence";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

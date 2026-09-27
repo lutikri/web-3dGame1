@@ -557,6 +557,7 @@ const PREFAB_DEFINITIONS = {
     rigidBody: {
       enabled: true,
       bodyType: "dynamic",
+      persistent: true,
       colliderNamePrefixes: ["UBX_SM_Chair1"],
       density: 55,
       linearDamping: 0.75,
@@ -587,6 +588,7 @@ const PREFAB_DEFINITIONS = {
     rigidBody: {
       enabled: true,
       bodyType: "dynamic",
+      persistent: true,
       colliderNamePrefixes: ["UBX_SM_Lamp1"],
       density: 35,
       linearDamping: 0.85,

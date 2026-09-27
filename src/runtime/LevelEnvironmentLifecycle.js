@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=level-rigid-bodies";
+import { LevelRuntime } from "./LevelRuntime.js?v=level-rigid-persistence";
 
 export class LevelEnvironmentLifecycle {
   constructor({

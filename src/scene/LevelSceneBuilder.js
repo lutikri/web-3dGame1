@@ -3,14 +3,14 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=level-rigid-bodies";
+} from "../prefabs/PrefabMarkerResolver.js?v=level-rigid-persistence";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=level-rigid-bodies";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=level-rigid-bodies";
-import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=level-rigid-bodies";
+} from "../levels/LevelConfigOverrides.js?v=level-rigid-persistence";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=level-rigid-persistence";
+import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=level-rigid-persistence";
 
 export function createLevelSceneBuilder({
   scene,
@@ -27,6 +27,7 @@ export function createLevelSceneBuilder({
   prefabInstances,
   lightingZones,
   registerLevelRigidBodies = () => {},
+  flushLevelPersistentRigidBodies = () => {},
   getLanguage = () => "en",
 }) {
   return {
@@ -40,6 +41,7 @@ export function createLevelSceneBuilder({
 
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig, timings);
       registerLevelRigidBodies(levelRuntime, levelId, environmentModels.get(levelId));
+      levelRuntime.defer(() => flushLevelPersistentRigidBodies(levelId));
       reportProgress(onProgress, 0.2);
       const configuredPrefabs = environmentConfig.prefabs ?? [];
       const pendingPrefabOverrides = getPendingPrefabOverrides(configuredPrefabs);

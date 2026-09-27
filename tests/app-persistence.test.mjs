@@ -4,11 +4,14 @@ import assert from "node:assert/strict";
 import {
   acknowledgeDevelopmentNotice,
   clearProgressStorage,
+  clearLevelRigidBodyStorage,
   createEmptyProgress,
+  loadLevelRigidBodyStates,
   loadProgress,
   loadSettings,
   requestReturnToMenuAfterPreflight,
   saveProgress,
+  saveLevelRigidBodyStates,
   shouldShowDevelopmentNotice,
 } from "../src/app/AppPersistence.js";
 
@@ -58,6 +61,30 @@ test("app progress persistence round-trips and clears level sessions", () => {
   assert.equal(storage.values.has("operatorGame.progress.v1"), false);
   assert.equal(session["operatorGame.levelSession.intro-shift"], undefined);
   assert.equal(session.unrelated, "keep");
+});
+
+test("persistent rigid body transforms are isolated by level and cleared with progress", () => {
+  const storage = createStorage();
+  saveLevelRigidBodyStates("intro-shift", {
+    Lamp01: {
+      position: { x: 1, y: 2, z: 3 },
+      rotation: { x: 0, y: 0, z: 0, w: 1 },
+      linearVelocity: { x: 0.1, y: 0, z: 0 },
+      angularVelocity: { x: 0, y: 0.2, z: 0 },
+      sleeping: true,
+    },
+  }, storage);
+  saveLevelRigidBodyStates("fuel-problems", {
+    Pipe01: {
+      position: { x: 5, y: 6, z: 7 },
+      rotation: { x: 0, y: 0, z: 0, w: 1 },
+    },
+  }, storage);
+  assert.deepEqual(Object.keys(loadLevelRigidBodyStates(storage)), ["intro-shift", "fuel-problems"]);
+
+  clearProgressStorage(storage, {});
+  assert.deepEqual(loadLevelRigidBodyStates(storage), {});
+  clearLevelRigidBodyStorage(storage);
 });
 
 test("preflight rerun intent is owned by app persistence", () => {

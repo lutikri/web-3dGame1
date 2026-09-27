@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=level-rigid-bodies";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=level-rigid-persistence";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {

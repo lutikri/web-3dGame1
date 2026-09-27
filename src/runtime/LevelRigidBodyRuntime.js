@@ -1,4 +1,10 @@
 import * as THREE from "three";
+import {
+  clearLevelRigidBodyStates,
+  clearLevelRigidBodyStorage,
+  loadLevelRigidBodyStates,
+  saveLevelRigidBodyStates,
+} from "../app/AppPersistence.js?v=level-rigid-persistence";
 
 const colliderPrefix = /^(?:UBX|UCX|USP|UCP)_/i;
 
@@ -22,6 +28,7 @@ export class LevelRigidBodyRuntime {
     this.itemInteraction = itemInteraction;
     this.warn = warn;
     this.entriesByLevel = new Map();
+    this.saveAccumulator = 0;
   }
 
   registerLevel(levelId, environmentRoot) {
@@ -34,9 +41,14 @@ export class LevelRigidBodyRuntime {
     });
 
     const usedIds = new Set();
+    const savedStates = loadLevelRigidBodyStates()[levelId] ?? {};
     const entries = roots.flatMap((root) => {
       const entry = this.#registerRoot(levelId, root, usedIds);
       return entry ? [entry] : [];
+    });
+    entries.forEach((entry) => {
+      if (!entry.persistent || !savedStates[entry.rigidId]) return;
+      this.physics.restoreRigidPrefabState?.(entry.physicsKey, savedStates[entry.rigidId]);
     });
     if (entries.length) this.entriesByLevel.set(levelId, entries);
     return entries;
@@ -44,11 +56,34 @@ export class LevelRigidBodyRuntime {
 
   unregisterLevel(levelId) {
     const entries = this.entriesByLevel.get(levelId) ?? [];
+    this.#saveEntries(levelId, entries);
     entries.forEach((entry) => {
       this.itemInteraction?.unregisterLevelRigidBody?.(entry.itemId);
       this.physics?.removeRigidPrefab?.(entry.physicsKey);
     });
     this.entriesByLevel.delete(levelId);
+  }
+
+  update(deltaSeconds) {
+    this.saveAccumulator += Math.max(0, Number(deltaSeconds) || 0);
+    if (this.saveAccumulator < 1) return;
+    this.saveAccumulator = 0;
+    this.entriesByLevel.forEach((entries, levelId) => this.#saveEntries(levelId, entries));
+  }
+
+  resetPersistentObjects() {
+    clearLevelRigidBodyStorage();
+    this.entriesByLevel.forEach((entries) => entries.forEach((entry) => {
+      if (entry.persistent) this.physics.resetRigidPrefab?.(entry.physicsKey);
+    }));
+  }
+
+  resetLevelPersistentObjects(levelId) {
+    const entries = this.entriesByLevel.get(levelId) ?? [];
+    entries.forEach((entry) => {
+      if (entry.persistent) this.physics.resetRigidPrefab?.(entry.physicsKey);
+    });
+    clearLevelRigidBodyStates(levelId);
   }
 
   #registerRoot(levelId, root, usedIds) {
@@ -112,7 +147,25 @@ export class LevelRigidBodyRuntime {
         label: rigidId,
       });
     }
-    return { levelId, rigidId, root, colliders, visuals, physicsKey, itemId, draggable };
+    return {
+      levelId,
+      rigidId,
+      root,
+      colliders,
+      visuals,
+      physicsKey,
+      itemId,
+      draggable,
+      persistent: Boolean(root.userData.tg_rigid_persistent),
+    };
+  }
+
+  #saveEntries(levelId, entries) {
+    const states = Object.fromEntries(entries
+      .filter((entry) => entry.persistent)
+      .map((entry) => [entry.rigidId, this.physics.getRigidPrefabState?.(entry.physicsKey)])
+      .filter(([, state]) => state));
+    saveLevelRigidBodyStates(levelId, states);
   }
 }
 

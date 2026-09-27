@@ -1,7 +1,13 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=level-rigid-bodies";
+} from "./behaviors/DeskDrawerBehavior.js?v=level-rigid-persistence";
+import {
+  clearLevelRigidBodyStates,
+  clearLevelRigidBodyStorage,
+  loadLevelRigidBodyStates,
+  saveLevelRigidBodyStates,
+} from "../app/AppPersistence.js?v=level-rigid-persistence";
 
 export function createPrefabPhysicsRegistrar({
   physics,
@@ -12,6 +18,8 @@ export function createPrefabPhysicsRegistrar({
   playSound = () => {},
 }) {
   const deskDrawersByTarget = new WeakMap();
+  const persistentRigidBodiesByLevel = new Map();
+  let persistentSaveAccumulator = 0;
 
   function findColliders(runtime, prefixes = []) {
     const normalizedPrefixes = prefixes.map(normalizeName);
@@ -101,12 +109,21 @@ export function createPrefabPhysicsRegistrar({
     }
     colliderMeshes.forEach((mesh) => runtime.dynamicColliderMeshes.add(mesh));
     runtime.rigidPrefabKey = `${levelId}:${prefabConfig.name}:rigid`;
-    return physics.createRigidPrefab({
+    const body = physics.createRigidPrefab({
       key: runtime.rigidPrefabKey, sceneKey: levelId, root: runtime.root, colliderMeshes,
       bodyType: config.bodyType ?? "dynamic", density: config.density,
       linearDamping: config.linearDamping, angularDamping: config.angularDamping,
       friction: config.friction, restitution: config.restitution, canSleep: config.canSleep,
     });
+    if (config.persistent) {
+      const stateId = `prefab:${prefabConfig.name}`;
+      const entries = persistentRigidBodiesByLevel.get(levelId) ?? new Map();
+      entries.set(stateId, { stateId, physicsKey: runtime.rigidPrefabKey });
+      persistentRigidBodiesByLevel.set(levelId, entries);
+      const savedState = loadLevelRigidBodyStates()[levelId]?.[stateId];
+      if (savedState) physics.restoreRigidPrefabState(runtime.rigidPrefabKey, savedState);
+    }
+    return body;
   }
 
   function registerDeskDrawers(levelId, prefabConfig, runtime) {
@@ -169,6 +186,31 @@ export function createPrefabPhysicsRegistrar({
     return true;
   }
 
+  function update(deltaSeconds) {
+    persistentSaveAccumulator += Math.max(0, Number(deltaSeconds) || 0);
+    if (persistentSaveAccumulator < 1) return;
+    persistentSaveAccumulator = 0;
+    persistentRigidBodiesByLevel.forEach((entries, levelId) => savePersistentEntries(levelId, entries));
+  }
+
+  function flushLevel(levelId) {
+    savePersistentEntries(levelId, persistentRigidBodiesByLevel.get(levelId));
+  }
+
+  function resetPersistentObjects() {
+    clearLevelRigidBodyStorage();
+    persistentRigidBodiesByLevel.forEach((entries) => entries.forEach((entry) => {
+      physics.resetRigidPrefab(entry.physicsKey);
+    }));
+  }
+
+  function resetLevelPersistentObjects(levelId) {
+    clearLevelRigidBodyStates(levelId);
+    [...(persistentRigidBodiesByLevel.get(levelId)?.values() ?? [])].forEach((entry) => {
+      physics.resetRigidPrefab(entry.physicsKey);
+    });
+  }
+
   function register(levelId, prefabConfig, runtime) {
     if (prefabConfig.behavior === "elevator") return registerElevator(levelId, prefabConfig, runtime);
     if (prefabConfig.behavior === "barrierGate") return registerBarrierGate(levelId, prefabConfig, runtime);
@@ -185,7 +227,19 @@ export function createPrefabPhysicsRegistrar({
     registerRigid,
     registerDeskDrawers,
     toggleDeskDrawer,
+    update,
+    flushLevel,
+    resetPersistentObjects,
+    resetLevelPersistentObjects,
   };
+
+  function savePersistentEntries(levelId, entries) {
+    if (!entries?.size) return;
+    const states = Object.fromEntries([...entries.values()]
+      .map((entry) => [entry.stateId, physics.getRigidPrefabState(entry.physicsKey)])
+      .filter(([, state]) => state));
+    if (Object.keys(states).length) saveLevelRigidBodyStates(levelId, states);
+  }
 }
 
 function isDescendantOf(object, ancestor) {

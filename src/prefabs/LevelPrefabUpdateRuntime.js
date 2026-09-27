@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-bodies";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-bodies";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-bodies";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-bodies";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-bodies";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-bodies";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-bodies";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-bodies";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-persistence";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-persistence";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-persistence";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-persistence";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-persistence";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-persistence";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=level-rigid-bodies";
+import { LevelSession } from "./LevelSession.js?v=level-rigid-persistence";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

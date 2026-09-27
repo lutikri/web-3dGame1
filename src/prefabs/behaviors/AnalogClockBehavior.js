@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=level-rigid-bodies";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=level-rigid-persistence";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;
