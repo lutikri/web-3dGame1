@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=level-rigid-persistence";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=global-rigid-world-state";
 
 const DISMISS_MS = 300;
 

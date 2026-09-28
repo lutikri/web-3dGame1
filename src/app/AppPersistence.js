@@ -3,7 +3,8 @@ const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
 const PREFLIGHT_RETURN_TO_MENU_KEY = "operatorGame.preflight.returnToMenu";
 const DEVELOPMENT_NOTICE_STORAGE_KEY = "operatorGame.developmentNotice.v1";
-const LEVEL_RIGID_BODIES_STORAGE_KEY = "operatorGame.levelRigidBodies.v1";
+const RIGID_BODIES_STORAGE_KEY = "operatorGame.rigidBodies.v2";
+const LEGACY_LEVEL_RIGID_BODIES_STORAGE_KEY = "operatorGame.levelRigidBodies.v1";
 
 const DEFAULT_SETTINGS = Object.freeze({
   fov: 72,
@@ -43,49 +44,75 @@ export function saveProgress(progress, storage = localStorage) {
 
 export function clearProgressStorage(storage = localStorage, session = sessionStorage) {
   storage.removeItem(PROGRESS_STORAGE_KEY);
-  clearLevelRigidBodyStorage(storage);
+  clearPersistentRigidBodyStorage(storage);
   Object.keys(session)
     .filter((key) => key.startsWith("operatorGame.levelSession."))
     .forEach((key) => session.removeItem(key));
 }
 
-export function loadLevelRigidBodyStates(storage = getLocalStorage()) {
+// Persistent props are world state, not shift-local save state. A stable authored
+// rigid ID therefore represents the same physical object wherever the complex
+// is presented by a shift.
+export function loadPersistentRigidBodyStates(storage = getLocalStorage()) {
   try {
-    const parsed = JSON.parse(storage.getItem(LEVEL_RIGID_BODIES_STORAGE_KEY) ?? "{}");
-    if (!isRecord(parsed)) return {};
-    return Object.fromEntries(Object.entries(parsed)
-      .filter(([, states]) => isRecord(states))
-      .map(([levelId, states]) => [levelId, normalizeRigidBodyStates(states)]));
+    const serialized = storage.getItem(RIGID_BODIES_STORAGE_KEY);
+    if (serialized == null) return migrateLegacyRigidBodyStates(storage);
+    const current = JSON.parse(serialized);
+    if (isRecord(current)) return normalizeRigidBodyStates(current);
+    return migrateLegacyRigidBodyStates(storage);
+  } catch {
+    return migrateLegacyRigidBodyStates(storage);
+  }
+}
+
+export function savePersistentRigidBodyStates(states, storage = getLocalStorage()) {
+  const allStates = loadPersistentRigidBodyStates(storage);
+  const normalizedStates = normalizeRigidBodyStates(states);
+  if (Object.keys(normalizedStates).length) {
+    Object.assign(allStates, normalizedStates);
+  }
+  storage.setItem(RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
+  return true;
+}
+
+export function clearPersistentRigidBodyStorage(storage = getLocalStorage()) {
+  storage.removeItem(RIGID_BODIES_STORAGE_KEY);
+  storage.removeItem(LEGACY_LEVEL_RIGID_BODIES_STORAGE_KEY);
+}
+
+export function clearPersistentRigidBodyStates(ids, storage = getLocalStorage()) {
+  const allStates = loadPersistentRigidBodyStates(storage);
+  const normalizedIds = [...new Set((ids ?? []).map((id) => String(id ?? "").trim()).filter(Boolean))];
+  const changed = normalizedIds.some((id) => id in allStates);
+  normalizedIds.forEach((id) => delete allStates[id]);
+  storage.setItem(RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
+  return changed;
+}
+
+function migrateLegacyRigidBodyStates(storage) {
+  try {
+    const legacy = JSON.parse(storage.getItem(LEGACY_LEVEL_RIGID_BODIES_STORAGE_KEY) ?? "{}");
+    if (!isRecord(legacy)) return {};
+    // The old data was level-scoped. Preserve it as a best-effort migration;
+    // if a prop appeared in several shifts, the most recently stored entry wins.
+    return Object.values(legacy).reduce((states, levelStates) => ({
+      ...states,
+      ...normalizeRigidBodyStates(levelStates),
+    }), {});
   } catch {
     return {};
   }
 }
 
-export function saveLevelRigidBodyStates(levelId, states, storage = getLocalStorage()) {
-  const normalizedLevelId = String(levelId ?? "").trim();
-  if (!normalizedLevelId) return false;
-  const allStates = loadLevelRigidBodyStates(storage);
-  const normalizedStates = normalizeRigidBodyStates(states);
-  if (Object.keys(normalizedStates).length) {
-    allStates[normalizedLevelId] = { ...(allStates[normalizedLevelId] ?? {}), ...normalizedStates };
-  }
-  else delete allStates[normalizedLevelId];
-  storage.setItem(LEVEL_RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
-  return true;
+// Compatibility aliases for older callers. New runtime code must use the
+// persistent/world-state names above.
+export const loadLevelRigidBodyStates = loadPersistentRigidBodyStates;
+export function saveLevelRigidBodyStates(_levelId, states, storage = getLocalStorage()) {
+  return savePersistentRigidBodyStates(states, storage);
 }
-
-export function clearLevelRigidBodyStorage(storage = getLocalStorage()) {
-  storage.removeItem(LEVEL_RIGID_BODIES_STORAGE_KEY);
-}
-
-export function clearLevelRigidBodyStates(levelId, storage = getLocalStorage()) {
-  const normalizedLevelId = String(levelId ?? "").trim();
-  if (!normalizedLevelId) return false;
-  const allStates = loadLevelRigidBodyStates(storage);
-  if (!(normalizedLevelId in allStates)) return false;
-  delete allStates[normalizedLevelId];
-  storage.setItem(LEVEL_RIGID_BODIES_STORAGE_KEY, JSON.stringify(allStates));
-  return true;
+export const clearLevelRigidBodyStorage = clearPersistentRigidBodyStorage;
+export function clearLevelRigidBodyStates(_levelId, storage = getLocalStorage()) {
+  return clearPersistentRigidBodyStorage(storage);
 }
 
 export function loadSettings(storage = localStorage) {

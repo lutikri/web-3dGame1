@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=level-rigid-persistence";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=global-rigid-world-state";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

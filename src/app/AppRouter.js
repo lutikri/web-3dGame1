@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=level-rigid-persistence";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=global-rigid-world-state";
 
 export function createAppRouter({
   overlay,

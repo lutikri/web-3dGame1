@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=level-rigid-persistence";
+} from "../../../levels/LevelConfigSerialization.js?v=global-rigid-world-state";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

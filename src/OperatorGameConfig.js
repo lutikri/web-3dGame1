@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=level-rigid-persistence";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=level-rigid-persistence";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=level-rigid-persistence";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=level-rigid-persistence";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=global-rigid-world-state";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=global-rigid-world-state";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=global-rigid-world-state";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=global-rigid-world-state";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

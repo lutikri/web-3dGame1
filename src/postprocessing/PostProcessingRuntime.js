@@ -9,7 +9,7 @@ import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=level-rigid-persistence";
+import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=global-rigid-world-state";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,7 +17,7 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=level-rigid-persistence";
+} from "./PostProcessingShaders.js?v=global-rigid-world-state";
 
 export class PostProcessingRuntime {
   composer = null;

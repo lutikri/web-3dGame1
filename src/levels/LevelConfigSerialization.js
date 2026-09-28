@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=level-rigid-persistence";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=global-rigid-world-state";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

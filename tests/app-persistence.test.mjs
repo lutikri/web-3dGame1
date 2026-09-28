@@ -4,14 +4,14 @@ import assert from "node:assert/strict";
 import {
   acknowledgeDevelopmentNotice,
   clearProgressStorage,
-  clearLevelRigidBodyStorage,
+  clearPersistentRigidBodyStorage,
   createEmptyProgress,
-  loadLevelRigidBodyStates,
+  loadPersistentRigidBodyStates,
   loadProgress,
   loadSettings,
   requestReturnToMenuAfterPreflight,
   saveProgress,
-  saveLevelRigidBodyStates,
+  savePersistentRigidBodyStates,
   shouldShowDevelopmentNotice,
 } from "../src/app/AppPersistence.js";
 
@@ -63,9 +63,9 @@ test("app progress persistence round-trips and clears level sessions", () => {
   assert.equal(session.unrelated, "keep");
 });
 
-test("persistent rigid body transforms are isolated by level and cleared with progress", () => {
+test("persistent rigid body transforms are global complex state and cleared with progress", () => {
   const storage = createStorage();
-  saveLevelRigidBodyStates("intro-shift", {
+  savePersistentRigidBodyStates({
     Lamp01: {
       position: { x: 1, y: 2, z: 3 },
       rotation: { x: 0, y: 0, z: 0, w: 1 },
@@ -74,17 +74,17 @@ test("persistent rigid body transforms are isolated by level and cleared with pr
       sleeping: true,
     },
   }, storage);
-  saveLevelRigidBodyStates("fuel-problems", {
+  savePersistentRigidBodyStates({
     Pipe01: {
       position: { x: 5, y: 6, z: 7 },
       rotation: { x: 0, y: 0, z: 0, w: 1 },
     },
   }, storage);
-  assert.deepEqual(Object.keys(loadLevelRigidBodyStates(storage)), ["intro-shift", "fuel-problems"]);
+  assert.deepEqual(Object.keys(loadPersistentRigidBodyStates(storage)), ["Lamp01", "Pipe01"]);
 
   clearProgressStorage(storage, {});
-  assert.deepEqual(loadLevelRigidBodyStates(storage), {});
-  clearLevelRigidBodyStorage(storage);
+  assert.deepEqual(loadPersistentRigidBodyStates(storage), {});
+  clearPersistentRigidBodyStorage(storage);
 });
 
 test("preflight rerun intent is owned by app persistence", () => {

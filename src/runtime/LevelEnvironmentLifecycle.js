@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=level-rigid-persistence";
+import { LevelRuntime } from "./LevelRuntime.js?v=global-rigid-world-state";
 
 export class LevelEnvironmentLifecycle {
   constructor({

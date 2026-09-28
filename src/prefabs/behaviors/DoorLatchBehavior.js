@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=level-rigid-persistence";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=global-rigid-world-state";
 
 export function smoothDoorLatchProgress(progress) {
   return progress * progress * (3 - 2 * progress);

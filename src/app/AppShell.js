@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=level-rigid-persistence";
-import { applyLocalization, translate } from "./Localization.js?v=level-rigid-persistence";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=level-rigid-persistence";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=level-rigid-persistence";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=level-rigid-persistence";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=level-rigid-persistence";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=level-rigid-persistence";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=global-rigid-world-state";
+import { applyLocalization, translate } from "./Localization.js?v=global-rigid-world-state";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=global-rigid-world-state";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=global-rigid-world-state";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=global-rigid-world-state";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=global-rigid-world-state";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=global-rigid-world-state";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=level-rigid-persistence";
-import { createAppPanelController } from "./AppPanelController.js?v=level-rigid-persistence";
-import { createAppRouter } from "./AppRouter.js?v=level-rigid-persistence";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=level-rigid-persistence";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=level-rigid-persistence";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=level-rigid-persistence";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=level-rigid-persistence";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=level-rigid-persistence";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=level-rigid-persistence";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=level-rigid-persistence";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=level-rigid-persistence";
+} from "./AppPersistence.js?v=global-rigid-world-state";
+import { createAppPanelController } from "./AppPanelController.js?v=global-rigid-world-state";
+import { createAppRouter } from "./AppRouter.js?v=global-rigid-world-state";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=global-rigid-world-state";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=global-rigid-world-state";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=global-rigid-world-state";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=global-rigid-world-state";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=global-rigid-world-state";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=global-rigid-world-state";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=global-rigid-world-state";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=global-rigid-world-state";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

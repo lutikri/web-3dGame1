@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=level-rigid-persistence";
+} from "./ServiceTerminalCanvasRenderer.js?v=global-rigid-world-state";
 
 export function createServiceTerminalRuntime(
   parts,

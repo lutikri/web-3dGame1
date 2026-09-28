@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=level-rigid-persistence";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=level-rigid-persistence";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=global-rigid-world-state";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=global-rigid-world-state";
 
 export class DoorStateRuntime {
   constructor(options) {

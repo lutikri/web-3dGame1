@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=level-rigid-persistence";
+} from "./panels/StatusScreenMaterial.js?v=global-rigid-world-state";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

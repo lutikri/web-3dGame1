@@ -1,13 +1,13 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=level-rigid-persistence";
+} from "./behaviors/DeskDrawerBehavior.js?v=global-rigid-world-state";
 import {
-  clearLevelRigidBodyStates,
-  clearLevelRigidBodyStorage,
-  loadLevelRigidBodyStates,
-  saveLevelRigidBodyStates,
-} from "../app/AppPersistence.js?v=level-rigid-persistence";
+  clearPersistentRigidBodyStates,
+  clearPersistentRigidBodyStorage,
+  loadPersistentRigidBodyStates,
+  savePersistentRigidBodyStates,
+} from "../app/AppPersistence.js?v=global-rigid-world-state";
 
 export function createPrefabPhysicsRegistrar({
   physics,
@@ -120,7 +120,7 @@ export function createPrefabPhysicsRegistrar({
       const entries = persistentRigidBodiesByLevel.get(levelId) ?? new Map();
       entries.set(stateId, { stateId, physicsKey: runtime.rigidPrefabKey });
       persistentRigidBodiesByLevel.set(levelId, entries);
-      const savedState = loadLevelRigidBodyStates()[levelId]?.[stateId];
+      const savedState = loadPersistentRigidBodyStates()[stateId];
       if (savedState) physics.restoreRigidPrefabState(runtime.rigidPrefabKey, savedState);
     }
     return body;
@@ -198,15 +198,16 @@ export function createPrefabPhysicsRegistrar({
   }
 
   function resetPersistentObjects() {
-    clearLevelRigidBodyStorage();
+    clearPersistentRigidBodyStorage();
     persistentRigidBodiesByLevel.forEach((entries) => entries.forEach((entry) => {
       physics.resetRigidPrefab(entry.physicsKey);
     }));
   }
 
   function resetLevelPersistentObjects(levelId) {
-    clearLevelRigidBodyStates(levelId);
-    [...(persistentRigidBodiesByLevel.get(levelId)?.values() ?? [])].forEach((entry) => {
+    const entries = [...(persistentRigidBodiesByLevel.get(levelId)?.values() ?? [])];
+    clearPersistentRigidBodyStates(entries.map((entry) => entry.stateId));
+    entries.forEach((entry) => {
       physics.resetRigidPrefab(entry.physicsKey);
     });
   }
@@ -238,7 +239,7 @@ export function createPrefabPhysicsRegistrar({
     const states = Object.fromEntries([...entries.values()]
       .map((entry) => [entry.stateId, physics.getRigidPrefabState(entry.physicsKey)])
       .filter(([, state]) => state));
-    if (Object.keys(states).length) saveLevelRigidBodyStates(levelId, states);
+    if (Object.keys(states).length) savePersistentRigidBodyStates(states);
   }
 }
 

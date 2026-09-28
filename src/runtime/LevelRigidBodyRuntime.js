@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import {
-  clearLevelRigidBodyStates,
-  clearLevelRigidBodyStorage,
-  loadLevelRigidBodyStates,
-  saveLevelRigidBodyStates,
-} from "../app/AppPersistence.js?v=level-rigid-persistence";
+  clearPersistentRigidBodyStates,
+  clearPersistentRigidBodyStorage,
+  loadPersistentRigidBodyStates,
+  savePersistentRigidBodyStates,
+} from "../app/AppPersistence.js?v=global-rigid-world-state";
 
 const colliderPrefix = /^(?:UBX|UCX|USP|UCP)_/i;
 
@@ -41,7 +41,7 @@ export class LevelRigidBodyRuntime {
     });
 
     const usedIds = new Set();
-    const savedStates = loadLevelRigidBodyStates()[levelId] ?? {};
+    const savedStates = loadPersistentRigidBodyStates();
     const entries = roots.flatMap((root) => {
       const entry = this.#registerRoot(levelId, root, usedIds);
       return entry ? [entry] : [];
@@ -72,7 +72,7 @@ export class LevelRigidBodyRuntime {
   }
 
   resetPersistentObjects() {
-    clearLevelRigidBodyStorage();
+    clearPersistentRigidBodyStorage();
     this.entriesByLevel.forEach((entries) => entries.forEach((entry) => {
       if (entry.persistent) this.physics.resetRigidPrefab?.(entry.physicsKey);
     }));
@@ -83,7 +83,7 @@ export class LevelRigidBodyRuntime {
     entries.forEach((entry) => {
       if (entry.persistent) this.physics.resetRigidPrefab?.(entry.physicsKey);
     });
-    clearLevelRigidBodyStates(levelId);
+    clearPersistentRigidBodyStates(entries.filter((entry) => entry.persistent).map((entry) => entry.rigidId));
   }
 
   #registerRoot(levelId, root, usedIds) {
@@ -165,7 +165,7 @@ export class LevelRigidBodyRuntime {
       .filter((entry) => entry.persistent)
       .map((entry) => [entry.rigidId, this.physics.getRigidPrefabState?.(entry.physicsKey)])
       .filter(([, state]) => state));
-    saveLevelRigidBodyStates(levelId, states);
+    savePersistentRigidBodyStates(states);
   }
 }
 

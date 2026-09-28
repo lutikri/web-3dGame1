@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=level-rigid-persistence";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=level-rigid-persistence";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=level-rigid-persistence";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=level-rigid-persistence";
+import { createDebugHub } from "./DebugHub.js?v=global-rigid-world-state";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=global-rigid-world-state";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=global-rigid-world-state";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=global-rigid-world-state";
 
 export class DebugToolsRuntime {
   constructor(options) {

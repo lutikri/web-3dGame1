@@ -3,149 +3,149 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=level-rigid-persistence";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=global-rigid-world-state";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=level-rigid-persistence";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=level-rigid-persistence";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=level-rigid-persistence";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=level-rigid-persistence";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=level-rigid-persistence";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=level-rigid-persistence";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=level-rigid-persistence";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=level-rigid-persistence";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=level-rigid-persistence";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=level-rigid-persistence";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=level-rigid-persistence";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=level-rigid-persistence";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=level-rigid-persistence";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=level-rigid-persistence";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=level-rigid-persistence";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=level-rigid-persistence";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=level-rigid-persistence";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=level-rigid-persistence";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=level-rigid-persistence";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=level-rigid-persistence";
+} from "./game/ShiftReport.js?v=global-rigid-world-state";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=global-rigid-world-state";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=global-rigid-world-state";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=global-rigid-world-state";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=global-rigid-world-state";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=global-rigid-world-state";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=global-rigid-world-state";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=global-rigid-world-state";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=global-rigid-world-state";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=global-rigid-world-state";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=global-rigid-world-state";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=global-rigid-world-state";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=global-rigid-world-state";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=global-rigid-world-state";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=global-rigid-world-state";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=global-rigid-world-state";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=global-rigid-world-state";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=global-rigid-world-state";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=global-rigid-world-state";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=global-rigid-world-state";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=level-rigid-persistence";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=level-rigid-persistence";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=level-rigid-persistence";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=level-rigid-persistence";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=level-rigid-persistence";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=level-rigid-persistence";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=level-rigid-persistence";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=level-rigid-persistence";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=level-rigid-persistence";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=level-rigid-persistence";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=level-rigid-persistence";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=level-rigid-persistence";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=level-rigid-persistence";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=global-rigid-world-state";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=global-rigid-world-state";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=global-rigid-world-state";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=global-rigid-world-state";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=global-rigid-world-state";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=global-rigid-world-state";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=global-rigid-world-state";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=global-rigid-world-state";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=global-rigid-world-state";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=global-rigid-world-state";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=global-rigid-world-state";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=global-rigid-world-state";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=global-rigid-world-state";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=level-rigid-persistence";
+} from "./config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=level-rigid-persistence";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=level-rigid-persistence";
-import { createStatusScreen } from "./StatusScreen.js?v=level-rigid-persistence";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=level-rigid-persistence";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=level-rigid-persistence";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=level-rigid-persistence";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=level-rigid-persistence";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=level-rigid-persistence";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=level-rigid-persistence";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=level-rigid-persistence";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=level-rigid-persistence";
+} from "./scene/TextureStreaming.js?v=global-rigid-world-state";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=global-rigid-world-state";
+import { createStatusScreen } from "./StatusScreen.js?v=global-rigid-world-state";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=global-rigid-world-state";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=global-rigid-world-state";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=global-rigid-world-state";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=global-rigid-world-state";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=global-rigid-world-state";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=global-rigid-world-state";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=global-rigid-world-state";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=global-rigid-world-state";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=level-rigid-persistence";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=level-rigid-persistence";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=level-rigid-persistence";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=global-rigid-world-state";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=global-rigid-world-state";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=global-rigid-world-state";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=level-rigid-persistence";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=level-rigid-persistence";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=level-rigid-persistence";
-import { AssetCache } from "./runtime/AssetCache.js?v=level-rigid-persistence";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=level-rigid-persistence";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=level-rigid-persistence";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=level-rigid-persistence";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=level-rigid-persistence";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=level-rigid-persistence";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=level-rigid-persistence";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=level-rigid-persistence";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=level-rigid-persistence";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=level-rigid-persistence";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=level-rigid-persistence";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=level-rigid-persistence";
-import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=level-rigid-persistence";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=level-rigid-persistence";
+} from "./lighting/FluorescentBehavior.js?v=global-rigid-world-state";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=global-rigid-world-state";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=global-rigid-world-state";
+import { AssetCache } from "./runtime/AssetCache.js?v=global-rigid-world-state";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=global-rigid-world-state";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=global-rigid-world-state";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=global-rigid-world-state";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=global-rigid-world-state";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=global-rigid-world-state";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=global-rigid-world-state";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=global-rigid-world-state";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=global-rigid-world-state";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=global-rigid-world-state";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=global-rigid-world-state";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=global-rigid-world-state";
+import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=global-rigid-world-state";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=global-rigid-world-state";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=level-rigid-persistence";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=level-rigid-persistence";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=level-rigid-persistence";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=level-rigid-persistence";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=level-rigid-persistence";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=level-rigid-persistence";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=level-rigid-persistence";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=level-rigid-persistence";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=level-rigid-persistence";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=level-rigid-persistence";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=level-rigid-persistence";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=level-rigid-persistence";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=level-rigid-persistence";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=level-rigid-persistence";
-import { PlayerController } from "./player/PlayerController.js?v=level-rigid-persistence";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=level-rigid-persistence";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=level-rigid-persistence";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=level-rigid-persistence";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=level-rigid-persistence";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=level-rigid-persistence";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=level-rigid-persistence";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=level-rigid-persistence";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=level-rigid-persistence";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=level-rigid-persistence";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=level-rigid-persistence";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=level-rigid-persistence";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=level-rigid-persistence";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=level-rigid-persistence";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=level-rigid-persistence";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=level-rigid-persistence";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=level-rigid-persistence";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=level-rigid-persistence";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=level-rigid-persistence";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=level-rigid-persistence";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=level-rigid-persistence";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=level-rigid-persistence";
-import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=level-rigid-persistence";
-import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=level-rigid-persistence";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=level-rigid-persistence";
+} from "./scene/InteriorObjectRegistry.js?v=global-rigid-world-state";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=global-rigid-world-state";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=global-rigid-world-state";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=global-rigid-world-state";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=global-rigid-world-state";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=global-rigid-world-state";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=global-rigid-world-state";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=global-rigid-world-state";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=global-rigid-world-state";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=global-rigid-world-state";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=global-rigid-world-state";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=global-rigid-world-state";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=global-rigid-world-state";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=global-rigid-world-state";
+import { PlayerController } from "./player/PlayerController.js?v=global-rigid-world-state";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=global-rigid-world-state";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=global-rigid-world-state";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=global-rigid-world-state";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=global-rigid-world-state";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=global-rigid-world-state";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=global-rigid-world-state";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=global-rigid-world-state";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=global-rigid-world-state";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=global-rigid-world-state";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=global-rigid-world-state";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=global-rigid-world-state";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=global-rigid-world-state";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=global-rigid-world-state";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=global-rigid-world-state";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=global-rigid-world-state";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=global-rigid-world-state";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=global-rigid-world-state";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=global-rigid-world-state";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=global-rigid-world-state";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=global-rigid-world-state";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=global-rigid-world-state";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=global-rigid-world-state";
+import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=global-rigid-world-state";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=global-rigid-world-state";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=level-rigid-persistence";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=global-rigid-world-state";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;

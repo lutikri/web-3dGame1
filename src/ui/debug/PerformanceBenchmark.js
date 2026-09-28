@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=level-rigid-persistence";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
 
 const EFFECT_KEYS = [
   "bloom",

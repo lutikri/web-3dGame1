@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-persistence";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-persistence";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-persistence";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-persistence";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-persistence";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-persistence";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=global-rigid-world-state";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=global-rigid-world-state";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

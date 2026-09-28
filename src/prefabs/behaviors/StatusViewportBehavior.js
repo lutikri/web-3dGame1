@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=level-rigid-persistence";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=level-rigid-persistence";
+} from "../../panels/StatusScreenMaterial.js?v=global-rigid-world-state";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=global-rigid-world-state";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

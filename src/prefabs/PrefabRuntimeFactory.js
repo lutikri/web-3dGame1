@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=level-rigid-persistence";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=level-rigid-persistence";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-persistence";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-persistence";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-persistence";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=level-rigid-persistence";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-persistence";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=level-rigid-persistence";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=level-rigid-persistence";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=global-rigid-world-state";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=global-rigid-world-state";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=global-rigid-world-state";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=global-rigid-world-state";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=global-rigid-world-state";
 
 export function createPrefabRuntimeFactory({
   config,

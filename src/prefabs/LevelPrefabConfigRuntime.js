@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=level-rigid-persistence";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=level-rigid-persistence";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=level-rigid-persistence";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=level-rigid-persistence";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=level-rigid-persistence";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=level-rigid-persistence";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=level-rigid-persistence";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=global-rigid-world-state";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

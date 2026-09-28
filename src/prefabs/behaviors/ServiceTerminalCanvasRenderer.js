@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=level-rigid-persistence";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=global-rigid-world-state";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;
