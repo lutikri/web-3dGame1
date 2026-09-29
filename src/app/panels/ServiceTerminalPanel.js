@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=global-rigid-world-state";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=zone-owned-large-meshes";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

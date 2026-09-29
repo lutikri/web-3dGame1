@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=global-rigid-world-state";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=global-rigid-world-state";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=global-rigid-world-state";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=global-rigid-world-state";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=zone-owned-large-meshes";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=zone-owned-large-meshes";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=zone-owned-large-meshes";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=zone-owned-large-meshes";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,
@@ -15,6 +15,39 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   },
   render: {
     meshNameExcludes: ["convcolonly", "UBX_", "SM_Door2"],
+  },
+  renderZones: {
+    enabled: true,
+    zoneExitGraceMs: 750,
+    preloadDistance: 6,
+    releaseDistance: 8,
+    sharedZoneCount: 5,
+    volumeAliases: {
+      FacilitySubCorridor: "FacilityCorridor",
+    },
+    visibility: {
+      EntryCorridor: {
+        always: ["EntryHall"],
+      },
+      EntryHall: {
+        always: ["EntryCorridor", "FacilityCorridor"],
+      },
+      FacilityCorridor: {
+        nearby: [
+          "EntryHall",
+          "CaveMain1",
+          "Observation1",
+          "ControlBoothA",
+          "StaffRoom1",
+          "PowerBusControl",
+        ],
+      },
+      CaveMain1: { always: ["FacilityCorridor"] },
+      Observation1: { always: ["FacilityCorridor"] },
+      ControlBoothA: { always: ["FacilityCorridor"] },
+      StaffRoom1: { always: ["FacilityCorridor"] },
+      PowerBusControl: { always: ["FacilityCorridor"] },
+    },
   },
   position: new THREE.Vector3(0, 0, 0),
   rotation: new THREE.Euler(0, 0, 0),

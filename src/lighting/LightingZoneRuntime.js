@@ -10,7 +10,7 @@ export class LightingZoneRuntime {
     this.activeZone = null;
   }
 
-  registerLevel(levelId, root) {
+  registerLevel(levelId, root, { volumeAliases = {} } = {}) {
     this.disposeLevel(levelId);
     root?.updateWorldMatrix?.(true, true);
     const zones = [];
@@ -20,8 +20,10 @@ export class LightingZoneRuntime {
       if (box.isEmpty()) return;
       object.visible = false;
       const size = box.getSize(new THREE.Vector3());
+      const physicalId = object.name.slice(ZONE_PREFIX.length);
       zones.push({
-        id: object.name.slice(ZONE_PREFIX.length),
+        id: String(volumeAliases[physicalId] ?? physicalId),
+        physicalId,
         name: object.name,
         levelId,
         root,
@@ -59,13 +61,17 @@ export class LightingZoneRuntime {
       .filter((zone) => zone.box.containsPoint(position))
       .sort((left, right) => left.volume - right.volume)[0] ?? null;
     if (!emitterZone) return { zoneId: null, tier: "off", priority: 3 };
-    if (emitterZone === this.activeZone) {
+    if (emitterZone.id === this.activeZone.id) {
       return { zoneId: emitterZone.id, tier: hasFixture ? "fixture" : "simple", priority: 0 };
     }
     if (this.activeZone.adjacent.has(emitterZone)) {
       return { zoneId: emitterZone.id, tier: "simple", priority: 1 };
     }
     return { zoneId: emitterZone.id, tier: "off", priority: 2 };
+  }
+
+  getActiveZone() {
+    return this.activeZone;
   }
 
   getDebugState() {

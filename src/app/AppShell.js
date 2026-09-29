@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=global-rigid-world-state";
-import { applyLocalization, translate } from "./Localization.js?v=global-rigid-world-state";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=global-rigid-world-state";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=global-rigid-world-state";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=global-rigid-world-state";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=global-rigid-world-state";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=global-rigid-world-state";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=zone-owned-large-meshes";
+import { applyLocalization, translate } from "./Localization.js?v=zone-owned-large-meshes";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=zone-owned-large-meshes";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=zone-owned-large-meshes";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=zone-owned-large-meshes";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=zone-owned-large-meshes";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=zone-owned-large-meshes";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=global-rigid-world-state";
-import { createAppPanelController } from "./AppPanelController.js?v=global-rigid-world-state";
-import { createAppRouter } from "./AppRouter.js?v=global-rigid-world-state";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=global-rigid-world-state";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=global-rigid-world-state";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=global-rigid-world-state";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=global-rigid-world-state";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=global-rigid-world-state";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=global-rigid-world-state";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=global-rigid-world-state";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=global-rigid-world-state";
+} from "./AppPersistence.js?v=zone-owned-large-meshes";
+import { createAppPanelController } from "./AppPanelController.js?v=zone-owned-large-meshes";
+import { createAppRouter } from "./AppRouter.js?v=zone-owned-large-meshes";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=zone-owned-large-meshes";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=zone-owned-large-meshes";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=zone-owned-large-meshes";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=zone-owned-large-meshes";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=zone-owned-large-meshes";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=zone-owned-large-meshes";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=zone-owned-large-meshes";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=zone-owned-large-meshes";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";
@@ -594,6 +594,13 @@ export function createAppShell({ gameApi }) {
     if (forcedShiftOutcome) return forceShiftOutcome(forcedShiftOutcome);
     const cinematicQuality = resolveCinematicQualityCommand(command, args);
     if (cinematicQuality) return gameApi.setCinematicPostProcessingQuality?.(cinematicQuality) ?? null;
+    const frameTrace = resolveFrameTraceCommand(command, args);
+    if (frameTrace?.action === "start") {
+      return gameApi.startFrameTrace?.(frameTrace.durationSeconds, frameTrace.spikeThresholdMs) ?? null;
+    }
+    if (frameTrace?.action === "stop") return gameApi.stopFrameTrace?.() ?? null;
+    if (frameTrace?.action === "status") return gameApi.getFrameTraceStatus?.() ?? null;
+    if (frameTrace?.action === "last") return gameApi.getLastFrameTrace?.() ?? null;
     if (command === "complete") return completeLevel(levelId);
     if (command === "attempt") return attemptLevel(levelId);
     if (command === "clear") return clearLevelProgress(levelId);
@@ -620,6 +627,11 @@ export function createAppShell({ gameApi }) {
       "og('cinematic max')",
       "og('cinematic off')",
       "og('quality cinematic med')",
+      "og('trace 60')        // record 60s, spikes >= 18ms",
+      "og('trace 60 18')     // custom spike threshold",
+      "og('trace status')",
+      "og('trace stop')",
+      "og('trace last')",
       "og.complete('intro-shift')",
       "og.goto('fuel-problems')",
       "og.resetProgress()",
@@ -648,6 +660,13 @@ export function createAppShell({ gameApi }) {
       cinematic: (quality = "max") => gameApi.setCinematicPostProcessingQuality?.(quality),
       shiftPass: () => forceShiftOutcome("complete"),
       shiftFail: () => forceShiftOutcome("failed"),
+      trace: (durationSeconds = 60, spikeThresholdMs = 18) => gameApi.startFrameTrace?.(
+        durationSeconds,
+        spikeThresholdMs,
+      ),
+      stopTrace: () => gameApi.stopFrameTrace?.(),
+      traceStatus: () => gameApi.getFrameTraceStatus?.(),
+      lastTrace: () => gameApi.getLastFrameTrace?.(),
     });
     window.og = og;
     window.operatorGameConsole = og;
@@ -669,6 +688,10 @@ export function createAppShell({ gameApi }) {
       forceShiftOutcome,
       shiftPass: () => forceShiftOutcome("complete"),
       shiftFail: () => forceShiftOutcome("failed"),
+      startFrameTrace: gameApi.startFrameTrace,
+      stopFrameTrace: gameApi.stopFrameTrace,
+      getFrameTraceStatus: gameApi.getFrameTraceStatus,
+      getLastFrameTrace: gameApi.getLastFrameTrace,
     };
     console.info("[OperatorGame] Dev console commands ready. Try og('help').");
   }
@@ -763,6 +786,19 @@ export function resolveForcedShiftOutcomeCommand(command, args = []) {
   if (command === "shift" && (args[0] === "pass" || args[0] === "complete")) return "complete";
   if (command === "shift" && (args[0] === "fail" || args[0] === "failed")) return "failed";
   return null;
+}
+
+export function resolveFrameTraceCommand(command, args = []) {
+  if (command !== "trace" && command !== "frametrace") return null;
+  const action = String(args[0] ?? "start").toLowerCase();
+  if (["stop", "status", "last"].includes(action)) return { action };
+  const durationSeconds = action === "start" ? Number(args[1] ?? 60) : Number(action);
+  const thresholdIndex = action === "start" ? 2 : 1;
+  return {
+    action: "start",
+    durationSeconds: Number.isFinite(durationSeconds) ? durationSeconds : 60,
+    spikeThresholdMs: Number.isFinite(Number(args[thresholdIndex])) ? Number(args[thresholdIndex]) : 18,
+  };
 }
 
 export function resolvePauseShortcutAction({ panelOpen, currentPanel, previousPanel, activeGameplayLevelId }) {

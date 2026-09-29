@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   resolveLevelAttemptPresentation,
   resolveCinematicQualityCommand,
+  resolveFrameTraceCommand,
   resolveForcedShiftOutcomeCommand,
   resolvePauseShortcutAction,
   shouldAutoShowLevelBriefing,
@@ -25,6 +26,21 @@ test("dev console recognizes forced active-shift outcomes", () => {
   assert.equal(resolveForcedShiftOutcomeCommand("shift", ["pass"]), "complete");
   assert.equal(resolveForcedShiftOutcomeCommand("shift", ["fail"]), "failed");
   assert.equal(resolveForcedShiftOutcomeCommand("complete", ["intro-shift"]), null);
+});
+
+test("dev console recognizes frame trace duration, threshold and inspection commands", () => {
+  assert.deepEqual(resolveFrameTraceCommand("trace", ["60"]), {
+    action: "start",
+    durationSeconds: 60,
+    spikeThresholdMs: 18,
+  });
+  assert.deepEqual(resolveFrameTraceCommand("trace", ["45", "22"]), {
+    action: "start",
+    durationSeconds: 45,
+    spikeThresholdMs: 22,
+  });
+  assert.deepEqual(resolveFrameTraceCommand("trace", ["status"]), { action: "status" });
+  assert.equal(resolveFrameTraceCommand("levels", []), null);
 });
 
 test("pause shortcut only toggles gameplay pause and its settings child", () => {

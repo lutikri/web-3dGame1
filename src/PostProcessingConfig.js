@@ -12,28 +12,33 @@ export const POST_PROCESSING_CONFIG = {
       },
       "min": {
         "enabled": true,
-        "resolutionScale": 0.5,
+        "resolutionScale": 0.35,
         "blendIntensity": 0.45,
         "radius": 0.28,
         "distanceExponent": 1.5,
         "thickness": 0.65,
         "distanceFallOff": 1,
         "scale": 1.2,
-        "samples": 8,
+        "samples": 4,
         "denoiseRadius": 2,
-        "denoiseSamples": 4
+        "denoiseSamples": 2,
+        "distanceFadeStart": 6,
+        "distanceFadeEnd": 10
       },
       "med": {
         "enabled": true,
+        "resolutionScale": 0.4,
         "blendIntensity": 0.62,
         "radius": 0.38,
         "distanceExponent": 1.65,
         "thickness": 0.78,
         "distanceFallOff": 1,
         "scale": 1.65,
-        "samples": 12,
+        "samples": 6,
         "denoiseRadius": 2,
-        "denoiseSamples": 6
+        "denoiseSamples": 3,
+        "distanceFadeStart": 8,
+        "distanceFadeEnd": 12
       },
       "max": {
         "enabled": true,
@@ -44,9 +49,11 @@ export const POST_PROCESSING_CONFIG = {
         "thickness": 0.85,
         "distanceFallOff": 1,
         "scale": 2,
-        "samples": 16,
+        "samples": 10,
         "denoiseRadius": 2,
-        "denoiseSamples": 8
+        "denoiseSamples": 4,
+        "distanceFadeStart": 10,
+        "distanceFadeEnd": 16
       }
     }
   },

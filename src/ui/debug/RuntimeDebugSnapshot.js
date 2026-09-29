@@ -44,6 +44,7 @@ export function createRuntimeDebugSnapshot(source) {
     photometricPointLights: state.photometricPointLights,
     pointLightPool: state.pointLightPool,
     lightingZones: state.lightingZones,
+    renderZones: state.renderZones,
     adaptiveQuality: state.adaptiveQuality,
     interiorFans: state.interiorFans.map((fan) => fan.name),
     doors: buildDoorSnapshot(levelPrefabInstances, physicsSystem),

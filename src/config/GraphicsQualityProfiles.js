@@ -44,7 +44,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
     pointLightSlots: 12,
     photometricLightSlots: 6,
     shadowQuality: "med",
-    gtaoQuality: "max",
+    gtaoQuality: "med",
     fullTextures: true,
     effects: [
       "bloom",

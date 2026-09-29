@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "./TransformUtils.js?v=global-rigid-world-state";
+import { applyAxisRotation } from "./TransformUtils.js?v=zone-owned-large-meshes";
 
 export class InteriorObjectRegistry {
   constructor(options) {

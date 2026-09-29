@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=global-rigid-world-state";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=zone-owned-large-meshes";
 
 const DISMISS_MS = 300;
 

@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=global-rigid-world-state";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=global-rigid-world-state";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=global-rigid-world-state";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=global-rigid-world-state";
+import { createDebugHub } from "./DebugHub.js?v=zone-owned-large-meshes";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=zone-owned-large-meshes";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=zone-owned-large-meshes";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=zone-owned-large-meshes";
 
 export class DebugToolsRuntime {
   constructor(options) {

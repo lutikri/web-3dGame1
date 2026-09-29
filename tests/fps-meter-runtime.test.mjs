@@ -14,3 +14,12 @@ test("fps meter runtime samples frames and exposes a stable snapshot", () => {
   assert.equal(element.textContent, "FPS 10");
 });
 
+test("hidden fps meter keeps sampling without periodic DOM writes", () => {
+  const element = { hidden: true, textContent: "FPS --", title: "" };
+  const runtime = new FpsMeterRuntime(element);
+  runtime.update(0.13);
+  runtime.update(0.13);
+  assert.equal(runtime.snapshot().fps, 7.7);
+  assert.equal(element.textContent, "FPS --");
+});
+

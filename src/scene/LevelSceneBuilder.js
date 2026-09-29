@@ -3,14 +3,14 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=global-rigid-world-state";
+} from "../prefabs/PrefabMarkerResolver.js?v=zone-owned-large-meshes";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=global-rigid-world-state";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=global-rigid-world-state";
-import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=global-rigid-world-state";
+} from "../levels/LevelConfigOverrides.js?v=zone-owned-large-meshes";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=zone-owned-large-meshes";
+import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=zone-owned-large-meshes";
 
 export function createLevelSceneBuilder({
   scene,
@@ -26,6 +26,7 @@ export function createLevelSceneBuilder({
   collisionModels,
   prefabInstances,
   lightingZones,
+  registerRenderZones = () => {},
   registerLevelRigidBodies = () => {},
   flushLevelPersistentRigidBodies = () => {},
   getLanguage = () => "en",
@@ -40,6 +41,7 @@ export function createLevelSceneBuilder({
       scene.add(prefabGroup);
 
       const markerPrefabs = await buildEnvironment(levelId, environmentConfig, timings);
+      registerRenderZones(levelRuntime, levelId, environmentModels.get(levelId), environmentConfig.renderZones);
       registerLevelRigidBodies(levelRuntime, levelId, environmentModels.get(levelId));
       levelRuntime.defer?.(() => flushLevelPersistentRigidBodies(levelId));
       reportProgress(onProgress, 0.2);
@@ -106,7 +108,7 @@ export function createLevelSceneBuilder({
     excludedMeshes.forEach((object) => object.parent?.remove(object));
     environmentModels.set(levelId, model);
     scene.add(model);
-    lightingZones?.registerLevel(levelId, model);
+    lightingZones?.registerLevel(levelId, model, config.renderZones);
     timings.environmentSetupMs += nowMilliseconds() - setupStarted;
     return [
       ...resolvePrefabMarkers(model),

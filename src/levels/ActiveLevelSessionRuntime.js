@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=global-rigid-world-state";
+import { LevelSession } from "./LevelSession.js?v=zone-owned-large-meshes";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

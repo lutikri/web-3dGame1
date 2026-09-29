@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {
   applyServiceTerminalHover,
   getServiceTerminalHit,
-} from "./ServiceTerminalBehavior.js?v=global-rigid-world-state";
+} from "./ServiceTerminalBehavior.js?v=zone-owned-large-meshes";
 
 const smoothstep = (value) => value * value * (3 - 2 * value);
 

@@ -1,3 +1,5 @@
+import { applyGtaoContactDistance } from "./GtaoContactAo.js?v=zone-owned-large-meshes";
+
 export function createPostProcessingPresets({ config }) {
   const getShadow = (quality) =>
     config.shadows.presets?.[quality] ?? config.shadows.presets?.min ?? { enabled: true, mapSize: 512 };
@@ -28,6 +30,7 @@ export function applyGtaoPreset(pass, preset) {
     radius: preset.denoiseRadius ?? 2,
     samples: preset.denoiseSamples ?? 4,
   });
+  applyGtaoContactDistance(pass, preset);
 }
 
 export function applySsrPreset(pass, preset) {

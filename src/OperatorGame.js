@@ -3,149 +3,151 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=global-rigid-world-state";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=zone-owned-large-meshes";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=global-rigid-world-state";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=global-rigid-world-state";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=global-rigid-world-state";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=global-rigid-world-state";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=global-rigid-world-state";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=global-rigid-world-state";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=global-rigid-world-state";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=global-rigid-world-state";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=global-rigid-world-state";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=global-rigid-world-state";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=global-rigid-world-state";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=global-rigid-world-state";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=global-rigid-world-state";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=global-rigid-world-state";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=global-rigid-world-state";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=global-rigid-world-state";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=global-rigid-world-state";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=global-rigid-world-state";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=global-rigid-world-state";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=global-rigid-world-state";
+} from "./game/ShiftReport.js?v=zone-owned-large-meshes";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=zone-owned-large-meshes";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=zone-owned-large-meshes";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=zone-owned-large-meshes";
+import { FrameTraceRuntime } from "./runtime/FrameTraceRuntime.js?v=zone-owned-large-meshes";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=zone-owned-large-meshes";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=zone-owned-large-meshes";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=zone-owned-large-meshes";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=zone-owned-large-meshes";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=zone-owned-large-meshes";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=zone-owned-large-meshes";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=zone-owned-large-meshes";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=zone-owned-large-meshes";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=zone-owned-large-meshes";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=zone-owned-large-meshes";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=zone-owned-large-meshes";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=zone-owned-large-meshes";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=zone-owned-large-meshes";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=zone-owned-large-meshes";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=zone-owned-large-meshes";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=zone-owned-large-meshes";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=zone-owned-large-meshes";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=global-rigid-world-state";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=global-rigid-world-state";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=global-rigid-world-state";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=global-rigid-world-state";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=global-rigid-world-state";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=global-rigid-world-state";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=global-rigid-world-state";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=global-rigid-world-state";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=global-rigid-world-state";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=global-rigid-world-state";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=global-rigid-world-state";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=global-rigid-world-state";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=global-rigid-world-state";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=zone-owned-large-meshes";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=zone-owned-large-meshes";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=zone-owned-large-meshes";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=zone-owned-large-meshes";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=zone-owned-large-meshes";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=zone-owned-large-meshes";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=zone-owned-large-meshes";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=zone-owned-large-meshes";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=zone-owned-large-meshes";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=zone-owned-large-meshes";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=zone-owned-large-meshes";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=zone-owned-large-meshes";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=zone-owned-large-meshes";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=zone-owned-large-meshes";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
+} from "./config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=global-rigid-world-state";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=global-rigid-world-state";
-import { createStatusScreen } from "./StatusScreen.js?v=global-rigid-world-state";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=global-rigid-world-state";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=global-rigid-world-state";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=global-rigid-world-state";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=global-rigid-world-state";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=global-rigid-world-state";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=global-rigid-world-state";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=global-rigid-world-state";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=global-rigid-world-state";
+} from "./scene/TextureStreaming.js?v=zone-owned-large-meshes";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=zone-owned-large-meshes";
+import { createStatusScreen } from "./StatusScreen.js?v=zone-owned-large-meshes";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=zone-owned-large-meshes";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=zone-owned-large-meshes";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=zone-owned-large-meshes";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=zone-owned-large-meshes";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=zone-owned-large-meshes";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=zone-owned-large-meshes";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=zone-owned-large-meshes";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=zone-owned-large-meshes";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=global-rigid-world-state";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=global-rigid-world-state";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=global-rigid-world-state";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=zone-owned-large-meshes";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=zone-owned-large-meshes";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=zone-owned-large-meshes";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=global-rigid-world-state";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=global-rigid-world-state";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=global-rigid-world-state";
-import { AssetCache } from "./runtime/AssetCache.js?v=global-rigid-world-state";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=global-rigid-world-state";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=global-rigid-world-state";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=global-rigid-world-state";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=global-rigid-world-state";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=global-rigid-world-state";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=global-rigid-world-state";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=global-rigid-world-state";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=global-rigid-world-state";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=global-rigid-world-state";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=global-rigid-world-state";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=global-rigid-world-state";
-import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=global-rigid-world-state";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=global-rigid-world-state";
+} from "./lighting/FluorescentBehavior.js?v=zone-owned-large-meshes";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=zone-owned-large-meshes";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=zone-owned-large-meshes";
+import { AssetCache } from "./runtime/AssetCache.js?v=zone-owned-large-meshes";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=zone-owned-large-meshes";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=zone-owned-large-meshes";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=zone-owned-large-meshes";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=zone-owned-large-meshes";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=zone-owned-large-meshes";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=zone-owned-large-meshes";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=zone-owned-large-meshes";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=zone-owned-large-meshes";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=zone-owned-large-meshes";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=zone-owned-large-meshes";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=zone-owned-large-meshes";
+import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=zone-owned-large-meshes";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=zone-owned-large-meshes";
+import { RenderZoneRuntime } from "./scene/RenderZoneRuntime.js?v=zone-owned-large-meshes";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=global-rigid-world-state";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=global-rigid-world-state";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=global-rigid-world-state";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=global-rigid-world-state";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=global-rigid-world-state";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=global-rigid-world-state";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=global-rigid-world-state";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=global-rigid-world-state";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=global-rigid-world-state";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=global-rigid-world-state";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=global-rigid-world-state";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=global-rigid-world-state";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=global-rigid-world-state";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=global-rigid-world-state";
-import { PlayerController } from "./player/PlayerController.js?v=global-rigid-world-state";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=global-rigid-world-state";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=global-rigid-world-state";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=global-rigid-world-state";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=global-rigid-world-state";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=global-rigid-world-state";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=global-rigid-world-state";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=global-rigid-world-state";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=global-rigid-world-state";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=global-rigid-world-state";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=global-rigid-world-state";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=global-rigid-world-state";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=global-rigid-world-state";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=global-rigid-world-state";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=global-rigid-world-state";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=global-rigid-world-state";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=global-rigid-world-state";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=global-rigid-world-state";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=global-rigid-world-state";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=global-rigid-world-state";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=global-rigid-world-state";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=global-rigid-world-state";
-import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=global-rigid-world-state";
-import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=global-rigid-world-state";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=global-rigid-world-state";
+} from "./scene/InteriorObjectRegistry.js?v=zone-owned-large-meshes";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=zone-owned-large-meshes";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=zone-owned-large-meshes";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=zone-owned-large-meshes";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=zone-owned-large-meshes";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=zone-owned-large-meshes";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=zone-owned-large-meshes";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=zone-owned-large-meshes";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=zone-owned-large-meshes";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=zone-owned-large-meshes";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=zone-owned-large-meshes";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=zone-owned-large-meshes";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=zone-owned-large-meshes";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=zone-owned-large-meshes";
+import { PlayerController } from "./player/PlayerController.js?v=zone-owned-large-meshes";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=zone-owned-large-meshes";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=zone-owned-large-meshes";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=zone-owned-large-meshes";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=zone-owned-large-meshes";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=zone-owned-large-meshes";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=zone-owned-large-meshes";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=zone-owned-large-meshes";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=zone-owned-large-meshes";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=zone-owned-large-meshes";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=zone-owned-large-meshes";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=zone-owned-large-meshes";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=zone-owned-large-meshes";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=zone-owned-large-meshes";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=zone-owned-large-meshes";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=zone-owned-large-meshes";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=zone-owned-large-meshes";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=zone-owned-large-meshes";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=zone-owned-large-meshes";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=zone-owned-large-meshes";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=zone-owned-large-meshes";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=zone-owned-large-meshes";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=zone-owned-large-meshes";
+import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=zone-owned-large-meshes";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=zone-owned-large-meshes";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=global-rigid-world-state";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=zone-owned-large-meshes";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -303,6 +305,7 @@ const lightingZoneRuntime = new LightingZoneRuntime({
   adjacencyMargin: CONFIG.lighting.pointLightPool?.zoneAdjacencyMargin ?? 0.35,
   exitPadding: CONFIG.lighting.pointLightPool?.zoneExitPadding ?? 0.6,
 });
+const renderZoneRuntime = new RenderZoneRuntime({ lightingZones: lightingZoneRuntime });
 const pointLightPoolRuntime = createPointLightPoolRuntime({
   scene,
   camera,
@@ -480,6 +483,10 @@ const levelSceneBuilder = createLevelSceneBuilder({
   collisionModels: levelCollisionModels,
   prefabInstances: levelPrefabInstances,
   lightingZones: lightingZoneRuntime,
+  registerRenderZones: (levelRuntime, levelId, environmentRoot, renderZoneConfig) => {
+    const state = renderZoneRuntime.registerLevel(levelId, environmentRoot, renderZoneConfig);
+    if (state) levelRuntime.defer(() => renderZoneRuntime.disposeLevel(levelId));
+  },
   registerLevelRigidBodies: (levelRuntime, levelId, environmentRoot) => {
     const entries = levelRigidBodyRuntime?.registerLevel(levelId, environmentRoot) ?? [];
     if (entries.length) levelRuntime.defer(() => levelRigidBodyRuntime?.unregisterLevel(levelId));
@@ -745,6 +752,8 @@ const performanceBenchmark = createPerformanceBenchmark({
   rebuildPostProcessing: setupPostProcessing,
   resizeRendererTargets,
   getTextureLoadingState: () => ({ ...runtimeTextureLoading }),
+  resetRenderTiming: () => postProcessingRuntime.resetPerformanceSamples(),
+  getRenderTimingSnapshot: () => postProcessingRuntime.getPerformanceSnapshot(),
 });
 const runtimeMemoryProfiler = createRuntimeMemoryProfiler({
   renderer,
@@ -1469,6 +1478,7 @@ const renderWarmupRuntime = new RenderWarmupRuntime({
   renderer,
   scene,
   camera,
+  beginVisibilityWarmup: () => renderZoneRuntime.beginWarmup(),
   acquireForegroundLease: frameSchedulingPolicy.acquireForegroundLease,
   prepare: async () => {
     await photometricPointLightRuntime.prepare();
@@ -1577,47 +1587,78 @@ const debugToolsRuntime = new DebugToolsRuntime({
 
 const updateRuntimeTextureLoading = runtimeTextureLoadingIndicator.update;
 let gameplayPaused = false;
+const frameTraceRuntime = new FrameTraceRuntime({
+  getContext: () => ({
+    levelId: activeLevelId,
+    levelMode: activeLevelMode,
+    loadedRuntimeLevelId,
+    textureLoading: { ...runtimeTextureLoading },
+    renderZones: renderZoneRuntime.getDebugState(),
+    postProcessing: postProcessingRuntime.getPerformanceSnapshot(),
+    quality: postProcessingPolicy.snapshot(),
+    adaptiveQuality: adaptiveQualityRuntime.snapshot(),
+  }),
+  onComplete: publishFrameTraceResult,
+});
 const animationLoop = new AnimationLoop({
   clock,
   schedulingPolicy: frameSchedulingPolicy,
+  frameTrace: frameTraceRuntime,
   getPaused: () => gameplayPaused,
   pausedSteps: [(dt) => postProcessingRuntime.render(dt)],
   steps: [
     updateLoadingOverlay,
     updateFpsMeter,
     adaptiveQualityRuntime.update,
-    (dt) => { testTime += dt; },
+    traceFrameStep("simulation-clock", (dt) => { testTime += dt; }),
     updateLevelPrefabElevators,
     updateLevelPrefabBehaviors,
     levelTriggerSequenceRuntime.update,
     serviceTerminalInteractionRuntime.update,
-    (dt) => playerController.update(dt),
+    traceFrameStep("player-controller", (dt) => playerController.update(dt)),
     updateHoverTarget,
-    (dt) => itemInteractionRuntime.update(dt),
+    traceFrameStep("item-interaction", (dt) => itemInteractionRuntime.update(dt)),
     updateControlLabels,
     updateInterior,
-    (dt) => operatorPanelRuntime.update(dt),
+    traceFrameStep("operator-panel", (dt) => operatorPanelRuntime.update(dt)),
     updateActiveLevelSession,
     updateFeedback,
     updateLevelPrefabLights,
-    (dt) => pointLightPoolRuntime.update(dt),
+    traceFrameStep("point-light-pool", (dt) => pointLightPoolRuntime.update(dt)),
+    traceFrameStep("render-zones", () => renderZoneRuntime.update(camera.position)),
     updateLevelPrefabClocks,
-    (dt) => randomSpeechRuntime.update(dt),
-    (dt) => facilityActivityRuntime.update(dt),
+    traceFrameStep("random-speech", (dt) => randomSpeechRuntime.update(dt)),
+    traceFrameStep("facility-activity", (dt) => facilityActivityRuntime.update(dt)),
     updateAudioState,
     updateNarratorRadios,
-    (dt) => physicsSystem?.step(dt),
-    () => playerController.updateAfterPhysics(),
+    traceFrameStep("physics", (dt) => physicsSystem?.step(dt)),
+    traceFrameStep("player-after-physics", () => playerController.updateAfterPhysics()),
     worldBoundsRecoveryRuntime.update,
-    (dt) => levelRigidBodyRuntime?.update(dt),
-    (dt) => prefabPhysicsRegistrar.update(dt),
+    traceFrameStep("level-rigid-bodies", (dt) => levelRigidBodyRuntime?.update(dt)),
+    traceFrameStep("prefab-physics", (dt) => prefabPhysicsRegistrar.update(dt)),
     menuCameraRuntime.update,
-    (dt) => photometricPointLightRuntime.updateUniforms(dt),
+    traceFrameStep("photometric-lights", (dt) => photometricPointLightRuntime.updateUniforms(dt)),
     updateRuntimeTextureLoading,
     updateDebugOverlay,
-    (dt) => postProcessingRuntime.render(dt),
+    traceFrameStep("render-postprocessing", (dt) => postProcessingRuntime.render(dt)),
   ],
 });
+
+function traceFrameStep(label, callback) {
+  callback.frameTraceLabel = label;
+  return callback;
+}
+
+function publishFrameTraceResult(trace) {
+  let output = document.querySelector("#frameTraceResult");
+  if (!output) {
+    output = document.createElement("script");
+    output.id = "frameTraceResult";
+    output.type = "application/json";
+    document.body.append(output);
+  }
+  output.textContent = JSON.stringify(trace);
+}
 
 await init();
 
@@ -2446,6 +2487,7 @@ const getRuntimeDebugState = () => createRuntimeDebugSnapshot(() => ({
   photometricPointLights: photometricPointLightRuntime.getDebugState(),
   pointLightPool: pointLightPoolRuntime.getDebugState(),
   lightingZones: lightingZoneRuntime.getDebugState(),
+  renderZones: renderZoneRuntime.getDebugState(),
   inventory: itemInteractionRuntime.getSnapshot(),
   adaptiveQuality: adaptiveQualityRuntime.snapshot(),
   interiorFans,
@@ -2610,6 +2652,7 @@ installOperatorGameApi(window, {
       [...levelLights.entries()].map(([levelId, lights]) => [levelId, lights.map((light) => light.name)]),
     ),
     physics: physicsSystem?.getStats?.() ?? null,
+    renderZones: renderZoneRuntime.getDebugState(),
     levelSession: activeLevelSessionRuntime.snapshot(),
   }),
   findObject: findSceneObject,
@@ -2656,6 +2699,13 @@ installOperatorGameApi(window, {
     geometries: renderer.info.memory.geometries,
     textures: renderer.info.memory.textures,
   }),
+  startFrameTrace: (durationSeconds = 60, spikeThresholdMs = 18) => frameTraceRuntime.start({
+    durationSeconds,
+    spikeThresholdMs,
+  }),
+  stopFrameTrace: () => frameTraceRuntime.stop("manual"),
+  getFrameTraceStatus: () => frameTraceRuntime.status(),
+  getLastFrameTrace: () => frameTraceRuntime.getLastTrace(),
   runPerformanceBenchmark,
   getPerformanceBenchmark: () => performanceBenchmark.getLastReport(),
   applyQualityProfile,

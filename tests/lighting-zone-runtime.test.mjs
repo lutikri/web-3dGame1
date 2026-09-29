@@ -51,3 +51,19 @@ test("box gap measures separation without treating overlaps as distant", () => {
   assert.equal(boxGap(left, touching), 0);
   assert.equal(boxGap(left, separated), 3);
 });
+
+test("lighting zones treat aliased physical volumes as one logical zone", () => {
+  const root = new THREE.Group();
+  addZone(root, "Corridor", [2, 2, 2], [0, 0, 0]);
+  addZone(root, "CorridorLink", [2, 2, 2], [3, 0, 0]);
+  const zones = new LightingZoneRuntime();
+  zones.registerLevel("level", root, {
+    volumeAliases: { CorridorLink: "Corridor" },
+  });
+
+  zones.update(new THREE.Vector3(0, 0, 0));
+
+  assert.deepEqual(zones.classifyEmitter("level", new THREE.Vector3(3, 0, 0), true), {
+    zoneId: "Corridor", tier: "fixture", priority: 0,
+  });
+});

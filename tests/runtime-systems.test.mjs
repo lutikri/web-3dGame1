@@ -132,12 +132,14 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
   const environmentModels = new Map();
   const collisionModels = new Map();
   const prefabInstances = new Map();
+  let renderZoneRegistration = null;
   const environmentConfig = {
     assetPath: "room.glb",
     collisionAssetPath: "collision.glb",
     position: new THREE.Vector3(),
     rotation: new THREE.Euler(),
     scale: new THREE.Vector3(1, 1, 1),
+    renderZones: { enabled: true },
     prefabs: [],
   };
   applyLevelOverrides(environmentConfig, {
@@ -176,6 +178,9 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
     environmentModels,
     collisionModels,
     prefabInstances,
+    registerRenderZones: (runtime, levelId, root, config) => {
+      renderZoneRegistration = { runtime, levelId, root, config };
+    },
   });
 
   const levelRuntime = { levelId: "level" };
@@ -191,6 +196,10 @@ test("scene builder applies saved overrides to nested prefab markers", async () 
   assert.equal(levelRuntime.loadTimings.glbFetchMs, 8);
   assert.equal(levelRuntime.loadTimings.glbParseDracoMs, 12);
   assert.equal(levelRuntime.loadTimings.prefabCount, 2);
+  assert.equal(renderZoneRegistration.runtime, levelRuntime);
+  assert.equal(renderZoneRegistration.levelId, "level");
+  assert.equal(renderZoneRegistration.root, environmentModels.get("level"));
+  assert.equal(renderZoneRegistration.config, environmentConfig.renderZones);
   assert.equal(buildProgress[0], 0);
   assert.equal(buildProgress.at(-1), 1);
   assert.ok(buildProgress.some((value) => value > 0.2 && value < 1));

@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=global-rigid-world-state";
+} from "../../../levels/LevelConfigSerialization.js?v=zone-owned-large-meshes";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

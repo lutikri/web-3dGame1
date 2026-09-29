@@ -10,6 +10,7 @@ test("render warmup waits for visibility and settles complete frames behind the 
   documentRef.hidden = true;
   let frameTime = 0;
   let foregroundLeases = 0;
+  let visibilityWarmupLeases = 0;
   const gl = {
     SYNC_GPU_COMMANDS_COMPLETE: 1,
     ALREADY_SIGNALED: 2,
@@ -29,6 +30,10 @@ test("render warmup waits for visibility and settles complete frames behind the 
     camera: { updateMatrixWorld: () => calls.push("cameraMatrix") },
     prepare: async () => calls.push("prepare"),
     renderFrame: () => calls.push("render"),
+    beginVisibilityWarmup: () => {
+      visibilityWarmupLeases += 1;
+      return () => { visibilityWarmupLeases -= 1; };
+    },
     acquireForegroundLease: () => {
       foregroundLeases += 1;
       return () => { foregroundLeases -= 1; };
@@ -46,6 +51,7 @@ test("render warmup waits for visibility and settles complete frames behind the 
   const pending = runtime.warmup({ onProgress: (value) => progress.push(value) });
   await Promise.resolve();
   assert.equal(foregroundLeases, 1);
+  assert.equal(visibilityWarmupLeases, 1);
   assert.equal(calls.includes("render"), false);
   documentRef.hidden = false;
   documentRef.dispatchEvent(new Event("visibilitychange"));
@@ -55,6 +61,7 @@ test("render warmup waits for visibility and settles complete frames behind the 
   assert.equal(calls.filter((call) => call === "flush").length, 2);
   assert.equal(calls.filter((call) => call === "deleteSync").length, 2);
   assert.equal(foregroundLeases, 0);
+  assert.equal(visibilityWarmupLeases, 0);
   assert.equal(timing.frameCount, 2);
   assert.ok(timing.totalMs >= 0);
   assert.ok(timing.shaderCompileMs >= 0);

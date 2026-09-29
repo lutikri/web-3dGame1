@@ -21,6 +21,7 @@
 
 ### Осталось перед внешним playtest
 
+- Выполнить P0-оптимизацию render pipeline: стабилизировать frame pacing, удешевить GTAO, исключить лишний geometry prepass и собрать мелкие fullscreen-эффекты в один presentation pass.
 - Свести loudness narration, PA alarms, reactor bed, UI, шагов и единичных interaction/impact sounds через общую измеряемую систему уровней.
 - Пройти все три смены end-to-end с чистого сохранения: briefing, success/fail, restart, Shift Report, unlocks, persistence и RU/EN.
 - Финально откалибровать Qualification по прохождениям новых игроков и проверить понятность причины провала.
@@ -33,6 +34,83 @@
 - First Boot уже показывает loading-slides, однако отдельная мини-анимация спуска в Site-12 ещё не сделана.
 - Вместо отдельной жилой сцены фон меню пока использует основной Site-12 environment. Personnel accommodation остаётся возможным последующим визуальным апгрейдом, а не блокером загрузочного flow.
 - Observation Port собран частично: shutter, централизованный `Announcement System` и фиксируемая кнопка `ALARM SILENCE` готовы.
+
+## P0. Полная оптимизация render pipeline
+
+Цель — уменьшить не только среднее время кадра, но и input latency и редкие frame-time spikes. Оптимизация выполняется по измеряемым этапам; визуально важные эффекты не отключаются вслепую ради среднего FPS.
+
+### 0. Зафиксировать измеримый baseline
+
+Статус: первый измерительный срез реализован. Debug overlay и performance benchmark показывают CPU/GPU timing, frame-time percentiles, draw calls, triangles, DPR и фактический render buffer. GPU time использует `EXT_disjoint_timer_query_webgl2` с явным fallback на CPU timing. Скрытые debug overlay/FPS DOM больше не обновляются в игровом кадре, а открытый overlay ограничен 4 обновлениями в секунду. Автоматизированные контрольные viewpoints ещё предстоит добавить; при сохраняющихся регулярных spikes отдельно проверить canvas-texture upload Status Viewport и deferred full-texture upgrades.
+
+- Добавить в performance benchmark раздельные CPU/GPU frame time, `p50/p95/p99`, draw calls, triangles, активное внутреннее разрешение и приблизительную память render targets/textures.
+- По возможности использовать `EXT_disjoint_timer_query_webgl2` для GPU timing; при отсутствии extension сохранять CPU timing и явно помечать его как приблизительный.
+- Зафиксировать одинаковые benchmark viewpoints: Entrance Corridor, Facility Corridor, Control Booth и Observation Port.
+- Сравнивать `LOW / MEDIUM / HIGH` после полного texture upgrade и shader warmup, а не во время пересборки composer.
+- Основной интерактивный бюджет для текущей тестовой машины: стремиться к стабильным `<= 8.3 ms` на High; отдельно отслеживать скачки выше `16.6 ms`.
+
+### 1. Упростить production effect graph
+
+Статус: production-профили не создают SSR; его pass и render targets удалены из стандартного runtime graph. SSGI/HBAO остаются lazy-loaded experimental реализмом и по умолчанию не участвуют в пользовательских профилях. Следующий отдельный этап — объединение мелких presentation passes.
+
+- `SSR`, `SSGI` и `screen-space shadows` считать redundant/experimental для текущего вертикального среза. Они остаются выключенными во всех пользовательских профилях и не участвуют в текущей оптимизации или visual acceptance.
+- Не создавать их render targets, materials и passes, пока соответствующее качество `off`.
+- После стабилизации стандартного pipeline решить отдельной задачей, удалить ли experimental runtime полностью или оставить только dev-only sandbox. Их возможное будущее включение требует собственного performance budget и не должно наслаиваться на GTAO автоматически.
+- Зафиксировать production graph явно: `scene -> GTAO/contact AO -> bloom -> combined presentation/color -> AA`.
+
+### 2. Перестроить GTAO вокруг ограниченного contact AO
+
+Статус: реализованы облегчённые MIN/MED/MAX параметры, High переведён на MED, добавлены плавный distance fade и ранний выход после contact range. GTAO повторно использует depth texture основного composer и восстанавливает normals из depth вместо собственного geometry pass. Нужна финальная визуальная проверка тонких поручней, дверных границ и shimmer в движении.
+
+- GTAO отвечает только за близкие контактные тени, а не за глобальное освещение всего комплекса.
+- Добавить плавную дистанцию: полный эффект примерно до `8 m`, fade до `12 m`, после чего дорогой sampling loop пропускается. Не использовать резкий cutoff.
+- Для High начать с `resolutionScale 0.35–0.4`, `6–8` AO samples и `2–4` denoise samples. Более тяжёлый вариант оставить только Ultra.
+- Использовать основной depth buffer повторно и проверить восстановление normals из depth. Цель — убрать текущий отдельный geometry render в normal target. Если качество reconstructed normals неприемлемо, один общий depth/normal prepass должен обслуживать все реально активные эффекты.
+- Разделить стоимость этапов в профайлере: g-buffer/depth, AO sampling, denoise и blend.
+- Проверить тонкие поручни, двусторонние meshes, границы дверей, движение камеры и temporal shimmer до принятия новых параметров.
+
+### 3. Слить presentation passes
+
+- Объединить LUT, color adjustments, gamma, saturation, vignette, grain, sharpen, lens distortion и chromatic aberration в один fullscreen shader там, где порядок операций допускает это без изменения картинки.
+- Lens dirt/glare включить в тот же pass, если это не требует собственного multi-resolution blur; Bloom оставить отдельной многоуровневой системой.
+- Убрать лишние ping-pong copies и не держать render targets для выключенных функций.
+- Сохранить существующие artist-facing параметры и Debug Workspace API: меняется реализация проходов, а не интерфейс настройки визуала.
+
+### 4. Оптимизировать shadows, lights и geometry submission
+
+- Ограничить одновременно активные shadow-casting lights и обновлять статические shadow maps только при реальном изменении света/геометрии.
+- Render zones должны скрывать также ненужных shadow casters; gameplay, physics и persistent rigid bodies при этом продолжают работать.
+- Измерить draw calls по зонам. Повторяющиеся props переводить в instancing, а статические meshes объединять только внутри одной authored зоны и одного material contract.
+- Не объединять интерактивные, разрушаемые, animated или independently culled объекты со статическим level batch.
+- Проверить material count и accidental duplicate materials после Blender export до работы над geometry LOD.
+
+### 5. Разделить качество изображения и внутреннее разрешение эффектов
+
+- UI/DOM и финальная композиция остаются в native resolution; GTAO, bloom и другие допускающие blur эффекты получают собственный resolution scale.
+- Общий render scale использовать после снижения стоимости отдельных эффектов, а не как первый и единственный способ получить FPS.
+- FXAA оставить дешёвым вариантом. MSAA/SMAA оценивать по GPU time и качеству отдельно; профиль не должен одновременно платить за дорогой AO и избыточное сглаживание.
+
+### 6. Переделать adaptive quality под frame-time budget
+
+- Текущий аварийный порог ниже `48 FPS` заменить политикой с целевым frame time и hysteresis; ориентир High — около `100–120 FPS` на текущей тестовой машине, но решение принимает frame time, а не герцовка конкретного монитора.
+- Снижать качество ступенями: `GTAO samples -> GTAO resolution -> GTAO off -> shadows -> общий render scale`.
+- Повышать качество медленнее, чем снижать, чтобы исключить oscillation и постоянные rebuild/stutter.
+- Не пересобирать весь composer при изменении параметра, который можно обновить uniform или размером существующего target.
+- Loading, hidden tab, shader warmup и открытая debug workspace не участвуют в решении о деградации качества.
+
+### 7. Texture/VRAM и streaming — отдельный бюджет
+
+- Render-zone culling скрывает draw calls, но не обязан выгружать уже загруженные textures. Не смешивать эту задачу с frame-time оптимизацией GTAO.
+- После стабилизации passes снять реальную GPU-memory картину по форматам и mip levels; текущую приблизительную оценку debug overlay не считать доказательством фактического VRAM allocation.
+- Только при подтверждённом memory pressure вводить per-zone texture residency/eviction. Включение уже загруженной комнаты должно оставаться мгновенным и не вызывать двухсекундный upload hitch.
+
+### Критерии готовности
+
+- High не зависит от общего `50%` render scale для отзывчивого управления.
+- Benchmark показывает устойчивый frame time без регулярных composer rebuilds и скачков при переходе между render zones.
+- GTAO визуально присутствует в ближайших контактах, плавно исчезает вдали и не выполняет тяжёлый sample loop за заданной дистанцией.
+- Выключение GTAO больше не даёт двукратного прироста FPS: это означает, что AO перестал доминировать над всем кадром.
+- LOW/MEDIUM/HIGH сохраняют читаемость панелей и общую цветовую композицию на `16:9`, ultrawide и экранах с высоким DPR.
 
 ## P0. Служебный терминал вместо бумажных брифов — готово
 

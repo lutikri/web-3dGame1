@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=global-rigid-world-state";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=zone-owned-large-meshes";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

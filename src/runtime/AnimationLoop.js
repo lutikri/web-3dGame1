@@ -1,3 +1,5 @@
+import { getFrameTraceStepLabel } from "./FrameTraceRuntime.js?v=zone-owned-large-meshes";
+
 export class AnimationLoop {
   constructor({
     clock,
@@ -9,6 +11,7 @@ export class AnimationLoop {
     getFrameDelay = schedulingPolicy?.getDelayMs ?? (() => null),
     requestFrame = (callback) => requestAnimationFrame(callback),
     requestDelayedFrame = (callback, delayMs) => setTimeout(callback, delayMs),
+    frameTrace = null,
   }) {
     this.clock = clock;
     this.steps = steps;
@@ -19,6 +22,7 @@ export class AnimationLoop {
     this.getFrameDelay = getFrameDelay;
     this.requestFrame = requestFrame;
     this.requestDelayedFrame = requestDelayedFrame;
+    this.frameTrace = frameTrace;
     this.running = false;
     this.scheduleRevision = 0;
     this.unsubscribeScheduling = null;
@@ -40,11 +44,23 @@ export class AnimationLoop {
 
   #tick = () => {
     if (!this.running) return;
-    const dt = Math.min(this.clock.getDelta(), this.maxDelta);
-    if (this.getPaused()) {
-      for (const step of this.pausedSteps) step(0);
-    } else {
-      for (const step of this.steps) step(dt);
+    const rawDelta = this.clock.getDelta();
+    const dt = Math.min(rawDelta, this.maxDelta);
+    const paused = this.getPaused();
+    const tracing = this.frameTrace?.beginFrame?.({ deltaSeconds: rawDelta, paused }) === true;
+    try {
+      const steps = paused ? this.pausedSteps : this.steps;
+      const stepDt = paused ? 0 : dt;
+      for (let index = 0; index < steps.length; index += 1) {
+        const step = steps[index];
+        if (tracing) {
+          this.frameTrace.measureStep(getFrameTraceStepLabel(step, index, paused), () => step(stepDt));
+        } else {
+          step(stepDt);
+        }
+      }
+    } finally {
+      if (tracing) this.frameTrace.endFrame();
     }
     this.#scheduleNext();
   };

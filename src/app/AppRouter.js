@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=global-rigid-world-state";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=zone-owned-large-meshes";
 
 export function createAppRouter({
   overlay,

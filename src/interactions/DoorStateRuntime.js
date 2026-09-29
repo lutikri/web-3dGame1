@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { applyAxisRotation } from "../scene/TransformUtils.js?v=global-rigid-world-state";
-import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=global-rigid-world-state";
+import { applyAxisRotation } from "../scene/TransformUtils.js?v=zone-owned-large-meshes";
+import { applyDoorLatchHandleRotation } from "../prefabs/behaviors/DoorLatchBehavior.js?v=zone-owned-large-meshes";
 
 export class DoorStateRuntime {
   constructor(options) {

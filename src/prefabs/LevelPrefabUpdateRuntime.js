@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=global-rigid-world-state";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=global-rigid-world-state";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=zone-owned-large-meshes";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=zone-owned-large-meshes";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=zone-owned-large-meshes";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=zone-owned-large-meshes";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=zone-owned-large-meshes";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=zone-owned-large-meshes";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=zone-owned-large-meshes";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=zone-owned-large-meshes";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

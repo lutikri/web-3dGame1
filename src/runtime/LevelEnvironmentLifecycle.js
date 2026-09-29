@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=global-rigid-world-state";
+import { LevelRuntime } from "./LevelRuntime.js?v=zone-owned-large-meshes";
 
 export class LevelEnvironmentLifecycle {
   constructor({

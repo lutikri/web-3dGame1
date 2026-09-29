@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=global-rigid-world-state";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=zone-owned-large-meshes";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=zone-owned-large-meshes";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=zone-owned-large-meshes";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=zone-owned-large-meshes";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=zone-owned-large-meshes";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=zone-owned-large-meshes";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=zone-owned-large-meshes";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

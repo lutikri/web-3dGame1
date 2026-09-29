@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=global-rigid-world-state";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=zone-owned-large-meshes";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

@@ -5,6 +5,7 @@ export class RenderWarmupRuntime {
     camera,
     prepare,
     renderFrame,
+    beginVisibilityWarmup = () => () => {},
     acquireForegroundLease = () => () => {},
     documentRef = document,
     setTimeoutFn = window.setTimeout.bind(window),
@@ -20,6 +21,7 @@ export class RenderWarmupRuntime {
       camera,
       prepare,
       renderFrame,
+      beginVisibilityWarmup,
       acquireForegroundLease,
       documentRef,
       setTimeoutFn,
@@ -34,6 +36,7 @@ export class RenderWarmupRuntime {
   warmup = async ({ onProgress } = {}) => {
     const totalStarted = nowMilliseconds();
     const releaseForegroundLease = this.acquireForegroundLease?.() ?? (() => {});
+    const releaseVisibilityWarmup = this.beginVisibilityWarmup?.() ?? (() => {});
     try {
       reportProgress(onProgress, 0);
       const prepareStarted = nowMilliseconds();
@@ -82,6 +85,7 @@ export class RenderWarmupRuntime {
         frameCount,
       };
     } finally {
+      releaseVisibilityWarmup();
       releaseForegroundLease();
     }
   };

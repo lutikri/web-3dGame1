@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
 
 const EFFECT_KEYS = [
   "bloom",
@@ -22,6 +22,8 @@ export function createPerformanceBenchmark({
   rebuildPostProcessing,
   resizeRendererTargets,
   getTextureLoadingState,
+  resetRenderTiming = () => {},
+  getRenderTimingSnapshot = () => null,
 }) {
   const defaultPostProcessingConfig = structuredClone(config.postProcessing);
   let running = null;
@@ -65,12 +67,22 @@ export function createPerformanceBenchmark({
       for (const preset of presets) {
         applyPreset(preset, postProcessingBackup, qualityBackup);
         await wait(warmupMs);
+        resetRenderTiming();
         const sample = await measureFrames(sampleMs);
+        const timing = getRenderTimingSnapshot();
         const row = {
           preset: preset.name,
           avgFps: Number(sample.avgFps.toFixed(1)),
           avgFrameMs: Number(sample.avgFrameMs.toFixed(2)),
+          p50FrameMs: Number(sample.p50FrameMs.toFixed(2)),
           p95FrameMs: Number(sample.p95FrameMs.toFixed(2)),
+          p99FrameMs: Number(sample.p99FrameMs.toFixed(2)),
+          worstFrameMs: Number(sample.worstFrameMs.toFixed(2)),
+          cpuP95Ms: timing?.cpu?.p95Ms ?? null,
+          gpuP95Ms: timing?.gpu?.samples ? timing.gpu.p95Ms : null,
+          gpuTiming: timing?.gpu?.available ? "EXT" : "N/A",
+          drawCalls: timing?.render?.calls ?? renderer.info?.render?.calls ?? 0,
+          triangles: timing?.render?.triangles ?? renderer.info?.render?.triangles ?? 0,
           dpr: renderer.getPixelRatio(),
           buffer: `${renderer.domElement.width}x${renderer.domElement.height}`,
           msaa: getComposerSamples(),
@@ -233,11 +245,13 @@ export function measureBenchmarkFrames(durationMs, requestFrame = requestAnimati
       if (time - startTime < durationMs) return requestFrame(sampleFrame);
       const elapsedSeconds = Math.max(0.001, (time - startTime) / 1000);
       const sorted = [...frameTimes].sort((a, b) => a - b);
-      const p95Index = Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95));
       resolve({
         avgFps: frameTimes.length / elapsedSeconds,
         avgFrameMs: frameTimes.length ? frameTimes.reduce((sum, value) => sum + value, 0) / frameTimes.length : 0,
-        p95FrameMs: sorted[Math.max(0, p95Index)] ?? 0,
+        p50FrameMs: percentile(sorted, 0.5),
+        p95FrameMs: percentile(sorted, 0.95),
+        p99FrameMs: percentile(sorted, 0.99),
+        worstFrameMs: sorted.at(-1) ?? 0,
       });
     }
     requestFrame(sampleFrame);
@@ -255,11 +269,13 @@ function showReport(report, screenshots) {
   loading.textContent = `Texture streaming: ${report.loadingProfile.durationSeconds}s, ${report.loadingProfile.completedTextures}/${report.loadingProfile.textureCount} textures, worst frame ${report.loadingProfile.worstFrameMs}ms`;
   const table = document.createElement("table");
   table.style.cssText = "border-collapse:collapse;width:100%;margin-bottom:20px";
-  table.innerHTML = "<thead><tr><th>Preset</th><th>FPS</th><th>Avg ms</th><th>P95 ms</th><th>DPR</th><th>Buffer</th><th>MSAA</th></tr></thead>";
+  table.innerHTML = "<thead><tr><th>Preset</th><th>FPS</th><th>Avg</th><th>P50</th><th>P95</th><th>P99</th><th>Worst</th><th>CPU P95</th><th>GPU P95</th><th>Calls</th><th>Triangles</th><th>DPR</th><th>Buffer</th><th>MSAA</th></tr></thead>";
   const body = document.createElement("tbody");
   report.results.forEach((row) => {
     const tr = document.createElement("tr");
-    [row.preset, row.avgFps, row.avgFrameMs, row.p95FrameMs, row.dpr, row.buffer, row.msaa].forEach((value) => {
+    [row.preset, row.avgFps, row.avgFrameMs, row.p50FrameMs, row.p95FrameMs, row.p99FrameMs,
+      row.worstFrameMs, row.cpuP95Ms, row.gpuP95Ms, row.drawCalls, row.triangles,
+      row.dpr, row.buffer, row.msaa].forEach((value) => {
       const td = document.createElement("td");
       td.textContent = String(value);
       td.style.cssText = "border:1px solid #365044;padding:5px 8px";
@@ -301,4 +317,10 @@ function nextFrame(callback) {
 
 function measureFrames(durationMs) {
   return measureBenchmarkFrames(durationMs);
+}
+
+function percentile(sorted, ratio) {
+  if (!sorted.length) return 0;
+  const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1));
+  return sorted[index];
 }

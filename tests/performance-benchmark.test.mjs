@@ -9,5 +9,8 @@ test("performance benchmark summarizes animation frame timing", async () => {
   const sample = await measureBenchmarkFrames(32, requestFrame);
   assert.equal(sample.avgFps, 62.5);
   assert.equal(sample.avgFrameMs, 16);
+  assert.equal(sample.p50FrameMs, 16);
   assert.equal(sample.p95FrameMs, 16);
+  assert.equal(sample.p99FrameMs, 16);
+  assert.equal(sample.worstFrameMs, 16);
 });

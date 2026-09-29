@@ -22,11 +22,11 @@ test("facility GLB preserves runtime material slot names without embedding sourc
     0,
   );
 
-  assert.deepEqual(materialNames, [
+  assert.deepEqual([...materialNames].sort(), [
     "M_Pipes1", "MI_COL", "M_Desk1", "M_ControlPost1", "M_Beams",
     "M_TrimTiles1", "M_Details1", "M_InteriorCab", "M_Posters1",
     "M_Posters2", "M_Rock1", "M_Signs1", "M_TrimConcrete1",
-  ]);
+  ].sort());
   assert.ok(assignedPrimitiveCount > 400);
   assert.equal((glb.images ?? []).length, 0);
   assert.equal((glb.textures ?? []).length, 0);

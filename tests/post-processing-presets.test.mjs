@@ -22,10 +22,23 @@ test("post-processing preset policy falls back to off presets", () => {
 test("post-processing preset applicators configure pass APIs", () => {
   const calls = [];
   const gtaoPass = {
+    gtaoMaterial: {
+      uniforms: {
+        contactAoFadeStart: { value: 0 },
+        contactAoFadeEnd: { value: 0 },
+      },
+    },
     updateGtaoMaterial: (value) => calls.push(value),
     updatePdMaterial: (value) => calls.push(value),
   };
-  applyGtaoPreset(gtaoPass, { samples: 12, denoiseSamples: 6 });
+  applyGtaoPreset(gtaoPass, {
+    samples: 12,
+    denoiseSamples: 6,
+    distanceFadeStart: 7,
+    distanceFadeEnd: 11,
+  });
   assert.equal(calls[0].samples, 12);
   assert.equal(calls[1].samples, 6);
+  assert.equal(gtaoPass.gtaoMaterial.uniforms.contactAoFadeStart.value, 7);
+  assert.equal(gtaoPass.gtaoMaterial.uniforms.contactAoFadeEnd.value, 11);
 });

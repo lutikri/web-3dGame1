@@ -41,7 +41,10 @@ test("post-processing runtime owns disabled fallback lifecycle", () => {
   runtime.setup();
   runtime.render(0.016);
   runtime.resize(800, 600);
-  assert.deepEqual(runtime.inspect(), { composer: false, realismComposer: false });
+  const inspection = runtime.inspect();
+  assert.equal(inspection.composer, false);
+  assert.equal(inspection.realismComposer, false);
+  assert.equal(inspection.performance.cpu.samples, 1);
   runtime.dispose();
   assert.deepEqual(calls, [
     "realism.setup", "render", "realism.resize", "realism.dispose", "assets.dispose",

@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=global-rigid-world-state";
+} from "./FluorescentBehavior.js?v=zone-owned-large-meshes";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

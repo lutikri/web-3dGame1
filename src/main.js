@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=global-rigid-world-state";
-import { applyLocalization } from "./app/Localization.js?v=global-rigid-world-state";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=global-rigid-world-state";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=global-rigid-world-state";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=global-rigid-world-state";
+import { createPreflight } from "./app/Preflight.js?v=zone-owned-large-meshes";
+import { applyLocalization } from "./app/Localization.js?v=zone-owned-large-meshes";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=zone-owned-large-meshes";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=zone-owned-large-meshes";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=zone-owned-large-meshes";
 
-const APP_BUILD_REVISION = "global-rigid-world-state";
+const APP_BUILD_REVISION = "zone-owned-large-meshes";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=global-rigid-world-state`);
+await import(`./OperatorGame.js?v=zone-owned-large-meshes`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=global-rigid-world-state`);
+const { createAppShell } = await import(`./app/AppShell.js?v=zone-owned-large-meshes`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=global-rigid-world-state`
+    `./runtime/RuntimeSmoke.js?v=zone-owned-large-meshes`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -15,7 +15,7 @@ export class FpsMeterRuntime {
     this.fps = this.frameCount / this.elapsed;
     this.frameCount = 0;
     this.elapsed = 0;
-    if (this.element) {
+    if (this.element && !this.element.hidden) {
       this.element.textContent = `FPS ${Math.round(this.fps)}`;
       this.element.title = `${this.frameTimeMs.toFixed(1)} ms/frame`;
     }

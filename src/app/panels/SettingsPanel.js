@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=global-rigid-world-state";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=global-rigid-world-state";
+} from "./ServiceTerminalCanvasRenderer.js?v=zone-owned-large-meshes";
 
 export function createServiceTerminalRuntime(
   parts,

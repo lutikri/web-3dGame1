@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=global-rigid-world-state";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=zone-owned-large-meshes";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",

@@ -29,3 +29,46 @@ test("debug overlay runtime renders camera, quality, memory and interaction stat
   assert.match(element.textContent, /hover: Button/);
 });
 
+test("hidden debug overlay does not collect memory or mutate DOM", () => {
+  let memoryReads = 0;
+  const element = { hidden: true, textContent: "unchanged" };
+  const runtime = new DebugOverlayRuntime({
+    element,
+    memoryProfiler: { getSnapshot: () => { memoryReads += 1; return {}; } },
+  });
+  runtime.update();
+  assert.equal(memoryReads, 0);
+  assert.equal(element.textContent, "unchanged");
+});
+
+test("visible debug overlay is throttled independently from the render loop", () => {
+  let now = 1000;
+  let memoryReads = 0;
+  const element = { hidden: false, textContent: "" };
+  const runtime = new DebugOverlayRuntime({
+    element,
+    now: () => now,
+    updateIntervalMs: 250,
+    camera: { position: new THREE.Vector3(), rotation: new THREE.Euler() },
+    renderer: { shadowMap: { enabled: false } },
+    postProcessing: {},
+    realismPostProcessing: {},
+    memoryProfiler: { getSnapshot: () => {
+      memoryReads += 1;
+      return { textureObjectCount: 0, geometryObjectCount: 0 };
+    } },
+    getQuality: () => ({}),
+    formatMemory: () => "n/a",
+    formatTexture: () => "n/a",
+    isNoclipEnabled: () => false,
+    getNoclipSpeed: () => 1,
+    getHoveredObject: () => null,
+  });
+  runtime.update();
+  now += 100;
+  runtime.update();
+  now += 150;
+  runtime.update();
+  assert.equal(memoryReads, 2);
+});
+

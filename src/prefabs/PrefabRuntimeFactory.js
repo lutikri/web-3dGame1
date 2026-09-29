@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=global-rigid-world-state";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=global-rigid-world-state";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=global-rigid-world-state";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=global-rigid-world-state";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=global-rigid-world-state";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=global-rigid-world-state";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=global-rigid-world-state";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=global-rigid-world-state";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=global-rigid-world-state";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=global-rigid-world-state";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=global-rigid-world-state";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=zone-owned-large-meshes";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=zone-owned-large-meshes";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=zone-owned-large-meshes";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=zone-owned-large-meshes";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=zone-owned-large-meshes";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=zone-owned-large-meshes";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=zone-owned-large-meshes";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=zone-owned-large-meshes";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=zone-owned-large-meshes";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=zone-owned-large-meshes";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=zone-owned-large-meshes";
 
 export function createPrefabRuntimeFactory({
   config,

@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=global-rigid-world-state";
+import { translateRequired } from "./Localization.js?v=zone-owned-large-meshes";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

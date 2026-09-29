@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { applyAxisRotation } from "../../scene/TransformUtils.js?v=global-rigid-world-state";
+import { applyAxisRotation } from "../../scene/TransformUtils.js?v=zone-owned-large-meshes";
 
 function applyClockHandRotation(hand, axis, angle) {
   if (!hand) return;

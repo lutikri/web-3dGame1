@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=global-rigid-world-state";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=zone-owned-large-meshes";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {

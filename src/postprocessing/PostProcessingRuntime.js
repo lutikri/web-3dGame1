@@ -5,11 +5,16 @@ import { LUTPass } from "three/addons/postprocessing/LUTPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
-import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-import { applyGtaoPreset, applySsrPreset } from "./PostProcessingPresets.js?v=global-rigid-world-state";
+import {
+  bindGtaoToComposerDepth,
+  configureGtaoContactAo,
+  createComposerTarget,
+} from "./GtaoContactAo.js?v=zone-owned-large-meshes";
+import { applyGtaoPreset } from "./PostProcessingPresets.js?v=zone-owned-large-meshes";
+import { RenderPerformanceMonitor } from "./RenderPerformanceMonitor.js?v=zone-owned-large-meshes";
 import {
   chromaticAberrationShader,
   colorAdjustmentShader,
@@ -17,12 +22,11 @@ import {
   lensDistortionShader,
   lensEffectsShader,
   sharpenShader,
-} from "./PostProcessingShaders.js?v=global-rigid-world-state";
+} from "./PostProcessingShaders.js?v=zone-owned-large-meshes";
 
 export class PostProcessingRuntime {
   composer = null;
   gtaoPass = null;
-  ssrPass = null;
   bloomPass = null;
   lutPass = null;
   colorAdjustmentPass = null;
@@ -57,6 +61,7 @@ export class PostProcessingRuntime {
       applyColorAdjustments, applyLensDistortion, applyLensEffects,
       setupRealism, renderRealism, resizeRealism, disposeRealism, inspectRealism,
     });
+    this.performanceMonitor = new RenderPerformanceMonitor({ renderer });
   }
 
   setup() {
@@ -81,27 +86,14 @@ export class PostProcessingRuntime {
         Math.max(1, Math.round(window.innerWidth * scale)),
         Math.max(1, Math.round(window.innerHeight * scale)));
       configureGtaoGeometryCoverage(this.gtaoPass);
+      configureGtaoContactAo(this.gtaoPass, gtao);
+      bindGtaoToComposerDepth(this.gtaoPass);
       this.gtaoPass.output = GTAOPass.OUTPUT.Default;
       applyGtaoPreset(this.gtaoPass, gtao);
       this.composer.addPass(this.gtaoPass);
       this.gtaoPass.setSize(
         Math.max(1, Math.round(window.innerWidth * scale)),
         Math.max(1, Math.round(window.innerHeight * scale)));
-    }
-
-    const ssr = this.presets.getSsr(quality.ssr);
-    if (ssr.enabled) {
-      const scale = ssr.resolutionScale ?? 1;
-      this.ssrPass = new SSRPass({
-        renderer: this.renderer,
-        scene: this.scene,
-        camera: this.camera,
-        width: Math.max(1, Math.round(window.innerWidth * scale)),
-        height: Math.max(1, Math.round(window.innerHeight * scale)),
-      });
-      this.ssrPass.output = SSRPass.OUTPUT.Default;
-      applySsrPreset(this.ssrPass, ssr);
-      this.composer.addPass(this.ssrPass);
     }
 
     if (config.bloom.enabled) {
@@ -177,9 +169,14 @@ export class PostProcessingRuntime {
   }
 
   render(dt) {
-    if (this.renderRealism(dt)) return;
-    if (this.composer) this.composer.render();
-    else this.renderer.render(this.scene, this.camera);
+    this.performanceMonitor.beginFrame();
+    try {
+      if (this.renderRealism(dt)) return;
+      if (this.composer) this.composer.render();
+      else this.renderer.render(this.scene, this.camera);
+    } finally {
+      this.performanceMonitor.endFrame();
+    }
   }
 
   resize(width, height) {
@@ -196,13 +193,6 @@ export class PostProcessingRuntime {
         Math.max(1, Math.round(renderHeight * scale)),
       );
     }
-    if (this.ssrPass) {
-      const scale = this.presets.getSsr(quality.ssr).resolutionScale ?? 1;
-      this.ssrPass.setSize(
-        Math.max(1, Math.round(renderWidth * scale)),
-        Math.max(1, Math.round(renderHeight * scale)),
-      );
-    }
     this.sharpenPass?.uniforms.resolution.value.set(renderWidth, renderHeight);
     this.#updateFxaa();
     this.resizeRealism(width, height);
@@ -212,17 +202,30 @@ export class PostProcessingRuntime {
     this.#revision += 1;
     this.#disposeStandard();
     this.disposeRealism();
+    this.performanceMonitor.dispose();
     this.assets.dispose();
   }
 
   inspect() {
-    return { composer: Boolean(this.composer), ...this.inspectRealism() };
+    return {
+      composer: Boolean(this.composer),
+      performance: this.performanceMonitor.snapshot(),
+      ...this.inspectRealism(),
+    };
+  }
+
+  resetPerformanceSamples() {
+    this.performanceMonitor.reset();
+  }
+
+  getPerformanceSnapshot() {
+    return this.performanceMonitor.snapshot();
   }
 
   #disposeStandard() {
     this.composer?.passes?.forEach((pass) => pass.dispose?.());
     this.composer?.dispose?.();
-    for (const key of ["composer", "gtaoPass", "ssrPass", "bloomPass", "lutPass", "colorAdjustmentPass",
+    for (const key of ["composer", "gtaoPass", "bloomPass", "lutPass", "colorAdjustmentPass",
       "sharpenPass", "lensDistortionPass", "chromaticAberrationPass", "lensEffectsPass", "fxaaPass", "smaaPass"]) {
       this[key] = null;
     }
@@ -230,14 +233,16 @@ export class PostProcessingRuntime {
 
   #createComposer() {
     const requested = Number(this.config.postProcessing.antiAliasing?.msaaSamples ?? 0);
-    if (!this.renderer.capabilities.isWebGL2 || requested <= 0) return new EffectComposer(this.renderer);
-    const samples = Math.min(requested, this.renderer.capabilities.maxSamples ?? requested);
+    if (!this.renderer.capabilities.isWebGL2) return new EffectComposer(this.renderer);
+    const samples = requested > 0
+      ? Math.min(requested, this.renderer.capabilities.maxSamples ?? requested)
+      : 0;
     const ratio = this.renderer.getPixelRatio();
-    const target = new THREE.WebGLRenderTarget(
+    const target = createComposerTarget(
       Math.max(1, Math.round(window.innerWidth * ratio)),
       Math.max(1, Math.round(window.innerHeight * ratio)),
-      { type: THREE.HalfFloatType });
-    target.samples = samples;
+      { samples },
+    );
     return new EffectComposer(this.renderer, target);
   }
 

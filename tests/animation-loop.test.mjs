@@ -97,3 +97,28 @@ test("animation loop wakes immediately when scheduling state changes", () => {
   assert.equal(steps, 2);
   loop.stop();
 });
+
+test("animation loop reports raw frame delta and named runtime step timings to an active trace", () => {
+  const calls = [];
+  const simulation = () => calls.push("simulation");
+  simulation.frameTraceLabel = "simulation-step";
+  const frameTrace = {
+    beginFrame: (frame) => { calls.push(["begin", frame]); return true; },
+    measureStep: (label, callback) => { calls.push(["measure", label]); callback(); },
+    endFrame: () => calls.push("end"),
+  };
+  const loop = new AnimationLoop({
+    clock: { getDelta: () => 0.2 },
+    steps: [simulation],
+    frameTrace,
+    requestFrame: () => {},
+  });
+  loop.start();
+  loop.stop();
+  assert.deepEqual(calls, [
+    ["begin", { deltaSeconds: 0.2, paused: false }],
+    ["measure", "simulation-step"],
+    "simulation",
+    "end",
+  ]);
+});
