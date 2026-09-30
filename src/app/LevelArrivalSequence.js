@@ -1,4 +1,4 @@
-import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=zone-owned-large-meshes";
+import { getTerminalShiftConfig, resolveTerminalShiftId } from "./panels/ServiceTerminalShiftConfig.js?v=combined-presentation-pass";
 
 const MONTHS = {
   en: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],

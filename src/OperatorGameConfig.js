@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=zone-owned-large-meshes";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=zone-owned-large-meshes";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=zone-owned-large-meshes";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=zone-owned-large-meshes";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=combined-presentation-pass";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=combined-presentation-pass";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=combined-presentation-pass";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=combined-presentation-pass";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

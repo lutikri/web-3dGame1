@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=zone-owned-large-meshes";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=combined-presentation-pass";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

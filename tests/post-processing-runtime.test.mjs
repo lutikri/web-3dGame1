@@ -5,6 +5,7 @@ import * as THREE from "three";
 
 import {
   configureGtaoGeometryCoverage,
+  createPresentationPassAlias,
   PostProcessingRuntime,
 } from "../src/postprocessing/PostProcessingRuntime.js";
 
@@ -82,4 +83,23 @@ test("post-processing targets follow the capped renderer pixel ratio", () => {
   assert.deepEqual(gtaoSizes, [[480, 270]]);
   assert.deepEqual(sharpenSizes, [[960, 540]]);
   assert.deepEqual(realismSizes, [[1920, 1080]]);
+});
+
+test("presentation pass aliases preserve the public tuning API without extra passes", () => {
+  const pass = {
+    material: { name: "presentation" },
+    uniforms: {
+      sharpenAmount: { value: 0.2 },
+      chromaticAberrationAmount: { value: 0.001 },
+    },
+  };
+  const sharpen = createPresentationPassAlias(pass, { amount: "sharpenAmount" });
+  const chromatic = createPresentationPassAlias(pass, { amount: "chromaticAberrationAmount" });
+
+  sharpen.uniforms.amount.value = 0.5;
+  chromatic.uniforms.amount.value = 0.003;
+
+  assert.equal(pass.uniforms.sharpenAmount.value, 0.5);
+  assert.equal(pass.uniforms.chromaticAberrationAmount.value, 0.003);
+  assert.equal(sharpen.material, pass.material);
 });

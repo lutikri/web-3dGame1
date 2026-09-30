@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=zone-owned-large-meshes";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=zone-owned-large-meshes";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=zone-owned-large-meshes";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=zone-owned-large-meshes";
+import { createDebugHub } from "./DebugHub.js?v=combined-presentation-pass";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=combined-presentation-pass";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=combined-presentation-pass";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=combined-presentation-pass";
 
 export class DebugToolsRuntime {
   constructor(options) {

@@ -4,7 +4,7 @@ import {
   clearPersistentRigidBodyStorage,
   loadPersistentRigidBodyStates,
   savePersistentRigidBodyStates,
-} from "../app/AppPersistence.js?v=zone-owned-large-meshes";
+} from "../app/AppPersistence.js?v=combined-presentation-pass";
 
 const colliderPrefix = /^(?:UBX|UCX|USP|UCP)_/i;
 

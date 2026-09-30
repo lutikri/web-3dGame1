@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=zone-owned-large-meshes";
+import { LevelRuntime } from "./LevelRuntime.js?v=combined-presentation-pass";
 
 export class LevelEnvironmentLifecycle {
   constructor({

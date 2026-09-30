@@ -3,14 +3,14 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=zone-owned-large-meshes";
+} from "../prefabs/PrefabMarkerResolver.js?v=combined-presentation-pass";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=zone-owned-large-meshes";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=zone-owned-large-meshes";
-import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=zone-owned-large-meshes";
+} from "../levels/LevelConfigOverrides.js?v=combined-presentation-pass";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=combined-presentation-pass";
+import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=combined-presentation-pass";
 
 export function createLevelSceneBuilder({
   scene,

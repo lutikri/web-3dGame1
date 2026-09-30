@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
 
 const EFFECT_KEYS = [
   "bloom",

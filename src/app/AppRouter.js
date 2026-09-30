@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=zone-owned-large-meshes";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=combined-presentation-pass";
 
 export function createAppRouter({
   overlay,

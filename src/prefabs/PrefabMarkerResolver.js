@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=zone-owned-large-meshes";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=zone-owned-large-meshes";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=combined-presentation-pass";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=combined-presentation-pass";
 
 const MARKER_PREFIX = "PF_";
 

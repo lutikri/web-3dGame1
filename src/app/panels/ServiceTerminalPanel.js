@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=zone-owned-large-meshes";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=combined-presentation-pass";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

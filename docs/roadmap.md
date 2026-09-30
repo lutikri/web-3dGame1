@@ -51,7 +51,7 @@
 
 ### 1. Упростить production effect graph
 
-Статус: production-профили не создают SSR; его pass и render targets удалены из стандартного runtime graph. SSGI/HBAO остаются lazy-loaded experimental реализмом и по умолчанию не участвуют в пользовательских профилях. Следующий отдельный этап — объединение мелких presentation passes.
+Статус: production-профили не создают SSR; его pass и render targets удалены из стандартного runtime graph. SSGI/HBAO остаются lazy-loaded experimental реализмом и по умолчанию не участвуют в пользовательских профилях. Мелкие presentation-эффекты объединены в один fullscreen pass.
 
 - `SSR`, `SSGI` и `screen-space shadows` считать redundant/experimental для текущего вертикального среза. Они остаются выключенными во всех пользовательских профилях и не участвуют в текущей оптимизации или visual acceptance.
 - Не создавать их render targets, materials и passes, пока соответствующее качество `off`.
@@ -70,6 +70,8 @@
 - Проверить тонкие поручни, двусторонние meshes, границы дверей, движение камеры и temporal shimmer до принятия новых параметров.
 
 ### 3. Слить presentation passes
+
+Статус: color adjustments, gamma/saturation, vignette, grain, sharpen, lens distortion, chromatic aberration и lens dirt/glare объединены в один `PresentationPass`. Bloom остаётся отдельным multi-resolution эффектом, а display LUT — отдельным проходом на явной границе цветового пространства. Старые artist-facing и Debug Workspace API сохранены через uniform aliases без дополнительных render passes. Нужна визуальная сверка цветокоррекции, резкости и линзовых эффектов в движении.
 
 - Объединить LUT, color adjustments, gamma, saturation, vignette, grain, sharpen, lens distortion и chromatic aberration в один fullscreen shader там, где порядок операций допускает это без изменения картинки.
 - Lens dirt/glare включить в тот же pass, если это не требует собственного multi-resolution blur; Bloom оставить отдельной многоуровневой системой.

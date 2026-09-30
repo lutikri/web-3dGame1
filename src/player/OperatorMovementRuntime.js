@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=zone-owned-large-meshes";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=combined-presentation-pass";
 
 export function createOperatorMovementRuntime({
   config,

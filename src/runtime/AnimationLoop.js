@@ -1,4 +1,4 @@
-import { getFrameTraceStepLabel } from "./FrameTraceRuntime.js?v=zone-owned-large-meshes";
+import { getFrameTraceStepLabel } from "./FrameTraceRuntime.js?v=combined-presentation-pass";
 
 export class AnimationLoop {
   constructor({

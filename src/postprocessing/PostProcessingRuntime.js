@@ -12,23 +12,20 @@ import {
   bindGtaoToComposerDepth,
   configureGtaoContactAo,
   createComposerTarget,
-} from "./GtaoContactAo.js?v=zone-owned-large-meshes";
-import { applyGtaoPreset } from "./PostProcessingPresets.js?v=zone-owned-large-meshes";
-import { RenderPerformanceMonitor } from "./RenderPerformanceMonitor.js?v=zone-owned-large-meshes";
+} from "./GtaoContactAo.js?v=combined-presentation-pass";
+import { applyGtaoPreset } from "./PostProcessingPresets.js?v=combined-presentation-pass";
+import { RenderPerformanceMonitor } from "./RenderPerformanceMonitor.js?v=combined-presentation-pass";
 import {
-  chromaticAberrationShader,
-  colorAdjustmentShader,
   compatibleFxaaShader,
-  lensDistortionShader,
-  lensEffectsShader,
-  sharpenShader,
-} from "./PostProcessingShaders.js?v=zone-owned-large-meshes";
+  presentationShader,
+} from "./PostProcessingShaders.js?v=combined-presentation-pass";
 
 export class PostProcessingRuntime {
   composer = null;
   gtaoPass = null;
   bloomPass = null;
   lutPass = null;
+  presentationPass = null;
   colorAdjustmentPass = null;
   sharpenPass = null;
   lensDistortionPass = null;
@@ -114,35 +111,43 @@ export class PostProcessingRuntime {
     this.composer.addPass(new OutputPass());
     if (lut?.enabled && lut.assetPath && lut.inputColorSpace !== "linear") this.#setupLut(lut, revision, addLut);
 
+    const presentationEnabled = config.colorAdjustments?.enabled || config.sharpen?.enabled
+      || config.lensEffects?.enabled || config.lensDistortion?.enabled
+      || config.chromaticAberration?.enabled;
+    if (presentationEnabled) {
+      this.presentationPass = new ShaderPass(presentationShader);
+      this.presentationPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+      this.composer.addPass(this.presentationPass);
+    }
     if (config.colorAdjustments?.enabled) {
-      this.colorAdjustmentPass = new ShaderPass(colorAdjustmentShader);
+      this.colorAdjustmentPass = createPresentationPassAlias(this.presentationPass, COLOR_UNIFORMS);
       this.applyColorAdjustments(this.colorAdjustmentPass, 0);
-      this.composer.addPass(this.colorAdjustmentPass);
     }
     if (config.sharpen?.enabled) {
-      this.sharpenPass = new ShaderPass(sharpenShader);
-      this.sharpenPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+      this.sharpenPass = createPresentationPassAlias(this.presentationPass, {
+        resolution: "resolution", amount: "sharpenAmount",
+      });
       this.sharpenPass.uniforms.amount.value = config.sharpen.amount ?? 0;
-      this.composer.addPass(this.sharpenPass);
     }
     if (config.lensEffects?.enabled) {
-      this.lensEffectsPass = new ShaderPass(lensEffectsShader);
+      this.lensEffectsPass = createPresentationPassAlias(this.presentationPass, LENS_EFFECT_UNIFORMS);
       this.applyLensEffects(this.lensEffectsPass);
-      this.composer.addPass(this.lensEffectsPass);
       const dirt = config.lensEffects.lensDirt ?? {};
       if (dirt.enabled && dirt.assetPath) this.assets.loadLensDirt(dirt).then(() => {
         if (revision === this.#revision && this.lensEffectsPass) this.applyLensEffects(this.lensEffectsPass);
       }).catch((error) => console.warn("[PostProcessingRuntime] Failed to load lens dirt", error));
     }
     if (config.lensDistortion?.enabled) {
-      this.lensDistortionPass = new ShaderPass(lensDistortionShader);
+      this.lensDistortionPass = createPresentationPassAlias(this.presentationPass, {
+        barrelAmount: "barrelAmount", fisheyeAmount: "fisheyeAmount",
+      });
       this.applyLensDistortion(this.lensDistortionPass, 0);
-      this.composer.addPass(this.lensDistortionPass);
     }
-    if (config.chromaticAberration.enabled) {
-      this.chromaticAberrationPass = new ShaderPass(chromaticAberrationShader);
+    if (config.chromaticAberration?.enabled) {
+      this.chromaticAberrationPass = createPresentationPassAlias(this.presentationPass, {
+        amount: "chromaticAberrationAmount",
+      });
       this.chromaticAberrationPass.uniforms.amount.value = config.chromaticAberration.amount;
-      this.composer.addPass(this.chromaticAberrationPass);
     }
     const requestedMsaa = Number(config.antiAliasing?.msaaSamples ?? 0);
     const selectedAa = config.antiAliasing?.method ?? "off";
@@ -193,7 +198,7 @@ export class PostProcessingRuntime {
         Math.max(1, Math.round(renderHeight * scale)),
       );
     }
-    this.sharpenPass?.uniforms.resolution.value.set(renderWidth, renderHeight);
+    (this.presentationPass ?? this.sharpenPass)?.uniforms.resolution.value.set(renderWidth, renderHeight);
     this.#updateFxaa();
     this.resizeRealism(width, height);
   }
@@ -225,7 +230,7 @@ export class PostProcessingRuntime {
   #disposeStandard() {
     this.composer?.passes?.forEach((pass) => pass.dispose?.());
     this.composer?.dispose?.();
-    for (const key of ["composer", "gtaoPass", "bloomPass", "lutPass", "colorAdjustmentPass",
+    for (const key of ["composer", "gtaoPass", "bloomPass", "lutPass", "presentationPass", "colorAdjustmentPass",
       "sharpenPass", "lensDistortionPass", "chromaticAberrationPass", "lensEffectsPass", "fxaaPass", "smaaPass"]) {
       this[key] = null;
     }
@@ -254,6 +259,28 @@ export class PostProcessingRuntime {
       1 / Math.max(1, window.innerHeight * ratio));
   }
 
+}
+
+const COLOR_UNIFORMS = [
+  "brightness", "contrast", "saturation", "gamma", "temperature", "tint", "emergency",
+  "emergencyTint", "emergencyTintStrength", "vignetteStrength", "vignetteRadius",
+  "vignetteSoftness", "grainAmount", "time",
+];
+
+const LENS_EFFECT_UNIFORMS = [
+  "bloomTexture", "lensDirtTexture", "hasBloomTexture", "hasLensDirtTexture", "glareEnabled",
+  "glareStrength", "glareThreshold", "glareLength", "glareTint", "ghostsEnabled", "ghostStrength",
+  "ghostThreshold", "ghostSpacing", "ghostTint", "ghostChromaticAberration", "haloStrength",
+  "haloRadius", "dirtEnabled", "dirtStrength", "dirtSpread", "dirtTint",
+];
+
+export function createPresentationPassAlias(pass, mapping) {
+  if (!pass?.uniforms) return null;
+  const entries = Array.isArray(mapping) ? mapping.map((name) => [name, name]) : Object.entries(mapping);
+  return {
+    material: pass.material,
+    uniforms: Object.fromEntries(entries.map(([alias, source]) => [alias, pass.uniforms[source]])),
+  };
 }
 
 export function configureGtaoGeometryCoverage(pass) {

@@ -1,13 +1,13 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=zone-owned-large-meshes";
+} from "./behaviors/DeskDrawerBehavior.js?v=combined-presentation-pass";
 import {
   clearPersistentRigidBodyStates,
   clearPersistentRigidBodyStorage,
   loadPersistentRigidBodyStates,
   savePersistentRigidBodyStates,
-} from "../app/AppPersistence.js?v=zone-owned-large-meshes";
+} from "../app/AppPersistence.js?v=combined-presentation-pass";
 
 export function createPrefabPhysicsRegistrar({
   physics,

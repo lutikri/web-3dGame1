@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=zone-owned-large-meshes";
+} from "./ServiceTerminalCanvasRenderer.js?v=combined-presentation-pass";
 
 export function createServiceTerminalRuntime(
   parts,

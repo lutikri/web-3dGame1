@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=zone-owned-large-meshes";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=combined-presentation-pass";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

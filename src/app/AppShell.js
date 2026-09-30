@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=zone-owned-large-meshes";
-import { applyLocalization, translate } from "./Localization.js?v=zone-owned-large-meshes";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=zone-owned-large-meshes";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=zone-owned-large-meshes";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=zone-owned-large-meshes";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=zone-owned-large-meshes";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=zone-owned-large-meshes";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=combined-presentation-pass";
+import { applyLocalization, translate } from "./Localization.js?v=combined-presentation-pass";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=combined-presentation-pass";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=combined-presentation-pass";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=combined-presentation-pass";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=combined-presentation-pass";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=combined-presentation-pass";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=zone-owned-large-meshes";
-import { createAppPanelController } from "./AppPanelController.js?v=zone-owned-large-meshes";
-import { createAppRouter } from "./AppRouter.js?v=zone-owned-large-meshes";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=zone-owned-large-meshes";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=zone-owned-large-meshes";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=zone-owned-large-meshes";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=zone-owned-large-meshes";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=zone-owned-large-meshes";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=zone-owned-large-meshes";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=zone-owned-large-meshes";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=zone-owned-large-meshes";
+} from "./AppPersistence.js?v=combined-presentation-pass";
+import { createAppPanelController } from "./AppPanelController.js?v=combined-presentation-pass";
+import { createAppRouter } from "./AppRouter.js?v=combined-presentation-pass";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=combined-presentation-pass";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=combined-presentation-pass";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=combined-presentation-pass";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=combined-presentation-pass";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=combined-presentation-pass";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=combined-presentation-pass";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=combined-presentation-pass";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=combined-presentation-pass";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

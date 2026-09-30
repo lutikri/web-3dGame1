@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=zone-owned-large-meshes";
+import { translateRequired } from "./Localization.js?v=combined-presentation-pass";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=zone-owned-large-meshes";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=zone-owned-large-meshes";
+import { registerPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=combined-presentation-pass";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=combined-presentation-pass";
 
 export function resolveBriefSocketPrefabs(root, config = {}, language = "en") {
   if (!root || config.enabled === false) return [];

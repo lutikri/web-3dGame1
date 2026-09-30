@@ -1,4 +1,4 @@
-import { applyGtaoContactDistance } from "./GtaoContactAo.js?v=zone-owned-large-meshes";
+import { applyGtaoContactDistance } from "./GtaoContactAo.js?v=combined-presentation-pass";
 
 export function createPostProcessingPresets({ config }) {
   const getShadow = (quality) =>

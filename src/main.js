@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=zone-owned-large-meshes";
-import { applyLocalization } from "./app/Localization.js?v=zone-owned-large-meshes";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=zone-owned-large-meshes";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=zone-owned-large-meshes";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=zone-owned-large-meshes";
+import { createPreflight } from "./app/Preflight.js?v=combined-presentation-pass";
+import { applyLocalization } from "./app/Localization.js?v=combined-presentation-pass";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=combined-presentation-pass";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=combined-presentation-pass";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=combined-presentation-pass";
 
-const APP_BUILD_REVISION = "zone-owned-large-meshes";
+const APP_BUILD_REVISION = "combined-presentation-pass";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=zone-owned-large-meshes`);
+await import(`./OperatorGame.js?v=combined-presentation-pass`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=zone-owned-large-meshes`);
+const { createAppShell } = await import(`./app/AppShell.js?v=combined-presentation-pass`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=zone-owned-large-meshes`
+    `./runtime/RuntimeSmoke.js?v=combined-presentation-pass`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

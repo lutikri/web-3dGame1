@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=zone-owned-large-meshes";
+} from "./FluorescentBehavior.js?v=combined-presentation-pass";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

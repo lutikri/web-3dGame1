@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=zone-owned-large-meshes";
+import { getServiceTerminalContent } from "../../app/panels/ServiceTerminalContent.js?v=combined-presentation-pass";
 
 export const TERMINAL_WIDTH = 1600;
 export const TERMINAL_HEIGHT = 900;

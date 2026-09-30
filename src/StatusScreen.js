@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "./panels/StatusScreenMaterial.js?v=zone-owned-large-meshes";
+} from "./panels/StatusScreenMaterial.js?v=combined-presentation-pass";
 
 const SCREEN_W = 1024;
 const SCREEN_H = 512;

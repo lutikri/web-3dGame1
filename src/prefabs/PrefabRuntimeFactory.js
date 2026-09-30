@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=zone-owned-large-meshes";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=zone-owned-large-meshes";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=zone-owned-large-meshes";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=zone-owned-large-meshes";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=zone-owned-large-meshes";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=zone-owned-large-meshes";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=zone-owned-large-meshes";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=zone-owned-large-meshes";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=zone-owned-large-meshes";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=zone-owned-large-meshes";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=zone-owned-large-meshes";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=combined-presentation-pass";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=combined-presentation-pass";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=combined-presentation-pass";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=combined-presentation-pass";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=combined-presentation-pass";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=combined-presentation-pass";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=combined-presentation-pass";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=combined-presentation-pass";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=combined-presentation-pass";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=combined-presentation-pass";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=combined-presentation-pass";
 
 export function createPrefabRuntimeFactory({
   config,

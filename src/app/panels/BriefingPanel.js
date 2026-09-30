@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=zone-owned-large-meshes";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=combined-presentation-pass";
 
 const DISMISS_MS = 300;
 

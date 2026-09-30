@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=zone-owned-large-meshes";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=zone-owned-large-meshes";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=combined-presentation-pass";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=zone-owned-large-meshes";
+} from "./UiAudioInteractionRuntime.js?v=combined-presentation-pass";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=zone-owned-large-meshes";
+} from "../config/GraphicsHardwareTiers.js?v=combined-presentation-pass";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=zone-owned-large-meshes";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=combined-presentation-pass";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

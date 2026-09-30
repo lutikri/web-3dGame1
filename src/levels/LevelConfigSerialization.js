@@ -1,4 +1,4 @@
-import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=zone-owned-large-meshes";
+import { getPrefabPlacement } from "../prefabs/PrefabPlacementMetadata.js?v=combined-presentation-pass";
 
 const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "assetPath",
