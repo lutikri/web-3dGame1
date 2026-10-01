@@ -3,14 +3,14 @@ import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
   resolvePrefabMarkers,
-} from "../prefabs/PrefabMarkerResolver.js?v=combined-presentation-pass";
+} from "../prefabs/PrefabMarkerResolver.js?v=compact-loading-game";
 import {
   applyPrefabOverrideEntries,
   applyPrefabStatePolicies,
   getPendingPrefabOverrides,
-} from "../levels/LevelConfigOverrides.js?v=combined-presentation-pass";
-import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=combined-presentation-pass";
-import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=combined-presentation-pass";
+} from "../levels/LevelConfigOverrides.js?v=compact-loading-game";
+import { resolveBriefSocketPrefabs } from "../game/BriefPlacementRuntime.js?v=compact-loading-game";
+import { isLevelRigidDescendant } from "../runtime/LevelRigidBodyRuntime.js?v=compact-loading-game";
 
 export function createLevelSceneBuilder({
   scene,

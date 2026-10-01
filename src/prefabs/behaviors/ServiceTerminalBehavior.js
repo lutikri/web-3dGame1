@@ -1,7 +1,7 @@
 import {
   createServiceTerminalCanvasRenderer,
   uvToTerminalPixels,
-} from "./ServiceTerminalCanvasRenderer.js?v=combined-presentation-pass";
+} from "./ServiceTerminalCanvasRenderer.js?v=compact-loading-game";
 
 export function createServiceTerminalRuntime(
   parts,

@@ -1,4 +1,4 @@
-import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=combined-presentation-pass";
+import { getServiceTerminalContent } from "./ServiceTerminalContent.js?v=compact-loading-game";
 
 const TAB_ORDER = ["brief", "guide", "reports", "archive", "notices"];
 

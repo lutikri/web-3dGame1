@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   createLoadingOverlay,
+  getFilledSegmentCount,
   getLoadingStageScale,
   pickBootBackground,
   updateLoadingStageScale,
@@ -19,6 +20,13 @@ test("repeat boot chooses one runtime background from the configured set", () =>
   assert.equal(pickBootBackground(backgrounds, () => 0), "one.webp");
   assert.equal(pickBootBackground(backgrounds, () => 0.5), "two.webp");
   assert.equal(pickBootBackground(backgrounds, () => 0.999), "three.webp");
+});
+
+test("repeat boot progress fills discrete blocks instead of drawing a continuous strip", () => {
+  assert.equal(getFilledSegmentCount(0, 48), 0);
+  assert.equal(getFilledSegmentCount(50, 48), 24);
+  assert.equal(getFilledSegmentCount(94, 48), 45);
+  assert.equal(getFilledSegmentCount(100, 48), 48);
 });
 
 test("loading stage writes a browser-compatible numeric scale", () => {
@@ -44,11 +52,13 @@ test("loading stage writes a browser-compatible numeric scale", () => {
 test("repeat boot systems expose their real lifecycle state", () => {
   const classes = new Set(["is-active"]);
   const output = { textContent: "LOADING" };
+  const attributes = new Map();
   const row = {
     classList: {
       add: (value) => classes.add(value),
       remove: (...values) => values.forEach((value) => classes.delete(value)),
     },
+    setAttribute: (name, value) => attributes.set(name, value),
     querySelector: (selector) => selector === "b" ? output : null,
   };
   const stage = { style: { setProperty() {} } };
@@ -66,6 +76,7 @@ test("repeat boot systems expose their real lifecycle state", () => {
 
   assert.equal(runtime.setBootSystem("siteData", "complete", "LOADED"), true);
   assert.deepEqual([...classes], ["is-complete"]);
+  assert.equal(attributes.get("aria-busy"), "false");
   assert.equal(output.textContent, "LOADED");
   assert.equal(runtime.setBootSystem("missing", "complete", "READY"), false);
 });

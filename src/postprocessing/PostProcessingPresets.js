@@ -1,4 +1,4 @@
-import { applyGtaoContactDistance } from "./GtaoContactAo.js?v=combined-presentation-pass";
+import { applyGtaoContactDistance } from "./GtaoContactAo.js?v=compact-loading-game";
 
 export function createPostProcessingPresets({ config }) {
   const getShadow = (quality) =>

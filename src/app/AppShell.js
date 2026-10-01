@@ -1,10 +1,10 @@
-import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=combined-presentation-pass";
-import { applyLocalization, translate } from "./Localization.js?v=combined-presentation-pass";
-import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=combined-presentation-pass";
-import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=combined-presentation-pass";
-import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=combined-presentation-pass";
-import { createSubtitleQueue } from "./SubtitleQueue.js?v=combined-presentation-pass";
-import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=combined-presentation-pass";
+import { LEVEL_DEFINITIONS as LEVELS } from "../levels/LevelRegistry.js?v=compact-loading-game";
+import { applyLocalization, translate } from "./Localization.js?v=compact-loading-game";
+import { createIntroTutorialFlow } from "./IntroTutorialFlow.js?v=compact-loading-game";
+import { createLevelTutorialRuntime } from "./LevelTutorialRuntime.js?v=compact-loading-game";
+import { createTutorialWorldHintPresenter } from "./TutorialWorldHintPresenter.js?v=compact-loading-game";
+import { createSubtitleQueue } from "./SubtitleQueue.js?v=compact-loading-game";
+import { createTutorialHintQueue } from "./TutorialHintQueue.js?v=compact-loading-game";
 import {
   clearPreflightStorage,
   clearProgressStorage,
@@ -14,17 +14,17 @@ import {
   requestReturnToMenuAfterPreflight,
   saveProgress,
   saveSettings as persistSettings,
-} from "./AppPersistence.js?v=combined-presentation-pass";
-import { createAppPanelController } from "./AppPanelController.js?v=combined-presentation-pass";
-import { createAppRouter } from "./AppRouter.js?v=combined-presentation-pass";
-import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=combined-presentation-pass";
-import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=combined-presentation-pass";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=combined-presentation-pass";
-import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=combined-presentation-pass";
-import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=combined-presentation-pass";
-import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=combined-presentation-pass";
-import { createSettingsPanel } from "./panels/SettingsPanel.js?v=combined-presentation-pass";
-import { createBriefingPanel } from "./panels/BriefingPanel.js?v=combined-presentation-pass";
+} from "./AppPersistence.js?v=compact-loading-game";
+import { createAppPanelController } from "./AppPanelController.js?v=compact-loading-game";
+import { createAppRouter } from "./AppRouter.js?v=compact-loading-game";
+import { createLevelArrivalSequence, getLevelArrivalConfig } from "./LevelArrivalSequence.js?v=compact-loading-game";
+import { createUiAudioInteractionRuntime } from "./UiAudioInteractionRuntime.js?v=compact-loading-game";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=compact-loading-game";
+import { createMainMenuPanel } from "./panels/MainMenuPanel.js?v=compact-loading-game";
+import { createPausePanel, isGameplayPausePanel } from "./panels/PausePanel.js?v=compact-loading-game";
+import { createLevelSelectPanel } from "./panels/LevelSelectPanel.js?v=compact-loading-game";
+import { createSettingsPanel } from "./panels/SettingsPanel.js?v=compact-loading-game";
+import { createBriefingPanel } from "./panels/BriefingPanel.js?v=compact-loading-game";
 
 const INTRO_LEVEL_ID = "intro-shift";
 const EARLY_MENU_MUSIC_KEY = "Menu_Musical5";

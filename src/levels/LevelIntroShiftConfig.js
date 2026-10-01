@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=combined-presentation-pass";
-import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=combined-presentation-pass";
-import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=combined-presentation-pass";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=combined-presentation-pass";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=combined-presentation-pass";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=compact-loading-game";
+import { LEVEL_INTRO_SHIFT_OVERRIDES } from "../generated/LevelIntroShiftOverrides.js?v=compact-loading-game";
+import { createPrefabInstance } from "../prefabs/PrefabRegistry.js?v=compact-loading-game";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=compact-loading-game";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=compact-loading-game";
 
 function blenderPosition(x, y, z) {
   return new THREE.Vector3(x, z, -y);

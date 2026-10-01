@@ -6,8 +6,7 @@ This is a static Three.js browser game. `index.html` boots `src/main.js`; `src/O
 
 1. Read `docs/project-structure.md` and the nearest nested `AGENTS.md` for files in scope.
 2. Run `git status --short`. Existing changes belong to the user; never rewrite or discard them.
-3. Run `npm run check` before implementation.
-4. State which system owns the requested behavior and which files are expected to change.
+3. State which system owns the requested behavior and which files are expected to change.
 
 ## Scope discipline
 
@@ -32,13 +31,57 @@ This is a static Three.js browser game. `index.html` boots `src/main.js`; `src/O
 
 See `docs/project-structure.md` for the current module map and `docs/game/` for game design. Do not copy design rules back into this file.
 
-## Verification
+## Development and verification policy
 
-1. Add or update a regression test for behavior or lifecycle changes.
-2. Run `npm run check`.
-3. After JavaScript/module-path changes, run `npm run stamp-modules -- <short-revision-name>` and then `npm run check` again.
-4. For level ownership/lifecycle changes, run `http://localhost:5173/?runtimeSmoke=1` and require `[RuntimeSmoke] PASS`.
-5. Use manual browser testing only for visual feel, input comfort, timing, and presentation.
-6. Unless the user explicitly asks Codex to inspect the running visuals, give the user a short manual visual checklist instead of using browser automation for subjective visual acceptance. Automated checks still own syntax, regression, and lifecycle verification.
+Keep routine development lightweight. Do not run the full test suite before starting a task.
 
-At handoff, report changed systems, verification performed, and any unverified visual/runtime risk.
+### During normal development
+
+- Do not run `npm run check` before implementation unless there is a specific reason to establish a baseline.
+- After a small or localized change, run only the test file(s) directly related to the changed system when useful.
+- For trivial presentation, copy, config, CSS, or clearly isolated changes, tests may be skipped unless the change has meaningful behavioral risk.
+- If a bug is being investigated, use the smallest relevant test or command needed to reproduce and verify the problem.
+- Do not repeatedly run the same tests after every intermediate edit.
+
+### Full verification
+
+Run `npm run check` only when one of these applies:
+
+- the user explicitly asks for full verification;
+- the task changes shared architecture, lifecycle, routing, persistence, physics, or other broadly used runtime behavior;
+- several systems were changed together;
+- a regression is suspected outside the directly changed system;
+- preparing a final production/deployment-ready state.
+
+Prefer running the full suite once, after implementation is complete.
+
+For level ownership/lifecycle changes, run `http://localhost:5173/?runtimeSmoke=1` and require `[RuntimeSmoke] PASS`.
+
+### Module revision stamping
+
+Do not run `npm run stamp-modules` during normal development or routine Codex tasks.
+
+Module revision stamping is a deployment/release operation. Run it only when the user explicitly asks to prepare or deploy a production build.
+
+Do not create large repository-wide diffs solely for cache-busting during ordinary development.
+
+### Repository scope
+
+- Inspect only files relevant to the current task.
+- Do not broadly inspect or search `assets/`, `source-assets/`, `docs/archive/`, or `src/generated/` unless the task specifically involves them.
+- Avoid dumping large diffs, full generated files, complete test-suite output, or large asset listings into the working context unless necessary.
+
+### Manual verification
+
+- Use manual browser testing only for visual feel, input comfort, timing, and presentation.
+- Unless the user explicitly asks Codex to inspect the running visuals, give the user a short manual visual checklist instead of using browser automation for subjective visual acceptance. Automated checks still own syntax, regression, and lifecycle verification.
+
+### Handoff
+
+At the end of a normal task, report:
+
+- what was changed;
+- which targeted tests, if any, were run;
+- what was not verified.
+
+Do not run additional full-project verification merely to produce a handoff summary.

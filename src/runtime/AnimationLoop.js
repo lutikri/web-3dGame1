@@ -1,4 +1,4 @@
-import { getFrameTraceStepLabel } from "./FrameTraceRuntime.js?v=combined-presentation-pass";
+import { getFrameTraceStepLabel } from "./FrameTraceRuntime.js?v=compact-loading-game";
 
 export class AnimationLoop {
   constructor({

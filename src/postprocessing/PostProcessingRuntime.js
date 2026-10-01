@@ -12,13 +12,13 @@ import {
   bindGtaoToComposerDepth,
   configureGtaoContactAo,
   createComposerTarget,
-} from "./GtaoContactAo.js?v=combined-presentation-pass";
-import { applyGtaoPreset } from "./PostProcessingPresets.js?v=combined-presentation-pass";
-import { RenderPerformanceMonitor } from "./RenderPerformanceMonitor.js?v=combined-presentation-pass";
+} from "./GtaoContactAo.js?v=compact-loading-game";
+import { applyGtaoPreset } from "./PostProcessingPresets.js?v=compact-loading-game";
+import { RenderPerformanceMonitor } from "./RenderPerformanceMonitor.js?v=compact-loading-game";
 import {
   compatibleFxaaShader,
   presentationShader,
-} from "./PostProcessingShaders.js?v=combined-presentation-pass";
+} from "./PostProcessingShaders.js?v=compact-loading-game";
 
 export class PostProcessingRuntime {
   composer = null;

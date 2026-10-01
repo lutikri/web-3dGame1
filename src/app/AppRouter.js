@@ -1,4 +1,4 @@
-import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=combined-presentation-pass";
+import { updateLoadingStageScale } from "../ui/LoadingOverlay.js?v=compact-loading-game";
 
 export function createAppRouter({
   overlay,

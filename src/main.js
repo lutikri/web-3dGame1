@@ -1,11 +1,11 @@
-import { createPreflight } from "./app/Preflight.js?v=combined-presentation-pass";
-import { applyLocalization } from "./app/Localization.js?v=combined-presentation-pass";
-import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
-import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=combined-presentation-pass";
-import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=combined-presentation-pass";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=combined-presentation-pass";
+import { createPreflight } from "./app/Preflight.js?v=compact-loading-game";
+import { applyLocalization } from "./app/Localization.js?v=compact-loading-game";
+import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v=compact-loading-game";
+import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=compact-loading-game";
+import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=compact-loading-game";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=compact-loading-game";
 
-const APP_BUILD_REVISION = "combined-presentation-pass";
+const APP_BUILD_REVISION = "compact-loading-game";
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();
@@ -42,11 +42,11 @@ if (bootChoice.firstRun) {
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;
 }
-await import(`./OperatorGame.js?v=combined-presentation-pass`);
+await import(`./OperatorGame.js?v=compact-loading-game`);
 
 if (!bootChoice.firstRun) preflight.remove();
 
-const { createAppShell } = await import(`./app/AppShell.js?v=combined-presentation-pass`);
+const { createAppShell } = await import(`./app/AppShell.js?v=compact-loading-game`);
 window.operatorGameApp = createAppShell({
   gameApi: window.operatorGameDebug,
 });
@@ -64,7 +64,7 @@ if (firstBootSlides) {
 
 if (runtimeSmokeMode) {
   const { runLevelRuntimeSmoke } = await import(
-    `./runtime/RuntimeSmoke.js?v=combined-presentation-pass`
+    `./runtime/RuntimeSmoke.js?v=compact-loading-game`
   );
   await window.operatorGameApp.initialRouteReady;
   try {

@@ -216,13 +216,7 @@ Malformed markers, unknown prefab types, and duplicate stable names should fail 
 
 ## Verification
 
-Use this order for code changes:
-
-```bash
-npm run check
-npm run stamp-modules -- <short-revision-name>
-npm run check
-```
+Follow the lightweight development and verification policy in the root `AGENTS.md`. In particular, routine changes do not require a baseline full-suite run or module revision stamping. Module stamping is reserved for an explicitly requested production/deployment preparation.
 
 For lifecycle changes, also run the browser smoke route:
 

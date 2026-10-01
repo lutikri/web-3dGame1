@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=combined-presentation-pass";
-import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=combined-presentation-pass";
-import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=combined-presentation-pass";
-import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=combined-presentation-pass";
-import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=combined-presentation-pass";
-import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=combined-presentation-pass";
-import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=combined-presentation-pass";
+import { applyPrefabSpotTarget } from "./PrefabRuntimeFactory.js?v=compact-loading-game";
+import { resetBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=compact-loading-game";
+import { resetControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=compact-loading-game";
+import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=compact-loading-game";
+import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact-loading-game";
+import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
+import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=compact-loading-game";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {

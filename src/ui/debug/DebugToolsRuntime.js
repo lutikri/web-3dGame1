@@ -1,7 +1,7 @@
-import { createDebugHub } from "./DebugHub.js?v=combined-presentation-pass";
-import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=combined-presentation-pass";
-import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=combined-presentation-pass";
-import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=combined-presentation-pass";
+import { createDebugHub } from "./DebugHub.js?v=compact-loading-game";
+import { createPostProcessingDebugPanel } from "./panels/PostProcessingDebugPanel.js?v=compact-loading-game";
+import { createSceneDebugPanels } from "./panels/SceneDebugPanels.js?v=compact-loading-game";
+import { createDebugWorkspace } from "./workspace/DebugWorkspace.js?v=compact-loading-game";
 
 export class DebugToolsRuntime {
   constructor(options) {

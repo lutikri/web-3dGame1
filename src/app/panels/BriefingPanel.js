@@ -1,4 +1,4 @@
-import { BRIEFING_UI } from "../BriefingUiConfig.js?v=combined-presentation-pass";
+import { BRIEFING_UI } from "../BriefingUiConfig.js?v=compact-loading-game";
 
 const DISMISS_MS = 300;
 

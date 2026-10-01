@@ -21,6 +21,12 @@ export function getLoadingStageScale(viewportWidth, viewportHeight) {
   return Math.min(width / LOADING_STAGE_WIDTH, height / LOADING_STAGE_HEIGHT);
 }
 
+export function getFilledSegmentCount(progress, segmentCount) {
+  const count = Math.max(0, Math.floor(Number(segmentCount) || 0));
+  const value = THREE.MathUtils.clamp(Number(progress) || 0, 0, 100);
+  return Math.round((value / 100) * count);
+}
+
 export function updateLoadingStageScale(overlay, view = globalThis.window) {
   const stage = overlay?.querySelector?.(".loading-stage");
   if (!stage || !view) return 0;
@@ -49,6 +55,7 @@ export function createLoadingOverlay({
   const bootLog = overlay?.querySelector?.("[data-boot-log]");
   const bootReadyLabel = overlay?.querySelector?.("[data-boot-ready-label]");
   const bootBackgroundImage = overlay?.querySelector?.("[data-boot-background-image]");
+  const progressSegments = createProgressSegments(barFill);
   const bootBackground = pickBootBackground(bootBackgrounds, random);
   if (bootBackgroundImage && bootBackground) bootBackgroundImage.src = bootBackground;
   updateLoadingStageScale(overlay, view);
@@ -63,7 +70,10 @@ export function createLoadingOverlay({
   function renderProgress(value) {
     const shownPercent = Math.min(100, Math.round(value));
     if (percent) percent.textContent = `${String(shownPercent).padStart(2, "0")}%`;
-    if (barFill) barFill.style.width = `${shownPercent}%`;
+    if (progressSegments.length) {
+      const filledCount = getFilledSegmentCount(value, progressSegments.length);
+      progressSegments.forEach((segment, index) => segment.classList.toggle("is-filled", index < filledCount));
+    } else if (barFill) barFill.style.width = `${shownPercent}%`;
   }
 
   function setStatus(text) {
@@ -75,6 +85,7 @@ export function createLoadingOverlay({
     if (!row) return false;
     row.classList.remove("is-active", "is-complete", "is-standby", "is-error");
     if (state) row.classList.add(`is-${state}`);
+    row.setAttribute?.("aria-busy", state === "active" ? "true" : "false");
     const output = row.querySelector?.("b");
     if (output && value) output.textContent = value;
     return true;
@@ -182,4 +193,19 @@ export function createLoadingOverlay({
     skip,
     update,
   };
+}
+
+function createProgressSegments(container) {
+  const count = Math.max(0, Math.floor(Number(container?.dataset?.bootProgressSegments) || 0));
+  const documentRef = container?.ownerDocument;
+  if (!count || !documentRef?.createElement) return [];
+  container.replaceChildren?.();
+  const segments = [];
+  for (let index = 0; index < count; index += 1) {
+    const segment = documentRef.createElement("i");
+    segment.setAttribute("aria-hidden", "true");
+    container.append(segment);
+    segments.push(segment);
+  }
+  return segments;
 }

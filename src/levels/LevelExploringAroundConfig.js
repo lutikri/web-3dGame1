@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=combined-presentation-pass";
-import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=combined-presentation-pass";
-import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=combined-presentation-pass";
-import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=combined-presentation-pass";
+import { createFacilityActivityConfig } from "../audio/FacilityActivityConfig.js?v=compact-loading-game";
+import { LEVEL_EXPLORING_AROUND_OVERRIDES } from "../generated/LevelExploringAroundOverrides.js?v=compact-loading-game";
+import { LEVEL_CONFIG_SCHEMA_VERSION, migrateLevelOverrides } from "./LevelConfigSchema.js?v=compact-loading-game";
+import { applyLevelOverrides } from "./LevelConfigOverrides.js?v=compact-loading-game";
 
 const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   schemaVersion: LEVEL_CONFIG_SCHEMA_VERSION,

@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=combined-presentation-pass";
-import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=combined-presentation-pass";
-import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=combined-presentation-pass";
-import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=combined-presentation-pass";
-import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=combined-presentation-pass";
-import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=combined-presentation-pass";
-import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=combined-presentation-pass";
-import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=combined-presentation-pass";
+import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=compact-loading-game";
+import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=compact-loading-game";
+import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=compact-loading-game";
+import { updateCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=compact-loading-game";
+import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact-loading-game";
+import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
+import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=compact-loading-game";
+import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=compact-loading-game";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {

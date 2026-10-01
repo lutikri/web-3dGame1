@@ -1,16 +1,16 @@
 import * as THREE from "three";
 
-import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=combined-presentation-pass";
-import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=combined-presentation-pass";
-import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=combined-presentation-pass";
-import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=combined-presentation-pass";
-import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=combined-presentation-pass";
-import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=combined-presentation-pass";
-import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=combined-presentation-pass";
-import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=combined-presentation-pass";
-import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=combined-presentation-pass";
-import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=combined-presentation-pass";
-import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=combined-presentation-pass";
+import { createAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=compact-loading-game";
+import { createBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=compact-loading-game";
+import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=compact-loading-game";
+import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=compact-loading-game";
+import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=compact-loading-game";
+import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact-loading-game";
+import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=compact-loading-game";
+import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
+import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=compact-loading-game";
+import { createStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=compact-loading-game";
+import { createSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=compact-loading-game";
 
 export function createPrefabRuntimeFactory({
   config,

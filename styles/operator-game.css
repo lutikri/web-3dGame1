@@ -4293,6 +4293,234 @@ html.preflight-boot #app {
   box-shadow: 0 0 10px rgba(112, 154, 107, 0.18);
 }
 
+/* Repeat boot: compact frontend presentation, not an in-world diagnostic terminal. */
+.boot-loading-overlay::before {
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(0, 0, 0, 0.08) 4px);
+}
+
+.boot-background-image {
+  filter: brightness(0.48) saturate(0.64) contrast(1.04) blur(1.2px);
+  transform: scale(1.004);
+}
+
+.boot-backdrop::before {
+  inset: 0;
+  border: 0;
+  background-size: 108px 108px;
+}
+
+.boot-backdrop::after {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(1, 8, 5, 0.02) 18%, rgba(1, 8, 5, 0.2) 70%, rgba(1, 8, 5, 0.58) 100%),
+    linear-gradient(rgba(1, 8, 5, 0.04), rgba(1, 8, 5, 0.18));
+}
+
+.boot-watermark,
+.boot-footer-label {
+  color: rgba(168, 197, 162, 0.92);
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+.boot-watermark-left { top: 54px; left: 62px; }
+.boot-watermark-right { top: 54px; right: 62px; text-align: right; }
+.boot-footer-label { bottom: 50px; left: 62px; }
+
+.boot-terminal {
+  top: 315px;
+  left: 540px;
+  width: 840px;
+  height: 450px;
+  border-color: rgba(112, 154, 107, 0.68);
+  background: rgba(2, 10, 7, 0.9);
+  box-shadow: 0 18px 80px rgba(0, 0, 0, 0.36), inset 0 0 32px rgba(56, 154, 79, 0.035);
+  letter-spacing: 0.055em;
+}
+
+.boot-terminal::before,
+.boot-terminal::after {
+  display: none;
+}
+
+.boot-terminal-header {
+  height: 54px;
+  margin: 0;
+  padding: 0 30px;
+  border-bottom-color: var(--facility-line-soft);
+  color: var(--facility-primary);
+  font-size: 14px;
+}
+
+.boot-title-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 144px;
+  margin: 0 28px;
+  padding: 0 4px;
+  border-bottom-color: var(--facility-line-soft);
+}
+
+.boot-title-row strong {
+  color: var(--facility-text);
+  font: 800 52px/0.98 var(--facility-font-display);
+  letter-spacing: 0.025em;
+}
+
+.boot-title-row > span:not([hidden]) {
+  margin: 17px 0 0;
+  color: var(--facility-primary);
+  font-size: 15px;
+  letter-spacing: 0.075em;
+}
+
+.boot-title-row > span:not([hidden])::before,
+.boot-title-row > span:not([hidden])::after {
+  content: none;
+}
+
+.boot-status-grid {
+  display: block;
+  min-height: 0;
+  height: 92px;
+  margin: 0;
+  padding: 18px 28px;
+  border-bottom: 0;
+}
+
+.boot-status-column {
+  display: block;
+}
+
+.boot-system-row {
+  grid-template-columns: 30px 230px minmax(0, 1fr) 112px;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  color: rgba(168, 197, 162, 0.52);
+  font-size: 14px;
+}
+
+.boot-system-row i {
+  width: 15px;
+  height: 15px;
+  border-color: rgba(118, 187, 112, 0.48);
+  background: rgba(118, 187, 112, 0.2);
+}
+
+.boot-system-row span {
+  padding-right: 20px;
+  border-right: 1px solid var(--facility-line-soft);
+}
+
+.boot-system-row span::after { content: none; }
+.boot-system-row b { min-width: 0; padding-left: 32px; font-weight: 500; }
+.boot-system-row em {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  visibility: hidden;
+  color: var(--facility-active);
+  font-style: normal;
+}
+
+.boot-system-row em u {
+  width: 28px;
+  height: 28px;
+  border: 4px dotted var(--facility-active);
+  border-radius: 50%;
+  text-decoration: none;
+  animation: boot-activity-spin 1.4s linear infinite;
+}
+
+.boot-system-row em small { font-size: 9px; letter-spacing: 0.08em; }
+.boot-system-row.is-active {
+  border-color: rgba(112, 154, 107, 0.48);
+  background: rgba(30, 72, 39, 0.12);
+  color: var(--facility-text);
+}
+.boot-system-row.is-active em { visibility: visible; }
+.boot-system-row.is-standby { color: rgba(168, 197, 162, 0.52); }
+.boot-system-row.is-complete { color: rgba(168, 197, 162, 0.72); }
+.boot-system-row.is-complete i {
+  border-color: var(--facility-active);
+  background: var(--facility-active);
+  box-shadow: none;
+}
+.boot-system-row.is-active i {
+  border-color: var(--facility-active);
+  background: var(--facility-active);
+  box-shadow: 0 0 0 3px rgba(118, 187, 112, 0.18);
+  animation: boot-status-pulse 0.9s ease-in-out infinite;
+}
+
+.boot-progress {
+  height: 160px;
+  margin: 0 28px;
+  padding: 28px 4px 0;
+  border-top: 1px solid var(--facility-line-soft);
+}
+
+.boot-progress-line {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  align-items: center;
+  gap: 24px;
+  margin: 0 0 14px !important;
+}
+
+.boot-progress strong {
+  color: var(--facility-text);
+  font: 800 30px/1 var(--facility-font-display);
+  text-align: right;
+}
+
+.boot-progress > span {
+  display: block;
+  color: var(--facility-muted);
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
+
+.boot-loading-overlay .boot-progress .loading-bar {
+  height: 24px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.boot-loading-overlay .boot-progress .loading-bar div {
+  display: grid;
+  grid-template-columns: repeat(48, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  box-shadow: none;
+  transition: none;
+}
+
+.boot-loading-overlay .boot-progress .loading-bar i {
+  display: block;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(118, 187, 112, 0.42);
+  background: rgba(118, 187, 112, 0.035);
+}
+
+.boot-loading-overlay .boot-progress .loading-bar i.is-filled {
+  border-color: var(--facility-active);
+  background: var(--facility-active);
+}
+
+@keyframes boot-activity-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Shift report: fixed technical dossier over the still-loaded level camera. */
 .results-overlay {
   --shift-report-scale: 1;

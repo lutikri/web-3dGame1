@@ -1,13 +1,13 @@
 import {
   createDeskDrawerRuntimes,
   toggleDeskDrawerRuntime,
-} from "./behaviors/DeskDrawerBehavior.js?v=combined-presentation-pass";
+} from "./behaviors/DeskDrawerBehavior.js?v=compact-loading-game";
 import {
   clearPersistentRigidBodyStates,
   clearPersistentRigidBodyStorage,
   loadPersistentRigidBodyStates,
   savePersistentRigidBodyStates,
-} from "../app/AppPersistence.js?v=combined-presentation-pass";
+} from "../app/AppPersistence.js?v=compact-loading-game";
 
 export function createPrefabPhysicsRegistrar({
   physics,

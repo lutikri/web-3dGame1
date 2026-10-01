@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=combined-presentation-pass";
-import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=combined-presentation-pass";
-import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=combined-presentation-pass";
-import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=combined-presentation-pass";
+import { POST_PROCESSING_CONFIG } from "./PostProcessingConfig.js?v=compact-loading-game";
+import { DEBUG_CONFIG } from "./config/DebugConfig.js?v=compact-loading-game";
+import { GLOBAL_SCENE_OVERRIDES } from "./generated/GlobalSceneOverrides.js?v=compact-loading-game";
+import { LEVEL_ENVIRONMENTS } from "./levels/LevelRegistry.js?v=compact-loading-game";
 
 function applyLevelMaterialTuning(materials, tuning) {
   Object.entries(tuning ?? {}).forEach(([key, values]) => {

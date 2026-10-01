@@ -2,8 +2,8 @@ import * as THREE from "three";
 import {
   applyStatusScreenMaterialConfig,
   createStatusScreenMaterial,
-} from "../../panels/StatusScreenMaterial.js?v=combined-presentation-pass";
-import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=combined-presentation-pass";
+} from "../../panels/StatusScreenMaterial.js?v=compact-loading-game";
+import { requestCoreViewportToggle } from "./CoreViewportBehavior.js?v=compact-loading-game";
 
 const SCREEN_WIDTH = 1024;
 const SCREEN_HEIGHT = 512;

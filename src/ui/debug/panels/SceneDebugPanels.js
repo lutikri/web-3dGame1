@@ -2,7 +2,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   cloneSerializable,
   createLevelOverrideSnapshot,
-} from "../../../levels/LevelConfigSerialization.js?v=combined-presentation-pass";
+} from "../../../levels/LevelConfigSerialization.js?v=compact-loading-game";
 
 function mergeConfig(target, source) {
   if (!source || typeof source !== "object") return target;

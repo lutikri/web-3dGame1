@@ -1,4 +1,4 @@
-import { translateRequired } from "./Localization.js?v=combined-presentation-pass";
+import { translateRequired } from "./Localization.js?v=compact-loading-game";
 
 const INTRO_LEVEL_ID = "intro-shift";
 

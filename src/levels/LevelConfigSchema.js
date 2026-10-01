@@ -1,4 +1,4 @@
-import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=combined-presentation-pass";
+import { getPrefabDefinition } from "../prefabs/PrefabRegistry.js?v=compact-loading-game";
 
 export const LEVEL_CONFIG_SCHEMA_VERSION = 1;
 

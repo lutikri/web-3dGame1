@@ -1,15 +1,15 @@
-import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
-import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=combined-presentation-pass";
+import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=compact-loading-game";
+import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=compact-loading-game";
 import {
   createUiAudioInteractionRuntime,
   resolveUiAudioControl,
-} from "./UiAudioInteractionRuntime.js?v=combined-presentation-pass";
+} from "./UiAudioInteractionRuntime.js?v=compact-loading-game";
 import {
   classifyGraphicsAdapter,
   isHighEndGraphicsAdapter,
-} from "../config/GraphicsHardwareTiers.js?v=combined-presentation-pass";
+} from "../config/GraphicsHardwareTiers.js?v=compact-loading-game";
 
-export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=combined-presentation-pass";
+export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=compact-loading-game";
 
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";

@@ -42,33 +42,32 @@
           <img class="boot-background-image" data-boot-background-image src="./assets/ui/boot-backgrounds/site-12-01.webp" fetchpriority="high" alt="" />
           <span class="boot-corner boot-corner-tl"></span><span class="boot-corner boot-corner-tr"></span>
           <span class="boot-corner boot-corner-bl"></span><span class="boot-corner boot-corner-br"></span>
-          <div class="boot-watermark boot-watermark-left">TGLOBAL ST<br />SITE-12<br />EST. 2040</div>
-          <div class="boot-watermark boot-watermark-right">SYS&nbsp;&nbsp;v2.4.7<br />WEBGL&nbsp;&nbsp;<b data-boot-webgl>INIT</b><br />NODE&nbsp;&nbsp;04</div>
-          <div class="boot-footer-label">SITE-12 / LOCAL SERVICE MODE</div>
-          <div class="boot-footer-label boot-footer-label-right">SESSION_RESTORE</div>
+          <div class="boot-watermark boot-watermark-left">VER. 2.3.4</div>
+          <div class="boot-watermark boot-watermark-right">BASELOAD (C)<br />AN ARTEM LUT GAME</div>
+          <div class="boot-footer-label">A TERRAGEN SYSTEM<br />OPERATING SYSTEM<br />1970–2037</div>
         </div>
         <div class="loading-stage">
-          <section class="boot-terminal" aria-label="Restoring operator session">
+          <section class="boot-terminal" aria-label="Loading game">
             <header class="boot-terminal-header">
               <span>TGLOBAL ST&nbsp;&nbsp;/&nbsp;&nbsp;SITE-12</span>
               <span>LOCAL NODE 04</span>
             </header>
             <div class="boot-title-row">
-              <strong>RESTORING SESSION</strong>
-              <span id="loadingStatus">RECONNECTING TO LOCAL SERVICES</span>
+              <strong>LOADING GAME...</strong>
+              <span id="loadingStatus">PREPARING LOCAL RENDER PIPELINE. PLEASE STAND BY.</span>
               <span id="loadingShiftTitle" hidden>LOCAL SERVICES</span>
             </div>
             <div class="boot-status-grid">
               <section class="boot-status-column">
-                <h2>LOCAL SYSTEM STATUS</h2>
-                <div class="boot-system-row is-complete" data-boot-system="localSession"><i></i><span>LOCAL SESSION</span><b>RESTORED</b></div>
-                <div class="boot-system-row is-active" data-boot-system="siteData"><i></i><span>SITE DATA</span><b>LOADING</b></div>
-                <div class="boot-system-row is-active" data-boot-system="renderSystem"><i></i><span>RENDER SYSTEM</span><b>INITIALIZING</b></div>
+                <div class="boot-system-row is-active" data-boot-system="renderSystem" aria-busy="true"><i></i><span>RENDER PIPELINE</span><b>INITIALIZING</b><em><u></u><small>ACTIVE</small></em></div>
               </section>
             </div>
             <footer class="boot-progress">
-              <div><span data-boot-ready-label>PLEASE STAND BY</span><strong id="loadingPercent">00%</strong></div>
-              <div class="loading-bar" aria-hidden="true"><div id="loadingBarFill"></div></div>
+              <div class="boot-progress-line">
+                <div class="loading-bar" aria-hidden="true"><div id="loadingBarFill" data-boot-progress-segments="48"></div></div>
+                <strong id="loadingPercent">00%</strong>
+              </div>
+              <span data-boot-ready-label>FINAL GRAPHICS INITIALIZATION MAY TAKE LONGER AFTER AN UPDATE.</span>
             </footer>
           </section>
         </div>
@@ -331,6 +330,6 @@
         </section>
       </div>
     </div>
-    <script type="module" src="src/main.js?v=combined-presentation-pass"></script>
+    <script type="module" src="src/main.js?v=compact-loading-game"></script>
   </body>
 </html>

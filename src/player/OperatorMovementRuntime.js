@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=combined-presentation-pass";
+import { FirstPersonBodyRigRuntime } from "./FirstPersonBodyRigRuntime.js?v=compact-loading-game";
 
 export function createOperatorMovementRuntime({
   config,

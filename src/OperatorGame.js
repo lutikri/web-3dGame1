@@ -3,151 +3,151 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Capsule } from "three/addons/math/Capsule.js";
 import { Octree } from "three/addons/math/Octree.js";
-import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=combined-presentation-pass";
+import { createFusionCoreSimulation } from "./FusionCoreSimulation.js?v=compact-loading-game";
 import {
   buildShiftReport,
   createShiftRecorder,
   evaluateQualificationOutcome,
   getShiftRecorderDebugState,
   updateShiftRecorder as updateShiftRecorderState,
-} from "./game/ShiftReport.js?v=combined-presentation-pass";
-import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=combined-presentation-pass";
-import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=combined-presentation-pass";
-import { AnimationLoop } from "./runtime/AnimationLoop.js?v=combined-presentation-pass";
-import { FrameTraceRuntime } from "./runtime/FrameTraceRuntime.js?v=combined-presentation-pass";
-import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=combined-presentation-pass";
-import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=combined-presentation-pass";
-import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=combined-presentation-pass";
-import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=combined-presentation-pass";
-import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=combined-presentation-pass";
-import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=combined-presentation-pass";
-import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=combined-presentation-pass";
-import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=combined-presentation-pass";
-import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=combined-presentation-pass";
-import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=combined-presentation-pass";
-import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=combined-presentation-pass";
-import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=combined-presentation-pass";
-import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=combined-presentation-pass";
-import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=combined-presentation-pass";
-import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=combined-presentation-pass";
-import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=combined-presentation-pass";
-import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=combined-presentation-pass";
+} from "./game/ShiftReport.js?v=compact-loading-game";
+import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=compact-loading-game";
+import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=compact-loading-game";
+import { AnimationLoop } from "./runtime/AnimationLoop.js?v=compact-loading-game";
+import { FrameTraceRuntime } from "./runtime/FrameTraceRuntime.js?v=compact-loading-game";
+import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=compact-loading-game";
+import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=compact-loading-game";
+import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=compact-loading-game";
+import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=compact-loading-game";
+import { LevelTriggerSequenceRuntime } from "./runtime/LevelTriggerSequenceRuntime.js?v=compact-loading-game";
+import { LevelStaticPhysicsRuntime } from "./runtime/LevelStaticPhysicsRuntime.js?v=compact-loading-game";
+import { WorldBoundsRecoveryRuntime } from "./runtime/WorldBoundsRecoveryRuntime.js?v=compact-loading-game";
+import { SceneAudioRuntime } from "./audio/SceneAudioRuntime.js?v=compact-loading-game";
+import { MenuAudioRuntime } from "./audio/MenuAudioRuntime.js?v=compact-loading-game";
+import { CoreAudioRuntime } from "./audio/CoreAudioRuntime.js?v=compact-loading-game";
+import { AnnouncementSystemRuntime } from "./audio/AnnouncementSystemRuntime.js?v=compact-loading-game";
+import { collectLevelSoundKeys } from "./audio/LevelSoundCatalog.js?v=compact-loading-game";
+import { createRuntimeDebugSnapshot } from "./ui/debug/RuntimeDebugSnapshot.js?v=compact-loading-game";
+import { installOperatorGameApi } from "./runtime/OperatorGameApi.js?v=compact-loading-game";
+import { LevelPrefabUpdateRuntime } from "./prefabs/LevelPrefabUpdateRuntime.js?v=compact-loading-game";
+import { requestBarrierGateUnlock } from "./prefabs/behaviors/BarrierGateBehavior.js?v=compact-loading-game";
+import { registerServiceTerminalInteraction } from "./prefabs/behaviors/ServiceTerminalBehavior.js?v=compact-loading-game";
 import {
   activateStatusViewportAlarmSilence,
   activateStatusViewportShutter,
   registerStatusViewportInteraction,
-} from "./prefabs/behaviors/StatusViewportBehavior.js?v=combined-presentation-pass";
-import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=combined-presentation-pass";
-import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=combined-presentation-pass";
-import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=combined-presentation-pass";
-import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=combined-presentation-pass";
-import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=combined-presentation-pass";
-import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=combined-presentation-pass";
-import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=combined-presentation-pass";
-import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=combined-presentation-pass";
-import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=combined-presentation-pass";
-import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=combined-presentation-pass";
-import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=combined-presentation-pass";
-import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=combined-presentation-pass";
-import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=combined-presentation-pass";
+} from "./prefabs/behaviors/StatusViewportBehavior.js?v=compact-loading-game";
+import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=compact-loading-game";
+import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=compact-loading-game";
+import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=compact-loading-game";
+import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=compact-loading-game";
+import { OperatorThoughtRuntime } from "./game/OperatorThoughtRuntime.js?v=compact-loading-game";
+import { LoadingCoordinator } from "./ui/LoadingCoordinator.js?v=compact-loading-game";
+import { FpsMeterRuntime } from "./ui/debug/FpsMeterRuntime.js?v=compact-loading-game";
+import { DebugOverlayRuntime } from "./ui/debug/DebugOverlayRuntime.js?v=compact-loading-game";
+import { DebugTransformRuntime } from "./ui/debug/DebugTransformRuntime.js?v=compact-loading-game";
+import { DebugTransformTargetResolver } from "./ui/debug/DebugTransformTargetResolver.js?v=compact-loading-game";
+import { LevelPrefabConfigRuntime } from "./prefabs/LevelPrefabConfigRuntime.js?v=compact-loading-game";
+import { CONFIG, MATERIAL_COLORS } from "./OperatorGameConfig.js?v=compact-loading-game";
+import { translate, translateControlLabel, translateRequired } from "./app/Localization.js?v=compact-loading-game";
 import {
   applyGraphicsQualityProfileToConfig,
   getGraphicsQualityProfile,
   resolveGraphicsPixelRatio,
-} from "./config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
+} from "./config/GraphicsQualityProfiles.js?v=compact-loading-game";
 import {
   createTextureStreaming,
-} from "./scene/TextureStreaming.js?v=combined-presentation-pass";
-import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=combined-presentation-pass";
-import { createStatusScreen } from "./StatusScreen.js?v=combined-presentation-pass";
-import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=combined-presentation-pass";
-import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=combined-presentation-pass";
-import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=combined-presentation-pass";
-import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=combined-presentation-pass";
-import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=combined-presentation-pass";
-import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=combined-presentation-pass";
-import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=combined-presentation-pass";
-import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=combined-presentation-pass";
+} from "./scene/TextureStreaming.js?v=compact-loading-game";
+import { PANEL1_GAUGE_RANGES, PANEL1_LAMP_WARNING_KEYS } from "./panels/Panel1Bindings.js?v=compact-loading-game";
+import { createStatusScreen } from "./StatusScreen.js?v=compact-loading-game";
+import { createLoadingOverlay } from "./ui/LoadingOverlay.js?v=compact-loading-game";
+import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=compact-loading-game";
+import { RuntimeTextureLoadingIndicator } from "./ui/RuntimeTextureLoadingIndicator.js?v=compact-loading-game";
+import { ShiftResultsController } from "./ui/ShiftResultsController.js?v=compact-loading-game";
+import { restoreSavedPostProcessingConfig } from "./ui/debug/panels/PostProcessingDebugPanel.js?v=compact-loading-game";
+import { restoreSavedSceneConfig } from "./ui/debug/panels/SceneDebugPanels.js?v=compact-loading-game";
+import { DebugToolsRuntime } from "./ui/debug/DebugToolsRuntime.js?v=compact-loading-game";
+import { createPerformanceBenchmark } from "./ui/debug/PerformanceBenchmark.js?v=compact-loading-game";
 import {
   createRuntimeMemoryProfiler,
   formatMemoryMiB,
   formatTextureLabel,
-} from "./ui/debug/RuntimeMemoryProfiler.js?v=combined-presentation-pass";
-import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=combined-presentation-pass";
-import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=combined-presentation-pass";
+} from "./ui/debug/RuntimeMemoryProfiler.js?v=compact-loading-game";
+import { createSceneInspector } from "./ui/debug/SceneInspector.js?v=compact-loading-game";
+import { createPhysicsSystem } from "./physics/PhysicsSystem.js?v=compact-loading-game";
 import {
   createFluorescentStartupPattern as createFluorescentStartupPatternFromConfig,
   getFluorescentStarterFaultFactor,
   getFluorescentStartupDuration,
   getFluorescentStartupFactor,
-} from "./lighting/FluorescentBehavior.js?v=combined-presentation-pass";
-import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=combined-presentation-pass";
-import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=combined-presentation-pass";
-import { AssetCache } from "./runtime/AssetCache.js?v=combined-presentation-pass";
-import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=combined-presentation-pass";
-import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=combined-presentation-pass";
-import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=combined-presentation-pass";
-import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=combined-presentation-pass";
-import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=combined-presentation-pass";
-import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=combined-presentation-pass";
-import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=combined-presentation-pass";
-import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=combined-presentation-pass";
-import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=combined-presentation-pass";
-import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=combined-presentation-pass";
-import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=combined-presentation-pass";
-import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=combined-presentation-pass";
-import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=combined-presentation-pass";
-import { RenderZoneRuntime } from "./scene/RenderZoneRuntime.js?v=combined-presentation-pass";
+} from "./lighting/FluorescentBehavior.js?v=compact-loading-game";
+import { getLevelEnvironmentId } from "./levels/LevelRegistry.js?v=compact-loading-game";
+import { LevelRuntimeManager } from "./runtime/LevelRuntimeManager.js?v=compact-loading-game";
+import { AssetCache } from "./runtime/AssetCache.js?v=compact-loading-game";
+import { LevelEnvironmentLifecycle } from "./runtime/LevelEnvironmentLifecycle.js?v=compact-loading-game";
+import { LevelOwnedState } from "./runtime/LevelOwnedState.js?v=compact-loading-game";
+import { createLevelEnvironmentActivation } from "./runtime/LevelEnvironmentActivation.js?v=compact-loading-game";
+import { DeferredTextureUpgradeQueue } from "./runtime/DeferredTextureUpgradeQueue.js?v=compact-loading-game";
+import { createInteriorMaterialFactory } from "./materials/InteriorMaterialFactory.js?v=compact-loading-game";
+import { InteriorMaterialRuntime } from "./materials/InteriorMaterialRuntime.js?v=compact-loading-game";
+import { createMaskOverlayRuntime } from "./materials/MaskOverlayMaterial.js?v=compact-loading-game";
+import { MaterialTextureRuntime } from "./materials/MaterialTextureRuntime.js?v=compact-loading-game";
+import { ActiveLevelSessionRuntime } from "./levels/ActiveLevelSessionRuntime.js?v=compact-loading-game";
+import { LevelBindingRuntime } from "./levels/LevelBindingRuntime.js?v=compact-loading-game";
+import { createLevelSceneBuilder } from "./scene/LevelSceneBuilder.js?v=compact-loading-game";
+import { LevelRigidBodyRuntime } from "./runtime/LevelRigidBodyRuntime.js?v=compact-loading-game";
+import { buildPrimitiveRoom } from "./scene/PrimitiveRoomBuilder.js?v=compact-loading-game";
+import { RenderZoneRuntime } from "./scene/RenderZoneRuntime.js?v=compact-loading-game";
 import {
   InteriorObjectRegistry,
   ensureSecondUvSet as ensureInteriorSecondUvSet,
   getInteriorObjectMatchNames as collectInteriorObjectMatchNames,
   isCollisionHelperMesh,
   normalizeObjectName,
-} from "./scene/InteriorObjectRegistry.js?v=combined-presentation-pass";
-import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=combined-presentation-pass";
-import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=combined-presentation-pass";
-import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=combined-presentation-pass";
-import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=combined-presentation-pass";
-import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=combined-presentation-pass";
-import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=combined-presentation-pass";
-import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=combined-presentation-pass";
-import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=combined-presentation-pass";
-import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=combined-presentation-pass";
-import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=combined-presentation-pass";
-import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=combined-presentation-pass";
-import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=combined-presentation-pass";
-import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=combined-presentation-pass";
-import { PlayerController } from "./player/PlayerController.js?v=combined-presentation-pass";
-import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=combined-presentation-pass";
-import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=combined-presentation-pass";
-import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=combined-presentation-pass";
-import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=combined-presentation-pass";
-import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=combined-presentation-pass";
-import { InputLockRuntime } from "./player/InputLockRuntime.js?v=combined-presentation-pass";
-import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=combined-presentation-pass";
-import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=combined-presentation-pass";
-import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=combined-presentation-pass";
-import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=combined-presentation-pass";
-import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=combined-presentation-pass";
-import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=combined-presentation-pass";
-import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=combined-presentation-pass";
-import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=combined-presentation-pass";
-import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=combined-presentation-pass";
-import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=combined-presentation-pass";
-import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=combined-presentation-pass";
-import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=combined-presentation-pass";
-import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=combined-presentation-pass";
-import { AudioRuntime } from "./audio/AudioRuntime.js?v=combined-presentation-pass";
-import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=combined-presentation-pass";
-import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=combined-presentation-pass";
-import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=combined-presentation-pass";
-import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=combined-presentation-pass";
+} from "./scene/InteriorObjectRegistry.js?v=compact-loading-game";
+import { LightingRuntime, applyLightShadowSettings } from "./lighting/LightingRuntime.js?v=compact-loading-game";
+import { createSceneFeedbackMath } from "./lighting/SceneFeedbackMath.js?v=compact-loading-game";
+import { RoomLightingRuntime } from "./lighting/RoomLightingRuntime.js?v=compact-loading-game";
+import { SceneFeedbackRuntime } from "./lighting/SceneFeedbackRuntime.js?v=compact-loading-game";
+import { FixtureFlickerRuntime } from "./lighting/FixtureFlickerRuntime.js?v=compact-loading-game";
+import { createPhotometricPointLightRuntime } from "./lighting/PhotometricPointLightRuntime.js?v=compact-loading-game";
+import { createPointLightPoolRuntime } from "./lighting/PointLightPoolRuntime.js?v=compact-loading-game";
+import { LightingZoneRuntime } from "./lighting/LightingZoneRuntime.js?v=compact-loading-game";
+import { createPrefabRuntimeFactory } from "./prefabs/PrefabRuntimeFactory.js?v=compact-loading-game";
+import { createPrefabPhysicsRegistrar } from "./prefabs/PrefabPhysicsRegistrar.js?v=compact-loading-game";
+import { DoorInteractionSystem } from "./interactions/DoorInteractionSystem.js?v=compact-loading-game";
+import { DoorStateRuntime } from "./interactions/DoorStateRuntime.js?v=compact-loading-game";
+import { createInteractionHoverRuntime, createInteractionTooltipPolicy, isObjectHierarchyVisible as isVisibleInSceneHierarchy } from "./interactions/InteractionHoverRuntime.js?v=compact-loading-game";
+import { PlayerController } from "./player/PlayerController.js?v=compact-loading-game";
+import { createPlayerCollisionRuntime } from "./player/PlayerCollisionRuntime.js?v=compact-loading-game";
+import { PlayerCollisionDebugRuntime } from "./player/PlayerCollisionDebugRuntime.js?v=compact-loading-game";
+import { createOperatorMovementRuntime } from "./player/OperatorMovementRuntime.js?v=compact-loading-game";
+import { OperatorViewRuntime } from "./player/OperatorViewRuntime.js?v=compact-loading-game";
+import { MenuCameraRuntime } from "./player/MenuCameraRuntime.js?v=compact-loading-game";
+import { InputLockRuntime } from "./player/InputLockRuntime.js?v=compact-loading-game";
+import { createOperatorInputRuntime } from "./player/OperatorInputRuntime.js?v=compact-loading-game";
+import { PostProcessingRuntime } from "./postprocessing/PostProcessingRuntime.js?v=compact-loading-game";
+import { RealismPostProcessingRuntime } from "./postprocessing/RealismPostProcessingRuntime.js?v=compact-loading-game";
+import { PostProcessingAssets } from "./postprocessing/PostProcessingAssets.js?v=compact-loading-game";
+import { PostProcessingPolicy } from "./postprocessing/PostProcessingPolicy.js?v=compact-loading-game";
+import { createPostProcessingPresets } from "./postprocessing/PostProcessingPresets.js?v=compact-loading-game";
+import { OperatorPanelRuntime } from "./panels/OperatorPanelRuntime.js?v=compact-loading-game";
+import { OperatorPanelAssetRuntime } from "./panels/OperatorPanelAssetRuntime.js?v=compact-loading-game";
+import { PanelLampRuntime } from "./panels/PanelLampRuntime.js?v=compact-loading-game";
+import { PanelGaugeRuntime } from "./panels/PanelGaugeRuntime.js?v=compact-loading-game";
+import { PanelControlRuntime } from "./panels/PanelControlRuntime.js?v=compact-loading-game";
+import { DiagnosticRuntime } from "./incidents/DiagnosticRuntime.js?v=compact-loading-game";
+import { FuelBlendRuntime } from "./incidents/FuelBlendRuntime.js?v=compact-loading-game";
+import { AudioRuntime } from "./audio/AudioRuntime.js?v=compact-loading-game";
+import { createNarrationRuntime, findLevelRadioRuntimes } from "./audio/NarrationRuntime.js?v=compact-loading-game";
+import { RandomSpeechRuntime } from "./audio/RandomSpeechRuntime.js?v=compact-loading-game";
+import { FacilityActivityRuntime } from "./audio/FacilityActivityRuntime.js?v=compact-loading-game";
+import { SOUND_GROUPS, SOUND_MIX, SOUND_REGISTRY } from "./audio/SoundRegistry.js?v=compact-loading-game";
 import {
   resetNarratorRadioRuntime,
   startNarratorRadioSpeech,
   updateNarratorRadioRuntime,
-} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=combined-presentation-pass";
+} from "./prefabs/behaviors/NarratorRadioBehavior.js?v=compact-loading-game";
 
 const bootOptions = window.operatorGameBootOptions ?? {};
 let physicsSystem = null;
@@ -1675,6 +1675,7 @@ async function init() {
   buildRoom();
   loadingOverlay.appendBootLog("preparing material programs");
   postProcessingRuntime.setup();
+  loadingOverlay.setBootSystem("renderSystem", "active", "COMPILING PIPELINE");
   setupPostProcessingDebugPanel();
   setupSceneDebugPanels();
   if (CONFIG.debug?.enabled) setDebugPanelsVisible(true);

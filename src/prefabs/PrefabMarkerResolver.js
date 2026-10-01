@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=combined-presentation-pass";
-import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=combined-presentation-pass";
+import { createPrefabInstance, getPrefabDefinition } from "./PrefabRegistry.js?v=compact-loading-game";
+import { registerPrefabPlacement } from "./PrefabPlacementMetadata.js?v=compact-loading-game";
 
 const MARKER_PREFIX = "PF_";
 

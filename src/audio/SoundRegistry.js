@@ -1,4 +1,4 @@
-import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=combined-presentation-pass";
+import { AUDIO_OVERRIDES } from "../generated/AudioOverrides.js?v=compact-loading-game";
 
 export const SOUND_REGISTRY = {
   Ambience_EntryHall1: {

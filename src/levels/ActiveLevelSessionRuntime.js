@@ -1,4 +1,4 @@
-import { LevelSession } from "./LevelSession.js?v=combined-presentation-pass";
+import { LevelSession } from "./LevelSession.js?v=compact-loading-game";
 
 export class ActiveLevelSessionRuntime {
   constructor({ createSession = (options) => new LevelSession(options), onComplete = () => {}, onEvent = () => {} } = {}) {

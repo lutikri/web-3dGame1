@@ -1,4 +1,4 @@
-import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=combined-presentation-pass";
+import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=compact-loading-game";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },

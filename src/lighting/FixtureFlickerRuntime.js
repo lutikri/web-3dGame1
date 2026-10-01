@@ -3,7 +3,7 @@ import {
   getFixtureFlickerFactor,
   triggerFixtureFlickerState,
   updateFixtureFlickerState,
-} from "./FluorescentBehavior.js?v=combined-presentation-pass";
+} from "./FluorescentBehavior.js?v=compact-loading-game";
 
 export class FixtureFlickerRuntime {
   constructor({ config, getTargets }) {

@@ -4,7 +4,7 @@ import {
   clearPersistentRigidBodyStorage,
   loadPersistentRigidBodyStates,
   savePersistentRigidBodyStates,
-} from "../app/AppPersistence.js?v=combined-presentation-pass";
+} from "../app/AppPersistence.js?v=compact-loading-game";
 
 const colliderPrefix = /^(?:UBX|UCX|USP|UCP)_/i;
 

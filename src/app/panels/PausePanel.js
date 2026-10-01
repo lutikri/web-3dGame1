@@ -1,4 +1,4 @@
-import { getMainMenuScale } from "./MainMenuPanel.js?v=combined-presentation-pass";
+import { getMainMenuScale } from "./MainMenuPanel.js?v=compact-loading-game";
 
 export function isGameplayPausePanel({ levelId, open, panelName, previousPanel }) {
   return Boolean(levelId && open && (

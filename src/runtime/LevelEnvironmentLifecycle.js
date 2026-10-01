@@ -1,4 +1,4 @@
-import { LevelRuntime } from "./LevelRuntime.js?v=combined-presentation-pass";
+import { LevelRuntime } from "./LevelRuntime.js?v=compact-loading-game";
 
 export class LevelEnvironmentLifecycle {
   constructor({
