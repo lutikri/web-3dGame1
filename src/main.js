@@ -22,7 +22,7 @@ applyLocalization(bootChoice.language);
 const selectedFirstRunProfile = bootChoice.firstRun ? await preflight.chooseProfile() : null;
 const bootProfile = selectedFirstRunProfile ?? bootChoice.profile ?? "low";
 const bootQuality = getGraphicsQualityProfile(bootProfile);
-let bootDisplayGamma = bootChoice.displayGamma ?? 0.93;
+const bootDisplayGamma = bootChoice.displayGamma ?? 0.93;
 
 window.operatorGameBootOptions = {
   qualityProfile: bootProfile,
@@ -36,8 +36,6 @@ window.operatorGameBootOptions = {
 
 let firstBootSlides = null;
 if (bootChoice.firstRun) {
-  bootDisplayGamma = await preflight.calibrateBrightness(null, bootDisplayGamma);
-  window.operatorGameBootOptions.displayGamma = bootDisplayGamma;
   preflight.complete(bootProfile, bootDisplayGamma, { removeOverlay: false });
   firstBootSlides = preflight.startFirstBootSlides();
   await firstBootSlides.ready;

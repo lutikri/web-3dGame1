@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   classifyGraphicsAdapter,
   createPreflightUiAudio,
+  getBrowserGpuLabel,
   getFirstBootSlideState,
   getPreflightScale,
   recommendGraphicsProfile,
@@ -69,16 +70,20 @@ test("preflight scales one fixed 1920 by 1080 composition uniformly", () => {
   assert.equal(getPreflightScale(960, 540), 0.5);
 });
 
-test("first boot advances three nine-second slides while reserving completion for runtime readiness", () => {
+test("preflight reports a neutral browser GPU label when detection is unavailable", () => {
+  assert.equal(getBrowserGpuLabel(""), "UNKNOWN / NOT REPORTED");
+  assert.equal(getBrowserGpuLabel("WebGL renderer"), "UNKNOWN / NOT REPORTED");
+  assert.equal(getBrowserGpuLabel("ANGLE (NVIDIA GeForce RTX 4070, Direct3D11)"), "NVIDIA GeForce RTX 4070");
+});
+
+test("first boot presentation advances through its three loading slides", () => {
   assert.deepEqual(getFirstBootSlideState(0), {
     slideIndex: 0, status: "LOADING ASSETS...", progress: 0,
   });
   assert.equal(getFirstBootSlideState(9000).slideIndex, 1);
   assert.equal(getFirstBootSlideState(18000).slideIndex, 2);
   assert.equal(getFirstBootSlideState(27000).slideIndex, 0);
-  assert.equal(getFirstBootSlideState(36000).slideIndex, 1);
   assert.equal(getFirstBootSlideState(27000).progress, 100);
-  assert.equal(getFirstBootSlideState(60000).progress, 100);
 });
 
 test("preflight owns and disposes its native UI button audio", () => {

@@ -14,11 +14,9 @@ export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=co
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
 const QUALITY_PROFILE_REVISION = 2;
-const QUALITY_PREVIEWS = {
-  low: "assets/ui/performance/set-min.jpg",
-  medium: "assets/ui/performance/set-med.jpg",
-  high: "assets/ui/performance/set-max.jpg",
-};
+const PREFLIGHT_DESIGN_WIDTH = 1920;
+const PREFLIGHT_DESIGN_HEIGHT = 1080;
+const PREFLIGHT_BACKGROUND = "assets/ui/boot-backgrounds/site-12-01.webp";
 const FIRST_BOOT_SLIDES = [
   "assets/ui/first-boot/Slide1.jpg",
   "assets/ui/first-boot/Slide2.jpg",
@@ -27,63 +25,32 @@ const FIRST_BOOT_SLIDES = [
 const FIRST_BOOT_SLIDE_MS = 9000;
 const FIRST_BOOT_TOTAL_MS = FIRST_BOOT_SLIDES.length * FIRST_BOOT_SLIDE_MS;
 
-const PREFLIGHT_DESIGN_WIDTH = 1920;
-const PREFLIGHT_DESIGN_HEIGHT = 1080;
-
 const COPY = {
   en: {
-    gpu: "GRAPHICS ADAPTER",
-    integrated: "The browser is using integrated or power-saving graphics. If this computer also has NVIDIA or AMD graphics, switch the browser to the high-performance adapter.",
-    software: "Hardware acceleration is unavailable. The browser is rendering through software, so MIN is the safe starting profile.",
-    unknown: "The browser did not disclose the adapter model. MEDIUM will be used as the balanced starting profile, but every profile remains available.",
-    guide: "I HAVE NVIDIA / AMD",
-    continue: "USE CURRENT ADAPTER",
-    confirmed: "ADAPTER CONFIRMED",
-    hardwareReady: "HARDWARE ACCELERATION CHECK COMPLETE",
-    result: "GRAPHICS CALIBRATION COMPLETE",
+    performance: "PERFORMANCE",
+    browserGpu: "BROWSER GPU",
+    graphicsProfile: "GRAPHICS PROFILE",
+    unknownGpu: "UNKNOWN / NOT REPORTED",
+    gpuHelpLabel: "About browser GPU detection",
+    gpuHelp: "Your browser may be using integrated graphics instead of your dedicated GPU. If performance is lower than expected, check Windows Graphics settings for your browser. The recommended profile is based on the adapter currently reported by the browser.",
     recommended: "RECOMMENDED",
-    measured: "Recommendation based on the adapter currently used by the browser",
-    choose: "Choose a graphics profile",
-    low: ["MIN", "FASTEST"],
-    medium: ["MEDIUM", "BALANCED"],
-    high: ["HIGH", "FULL EFFECTS"],
-    apply: "APPLY",
-    applying: "INITIALIZING SELECTED GRAPHICS PROFILE",
-    loadingRuntime: "LOADING RUNTIME",
-    brightnessTitle: "DISPLAY BRIGHTNESS",
-    brightnessHint: "Move the slider until the left bar merges with the black frame. The second bar should be barely visible.",
-    brightnessControl: "GAME BRIGHTNESS",
-    brightnessApply: "CONTINUE",
-    setupComplete: "SETUP COMPLETE",
-    setupAgain: "Run it again later: P → Settings → Setup Wizard.",
-    okay: "OK",
+    low: "LOW",
+    medium: "MEDIUM",
+    high: "HIGH",
+    continue: "CONTINUE",
   },
   ru: {
-    gpu: "ГРАФИЧЕСКИЙ АДАПТЕР",
-    integrated: "Браузер использует встроенную или энергосберегающую графику. Если в компьютере также есть NVIDIA или AMD, переключите браузер на производительный адаптер.",
-    software: "Аппаратное ускорение недоступно. Браузер рисует сцену программно, поэтому безопасный стартовый профиль — MIN.",
-    unknown: "Браузер не сообщил модель адаптера. Стартовым сбалансированным профилем будет MEDIUM, но выбрать можно любой профиль.",
-    guide: "У МЕНЯ ЕСТЬ NVIDIA / AMD",
-    continue: "ИСПОЛЬЗОВАТЬ ТЕКУЩИЙ",
-    confirmed: "АДАПТЕР ВЕРНЫЙ",
-    hardwareReady: "ПРОВЕРКА АППАРАТНОГО УСКОРЕНИЯ ЗАВЕРШЕНА",
-    result: "КАЛИБРОВКА ГРАФИКИ ЗАВЕРШЕНА",
+    performance: "ПРОИЗВОДИТЕЛЬНОСТЬ",
+    browserGpu: "GPU БРАУЗЕРА",
+    graphicsProfile: "ГРАФИЧЕСКИЙ ПРОФИЛЬ",
+    unknownGpu: "НЕИЗВЕСТНО / НЕ СООБЩЕНО",
+    gpuHelpLabel: "О распознавании GPU браузером",
+    gpuHelp: "Браузер может использовать встроенную графику вместо дискретной видеокарты. Если производительность ниже ожидаемой, проверьте параметры графики Windows для вашего браузера. Рекомендуемый профиль основан на адаптере, о котором сейчас сообщает браузер.",
     recommended: "РЕКОМЕНДУЕТСЯ",
-    measured: "Рекомендация основана на адаптере, который сейчас использует браузер",
-    choose: "Выберите профиль графики",
-    low: ["MIN", "МАКСИМУМ FPS"],
-    medium: ["MEDIUM", "БАЛАНС"],
-    high: ["HIGH", "ВСЕ ЭФФЕКТЫ"],
-    apply: "ПРИМЕНИТЬ",
-    applying: "ИНИЦИАЛИЗАЦИЯ ВЫБРАННОГО ПРОФИЛЯ ГРАФИКИ",
-    loadingRuntime: "ЗАГРУЗКА СИСТЕМ",
-    brightnessTitle: "ЯРКОСТЬ ЭКРАНА",
-    brightnessHint: "Двигайте ползунок, пока левая полоса не сольётся с чёрной рамкой шкалы. Вторая полоса должна быть едва заметна.",
-    brightnessControl: "ЯРКОСТЬ ИГРЫ",
-    brightnessApply: "ПРОДОЛЖИТЬ",
-    setupComplete: "НАСТРОЙКА ЗАВЕРШЕНА",
-    setupAgain: "Настроить заново: P → Настройки → Мастер настройки.",
-    okay: "OK",
+    low: "LOW",
+    medium: "MEDIUM",
+    high: "HIGH",
+    continue: "ПРОДОЛЖИТЬ",
   },
 };
 
@@ -93,8 +60,6 @@ export function createPreflight({ screenTransition } = {}) {
   let overlay = null;
   let gpuInfo = null;
   let selectedProfile = saved?.profile ?? "low";
-  let gpuContinuePromise = null;
-  let resolveGpuContinue = null;
   let resizeHandler = null;
   let uiAudio = null;
 
@@ -121,19 +86,17 @@ export function createPreflight({ screenTransition } = {}) {
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
     document.documentElement.classList.remove("preflight-boot");
-    preloadFirstRunAssets();
+    preloadFirstBootAssets();
     language = await chooseLanguage();
     document.documentElement.lang = language;
-    gpuInfo = probeGraphics();
-    showGpuCheck();
     return { firstRun: true, language, profile: "low", displayGamma: 0.93 };
   }
 
-  async function chooseProfile() {
-    await gpuContinuePromise;
+  function chooseProfile() {
+    gpuInfo = probeGraphics();
     const recommendation = recommendGraphicsProfile({ gpuInfo });
     selectedProfile = recommendation;
-    return new Promise((resolve) => showProfileChoice({ benchmark: null, recommendation, resolve }));
+    return new Promise((resolve) => showPerformance({ recommendation, resolve }));
   }
 
   function complete(profile, displayGamma = 0.93, { removeOverlay = true } = {}) {
@@ -149,63 +112,25 @@ export function createPreflight({ screenTransition } = {}) {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     saveAppQualitySettings(profile, displayGamma);
-    window.operatorGameBootOptions.qualityProfile = profile;
-    window.operatorGameBootOptions.deferFullTextures = false;
-    window.operatorGameBootOptions.disableFullTextures = !quality.fullTextures;
+    if (window.operatorGameBootOptions) {
+      window.operatorGameBootOptions.qualityProfile = profile;
+      window.operatorGameBootOptions.deferFullTextures = false;
+      window.operatorGameBootOptions.disableFullTextures = !quality.fullTextures;
+    }
     if (removeOverlay) remove();
   }
 
   async function finish() {
     if (!overlay) return;
     overlay.classList.add("is-finishing");
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    if (screenTransition) {
+      await screenTransition.cover({ tone: "white", durationMs: 760, holdMs: 180 });
+      remove();
+      await screenTransition.reveal({ durationMs: 900 });
+      return;
+    }
+    await wait(260);
     remove();
-  }
-
-  function calibrateBrightness(onChange, initialGamma = 0.93) {
-    const copy = COPY[language];
-    const panel = getPanel();
-    setStep("display");
-    panel.innerHTML = `
-      <div class="preflight-kicker">DISPLAY CALIBRATION</div>
-      <h1>${copy.brightnessTitle}</h1>
-      <p>${copy.brightnessHint}</p>
-      <div class="preflight-black-frame">
-        <div class="preflight-black-levels">
-          ${[0, 4, 8, 12, 20, 32].map((level) => `<span data-black-level="${level}"></span>`).join("")}
-        </div>
-      </div>
-      <label class="preflight-gamma-control">
-        <span>${copy.brightnessControl}</span>
-        <input type="range" min="0.75" max="1.25" step="0.01" value="${initialGamma}" data-gamma />
-        <strong data-gamma-value>100%</strong>
-      </label>
-      <button type="button" data-gamma-apply>${copy.brightnessApply}</button>`;
-
-    const input = panel.querySelector("[data-gamma]");
-    const update = () => {
-      const gamma = Number(input.value);
-      panel.querySelector("[data-gamma-value]").textContent = `${Math.round((gamma / 0.93) * 100)}%`;
-      panel.querySelectorAll("[data-black-level]").forEach((bar) => {
-        const source = Number(bar.dataset.blackLevel) / 255;
-        const corrected = Math.round(Math.pow(source, 1 / gamma) * 255);
-        bar.style.backgroundColor = `rgb(${corrected}, ${corrected}, ${corrected})`;
-      });
-      onChange?.(gamma);
-    };
-    input.addEventListener("input", update);
-    update();
-    return new Promise((resolve) => {
-      panel.querySelector("[data-gamma-apply]").addEventListener("click", () => {
-        const gamma = Number(input.value);
-        panel.innerHTML = `
-          <div class="preflight-kicker">OPERATOR CONSOLE</div>
-          <h1>${copy.setupComplete}</h1>
-          <p>${copy.setupAgain}</p>
-          <button type="button" data-setup-ok data-ui-sound="setupComplete">${copy.okay}</button>`;
-        panel.querySelector("[data-setup-ok]").addEventListener("click", () => resolve(gamma), { once: true });
-      }, { once: true });
-    });
   }
 
   function remove() {
@@ -217,20 +142,8 @@ export function createPreflight({ screenTransition } = {}) {
     overlay = null;
   }
 
-  function showBooting() {
-    const copy = COPY[language];
-    const panel = getPanel();
-    panel.innerHTML = `
-      <div class="preflight-kicker">RENDERER / ${selectedProfile.toUpperCase()}</div>
-      <h1>${copy.applying}</h1>
-      <div class="preflight-test-status">
-        <span class="preflight-spinner"></span>
-        <strong>${copy.loadingRuntime}</strong>
-      </div>`;
-  }
-
   function startFirstBootSlides() {
-    if (!overlay) return { finish: async () => {} };
+    if (!overlay) return { ready: Promise.resolve(), finish: async () => {} };
     let startedAt = null;
     let timer = null;
     let runtimeReady = false;
@@ -241,8 +154,7 @@ export function createPreflight({ screenTransition } = {}) {
 
     const render = () => {
       if (startedAt === null) return;
-      const elapsed = performance.now() - startedAt;
-      const state = getFirstBootSlideState(elapsed);
+      const state = getFirstBootSlideState(performance.now() - startedAt);
       overlay.querySelectorAll("[data-first-boot-slide]").forEach((image, index) => {
         image.classList.toggle("is-active", index === state.slideIndex);
       });
@@ -263,8 +175,7 @@ export function createPreflight({ screenTransition } = {}) {
       completing = true;
       if (timer !== null) window.clearInterval(timer);
       timer = null;
-      const continueButton = overlay?.querySelector("[data-first-boot-continue]");
-      continueButton?.setAttribute("aria-disabled", "true");
+      overlay?.querySelector("[data-first-boot-continue]")?.setAttribute("aria-disabled", "true");
       await wait(120);
       await screenTransition?.cover({ tone: "white", durationMs: 950, holdMs: 400 });
       remove();
@@ -322,156 +233,87 @@ export function createPreflight({ screenTransition } = {}) {
     const element = document.createElement("div");
     element.className = "preflight-overlay";
     element.innerHTML = `
-      <section class="preflight-terminal">
+      <div class="preflight-backdrop" aria-hidden="true">
+        <img src="${PREFLIGHT_BACKGROUND}" alt="" />
+        <span class="preflight-corner preflight-corner-tl"></span>
+        <span class="preflight-corner preflight-corner-tr"></span>
+        <span class="preflight-corner preflight-corner-bl"></span>
+        <span class="preflight-corner preflight-corner-br"></span>
+        <span class="preflight-ambient preflight-ambient-version">VER. 2.3.4</span>
+        <span class="preflight-ambient preflight-ambient-brand">BASELOAD (C)<br />AN ARTEM LUT GAME</span>
+        <span class="preflight-ambient preflight-ambient-system">A TERRAGEN SYSTEM<br />OPERATING SYSTEM<br />1970–2037</span>
+      </div>
+      <section class="preflight-terminal" aria-label="System preflight">
         <header class="preflight-header">
-          <span>TERRAGEN SYSTEMS / SYSTEM PREFLIGHT</span>
-          <span>SITE-12 / TERM 04</span>
+          <span>TERRAGEN SYSTEMS</span>
+          <span>SITE-12</span>
         </header>
-        <div class="preflight-body">
-          <aside class="preflight-index" aria-label="Setup progress">
-            <div class="preflight-index-heading"><span>PREFLIGHT</span><span>01</span></div>
-            <ol>
-              <li data-preflight-step="language"><b>01</b><span>LANGUAGE</span></li>
-              <li data-preflight-step="graphics"><b>02</b><span>GRAPHICS</span></li>
-              <li data-preflight-step="profile"><b>03</b><span>QUALITY PROFILE</span></li>
-              <li data-preflight-step="display"><b>04</b><span>DISPLAY</span></li>
-            </ol>
-            <p>FIRST-RUN TERMINAL CALIBRATION</p>
-          </aside>
-          <main class="preflight-panel" aria-live="polite"></main>
-        </div>
-        <footer class="preflight-footer">
-          <span>OPERATOR CONSOLE / INITIAL SETUP</span>
-          <span data-preflight-stage>SETUP 01 / 04</span>
-        </footer>
+        <main class="preflight-panel" aria-live="polite"></main>
       </section>`;
     return element;
   }
 
-  function setStep(step) {
-    const steps = ["language", "graphics", "profile", "display"];
-    const activeIndex = Math.max(0, steps.indexOf(step));
-    overlay?.querySelectorAll("[data-preflight-step]").forEach((node, index) => {
-      node.classList.toggle("is-active", index === activeIndex);
-      node.classList.toggle("is-complete", index < activeIndex);
-    });
-    const stage = overlay?.querySelector("[data-preflight-stage]");
-    if (stage) stage.textContent = `SETUP ${String(activeIndex + 1).padStart(2, "0")} / 04`;
-  }
-
   function chooseLanguage() {
     const panel = getPanel();
-    setStep("language");
-    panel.innerHTML = `
-      <h1>CHOOSE LANGUAGE / ВЫБЕРИТЕ ЯЗЫК</h1>
-      <div class="preflight-language-actions">
-        <button type="button" data-language="en">ENGLISH</button>
-        <button type="button" data-language="ru">РУССКИЙ</button>
-      </div>`;
+    renderLanguage(panel);
     return new Promise((resolve) => {
       panel.querySelectorAll("[data-language]").forEach((button) => {
-        button.addEventListener("click", () => resolve(button.dataset.language), { once: true });
+        button.addEventListener("click", () => {
+          language = button.dataset.language;
+          document.documentElement.lang = language;
+          resolve(language);
+        }, { once: true });
       });
     });
   }
 
-  function showGpuCheck() {
-    const copy = COPY[language];
-    const adapterClass = classifyGraphicsAdapter(gpuInfo.renderer);
-    const integrated = adapterClass === "integrated";
-    const adapterNotice = adapterClass === "software" ? copy.software : adapterClass === "unknown" ? copy.unknown : integrated ? copy.integrated : "";
-    const gpuName = getShortGpuName(gpuInfo.renderer);
-    setStep("graphics");
-    if (!gpuContinuePromise) {
-      gpuContinuePromise = new Promise((resolve) => {
-        resolveGpuContinue = resolve;
-      });
-    }
-    getPanel().innerHTML = `
-      <div class="preflight-kicker">HARDWARE / WEBGL ${gpuInfo.webgl2 ? "2" : "1"}</div>
-      <h1>${copy.gpu}</h1>
-      <strong class="preflight-gpu">${escapeHtml(gpuName)}</strong>
-      ${adapterNotice ? `<p class="preflight-warning is-${adapterClass}">${adapterNotice}</p>` : ""}
-      <div class="preflight-test-status" data-test-status>
-        <strong>${copy.hardwareReady}</strong>
+  function renderLanguage(panel) {
+    panel.innerHTML = `
+      <div class="preflight-step-content preflight-language-step">
+        <h1>CHOOSE LANGUAGE<small>ВЫБЕРИТЕ ЯЗЫК</small></h1>
+        <div class="preflight-language-actions">
+          <button type="button" data-language="en">ENGLISH</button>
+          <button type="button" data-language="ru">РУССКИЙ</button>
+        </div>
       </div>
-      <div class="preflight-language-actions">
-        ${integrated ? `<button type="button" data-gpu-guide>${copy.guide}</button>` : ""}
-        <button type="button" data-gpu-continue>${adapterClass === "software" || integrated ? copy.continue : copy.confirmed}</button>
-      </div>`;
-    getPanel().querySelector("[data-gpu-guide]")?.addEventListener("click", showGpuGuide);
-    getPanel().querySelector("[data-gpu-continue]").addEventListener("click", () => resolveGpuContinue?.(), { once: true });
+      ${progressMarkup(0)}`;
   }
 
-  function showGpuGuide() {
+  function showPerformance({ recommendation, resolve }) {
     const copy = COPY[language];
     const panel = getPanel();
+    const gpuName = getBrowserGpuLabel(gpuInfo?.renderer, copy.unknownGpu);
     panel.innerHTML = `
-      <div class="preflight-kicker">${copy.guide}</div>
-      <h1>WINDOWS GPU SETUP</h1>
-      <div class="preflight-os-tabs">
-        ${["11", "10", "7", "xp"].map((version) => `<button type="button" data-windows="${version}">WINDOWS ${version.toUpperCase()}</button>`).join("")}
+      <div class="preflight-step-content preflight-performance-step">
+        <h1>${copy.performance}</h1>
+        <div class="preflight-gpu-block">
+          <div class="preflight-gpu-label">${copy.browserGpu}</div>
+          <div class="preflight-gpu-value">
+            <strong class="preflight-gpu">${escapeHtml(gpuName)}</strong>
+            <span class="preflight-gpu-help">
+              <button type="button" aria-label="${copy.gpuHelpLabel}" aria-describedby="preflightGpuHelp">?</button>
+            </span>
+            <span class="preflight-gpu-tooltip" id="preflightGpuHelp" role="tooltip">${copy.gpuHelp}</span>
+          </div>
+        </div>
+        <div class="preflight-profile-block">
+          <div class="preflight-profile-label">${copy.graphicsProfile}</div>
+          <div class="preflight-quality-grid">
+            ${["low", "medium", "high"].map((profile) => qualityCard(profile, recommendation, copy)).join("")}
+          </div>
+        </div>
+        <button class="preflight-apply" type="button" data-apply-profile>${copy.continue}</button>
       </div>
-      <div class="preflight-os-guide" data-os-guide></div>
-      <div class="preflight-language-actions">
-        <button type="button" data-guide-back>${copy.continue}</button>
-      </div>`;
+      ${progressMarkup(1)}`;
 
-    const showWindowsGuide = (version) => {
-      panel.querySelector("[data-os-guide]").innerHTML = getWindowsGuide(version, language);
-      panel.querySelectorAll("[data-windows]").forEach((button) => {
-        button.classList.toggle("is-selected", button.dataset.windows === version);
-      });
-    };
-    panel.querySelectorAll("[data-windows]").forEach((button) => {
-      button.addEventListener("click", () => showWindowsGuide(button.dataset.windows));
-    });
-    panel.querySelector("[data-guide-back]").addEventListener("click", showGpuCheck, { once: true });
-    showWindowsGuide("11");
-  }
-
-  function showProfileChoice({ benchmark, recommendation, resolve }) {
-    const copy = COPY[language];
-    const lowResult = findResult(benchmark, "PROFILE LOW");
-    const mediumResult = findResult(benchmark, "PROFILE MEDIUM");
-    const highResult = findResult(benchmark, "PROFILE HIGH");
-    const estimates = {
-      low: estimateFps(lowResult),
-      medium: estimateFps(mediumResult),
-      high: estimateFps(highResult),
-    };
-    const panel = getPanel();
-    setStep("profile");
-    panel.innerHTML = `
-      <div class="preflight-kicker">${copy.result}</div>
-      <h1>${copy.choose}</h1>
-      <p>${copy.measured}.</p>
-      <div class="preflight-quality-grid">
-        ${["low", "medium", "high"].map((profile) => qualityCard(profile, recommendation, estimates[profile], copy)).join("")}
-      </div>
-      <img class="preflight-quality-zoom" alt="" aria-hidden="true" />
-      <button class="preflight-apply" type="button" data-apply-profile>${copy.apply} ${recommendation.toUpperCase()}</button>`;
-
-    const zoomPreview = panel.querySelector(".preflight-quality-zoom");
-    let previewArmed = false;
-    window.setTimeout(() => {
-      previewArmed = true;
-    }, 320);
     panel.querySelectorAll("[data-profile]").forEach((button) => {
-      const previewTarget = button.querySelector(".preflight-quality-preview");
-      const showPreview = () => {
-        if (!previewArmed) return;
-        zoomPreview.src = button.dataset.preview;
-        zoomPreview.classList.add("is-visible");
-      };
-      const hidePreview = () => zoomPreview.classList.remove("is-visible");
-      previewTarget.addEventListener("mouseenter", () => showPreview());
-      previewTarget.addEventListener("mousemove", () => showPreview());
-      previewTarget.addEventListener("mouseleave", hidePreview);
       button.addEventListener("click", () => {
         selectedProfile = button.dataset.profile;
-        panel.querySelectorAll("[data-profile]").forEach((card) => card.classList.toggle("is-selected", card === button));
-        panel.querySelector("[data-apply-profile]").textContent = `${copy.apply} ${selectedProfile.toUpperCase()}`;
+        panel.querySelectorAll("[data-profile]").forEach((card) => {
+          const selected = card === button;
+          card.classList.toggle("is-selected", selected);
+          card.setAttribute("aria-pressed", String(selected));
+        });
       });
     });
     panel.querySelector("[data-apply-profile]").addEventListener("click", () => resolve(selectedProfile), { once: true });
@@ -481,16 +323,24 @@ export function createPreflight({ screenTransition } = {}) {
     return overlay.querySelector(".preflight-panel");
   }
 
-  return {
-    prepare,
-    chooseProfile,
-    showBooting,
-    startFirstBootSlides,
-    calibrateBrightness,
-    complete,
-    finish,
-    remove,
-  };
+  return { prepare, chooseProfile, complete, finish, startFirstBootSlides, remove };
+}
+
+function progressMarkup(activeIndex) {
+  return `
+    <footer class="preflight-progress" aria-label="Preflight progress">
+      <strong class="${activeIndex === 0 ? "is-active" : ""}"><b>01</b>LANGUAGE</strong>
+      <strong class="${activeIndex === 1 ? "is-active" : ""}"><b>02</b>PERFORMANCE</strong>
+    </footer>`;
+}
+
+function qualityCard(profile, recommendation, copy) {
+  const title = copy[profile];
+  const selected = profile === recommendation;
+  return `<div class="preflight-quality-option">
+    <button type="button" class="preflight-quality-card ${selected ? "is-selected" : ""}" data-profile="${profile}" aria-pressed="${selected}">${title}</button>
+    ${selected ? `<em>${copy.recommended}</em>` : ""}
+  </div>`;
 }
 
 export function getFirstBootSlideState(elapsedMs) {
@@ -509,21 +359,10 @@ async function waitForFirstBootImages(root) {
     try {
       await image.decode?.();
     } catch {
-      // A failed optional orientation image must not block the application boot.
+      // Optional orientation art must not block boot if an image fails to decode.
     }
   });
   await Promise.race([Promise.all(pending), wait(4000)]);
-}
-
-function qualityCard(profile, recommendation, fps, copy) {
-  const [title, description] = copy[profile];
-  const preview = QUALITY_PREVIEWS[profile];
-  return `<button type="button" class="preflight-quality-card ${profile === recommendation ? "is-selected" : ""}" data-profile="${profile}" data-preview="${preview}">
-    <span class="preflight-quality-preview is-${profile}" style="background-image:url('${preview}')"></span>
-    <strong>${title}${profile === recommendation ? ` · ${copy.recommended}` : ""}</strong>
-    <span>${description}</span>
-    ${fps ? `<em>${fps} FPS</em>` : ""}
-  </button>`;
 }
 
 function probeGraphics() {
@@ -533,9 +372,21 @@ function probeGraphics() {
   return {
     renderer: extension
       ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL)
-      : gl?.getParameter(gl.RENDERER) ?? "GPU information unavailable",
+      : gl?.getParameter(gl.RENDERER) ?? "",
     webgl2: typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext,
   };
+}
+
+export function getBrowserGpuLabel(renderer, fallback = "UNKNOWN / NOT REPORTED") {
+  const text = String(renderer ?? "").trim();
+  if (!text || /unavailable|unknown|masked|webgl renderer/i.test(text)) return fallback;
+  const intel = text.match(/Intel(?:\(R\))?\s+(?:HD|UHD|Iris)[^,(]*/i);
+  if (intel) return intel[0].replace(/\s+/g, " ").trim();
+  const nvidia = text.match(/NVIDIA\s+GeForce\s+[^,(]*/i);
+  if (nvidia) return nvidia[0].trim();
+  const amd = text.match(/(?:AMD\s+)?Radeon\s+[^,(]*/i);
+  if (amd) return amd[0].trim();
+  return text.replace(/^ANGLE\s*\(/i, "").split(",")[0].trim() || fallback;
 }
 
 function findResult(benchmark, name) {
@@ -547,16 +398,6 @@ function getStableFps(result, fallback) {
   const average = Number(result.avgFps) || fallback;
   const p95Fps = result.p95FrameMs > 0 ? 1000 / result.p95FrameMs : average;
   return Math.min(average, p95Fps);
-}
-
-function estimateFps(result) {
-  if (!result) return null;
-  const average = Number(result.avgFps) || 0;
-  const stable = getStableFps(result, 0);
-  if (average >= 120 && stable >= 75) return "120+";
-  if (stable >= 60) return "60+";
-  const conservative = Math.max(5, Math.min(120, stable * 0.9));
-  return `~${Math.max(5, Math.round(conservative / 5) * 5)}`;
 }
 
 export function recommendGraphicsProfile({ benchmark, gpuInfo } = {}) {
@@ -629,58 +470,6 @@ function updatePreflightScale(overlay, viewportWidth, viewportHeight) {
   overlay?.style.setProperty("--preflight-scale", String(getPreflightScale(viewportWidth, viewportHeight)));
 }
 
-function getShortGpuName(renderer) {
-  const text = String(renderer);
-  const intel = text.match(/Intel(?:\(R\))?\s+(?:HD|UHD|Iris)[^,(]*/i);
-  if (intel) return intel[0].replace(/\s+/g, " ").trim();
-  const nvidia = text.match(/NVIDIA\s+GeForce\s+[^,(]*/i);
-  if (nvidia) return nvidia[0].trim();
-  const amd = text.match(/(?:AMD\s+)?Radeon\s+[^,(]*/i);
-  if (amd) return amd[0].trim();
-  return text.replace(/^ANGLE\s*\(/i, "").split(",")[0].trim();
-}
-
-function getWindowsGuide(version, language) {
-  const guides = {
-    en: {
-      11: [
-        "Press Win + I → System → Display → Graphics.",
-        "Under “Custom settings for applications”, choose “Add desktop app” and click Browse.",
-        "Select the EXE file of the browser you are using.",
-        "When the browser appears in the list, open Options → High performance → Save.",
-        "Fully close every browser window, then start it again.",
-      ],
-      10: [
-        "Press Win + I → System → Display → Graphics settings.",
-        "Under “Choose an app to set preference”, select Desktop app → Browse.",
-        "Select the EXE file of the browser you are using.",
-        "Select the added browser → Options → High performance → Save, then restart it.",
-      ],
-      7: ["Open NVIDIA Control Panel or AMD Catalyst Control Center.", "Find application graphics settings.", "Assign the browser to the high-performance GPU."],
-      xp: ["Politely inform Windows XP that hybrid graphics exist now.", "Install a newer Windows.", "Return when the control room stops using Internet Explorer 6."],
-    },
-    ru: {
-      11: [
-        "Нажмите Win + I → Система → Дисплей → Графика.",
-        "В разделе пользовательских параметров приложений выберите «Добавить классическое приложение / Add desktop app» и нажмите «Обзор / Browse».",
-        "Выберите EXE-файл браузера, которым вы сейчас пользуетесь.",
-        "Нажмите на добавленный браузер → Параметры → Высокая производительность → Сохранить.",
-        "Полностью закройте все окна браузера и запустите его снова.",
-      ],
-      10: [
-        "Нажмите Win + I → Система → Дисплей → Настройки графики.",
-        "В «Выберите приложение для настройки» укажите «Классическое приложение» → Обзор.",
-        "Выберите EXE-файл используемого браузера.",
-        "Выберите добавленный браузер → Параметры → Высокая производительность → Сохранить и перезапустите браузер.",
-      ],
-      7: ["Откройте NVIDIA Control Panel или AMD Catalyst Control Center.", "Найдите настройки графики для приложений.", "Назначьте браузеру производительную видеокарту."],
-      xp: ["Спокойно объясните Windows XP, что гибридные видеокарты уже существуют.", "Установите Windows поновее.", "Возвращайтесь, когда диспетчерская перестанет запускать Internet Explorer 6."],
-    },
-  };
-  const steps = guides[language]?.[version] ?? guides.en[version];
-  return `<ol>${steps.map((step) => `<li>${step}</li>`).join("")}</ol>`;
-}
-
 function loadSaved() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
@@ -705,16 +494,15 @@ function saveAppQualitySettings(profile, gamma = null) {
   } catch {
     settings = {};
   }
-  const shadows = getGraphicsQualityProfile(profile).shadowQuality;
-  const gtao = getGraphicsQualityProfile(profile).gtaoQuality;
+  const quality = getGraphicsQualityProfile(profile);
   localStorage.setItem(
     SETTINGS_KEY,
     JSON.stringify({
       ...settings,
       qualityProfile: profile,
       ...(gamma == null ? {} : { gamma }),
-      shadowQuality: shadows,
-      gtaoQuality: gtao,
+      shadowQuality: quality.shadowQuality,
+      gtaoQuality: quality.gtaoQuality,
       ssgiQuality: "off",
       ssrQuality: "off",
       screenSpaceShadowQuality: "off",
@@ -728,19 +516,8 @@ function escapeHtml(value) {
   return element.innerHTML;
 }
 
-function preloadFirstRunAssets() {
-  const criticalAssets = [
-    "assets/mesh/panel/SM_Panel1.glb",
-    "assets/mesh/environment/SM_Interior2.glb",
-    "assets/mesh/prefabs/SM_DoorBulk1.glb",
-    "assets/mesh/prefabs/SM_Lamp_BulkRed.glb",
-    "assets/runtime-textures/T_Panel1_BaseColor_Critical_Preview_1024_ETC1S.ktx2",
-    "assets/runtime-textures/T_Panel1_Normal_Critical_Preview_1024_ETC1S.ktx2",
-    "assets/runtime-textures/T_Panel1_OcclusionRoughnessMetallic_Critical_Preview_1024_ETC1S.ktx2",
-    ...Object.values(QUALITY_PREVIEWS),
-    ...FIRST_BOOT_SLIDES,
-  ];
-  criticalAssets.forEach((url) => {
+function preloadFirstBootAssets() {
+  FIRST_BOOT_SLIDES.forEach((url) => {
     fetch(url, { cache: "force-cache", priority: "low" }).catch(() => {});
   });
 }

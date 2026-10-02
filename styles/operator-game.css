@@ -4251,6 +4251,362 @@ html.preflight-boot #app {
   background: var(--facility-accent);
 }
 
+/* First-run preflight: compact two-step terminal over the shared Site-12 boot treatment. */
+.preflight-overlay {
+  background: var(--facility-bg);
+  color: var(--facility-primary);
+  font-family: var(--facility-font-mono);
+}
+
+.preflight-overlay::after {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(0, 0, 0, 0.08) 4px);
+  content: "";
+  pointer-events: none;
+}
+
+.preflight-backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+}
+
+.preflight-backdrop > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.42) saturate(0.68) contrast(1.08) blur(1.4px);
+  transform: scale(1.006);
+}
+
+.preflight-backdrop::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(112, 154, 107, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(112, 154, 107, 0.065) 1px, transparent 1px);
+  background-size: 108px 108px;
+  content: "";
+  pointer-events: none;
+}
+
+.preflight-backdrop::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(2, 8, 5, 0.03) 16%, rgba(1, 8, 5, 0.28) 68%, rgba(1, 8, 5, 0.68) 100%),
+    linear-gradient(rgba(1, 8, 5, 0.08), rgba(1, 8, 5, 0.26));
+  content: "";
+  pointer-events: none;
+}
+
+.preflight-corner {
+  position: absolute;
+  z-index: 2;
+  width: 20px;
+  height: 20px;
+  border-color: rgba(168, 197, 162, 0.88);
+}
+
+.preflight-corner-tl { top: 20px; left: 20px; border-top: 1px solid; border-left: 1px solid; }
+.preflight-corner-tr { top: 20px; right: 20px; border-top: 1px solid; border-right: 1px solid; }
+.preflight-corner-bl { bottom: 20px; left: 20px; border-bottom: 1px solid; border-left: 1px solid; }
+.preflight-corner-br { right: 20px; bottom: 20px; border-right: 1px solid; border-bottom: 1px solid; }
+
+.preflight-ambient {
+  position: absolute;
+  z-index: 2;
+  color: rgba(168, 197, 162, 0.92);
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
+.preflight-ambient-version { top: 54px; left: 62px; }
+.preflight-ambient-brand { top: 54px; right: 62px; text-align: right; }
+.preflight-ambient-system { bottom: 50px; left: 62px; }
+
+.preflight-terminal {
+  z-index: 3;
+  grid-template-rows: 52px minmax(0, 1fr);
+  width: 860px;
+  height: 440px;
+  border-color: var(--facility-line);
+  background: rgba(2, 11, 7, 0.94);
+  box-shadow: 0 18px 80px rgba(0, 0, 0, 0.42), inset 0 0 32px rgba(56, 154, 79, 0.035);
+}
+
+.preflight-overlay.is-finishing .preflight-terminal {
+  visibility: visible;
+  pointer-events: none;
+}
+
+.preflight-terminal > .preflight-header {
+  height: 52px;
+  padding: 0 30px;
+  border-bottom: 1px solid var(--facility-line-soft);
+  color: var(--facility-primary);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.preflight-terminal > .preflight-panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 56px;
+  min-height: 0;
+  overflow: visible;
+  padding: 0 40px;
+}
+
+.preflight-step-content {
+  min-width: 0;
+}
+
+.preflight-language-step {
+  display: grid;
+  align-content: center;
+  gap: 36px;
+  padding: 0 16px;
+}
+
+.preflight-performance-step {
+  display: grid;
+  align-content: start;
+  grid-template-rows: auto auto auto auto;
+  gap: 18px;
+  padding: 20px 16px 16px;
+}
+
+.preflight-terminal .preflight-panel h1 {
+  max-width: none;
+  margin: 0;
+  color: var(--facility-text);
+  font: 800 46px/1 var(--facility-font-display);
+  letter-spacing: 0.025em;
+}
+
+.preflight-terminal .preflight-panel h1 small {
+  display: block;
+  margin-top: 10px;
+  color: var(--facility-primary);
+  font: 500 30px/1 var(--facility-font-display);
+  letter-spacing: 0.02em;
+}
+
+.preflight-terminal .preflight-language-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 0;
+}
+
+.preflight-terminal .preflight-panel button {
+  min-height: 50px;
+  border-color: var(--facility-line);
+  background: rgba(4, 17, 9, 0.42);
+  color: var(--facility-primary);
+  font-family: var(--facility-font-mono);
+}
+
+.preflight-terminal .preflight-panel button:hover,
+.preflight-terminal .preflight-panel button:focus-visible,
+.preflight-terminal .preflight-panel button.is-selected {
+  border-color: var(--facility-active);
+  background: var(--facility-selected);
+  color: var(--facility-text);
+  outline: none;
+}
+
+.preflight-terminal .preflight-language-actions button {
+  position: relative;
+  min-height: 54px;
+  font-size: 19px;
+}
+
+.preflight-terminal .preflight-language-actions button:hover::before,
+.preflight-terminal .preflight-language-actions button:focus-visible::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--facility-active);
+  content: "";
+}
+
+.preflight-gpu-block {
+  display: grid;
+  gap: 7px;
+}
+
+.preflight-gpu-label {
+  color: var(--facility-primary);
+  font-size: 14px;
+  letter-spacing: 0.055em;
+}
+
+.preflight-gpu-value {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.preflight-terminal .preflight-gpu {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--facility-text);
+  font: 500 20px/1.2 var(--facility-font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preflight-gpu-help {
+  position: relative;
+  display: inline-flex;
+}
+
+.preflight-terminal .preflight-gpu-help > button {
+  display: grid;
+  width: 21px;
+  min-height: 21px;
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 12px;
+}
+
+.preflight-gpu-tooltip {
+  position: absolute;
+  z-index: 8;
+  top: calc(100% + 18px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 138px;
+  padding: 24px 32px;
+  border: 1px solid var(--facility-line);
+  background: rgba(2, 11, 7, 0.96);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45);
+  color: var(--facility-primary);
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: 0.025em;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 130ms linear, transform 130ms linear;
+  pointer-events: none;
+}
+
+.preflight-gpu-help:hover + .preflight-gpu-tooltip,
+.preflight-gpu-help:focus-within + .preflight-gpu-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preflight-terminal .preflight-profile-block {
+  display: grid;
+  gap: 9px;
+}
+
+.preflight-terminal .preflight-profile-label {
+  margin: 0;
+  color: var(--facility-muted);
+  font-size: 14px;
+  letter-spacing: 0.09em;
+}
+
+.preflight-terminal .preflight-quality-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: auto;
+  margin: 0;
+}
+
+.preflight-quality-option {
+  display: grid;
+  grid-template-rows: 52px 16px;
+  gap: 4px;
+  min-width: 0;
+}
+
+.preflight-terminal .preflight-quality-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-template-rows: none;
+  width: 100%;
+  min-height: 52px;
+  padding: 7px 10px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.preflight-terminal .preflight-quality-card.is-selected::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--facility-active);
+  content: "";
+}
+
+.preflight-quality-option > em {
+  align-self: center;
+  justify-self: end;
+  padding: 0 2px;
+  background: transparent;
+  color: var(--facility-active);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.preflight-terminal .preflight-apply {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.preflight-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--facility-line-soft);
+  padding: 0 10px;
+  color: var(--facility-muted);
+  font-size: 14px;
+  letter-spacing: 0.09em;
+}
+
+.preflight-progress strong {
+  color: rgba(120, 150, 117, 0.45);
+  font-weight: 400;
+}
+
+.preflight-progress strong.is-active {
+  color: var(--facility-active);
+}
+
+.preflight-progress strong b {
+  margin-right: 10px;
+  font-weight: 400;
+}
+
 .boot-loading-overlay {
   --boot-green: var(--facility-primary);
   --boot-green-dim: var(--facility-muted);
@@ -4296,6 +4652,10 @@ html.preflight-boot #app {
 /* Repeat boot: compact frontend presentation, not an in-world diagnostic terminal. */
 .boot-loading-overlay::before {
   background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(0, 0, 0, 0.08) 4px);
+}
+
+.boot-loading-overlay .loading-stage {
+  z-index: 3;
 }
 
 .boot-background-image {
