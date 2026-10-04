@@ -146,6 +146,15 @@ test("exploring around starts localized panel guidance on first control booth en
       duration: 33.36,
     },
   });
+  assert.equal(environment.shiftProfile.completionMode, "external");
+  assert.deepEqual(
+    environment.shiftProfile.powerQualification.stages.map(({ targetMw, holdSeconds, narration }) => ({ targetMw, holdSeconds, narration })),
+    [
+      { targetMw: 400, holdSeconds: 10, narration: "power400" },
+      { targetMw: 950, holdSeconds: 10, narration: "power950" },
+      { targetMw: 100, holdSeconds: 10, narration: "power100" },
+    ],
+  );
 });
 
 test("instrument reliability shift reuses the facility with its own brief, intro and failed lights", () => {
@@ -161,6 +170,8 @@ test("instrument reliability shift reuses the facility with its own brief, intro
   assert.deepEqual(environment.physicalBriefing.sheets, level.briefingImage);
   assert.equal(environment.physicalBriefing.briefingLevelId, level.id);
   assert.equal(environment.tutorial.enabled, false);
+  assert.equal(environment.shiftProfile.completionMode, "timed");
+  assert.equal(environment.shiftProfile.powerQualification, null);
   assert.equal(
     environment.triggerSequences.find(({ name }) => name === "WelcomeEntry").narration,
     "faultsIntro",

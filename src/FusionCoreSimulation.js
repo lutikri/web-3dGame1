@@ -86,7 +86,7 @@ export function createFusionCoreSimulation() {
           : null;
       if (!normalized || state.mode === "complete" || state.mode === "failed") return null;
       state.mode = normalized;
-      state.elapsed = TOTAL_TIME;
+      if (state.completionMode !== "external") state.elapsed = state.durationSeconds;
       state.startupRemaining = 0;
       state.failureType = normalized === "complete" ? null : "qualityFailure";
       state.status = normalized === "complete" ? "SHIFT COMPLETE" : "OUTPUT QUALITY BELOW LIMIT";
@@ -95,6 +95,15 @@ export function createFusionCoreSimulation() {
         state.averageEfficiency = Math.max(100, state.averageEfficiency);
         state.reactionEfficiency = Math.max(100, state.reactionEfficiency);
       }
+      return getSnapshot(state);
+    },
+
+    completeExternal() {
+      if (state.completionMode !== "external" || state.mode !== "running") return null;
+      state.mode = "complete";
+      state.startupRemaining = 0;
+      state.failureType = null;
+      state.status = "SHIFT COMPLETE";
       return getSnapshot(state);
     },
 
@@ -173,6 +182,8 @@ function createInitialState() {
     averageEfficiency: 0,
     efficiencySamples: 0,
     debugForcedOutcome: null,
+    completionMode: "timed",
+    durationSeconds: TOTAL_TIME,
   };
 }
 
@@ -192,6 +203,8 @@ function updateStartupFaultState(state, dt) {
 
 function updateRunningState(state, dt, controls) {
   const shiftProfile = normalizeShiftProfile(controls.shiftProfile);
+  state.completionMode = shiftProfile?.completionMode ?? "timed";
+  state.durationSeconds = Math.max(1, Number(shiftProfile?.durationSeconds) || TOTAL_TIME);
   const phase = getPhase(state.elapsed, shiftProfile);
   const operatingTargets = getOperatingTargets(state.elapsed, shiftProfile);
   const fuel = controls.fuelInjection / 100;
@@ -401,7 +414,9 @@ function updateRunningState(state, dt, controls) {
   state.coreStress = clamp(state.coreStress + stressRate * dt, 0, 100);
   state.stallLockTimer = state.reactionStalled ? state.stallLockTimer + dt : Math.max(0, state.stallLockTimer - dt * 1.4);
 
-  state.elapsed = clamp(state.elapsed + dt, 0, TOTAL_TIME);
+  state.elapsed = state.completionMode === "external"
+    ? state.elapsed + dt
+    : clamp(state.elapsed + dt, 0, state.durationSeconds);
   state.targetOutput = demand;
   const underDemandRatio = demand > 0 ? Math.max(0, (demand - state.powerOutput) / demand) : 0;
   const overDemandRatio = demand > 0 ? Math.max(0, (state.powerOutput - demand) / demand) : 0;
@@ -431,7 +446,7 @@ function updateRunningState(state, dt, controls) {
     state.mode = "failed";
     state.failureType = state.coreStress >= 100 ? "coreDestroyed" : "safeShutdown";
     state.status = state.failureType === "coreDestroyed" ? "CORE STRESS LIMIT EXCEEDED" : "REACTION LOST";
-  } else if (state.elapsed >= TOTAL_TIME) {
+  } else if (state.completionMode !== "external" && state.elapsed >= state.durationSeconds) {
     state.mode = state.averageEfficiency >= 62 && state.coreStress < 100 ? "complete" : "failed";
     state.failureType = state.mode === "failed" ? "qualityFailure" : null;
     state.status = state.mode === "complete" ? "SHIFT COMPLETE" : "OUTPUT QUALITY BELOW LIMIT";
@@ -444,7 +459,7 @@ function getSnapshot(state) {
     mode: state.mode,
     startupRemaining: state.startupRemaining,
     elapsed: state.elapsed,
-    remaining: TOTAL_TIME - state.elapsed,
+    remaining: Math.max(0, state.durationSeconds - state.elapsed),
     phase,
     plasmaTemp: state.plasmaTemp,
     containment: state.containment,
@@ -535,6 +550,7 @@ function pickStatus(state, phase, tempLow, tempHigh, event) {
 }
 
 function getLiveDemand(phase, elapsed, event, shiftProfile = null) {
+  if (Number.isFinite(shiftProfile?.demandOverride)) return Math.max(0, shiftProfile.demandOverride);
   const wander = shiftProfile?.demandWander ?? { enabled: true, amount: 1 };
   const wanderAmount = wander.enabled === false ? 0 : Number(wander.amount ?? 1);
   const gridWander = (Math.sin(elapsed * 0.19) * 18 + Math.sin(elapsed * 0.071 + 1.2) * 12) * wanderAmount;
@@ -604,6 +620,9 @@ function normalizeShiftProfile(input) {
         .filter((phase) => phase.end > phase.start)
     : [];
   return {
+    completionMode: input.completionMode === "external" ? "external" : "timed",
+    durationSeconds: Math.max(1, Number(input.durationSeconds) || TOTAL_TIME),
+    demandOverride: Number.isFinite(input.demandOverride) ? Number(input.demandOverride) : null,
     defaultEvents: input.defaultEvents !== false,
     transitionSeconds: Number(input.transitionSeconds ?? 9),
     demandWander: input.demandWander ?? { enabled: true, amount: 1 },

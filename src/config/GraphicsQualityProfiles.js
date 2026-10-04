@@ -20,6 +20,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
     shadowQuality: "off",
     gtaoQuality: "off",
     fullTextures: false,
+    bloomResolutionScale: 0.5,
     effects: ["lut", "colorAdjustments"],
   },
   medium: {
@@ -33,6 +34,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
     shadowQuality: "min",
     gtaoQuality: "min",
     fullTextures: true,
+    bloomResolutionScale: 0.5,
     effects: ["bloom", "lensEffects", "lut", "colorAdjustments"],
   },
   high: {
@@ -46,6 +48,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
     shadowQuality: "med",
     gtaoQuality: "med",
     fullTextures: true,
+    bloomResolutionScale: 0.5,
     effects: [
       "bloom",
       "lensEffects",
@@ -67,6 +70,7 @@ export const GRAPHICS_QUALITY_PROFILES = {
     shadowQuality: "max",
     gtaoQuality: "max",
     fullTextures: true,
+    bloomResolutionScale: 1,
     effects: [
       "bloom", "lensEffects", "lut", "colorAdjustments", "sharpen",
       "lensDistortion", "chromaticAberration",
@@ -104,6 +108,7 @@ export function applyGraphicsQualityProfileToConfig(config, profile = "low") {
   post.ssgi.defaultQuality = "off";
   post.ssr.defaultQuality = "off";
   post.screenSpaceShadows.defaultQuality = "off";
+  post.bloom.resolutionScale = quality.bloomResolutionScale;
   POST_EFFECT_KEYS.forEach((key) => {
     if (post[key]) post[key].enabled = quality.effects.includes(key);
   });

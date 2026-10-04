@@ -74,6 +74,36 @@ test("post-processing policy applies live standard pass configuration", () => {
   assert.equal(realismUpdates, 1);
 });
 
+test("live AO tuning applies the active preset without rebuilding the composer", () => {
+  const { policy } = createPolicy();
+  const preset = {
+    enabled: true, blendIntensity: 0.71, radius: 0.46, distanceExponent: 1.7,
+    thickness: 0.8, distanceFallOff: 1, scale: 2, samples: 10,
+    denoiseRadius: 2, denoiseSamples: 4, distanceFadeStart: 5, distanceFadeEnd: 12,
+  };
+  policy.presets.getGtao = (key) => key === "high" ? preset : { enabled: false };
+  policy.replace({ gtao: "high" });
+  const gtaoChanges = [];
+  const denoiseChanges = [];
+  const gtaoPass = {
+    updateGtaoMaterial: (settings) => gtaoChanges.push(settings),
+    updatePdMaterial: (settings) => denoiseChanges.push(settings),
+    gtaoMaterial: { uniforms: { contactAoFadeStart: { value: 0 }, contactAoFadeEnd: { value: 0 } } },
+  };
+  policy.attach({ runtime: { gtaoPass, setup: () => assert.fail("Live AO must not rebuild the composer") }, realism: null });
+  policy.applyLiveConfig();
+  assert.equal(gtaoPass.blendIntensity, 0.71);
+  assert.equal(gtaoChanges[0].radius, 0.46);
+  assert.equal(gtaoChanges[0].samples, 10);
+  assert.deepEqual(denoiseChanges[0], { radius: 2, samples: 4 });
+  assert.equal(gtaoPass.gtaoMaterial.uniforms.contactAoFadeStart.value, 5);
+  preset.blendIntensity = 0.2;
+  preset.radius = 0.15;
+  policy.applyLiveConfig();
+  assert.equal(gtaoPass.blendIntensity, 0.2);
+  assert.equal(gtaoChanges[1].radius, 0.15);
+});
+
 test("SSGI and standalone SSR are mutually exclusive", () => {
   const { policy } = createPolicy();
   let setups = 0;

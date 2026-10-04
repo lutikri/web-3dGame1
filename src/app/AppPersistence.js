@@ -160,7 +160,7 @@ export function normalizeSettings(source = {}) {
     sensitivity: clampNumber(source.sensitivity, 40, 180, DEFAULT_SETTINGS.sensitivity),
     qualityProfile: normalizeQuality(source.qualityProfile, ["low", "medium", "high", "ultra"], null),
     renderScale: clampNumber(source.renderScale, 50, 150, DEFAULT_SETTINGS.renderScale),
-    gamma: source.gamma == null ? null : clampNumber(source.gamma, 0.75, 1.25, 0.93),
+    gamma: source.gamma == null ? null : clampNumber(source.gamma, 0.75, 1.395, 0.93),
     antiAliasing: normalizeQuality(source.antiAliasing, ["fxaa", "smaa", "msaa4", "msaa8"], null),
     masterVolume: clampNumber(source.masterVolume, 0, 100, DEFAULT_SETTINGS.masterVolume),
   };

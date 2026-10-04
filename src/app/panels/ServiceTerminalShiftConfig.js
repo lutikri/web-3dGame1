@@ -24,8 +24,8 @@ export const TERMINAL_SHIFT_CONFIG = Object.freeze({
     brief: {
       title: localized("FIRST OPERATOR\nQUALIFICATION SHIFT", "ПЕРВАЯ КВАЛ.\nСМЕНА"),
       purpose: localized("FCU-16 operator qualification under standard grid load.", "Квалификация оператора FCU-16 при штатной нагрузке сети."),
-      objective: localized("Complete operator qualification.\nMatch reactor output to grid demand.", "Пройти квалификацию оператора.\nПоддерживать мощность по запросу сети."),
-      success: localized("Stable manual operation, acceptable demand compliance,\nno critical reactor events.", "Стабильное ручное управление, допустимое соответствие спросу,\nбез критических событий реактора."),
+      objective: localized("Reach 400, 950, and 100 MW to test the installation\nand complete operator qualification.", "Достигните 400, 950 и 100 МВт для тестирования установки\nи прохождения квалификации."),
+      success: localized("Hold each requested output level for 10 seconds\nwithout a critical reactor event.", "Удерживайте каждый запрошенный уровень мощности 10 секунд\nбез критических событий реактора."),
       conditions: localized("Standard instrumentation and environmental conditions.\nSupervised operation.", "Штатные приборы и условия среды.\nРабота под наблюдением."),
       attachments: [
         {
@@ -41,21 +41,10 @@ export const TERMINAL_SHIFT_CONFIG = Object.freeze({
         {
           id: "load-profile",
           icon: "guide",
-          title: localized("LOAD PROFILE", "ПРОФИЛЬ НАГРУЗКИ"),
+          title: localized("LOAD PROFILE — UNAVAILABLE", "ПРОФИЛЬ НАГРУЗКИ — НЕДОСТУПЕН"),
           type: "loadProfile",
           heading: localized("FCU-16 / LOAD PROFILE", "FCU-16 / ПРОФИЛЬ НАГРУЗКИ"),
-          points: {
-            en: [
-              ["00:00", 140, "FIELD PRECHARGE"], ["00:24", 430, "PLASMA IGNITION"],
-              ["00:52", 650, "STABLE BURN"], ["01:30", 850, "DEMAND SURGE"],
-              ["02:15", 980, "SUSTAINED HIGH LOAD"], ["03:00", 980, "SHIFT END"],
-            ],
-            ru: [
-              ["00:00", 140, "ПРЕДВАРИТЕЛЬНОЕ ПОЛЕ"], ["00:24", 430, "ЗАЖИГАНИЕ ПЛАЗМЫ"],
-              ["00:52", 650, "СТАБИЛЬНОЕ ГОРЕНИЕ"], ["01:30", 850, "СКАЧОК СПРОСА"],
-              ["02:15", 980, "ВЫСОКАЯ НАГРУЗКА"], ["03:00", 980, "КОНЕЦ СМЕНЫ"],
-            ],
-          },
+          paragraphs: localized(["UNAVAILABLE"], ["НЕДОСТУПНО"]),
         },
       ],
     },

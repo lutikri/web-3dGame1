@@ -1,0 +1,8 @@
+﻿1
+00:00:00,060 --> 00:00:04,420
+Bring reactor output to 400 megawatts.
+
+2
+00:00:04,886 --> 00:00:07,320
+Maintain the required level for 10 seconds.
+

@@ -29,6 +29,9 @@ test("service terminal content exposes the required data-driven sections in EN a
   assert.equal(russian.brief.attachments[0].pages.length, 2);
   assert.equal(russian.brief.title, "ПЕРВАЯ КВАЛ.\nСМЕНА");
   assert.equal(russian.brief.attachments[0].title, "АРХИВНЫЙ ТЕХ. БРИФ");
+  assert.equal(english.brief.attachments[1].title, "LOAD PROFILE — UNAVAILABLE");
+  assert.deepEqual(english.brief.attachments[1].paragraphs, ["UNAVAILABLE"]);
+  assert.match(english.brief.sections[0].text, /400, 950, and 100 MW/);
   assert.equal(russian.guide.slides[0].kind, "demandIndicators");
   assert.equal(russian.guide.slides[1].kind, "indicatorDefinitions");
   assert.deepEqual(russian.guide.slides[1].definitions[0], ["OVER DEMAND", "Мощность выше текущего запроса сети."]);

@@ -6,7 +6,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { BloomResolutionPass } from "./BloomResolutionPass.js?v=compact-loading-game";
 
 import {
   bindGtaoToComposerDepth,
@@ -52,11 +52,12 @@ export class PostProcessingRuntime {
     resizeRealism,
     disposeRealism,
     inspectRealism,
+    getRealismComposer,
   }) {
     Object.assign(this, {
       config, renderer, scene, camera, assets, presets, getQuality,
       applyColorAdjustments, applyLensDistortion, applyLensEffects,
-      setupRealism, renderRealism, resizeRealism, disposeRealism, inspectRealism,
+      setupRealism, renderRealism, resizeRealism, disposeRealism, inspectRealism, getRealismComposer,
     });
     this.performanceMonitor = new RenderPerformanceMonitor({ renderer });
   }
@@ -94,9 +95,9 @@ export class PostProcessingRuntime {
     }
 
     if (config.bloom.enabled) {
-      this.bloomPass = new UnrealBloomPass(
+      this.bloomPass = new BloomResolutionPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
-        config.bloom.strength, config.bloom.radius, config.bloom.threshold);
+        config.bloom.strength, config.bloom.radius, config.bloom.threshold, config.bloom.resolutionScale);
       this.composer.addPass(this.bloomPass);
     }
 
@@ -184,6 +185,61 @@ export class PostProcessingRuntime {
     }
   }
 
+  captureFrame(copyFrame) {
+    const renderer = this.renderer;
+    const size = renderer.getSize(new THREE.Vector2());
+    const buffer = renderer.getDrawingBufferSize(new THREE.Vector2());
+    const ratio = renderer.getPixelRatio();
+    const width = buffer.x * 2;
+    const height = buffer.y * 2;
+    const context = renderer.getContext();
+    const viewportLimit = context.getParameter(context.MAX_VIEWPORT_DIMS);
+    const targetLimit = Math.min(renderer.capabilities.maxTextureSize, context.getParameter(context.MAX_RENDERBUFFER_SIZE));
+    if (width > Math.min(targetLimit, viewportLimit[0]) || height > Math.min(targetLimit, viewportLimit[1])) {
+      throw new Error(`Screenshot ${width}x${height} exceeds GPU render limits`);
+    }
+    const samples = renderer.capabilities.isWebGL2 ? renderer.capabilities.maxSamples ?? 0 : 0;
+    const realism = this.getRealismComposer?.();
+    const realismSamples = realism?.multisampling;
+    const savedTarget = renderer.getRenderTarget();
+    const savedSamples = [this.composer?.renderTarget1, this.composer?.renderTarget2]
+      .filter(Boolean).map((target) => [target, target.samples]);
+    let fallback = null;
+    try {
+      for (const [target] of savedSamples) target.samples = samples;
+      if (realism) realism.multisampling = samples;
+      // Use exact physical dimensions, including any rounding in the current drawing buffer.
+      renderer.setPixelRatio(1);
+      renderer.setSize(width, height, false);
+      this.resize(width, height);
+      // The realism composer propagates physical buffer dimensions to its effect passes.
+      realism?.setSize(width, height, false);
+      if (this.composer || realism) {
+        this.render(0);
+      } else {
+        // Direct rendering normally has no MSAA; use a temporary composer for this frame.
+        fallback = this.#createComposer(samples);
+        fallback.addPass(new RenderPass(this.scene, this.camera));
+        fallback.addPass(new OutputPass());
+        fallback.setPixelRatio(renderer.getPixelRatio());
+        fallback.setSize(width, height);
+        fallback.render(0);
+      }
+      const canvas = copyFrame(renderer.domElement);
+      return { canvas, width: renderer.domElement.width, height: renderer.domElement.height, samples };
+    } finally {
+      fallback?.passes.forEach((pass) => pass.dispose?.());
+      fallback?.dispose();
+      for (const [target, previous] of savedSamples) target.samples = previous;
+      if (realism) realism.multisampling = realismSamples;
+      renderer.setPixelRatio(ratio);
+      renderer.setSize(size.x, size.y, false);
+      this.resize(size.x, size.y);
+      renderer.setRenderTarget(savedTarget);
+      this.render(0);
+    }
+  }
+
   resize(width, height) {
     const pixelRatio = this.renderer.getPixelRatio();
     this.composer?.setPixelRatio(pixelRatio);
@@ -199,7 +255,7 @@ export class PostProcessingRuntime {
       );
     }
     (this.presentationPass ?? this.sharpenPass)?.uniforms.resolution.value.set(renderWidth, renderHeight);
-    this.#updateFxaa();
+    this.#updateFxaa(width, height);
     this.resizeRealism(width, height);
   }
 
@@ -236,8 +292,8 @@ export class PostProcessingRuntime {
     }
   }
 
-  #createComposer() {
-    const requested = Number(this.config.postProcessing.antiAliasing?.msaaSamples ?? 0);
+  #createComposer(samplesOverride = null) {
+    const requested = samplesOverride ?? Number(this.config.postProcessing.antiAliasing?.msaaSamples ?? 0);
     if (!this.renderer.capabilities.isWebGL2) return new EffectComposer(this.renderer);
     const samples = requested > 0
       ? Math.min(requested, this.renderer.capabilities.maxSamples ?? requested)
@@ -251,12 +307,12 @@ export class PostProcessingRuntime {
     return new EffectComposer(this.renderer, target);
   }
 
-  #updateFxaa() {
+  #updateFxaa(width = window.innerWidth, height = window.innerHeight) {
     if (!this.fxaaPass) return;
     const ratio = this.renderer.getPixelRatio();
     this.fxaaPass.material.uniforms.resolution.value.set(
-      1 / Math.max(1, window.innerWidth * ratio),
-      1 / Math.max(1, window.innerHeight * ratio));
+      1 / Math.max(1, width * ratio),
+      1 / Math.max(1, height * ratio));
   }
 
 }

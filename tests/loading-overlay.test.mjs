@@ -22,6 +22,32 @@ test("repeat boot chooses one runtime background from the configured set", () =>
   assert.equal(pickBootBackground(backgrounds, () => 0.999), "three.webp");
 });
 
+test("repeat boot preserves a background selected before module initialization", () => {
+  let source = "early.webp";
+  const background = {
+    dataset: { bootBackgroundSelected: "true" },
+    get src() { return source; },
+    set src(value) { source = value; },
+  };
+  const stage = { style: { setProperty() {} } };
+  const overlay = {
+    querySelector(selector) {
+      if (selector === ".loading-stage") return stage;
+      if (selector === "[data-boot-background-image]") return background;
+      return null;
+    },
+  };
+
+  createLoadingOverlay({
+    overlay,
+    bootBackgrounds: ["late.webp"],
+    random: () => 0,
+    view: { innerWidth: 1920, innerHeight: 1080 },
+  });
+
+  assert.equal(source, "early.webp");
+});
+
 test("repeat boot progress fills discrete blocks instead of drawing a continuous strip", () => {
   assert.equal(getFilledSegmentCount(0, 48), 0);
   assert.equal(getFilledSegmentCount(50, 48), 24);

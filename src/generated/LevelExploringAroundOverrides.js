@@ -20,6 +20,64 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "SM_Door2"
     ]
   },
+  "renderZones": {
+    "enabled": true,
+    "zoneExitGraceMs": 750,
+    "preloadDistance": 6,
+    "releaseDistance": 8,
+    "sharedZoneCount": 5,
+    "volumeAliases": {
+      "FacilitySubCorridor": "FacilityCorridor"
+    },
+    "visibility": {
+      "EntryCorridor": {
+        "always": [
+          "EntryHall"
+        ]
+      },
+      "EntryHall": {
+        "always": [
+          "EntryCorridor",
+          "FacilityCorridor"
+        ]
+      },
+      "FacilityCorridor": {
+        "nearby": [
+          "EntryHall",
+          "CaveMain1",
+          "Observation1",
+          "ControlBoothA",
+          "StaffRoom1",
+          "PowerBusControl"
+        ]
+      },
+      "CaveMain1": {
+        "always": [
+          "FacilityCorridor"
+        ]
+      },
+      "Observation1": {
+        "always": [
+          "FacilityCorridor"
+        ]
+      },
+      "ControlBoothA": {
+        "always": [
+          "FacilityCorridor"
+        ]
+      },
+      "StaffRoom1": {
+        "always": [
+          "FacilityCorridor"
+        ]
+      },
+      "PowerBusControl": {
+        "always": [
+          "FacilityCorridor"
+        ]
+      }
+    }
+  },
   "position": {
     "x": 0,
     "y": 0,
@@ -299,6 +357,32 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     }
   },
   "shiftProfile": {
+    "completionMode": "external",
+    "powerQualification": {
+      "stages": [
+        {
+          "name": "QUALIFICATION / 400 MW",
+          "targetMw": 400,
+          "toleranceMw": 40,
+          "holdSeconds": 10,
+          "narration": "power400"
+        },
+        {
+          "name": "QUALIFICATION / 950 MW",
+          "targetMw": 950,
+          "toleranceMw": 50,
+          "holdSeconds": 10,
+          "narration": "power950"
+        },
+        {
+          "name": "QUALIFICATION / 100 MW",
+          "targetMw": 100,
+          "toleranceMw": 20,
+          "holdSeconds": 10,
+          "narration": "power100"
+        }
+      ]
+    },
     "defaultEvents": false,
     "transitionSeconds": 9,
     "demandWander": {
@@ -444,6 +528,42 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "soundKey": "MessageRU_WelcomePanelTutorial1",
         "subtitlePath": "assets/sounds/narration/MessageRU_WelcomePanelTutorial1.srt",
         "duration": 33.36
+      }
+    },
+    "power400": {
+      "en": {
+        "soundKey": "MessageEN_QualificationPower400MW1",
+        "subtitlePath": "assets/sounds/narration/MessageEN_QualificationPower400MW1.srt",
+        "duration": 8.78
+      },
+      "ru": {
+        "soundKey": "MessageRU_QualificationPower400MW1",
+        "subtitlePath": "assets/sounds/narration/MessageRU_QualificationPower400MW1.srt",
+        "duration": 9.58
+      }
+    },
+    "power950": {
+      "en": {
+        "soundKey": "MessageEN_QualificationPower950MW1",
+        "subtitlePath": "assets/sounds/narration/MessageEN_QualificationPower950MW1.srt",
+        "duration": 6.94
+      },
+      "ru": {
+        "soundKey": "MessageRU_QualificationPower950MW1",
+        "subtitlePath": "assets/sounds/narration/MessageRU_QualificationPower950MW1.srt",
+        "duration": 8.41
+      }
+    },
+    "power100": {
+      "en": {
+        "soundKey": "MessageEN_QualificationPower100MW1",
+        "subtitlePath": "assets/sounds/narration/MessageEN_QualificationPower100MW1.srt",
+        "duration": 12.32
+      },
+      "ru": {
+        "soundKey": "MessageRU_QualificationPower100MW1",
+        "subtitlePath": "assets/sounds/narration/MessageRU_QualificationPower100MW1.srt",
+        "duration": 11.98
       }
     },
     "passed": {
@@ -2416,7 +2536,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "light": {
         "enabled": true,
         "color": "#fff0cf",
-        "intensity": 2,
+        "intensity": 2.14,
         "distance": 4,
         "decay": 1.2,
         "parentName": "SM_LampDome1",

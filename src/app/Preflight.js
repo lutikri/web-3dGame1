@@ -1,4 +1,5 @@
 import { getGraphicsQualityProfile } from "../config/GraphicsQualityProfiles.js?v=compact-loading-game";
+import { GAME_VERSION_LABEL } from "../config/GameVersion.js?v=compact-loading-game";
 import { SOUND_REGISTRY } from "../audio/SoundRegistry.js?v=compact-loading-game";
 import {
   createUiAudioInteractionRuntime,
@@ -14,6 +15,7 @@ export { classifyGraphicsAdapter } from "../config/GraphicsHardwareTiers.js?v=co
 const STORAGE_KEY = "operatorGame.preflight.v1";
 const SETTINGS_KEY = "operatorGame.settings.v1";
 const QUALITY_PROFILE_REVISION = 2;
+export const FIRST_RUN_DISPLAY_GAMMA = 1.255;
 const PREFLIGHT_DESIGN_WIDTH = 1920;
 const PREFLIGHT_DESIGN_HEIGHT = 1080;
 const PREFLIGHT_BACKGROUND = "assets/ui/boot-backgrounds/site-12-01.webp";
@@ -89,7 +91,7 @@ export function createPreflight({ screenTransition } = {}) {
     preloadFirstBootAssets();
     language = await chooseLanguage();
     document.documentElement.lang = language;
-    return { firstRun: true, language, profile: "low", displayGamma: 0.93 };
+    return { firstRun: true, language, profile: "low", displayGamma: FIRST_RUN_DISPLAY_GAMMA };
   }
 
   function chooseProfile() {
@@ -99,7 +101,7 @@ export function createPreflight({ screenTransition } = {}) {
     return new Promise((resolve) => showPerformance({ recommendation, resolve }));
   }
 
-  function complete(profile, displayGamma = 0.93, { removeOverlay = true } = {}) {
+  function complete(profile, displayGamma = FIRST_RUN_DISPLAY_GAMMA, { removeOverlay = true } = {}) {
     const quality = getGraphicsQualityProfile(profile);
     selectedProfile = profile;
     saved = {
@@ -239,7 +241,7 @@ export function createPreflight({ screenTransition } = {}) {
         <span class="preflight-corner preflight-corner-tr"></span>
         <span class="preflight-corner preflight-corner-bl"></span>
         <span class="preflight-corner preflight-corner-br"></span>
-        <span class="preflight-ambient preflight-ambient-version">VER. 2.3.4</span>
+        <span class="preflight-ambient preflight-ambient-version">${GAME_VERSION_LABEL}</span>
         <span class="preflight-ambient preflight-ambient-brand">BASELOAD (C)<br />AN ARTEM LUT GAME</span>
         <span class="preflight-ambient preflight-ambient-system">A TERRAGEN SYSTEM<br />OPERATING SYSTEM<br />1970–2037</span>
       </div>

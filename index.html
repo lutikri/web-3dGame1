@@ -39,10 +39,16 @@
       <canvas id="scene"></canvas>
       <div id="loadingOverlay" class="loading-overlay boot-loading-overlay" aria-live="polite">
         <div class="boot-backdrop" data-boot-background aria-hidden="true">
-          <img class="boot-background-image" data-boot-background-image src="./assets/ui/boot-backgrounds/site-12-01.webp" fetchpriority="high" alt="" />
+          <img
+            class="boot-background-image"
+            data-boot-background-image
+            data-boot-backgrounds="./assets/ui/boot-backgrounds/site-12-01.webp|./assets/ui/boot-backgrounds/site-12-02.webp|./assets/ui/boot-backgrounds/site-12-03.webp|./assets/ui/boot-backgrounds/site-12-04.webp"
+            fetchpriority="high"
+            alt=""
+          />
           <span class="boot-corner boot-corner-tl"></span><span class="boot-corner boot-corner-tr"></span>
           <span class="boot-corner boot-corner-bl"></span><span class="boot-corner boot-corner-br"></span>
-          <div class="boot-watermark boot-watermark-left">VER. 2.3.4</div>
+          <div class="boot-watermark boot-watermark-left" data-game-version></div>
           <div class="boot-watermark boot-watermark-right">BASELOAD (C)<br />AN ARTEM LUT GAME</div>
           <div class="boot-footer-label">A TERRAGEN SYSTEM<br />OPERATING SYSTEM<br />1970–2037</div>
         </div>
@@ -72,6 +78,23 @@
           </section>
         </div>
       </div>
+      <script>
+        (() => {
+          const overlay = document.querySelector("#loadingOverlay");
+          const background = overlay?.querySelector("[data-boot-background-image]");
+          const backgrounds = background?.dataset.bootBackgrounds?.split("|").filter(Boolean) ?? [];
+          if (background && backgrounds.length) {
+            background.src = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            background.dataset.bootBackgroundSelected = "true";
+          }
+
+          const stage = overlay?.querySelector(".loading-stage");
+          if (stage) {
+            const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            stage.style.setProperty("--loading-stage-scale", String(scale));
+          }
+        })();
+      </script>
       <div id="routeLoadingOverlay" class="loading-overlay route-loading-overlay" aria-live="polite" hidden>
         <div class="loading-stage">
           <div class="loading-panel">
@@ -175,6 +198,7 @@
               <dt>OPERATOR RECORD</dt><dd>ACTIVE</dd>
               <dt>FACILITY</dt><dd>SITE-12</dd>
               <dt>LAST SESSION</dt><dd data-main-menu-last-session>26.07.2026 06:42</dd>
+              <dt>GAME VERSION</dt><dd data-game-version></dd>
             </dl>
           </div>
         </section>
@@ -298,7 +322,7 @@
                   <p class="settings-description" data-i18n="settings.graphicsHint">DISPLAY AND PERFORMANCE</p>
                   <div class="settings-option"><div><strong>QUALITY PRESET</strong><small data-i18n="settings.qualityHint">OVERALL GRAPHICS QUALITY</small></div><div class="settings-choices" data-setting-key="qualityProfile"><button data-setting-value="low">MIN</button><button data-setting-value="medium">MEDIUM</button><button data-setting-value="high">HIGH</button><button data-setting-value="ultra">ULTRA</button></div></div>
                   <div class="settings-option"><div><strong>RENDER SCALE</strong><small data-i18n="settings.renderScaleHint">RENDERING SCALE</small></div><div class="settings-choices" data-setting-key="renderScale"><button data-setting-value="50">50%</button><button data-setting-value="75">75%</button><button data-setting-value="100">100%</button><button data-setting-value="150">150%</button></div></div>
-                  <label class="settings-option"><span><strong>GAMMA</strong><small data-i18n="settings.gammaHint">IMAGE BRIGHTNESS</small></span><span class="settings-range"><input id="settingGamma" type="range" min="0.75" max="1.25" step="0.01"><output id="settingGammaValue">100%</output></span></label>
+                  <label class="settings-option"><span><strong>GAMMA</strong><small data-i18n="settings.gammaHint">IMAGE BRIGHTNESS</small></span><span class="settings-range"><input id="settingGamma" type="range" min="0.75" max="1.395" step="0.005"><output id="settingGammaValue">100%</output></span></label>
                   <div class="settings-option"><div><strong>AVG FPS</strong><small data-i18n="settings.fpsHint">AVERAGE FPS</small></div><output id="settingFpsValue">N/A</output></div>
                   <div class="settings-option"><div><strong>RENDER RES</strong><small data-i18n="settings.resHint">RENDER RESOLUTION</small></div><output id="settingRenderResValue">—</output></div>
                   <div class="settings-option"><div><strong>ANTI ALIASING</strong><small data-i18n="settings.aaHint">EDGE SMOOTHING</small></div><div class="settings-choices" data-setting-key="antiAliasing"><button data-setting-value="fxaa">FXAA</button><button data-setting-value="smaa">SMAA</button><button data-setting-value="msaa4">MSAA 4×</button><button data-setting-value="msaa8">MSAA 8×</button></div></div>

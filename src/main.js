@@ -4,8 +4,10 @@ import { getGraphicsQualityProfile } from "./config/GraphicsQualityProfiles.js?v
 import { showDevelopmentNotice } from "./app/DevelopmentNotice.js?v=compact-loading-game";
 import { acknowledgeDevelopmentNotice, shouldShowDevelopmentNotice } from "./app/AppPersistence.js?v=compact-loading-game";
 import { getScreenTransitionRuntime } from "./ui/ScreenTransitionRuntime.js?v=compact-loading-game";
+import { applyGameVersion } from "./app/GameVersionPresentation.js?v=compact-loading-game";
 
 const APP_BUILD_REVISION = "compact-loading-game";
+applyGameVersion();
 const runtimeSmokeMode = new URLSearchParams(window.location.search).has("runtimeSmoke");
 if (!runtimeSmokeMode && shouldShowDevelopmentNotice()) {
   await showDevelopmentNotice();

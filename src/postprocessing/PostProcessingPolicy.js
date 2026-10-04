@@ -1,3 +1,5 @@
+import { applyGtaoPreset } from "./PostProcessingPresets.js?v=compact-loading-game";
+
 export class PostProcessingPolicy {
   constructor({ config, renderer, presets, assets, pointLights, prefabInstances, applyShadowSettings, getTime }) {
     Object.assign(this, { config, renderer, presets, assets, pointLights, prefabInstances, applyShadowSettings, getTime });
@@ -28,6 +30,7 @@ export class PostProcessingPolicy {
   applyLiveConfig = () => {
     const runtime = this.runtime;
     const config = this.config.postProcessing;
+    if (runtime?.gtaoPass) applyGtaoPreset(runtime.gtaoPass, this.getGtaoPreset());
     if (runtime?.bloomPass) Object.assign(runtime.bloomPass, {
       strength: config.bloom.strength, radius: config.bloom.radius, threshold: config.bloom.threshold,
     });

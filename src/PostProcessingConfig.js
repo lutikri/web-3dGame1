@@ -205,6 +205,7 @@ export const POST_PROCESSING_CONFIG = {
     }
   },
   "bloom": {
+    "resolutionScale": 0.5,
     "enabled": true,
     "strength": 0.52,
     "radius": 0.8,

@@ -162,6 +162,7 @@ function localizeAttachment(attachment, locale) {
     title: localize(attachment.title, locale),
     heading: localize(attachment.heading, locale),
     pages: localize(attachment.pages, locale),
+    paragraphs: localize(attachment.paragraphs, locale),
     points: localize(attachment.points, locale),
   };
 }

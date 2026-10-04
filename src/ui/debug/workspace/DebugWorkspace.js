@@ -560,10 +560,29 @@ export function createDebugWorkspace({
           const quality = { active: getPostProcessingQualities?.()?.[key] ?? value.defaultQuality ?? "off" };
           folder.add(quality, "active", Object.keys(value.presets)).name("ACTIVE QUALITY").onChange((next) => {
             setPostProcessingQuality?.(key, next);
+            rebuildProperties();
             setStatus(`${key}: ${next}`, "live");
           });
+          const preset = value.presets[quality.active];
+          if (preset?.enabled) {
+            const tuning = folder.addFolder(`ACTIVE SETTINGS — ${quality.active.toUpperCase()}`);
+            Object.keys(preset).filter((parameter) => parameter !== "enabled").forEach((parameter) => {
+              const update = key === "gtao" && parameter !== "resolutionScale"
+                ? () => { applyPostProcessing?.(); setStatus("applied GTAO", "live"); }
+                : apply;
+              addAutoController(tuning, preset, parameter, update);
+            });
+          }
         }
-        addObjectFolder(folder, value, apply, new Set(["presets"]));
+        const omit = new Set(["presets"]);
+        if (key === "chromaticAberration") {
+          omit.add("amount");
+          addNumber(folder, value, "amount", "AMOUNT", 0, 0.025, 0.0001, () => {
+            applyPostProcessing?.();
+            setStatus("applied chromatic aberration", "live");
+          });
+        }
+        addObjectFolder(folder, value, apply, omit);
       } else addAutoController(propertiesGui, postProcessingConfig, key, apply);
     });
     action(propertiesGui, "COPY POST FX", () => copyJson(postProcessingConfig, "Post FX copied"));
@@ -931,6 +950,7 @@ export function getAudioSearchCandidates(query, sceneKeys, soundRegistry) {
 }
 
 function getAutoNumberRange(key, value) {
+  if (key === "chromaticAberration") return [0, 0.05, 0.0001];
   if (/volume/i.test(key)) return [0, 2, 0.01];
   if (/alphaMapContrast/i.test(key)) return [0, 4, 0.01];
   if (/bias|temperature|tint|barrel|fisheye|brightness/i.test(key)) return [-2, 2, 0.001];

@@ -13,41 +13,48 @@ export const POST_PROCESSING_OVERRIDES = {
       },
       "min": {
         "enabled": true,
-        "resolutionScale": 0.5,
+        "resolutionScale": 0.35,
         "blendIntensity": 0.45,
         "radius": 0.28,
         "distanceExponent": 1.5,
         "thickness": 0.65,
         "distanceFallOff": 1,
         "scale": 1.2,
-        "samples": 8,
+        "samples": 4,
         "denoiseRadius": 2,
-        "denoiseSamples": 4
+        "denoiseSamples": 2,
+        "distanceFadeStart": 6,
+        "distanceFadeEnd": 10
       },
       "med": {
         "enabled": true,
+        "resolutionScale": 0.4,
         "blendIntensity": 0.62,
         "radius": 0.38,
         "distanceExponent": 1.65,
         "thickness": 0.78,
         "distanceFallOff": 1,
         "scale": 1.65,
-        "samples": 12,
+        "samples": 6,
         "denoiseRadius": 2,
-        "denoiseSamples": 6
+        "denoiseSamples": 3,
+        "distanceFadeStart": 8,
+        "distanceFadeEnd": 12
       },
       "max": {
         "enabled": true,
-        "resolutionScale": 0.5,
+        "resolutionScale": 1,
         "blendIntensity": 0.8,
         "radius": 0.42,
         "distanceExponent": 1.7,
         "thickness": 0.85,
         "distanceFallOff": 1,
         "scale": 2,
-        "samples": 16,
+        "samples": 10,
         "denoiseRadius": 2,
-        "denoiseSamples": 8
+        "denoiseSamples": 4,
+        "distanceFadeStart": 10,
+        "distanceFadeEnd": 16
       }
     }
   },
@@ -199,14 +206,15 @@ export const POST_PROCESSING_OVERRIDES = {
     }
   },
   "bloom": {
+    "resolutionScale": 1,
     "enabled": true,
     "strength": 0.52,
     "radius": 0.8,
     "threshold": 0.33
   },
   "antiAliasing": {
-    "method": "off",
-    "msaaSamples": 4
+    "method": "smaa",
+    "msaaSamples": 0
   },
   "lensEffects": {
     "enabled": true,
@@ -249,7 +257,7 @@ export const POST_PROCESSING_OVERRIDES = {
     "brightness": 0.025,
     "contrast": 1.074,
     "saturation": 0.88,
-    "gamma": 1.25,
+    "gamma": 1.23,
     "temperature": -0.13,
     "tint": -0.05,
     "emergencyTint": "#c2c2c2",
@@ -274,13 +282,13 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "lensDistortion": {
     "enabled": true,
-    "barrelAmount": 0,
-    "fisheyeAmount": 0.05,
+    "barrelAmount": -0.013,
+    "fisheyeAmount": 0.01,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0.0005
+    "amount": 0
   }
 };

@@ -233,6 +233,11 @@ function createUnexpectedStuffConfig() {
       ],
       bindings: baseConfig.session?.bindings ?? [],
     },
+    shiftProfile: {
+      ...baseConfig.shiftProfile,
+      completionMode: "timed",
+      powerQualification: null,
+    },
     narration: {
       ...baseConfig.narration,
       passed: {

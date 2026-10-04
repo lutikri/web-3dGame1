@@ -50,3 +50,32 @@ test("fusion core debug outcome reaches a terminal state from any active attempt
   assert.equal(failSnapshot.failureType, "qualityFailure");
   assert.equal(failSnapshot.debugForcedOutcome, "failed");
 });
+
+test("externally completed profiles do not end at the legacy three-minute limit", () => {
+  const core = createFusionCoreSimulation();
+  core.start();
+  const snapshot = core.update(181, {
+    fuelInjection: 0,
+    magneticField: 100,
+    coolantFlow: 100,
+    ventActive: false,
+    pulseActive: false,
+    shiftProfile: { completionMode: "external", demandWander: { enabled: false } },
+  });
+  assert.equal(snapshot.elapsed, 181);
+  assert.notEqual(snapshot.mode, "complete");
+
+  const completable = createFusionCoreSimulation();
+  completable.start();
+  completable.update(0.1, {
+    fuelInjection: 40,
+    magneticField: 60,
+    coolantFlow: 30,
+    ventActive: false,
+    pulseActive: false,
+    shiftProfile: { completionMode: "external" },
+  });
+  const completed = completable.completeExternal();
+  assert.equal(completed.mode, "complete");
+  assert.equal(completed.debugForcedOutcome, null);
+});

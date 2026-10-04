@@ -48,6 +48,13 @@ test("app persistence normalizes invalid settings", () => {
   });
 });
 
+test("app persistence allows display gamma up to 150 percent", () => {
+  const storage = createStorage({
+    "operatorGame.settings.v1": JSON.stringify({ gamma: 2 }),
+  });
+  assert.equal(loadSettings(storage).gamma, 1.395);
+});
+
 test("app progress persistence round-trips and clears level sessions", () => {
   const storage = createStorage();
   const progress = createEmptyProgress();

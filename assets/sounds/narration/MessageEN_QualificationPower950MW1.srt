@@ -1,0 +1,8 @@
+﻿1
+00:00:00,306 --> 00:00:00,693
+Good.
+
+2
+00:00:00,880 --> 00:00:04,660
+Now increase reactor output to 950 megawatts.
+

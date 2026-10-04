@@ -11,6 +11,7 @@ import { createFusionCoreSimulation } from "../src/FusionCoreSimulation.js";
 import { LEVEL_EXPLORING_AROUND_CONFIG } from "../src/levels/LevelExploringAroundConfig.js";
 
 const shiftProfile = LEVEL_EXPLORING_AROUND_CONFIG.shiftProfile;
+const timedShiftProfile = { ...shiftProfile, completionMode: "timed", powerQualification: null };
 
 function terminalSnapshot(overrides = {}) {
   return {
@@ -195,13 +196,13 @@ function runQualification(selectControls) {
       ventActive: snapshot.plasmaTemp > 177,
       pulseActive: snapshot.coreStall > 75,
       fuelBlend: null,
-      shiftProfile,
+      shiftProfile: timedShiftProfile,
     };
     snapshot = simulation.update(0.1, controls);
     updateShiftRecorder(recorder, 0.1, snapshot, controls);
   }
   return {
     recorder,
-    outcome: evaluateQualificationOutcome(recorder, snapshot, shiftProfile),
+    outcome: evaluateQualificationOutcome(recorder, snapshot, timedShiftProfile),
   };
 }

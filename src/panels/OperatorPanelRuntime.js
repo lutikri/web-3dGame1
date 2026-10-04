@@ -46,7 +46,7 @@ export class OperatorPanelRuntime {
     tick.diagnostics.update(dt);
     if (tick.diagnostics.consumeLightRestartRequest()) tick.onLightRestart();
     tick.updateRecorder(dt, snapshot, inputs);
-    snapshot = tick.evaluateCompletion?.(snapshot, inputs) ?? snapshot;
+    snapshot = tick.evaluateCompletion?.(snapshot, inputs, dt) ?? snapshot;
     tick.setSnapshot(snapshot);
     tick.updateThoughts(before, snapshot, inputs);
     tick.updateCompletion(dt, snapshot);

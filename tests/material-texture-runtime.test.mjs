@@ -53,3 +53,40 @@ test("material texture runtime loads initial maps and schedules full upgrades", 
   assert.equal(scheduled.length, 1);
   assert.deepEqual(timingLabels.sort(), ["material:wall:initial", "panel:initial"]);
 });
+
+test("full texture requests bypass a disabled queue and share upgrades with concurrent and queued requests", async () => {
+  const loadedPaths = [];
+  const disposed = [];
+  const scheduled = [];
+  const materials = { panel: { userData: {} }, interiorCustom: { wall: { userData: {} } } };
+  const runtime = new MaterialTextureRuntime({
+    config: {
+      panel: { maps: { preview: { baseColor: "panel-preview" }, full: { baseColor: "panel-full" } } },
+      interior: { specialMaterials: { wall: { maps: { preview: { baseColor: "wall-preview" }, full: { baseColor: "wall-full" } } } } },
+    },
+    textureStreaming: {
+      loadTextureMaps: async (paths) => {
+        loadedPaths.push(paths.baseColor);
+        return { map: { source: { data: { src: paths.baseColor } } } };
+      },
+      disposeTextureMaps: (maps) => disposed.push(maps.map.source.data.src),
+    },
+    upgradeQueue: { schedule: (task) => scheduled.push(task) },
+    loadingIndicator: { start() {}, complete() {} },
+    textureSets: new Map(),
+    getMaterials: () => materials,
+    applyCustomMaps: (material, maps) => { material.map = maps.map; },
+    applyPanelMaps: (material, maps) => { material.map = maps.map; },
+    syncMaterialClones() {}, updateRoomLightMaterials() {}, setLoadingStatus() {},
+  });
+  runtime.start();
+  await Promise.all([runtime.ensureFullResolution(), runtime.ensureFullResolution()]);
+  assert.deepEqual(loadedPaths.sort(), ["panel-full", "panel-preview", "wall-full", "wall-preview"]);
+  assert.deepEqual(disposed.sort(), ["panel-preview", "wall-preview"]);
+  assert.equal(materials.panel.userData.textureTier, "full");
+  assert.equal(materials.interiorCustom.wall.userData.textureTier, "full");
+  for (const task of scheduled) await task();
+  await runtime.ensureFullResolution();
+  assert.equal(loadedPaths.length, 4);
+  assert.equal(disposed.length, 2);
+});

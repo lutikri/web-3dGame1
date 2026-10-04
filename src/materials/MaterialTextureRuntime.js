@@ -29,11 +29,23 @@ export class MaterialTextureRuntime {
     this.reportTextureTiming = reportTextureTiming;
     this.customMaps = {};
     this.panelMaps = null;
+    this.ready = null;
+    this.fullUpgrades = new Map();
   }
 
   start() {
-    this.#loadCustomMaterials();
-    this.#loadPanel();
+    return this.ready ??= Promise.all([this.#loadCustomMaterials(), this.#loadPanel()]);
+  }
+
+  async ensureFullResolution() {
+    await this.start();
+    const jobs = Object.entries(this.config.interior.specialMaterials ?? {}).flatMap(([key, materialConfig]) => {
+      const paths = materialConfig.maps && (getDeferredPaths(materialConfig.maps) ?? getInitialPaths(materialConfig.maps));
+      return paths ? [this.#upgradeCustom(key, paths)] : [];
+    });
+    const panelPaths = this.config.panel.maps && (getDeferredPaths(this.config.panel.maps) ?? getInitialPaths(this.config.panel.maps));
+    if (panelPaths) jobs.push(this.#upgradePanel(panelPaths));
+    await Promise.all(jobs);
   }
 
   async #loadCustomMaterials() {
@@ -86,15 +98,7 @@ export class MaterialTextureRuntime {
   #scheduleCustomUpgrade(key, paths) {
     this.upgradeQueue.schedule(async () => {
       try {
-        const maps = await this.#load(paths, true, `material:${key}:full`);
-        const previous = this.customMaps[key];
-        this.customMaps[key] = maps;
-        this.#register(`material:${key}`, maps, paths, "full");
-        const material = this.getMaterials().interiorCustom[key];
-        this.applyCustomMaps(material, maps, this.config.interior.specialMaterials?.[key]);
-        material.userData.textureTier = "full";
-        this.syncMaterialClones(key);
-        this.textureStreaming.disposeTextureMaps(previous);
+        await this.#upgradeCustom(key, paths);
       } catch (error) {
         console.warn(`[OperatorGame] Failed to upgrade ${key} textures`, error);
       }
@@ -104,18 +108,46 @@ export class MaterialTextureRuntime {
   #schedulePanelUpgrade(paths) {
     this.upgradeQueue.schedule(async () => {
       try {
-        const maps = await this.#load(paths, true, "panel:full");
-        const previous = this.panelMaps;
-        this.panelMaps = maps;
-        this.#register("panel:Panel1_PBR", maps, paths, "full");
-        const material = this.getMaterials().panel;
-        this.applyPanelMaps(material, maps);
-        material.userData.textureTier = "full";
-        this.textureStreaming.disposeTextureMaps(previous);
+        await this.#upgradePanel(paths);
       } catch (error) {
         console.warn("[OperatorGame] Failed to upgrade Panel1 textures", error);
       }
     });
+  }
+
+  #upgradeCustom(key, paths) {
+    return this.#upgrade(`material:${key}`, async () => {
+      const maps = await this.#load(paths, true, `material:${key}:full`);
+      const previous = this.customMaps[key];
+      this.customMaps[key] = maps;
+      this.#register(`material:${key}`, maps, paths, "full");
+      const material = this.getMaterials().interiorCustom[key];
+      this.applyCustomMaps(material, maps, this.config.interior.specialMaterials?.[key]);
+      material.userData.textureTier = "full";
+      this.syncMaterialClones(key);
+      this.textureStreaming.disposeTextureMaps(previous);
+    });
+  }
+
+  #upgradePanel(paths) {
+    return this.#upgrade("panel:Panel1_PBR", async () => {
+      const maps = await this.#load(paths, true, "panel:full");
+      const previous = this.panelMaps;
+      this.panelMaps = maps;
+      this.#register("panel:Panel1_PBR", maps, paths, "full");
+      const material = this.getMaterials().panel;
+      this.applyPanelMaps(material, maps);
+      material.userData.textureTier = "full";
+      this.textureStreaming.disposeTextureMaps(previous);
+    });
+  }
+
+  #upgrade(label, task) {
+    if (this.textureSets.get(label)?.tier === "full") return Promise.resolve();
+    if (this.fullUpgrades.has(label)) return this.fullUpgrades.get(label);
+    const promise = task().finally(() => this.fullUpgrades.delete(label));
+    this.fullUpgrades.set(label, promise);
+    return promise;
   }
 
   #load(paths, tracked = false, label = "textures") {

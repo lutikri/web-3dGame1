@@ -103,3 +103,70 @@ test("presentation pass aliases preserve the public tuning API without extra pas
   assert.equal(pass.uniforms.chromaticAberrationAmount.value, 0.003);
   assert.equal(sharpen.material, pass.material);
 });
+
+function captureFixture() {
+  let ratio = 0.6375;
+  let width = 969;
+  let height = 537;
+  const canvas = {};
+  const updateBuffer = () => { canvas.width = Math.floor(width * ratio); canvas.height = Math.floor(height * ratio); };
+  updateBuffer();
+  const renderer = {
+    domElement: canvas,
+    capabilities: { isWebGL2: true, maxSamples: 8, maxTextureSize: 16384 },
+    getSize: (size) => size.set(width, height),
+    getDrawingBufferSize: (size) => size.set(canvas.width, canvas.height),
+    getPixelRatio: () => ratio,
+    setPixelRatio: (value) => { ratio = value; updateBuffer(); },
+    setSize: (w, h, style) => { assert.equal(style, false); width = w; height = h; updateBuffer(); },
+    getRenderTarget: () => null,
+    setRenderTarget() {},
+    getContext: () => ({ MAX_VIEWPORT_DIMS: "viewport", MAX_RENDERBUFFER_SIZE: "target", getParameter: (key) => key === "viewport" ? [16384, 16384] : 16384 }),
+  };
+  const runtime = new PostProcessingRuntime({
+    renderer,
+    config: { postProcessing: { antiAliasing: { method: "fxaa", msaaSamples: 0 } } },
+    getQuality: () => ({}),
+    resizeRealism() {},
+  });
+  runtime.composer = { renderTarget1: { samples: 0 }, renderTarget2: { samples: 0 }, setPixelRatio() {}, setSize() {} };
+  const fxaaResolution = new THREE.Vector2();
+  runtime.fxaaPass = { material: { uniforms: { resolution: { value: fxaaResolution } } } };
+  const frames = [];
+  runtime.render = () => frames.push([canvas.width, canvas.height, runtime.composer.renderTarget1.samples]);
+  return { runtime, renderer, canvas, frames, fxaaResolution };
+}
+
+test("capture doubles the exact physical buffer, adds maximum MSAA and restores before PNG encoding", () => {
+  const f = captureFixture();
+  const before = { width: f.canvas.width, height: f.canvas.height, ratio: f.renderer.getPixelRatio() };
+  const result = f.runtime.captureFrame((canvas) => {
+    assert.equal(canvas.width, before.width * 2);
+    assert.equal(canvas.height, before.height * 2);
+    assert.equal(f.fxaaResolution.x, 1 / canvas.width);
+    assert.equal(f.runtime.composer.renderTarget1.samples, 8);
+    return "copied-frame";
+  });
+  assert.equal(result.canvas, "copied-frame");
+  assert.equal(result.samples, 8);
+  assert.deepEqual(f.frames, [[before.width * 2, before.height * 2, 8], [before.width, before.height, 0]]);
+  assert.equal(f.renderer.getPixelRatio(), before.ratio);
+  assert.equal(f.runtime.config.postProcessing.antiAliasing.method, "fxaa");
+  assert.equal(f.runtime.composer.renderTarget2.samples, 0);
+});
+
+test("failed frame copying still restores render size and MSAA", () => {
+  const f = captureFixture();
+  assert.throws(() => f.runtime.captureFrame(() => { throw new Error("copy failed"); }), /copy failed/);
+  assert.equal(f.renderer.getPixelRatio(), 0.6375);
+  assert.equal(f.canvas.width, 617);
+  assert.equal(f.runtime.composer.renderTarget1.samples, 0);
+});
+
+test("capture refuses oversized GPU buffers without changing current render settings", () => {
+  const f = captureFixture();
+  f.renderer.capabilities.maxTextureSize = 1024;
+  assert.throws(() => f.runtime.captureFrame(() => {}), /exceeds GPU render limits/);
+  assert.equal(f.renderer.getPixelRatio(), 0.6375);
+  assert.equal(f.frames.length, 0);
+});

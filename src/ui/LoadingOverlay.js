@@ -56,7 +56,9 @@ export function createLoadingOverlay({
   const bootReadyLabel = overlay?.querySelector?.("[data-boot-ready-label]");
   const bootBackgroundImage = overlay?.querySelector?.("[data-boot-background-image]");
   const progressSegments = createProgressSegments(barFill);
-  const bootBackground = pickBootBackground(bootBackgrounds, random);
+  const bootBackground = bootBackgroundImage?.dataset?.bootBackgroundSelected === "true"
+    ? ""
+    : pickBootBackground(bootBackgrounds, random);
   if (bootBackgroundImage && bootBackground) bootBackgroundImage.src = bootBackground;
   updateLoadingStageScale(overlay, view);
 

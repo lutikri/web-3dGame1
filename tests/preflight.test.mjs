@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  FIRST_RUN_DISPLAY_GAMMA,
   classifyGraphicsAdapter,
   createPreflightUiAudio,
   getBrowserGpuLabel,
@@ -9,6 +10,10 @@ import {
   getPreflightScale,
   recommendGraphicsProfile,
 } from "../src/app/Preflight.js";
+
+test("first-run preflight defaults display gamma to 135 percent", () => {
+  assert.equal(Math.round(FIRST_RUN_DISPLAY_GAMMA / 0.93 * 100), 135);
+});
 import { isHighEndGraphicsAdapter } from "../src/config/GraphicsHardwareTiers.js";
 import { SOUND_REGISTRY } from "../src/audio/SoundRegistry.js";
 

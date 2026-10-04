@@ -29,6 +29,7 @@ test("graphics profiles select inexpensive AA below high and composer MSAA on hi
     applyGraphicsQualityProfileToConfig(config, profile);
     assert.equal(config.postProcessing.antiAliasing.method, method, profile);
     assert.equal(config.postProcessing.antiAliasing.msaaSamples, samples, profile);
+    assert.equal(config.postProcessing.bloom.resolutionScale, profile === "ultra" ? 1 : 0.5, profile);
   }
 });
 
@@ -44,6 +45,35 @@ test("manual render scale multiplies the profile resolution and survives profile
   runtime.configure("ultra");
   assert.equal(runtime.snapshot().renderScale, 150);
   assert.equal(applied.at(-1), 1.5);
+});
+
+test("native resolution override ignores budgets and adaptive degradation until cleared", () => {
+  let now = 0;
+  const runtime = new AdaptiveQualityRuntime({
+    getViewport: () => ({ width: 7680, height: 4320 }),
+    shouldSample: () => true,
+    now: () => now,
+    settleDurationMs: 0,
+    lowConfirmWindows: 1,
+  });
+  runtime.configure("high");
+  runtime.setRenderScale(50);
+  runtime.setResolutionOverride(2);
+  for (let frame = 0; frame < 50; frame += 1) {
+    now += 100;
+    runtime.update();
+  }
+  assert.equal(runtime.snapshot().degraded, false);
+  assert.equal(runtime.snapshot().pixelRatio, 2);
+  runtime.resize();
+  assert.equal(runtime.snapshot().pixelRatio, 2);
+  runtime.setResolutionOverride(null);
+  assert.equal(runtime.snapshot().pixelRatio, 0.167);
+  for (let frame = 0; frame < 20; frame += 1) {
+    now += 100;
+    runtime.update();
+  }
+  assert.equal(runtime.snapshot().degraded, true);
 });
 
 test("adaptive quality lowers resolution once after sustained low foreground fps", () => {

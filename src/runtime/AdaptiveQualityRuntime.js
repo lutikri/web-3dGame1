@@ -30,6 +30,7 @@ export class AdaptiveQualityRuntime {
     this.degraded = false;
     this.lowRecommended = false;
     this.renderScale = 100;
+    this.resolutionOverride = null;
     this.pixelRatio = this.#resolvePixelRatio();
     this.lastFps = 0;
     this.lowWindows = 0;
@@ -52,7 +53,7 @@ export class AdaptiveQualityRuntime {
 
   update = () => {
     const timestamp = this.now();
-    if (!this.shouldSample() || this.quality.adaptivePixelRatioFactor >= 1) {
+    if (this.resolutionOverride != null || !this.shouldSample() || this.quality.adaptivePixelRatioFactor >= 1) {
       this.#resetSampling(timestamp, false);
       return;
     }
@@ -86,6 +87,12 @@ export class AdaptiveQualityRuntime {
 
   resize = () => this.#applyResolvedRatio();
 
+  setResolutionOverride = (pixelRatio = null) => {
+    this.resolutionOverride = pixelRatio == null ? null : Math.max(0.1, Number(pixelRatio) || 1);
+    this.#applyResolvedRatio();
+    return this.resolutionOverride;
+  };
+
   setRenderScale = (percent = 100) => {
     this.renderScale = Math.max(50, Math.min(150, Number(percent) || 100));
     this.#applyResolvedRatio();
@@ -96,12 +103,14 @@ export class AdaptiveQualityRuntime {
     profile: this.profile,
     pixelRatio: Number(this.pixelRatio.toFixed(3)),
     renderScale: this.renderScale,
+    resolutionOverride: this.resolutionOverride,
     degraded: this.degraded,
     lastFps: Number(this.lastFps.toFixed(1)),
     lowRecommended: this.lowRecommended,
   });
 
   #resolvePixelRatio() {
+    if (this.resolutionOverride != null) return this.resolutionOverride;
     const viewport = this.getViewport();
     return resolveGraphicsPixelRatio(this.quality, viewport.width, viewport.height, this.degraded)
       * this.renderScale / 100;

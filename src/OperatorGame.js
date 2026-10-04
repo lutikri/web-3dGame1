@@ -13,9 +13,12 @@ import {
 } from "./game/ShiftReport.js?v=compact-loading-game";
 import { ShiftCompletionRuntime } from "./game/ShiftCompletionRuntime.js?v=compact-loading-game";
 import { ShiftLifecycleRuntime } from "./game/ShiftLifecycleRuntime.js?v=compact-loading-game";
+import { PowerQualificationRuntime } from "./game/PowerQualificationRuntime.js?v=compact-loading-game";
 import { AnimationLoop } from "./runtime/AnimationLoop.js?v=compact-loading-game";
 import { FrameTraceRuntime } from "./runtime/FrameTraceRuntime.js?v=compact-loading-game";
 import { AdaptiveQualityRuntime } from "./runtime/AdaptiveQualityRuntime.js?v=compact-loading-game";
+import { PhotoModeRuntime } from "./runtime/PhotoModeRuntime.js?v=compact-loading-game";
+import { ScreenshotCaptureRuntime } from "./runtime/ScreenshotCaptureRuntime.js?v=compact-loading-game";
 import { FrameSchedulingPolicy } from "./runtime/FrameSchedulingPolicy.js?v=compact-loading-game";
 import { LevelRouteCoordinator } from "./runtime/LevelRouteCoordinator.js?v=compact-loading-game";
 import { RenderWarmupRuntime } from "./runtime/RenderWarmupRuntime.js?v=compact-loading-game";
@@ -738,6 +741,7 @@ const postProcessingRuntime = new PostProcessingRuntime({
   resizeRealism: (width, height) => realismPostProcessingRuntime.resize(width, height),
   disposeRealism: () => realismPostProcessingRuntime.dispose(),
   inspectRealism: () => realismPostProcessingRuntime.inspect(),
+  getRealismComposer: () => realismPostProcessingRuntime.composer,
 });
 postProcessingPolicy.attach({ runtime: postProcessingRuntime, realism: realismPostProcessingRuntime });
 const performanceBenchmark = createPerformanceBenchmark({
@@ -1050,8 +1054,14 @@ const narrationRuntime = createNarrationRuntime({
   onStarted: (detail) => activeLevelSessionRuntime.emit("narrationStarted", detail),
   onEnded: (detail) => {
     activeLevelSessionRuntime.emit("narrationEnded", detail);
+    powerQualificationRuntime.onNarrationEnded(detail);
     shiftCompletionRuntime.onNarrationEnded(detail.line);
   },
+});
+const powerQualificationRuntime = new PowerQualificationRuntime({
+  playNarration: (line) => narrationRuntime.playNarration(line, activeLevelId),
+  isNarrationActive: () => narrationRuntime.isPlaying(),
+  completeShift: () => fusionCore.completeExternal(),
 });
 const randomSpeechRuntime = new RandomSpeechRuntime({
   getActiveLevelId: () => activeLevelId,
@@ -1331,11 +1341,9 @@ const operatorPanelRuntime = new OperatorPanelRuntime({
     onLightRestart: triggerRoomLightBoot,
     updateThoughts: updateOperatorThoughts,
     updateRecorder: updateShiftRecorder,
-    evaluateCompletion: (snapshot) => evaluateQualificationOutcome(
-      shiftRecorder,
-      snapshot,
-      activeShiftProfile,
-    ),
+    evaluateCompletion: (snapshot, _inputs, dt) => powerQualificationRuntime.isEnabled()
+      ? powerQualificationRuntime.update(dt, snapshot)
+      : evaluateQualificationOutcome(shiftRecorder, snapshot, activeShiftProfile),
     updateCompletion: updateShiftCompletion,
   },
 });
@@ -1474,6 +1482,22 @@ adaptiveQualityRuntime = new AdaptiveQualityRuntime({
   ),
 });
 adaptiveQualityRuntime.configure(bootOptions.qualityProfile ?? "high");
+const photoModeRuntime = new PhotoModeRuntime({
+  config: CONFIG,
+  bootOptions,
+  renderer,
+  scene,
+  textureSets: activeRuntimeTextureSets,
+  materialTextures: materialTextureRuntime,
+  adaptiveQuality: adaptiveQualityRuntime,
+  postProcessingPolicy,
+  rebuildPostProcessing: setupPostProcessing,
+});
+const screenshotCaptureRuntime = new ScreenshotCaptureRuntime({
+  captureFrame: (copyFrame) => postProcessingRuntime.captureFrame(copyFrame),
+  canCapture: () => loadingCoordinator.isComplete(),
+});
+screenshotCaptureRuntime.wire();
 const renderWarmupRuntime = new RenderWarmupRuntime({
   renderer,
   scene,
@@ -1517,7 +1541,10 @@ const levelRouteCoordinator = new LevelRouteCoordinator({
   setRoomLights: setRoomLightsEnabled,
   resetDiagnostics: (options) => diagnosticRuntime.reset(options),
   resetFuelBlend: (options) => fuelBlendRuntime.reset(options),
-  setShiftProfile: (profile) => { activeShiftProfile = profile; },
+  setShiftProfile: (profile) => {
+    activeShiftProfile = profile;
+    powerQualificationRuntime.configure(profile);
+  },
   resetLevelRuntime: resetLevelSession,
   configureTriggerSequences: levelTriggerSequenceRuntime.configureAttempt,
   resetRecorder: resetShiftRecorder,
@@ -1605,11 +1632,12 @@ const animationLoop = new AnimationLoop({
   schedulingPolicy: frameSchedulingPolicy,
   frameTrace: frameTraceRuntime,
   getPaused: () => gameplayPaused,
-  pausedSteps: [(dt) => postProcessingRuntime.render(dt)],
+  pausedSteps: [photoModeRuntime.update, (dt) => postProcessingRuntime.render(dt)],
   steps: [
     updateLoadingOverlay,
     updateFpsMeter,
     adaptiveQualityRuntime.update,
+    photoModeRuntime.update,
     traceFrameStep("simulation-clock", (dt) => { testTime += dt; }),
     updateLevelPrefabElevators,
     updateLevelPrefabBehaviors,
@@ -2118,7 +2146,11 @@ function createFluorescentStartupPattern() {
 }
 
 function getControlInputs(fuelBlend = null) {
-  return panelControlRuntime.getSimulationInputs({ fuelBlend, shiftProfile: activeShiftProfile });
+  const target = powerQualificationRuntime.getDemandTarget();
+  const shiftProfile = target == null || !activeShiftProfile
+    ? activeShiftProfile
+    : { ...activeShiftProfile, demandOverride: target };
+  return panelControlRuntime.getSimulationInputs({ fuelBlend, shiftProfile });
 }
 
 function updateRoomLightMaterials() {
@@ -2205,6 +2237,7 @@ function resetLevelSession() {
     needle.userData.needleDebugAxis = null;
   });
   shiftCompletionRuntime.reset(latestSnapshot.mode);
+  powerQualificationRuntime.resetAttempt();
 }
 
 function updateActiveLevelSession(dt) {
@@ -2245,7 +2278,7 @@ async function enterLevelSession({
 function runControlButtonAction(button) {
   if (button.userData.controlAction === "start") {
     activeLevelSessionRuntime.emit("coreStarted", { target: button.name });
-    startShift();
+    if (startShift()) powerQualificationRuntime.onCoreStarted();
     console.log("[OperatorGame] Fusion core run started");
   } else if (button.userData.controlAction === "reset") {
     resetForMenu();
@@ -2397,6 +2430,7 @@ function runPerformanceBenchmark(options = {}) {
 }
 
 function applyQualityProfile(profile = "low") {
+  photoModeRuntime.disable();
   const normalized = configureQualityProfile(profile);
   const quality = getGraphicsQualityProfile(normalized);
   bootOptions.qualityProfile = normalized;
@@ -2416,7 +2450,7 @@ function applyQualityProfile(profile = "low") {
 }
 
 function setDisplayGamma(gamma = 0.93) {
-  const value = THREE.MathUtils.clamp(Number(gamma) || 0.93, 0.75, 1.25);
+  const value = THREE.MathUtils.clamp(Number(gamma) || 0.93, 0.75, 1.395);
   CONFIG.postProcessing.colorAdjustments.gamma = value;
   if (postProcessingRuntime.colorAdjustmentPass) {
     applyColorAdjustmentConfig(postProcessingRuntime.colorAdjustmentPass, 0);
@@ -2710,6 +2744,9 @@ installOperatorGameApi(window, {
   runPerformanceBenchmark,
   getPerformanceBenchmark: () => performanceBenchmark.getLastReport(),
   applyQualityProfile,
+  setPhotoMode: photoModeRuntime.setEnabled,
+  getPhotoMode: photoModeRuntime.snapshot,
+  downloadScreenshot: screenshotCaptureRuntime.capture,
   setDisplayGamma,
   setRenderScale: (percent) => adaptiveQualityRuntime.setRenderScale(percent),
   setAntiAliasingMode,
