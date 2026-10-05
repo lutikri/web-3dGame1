@@ -1,3 +1,5 @@
+import { AUDIO_CATEGORY_SETTINGS } from "../audio/AudioCategorySettings.js?v=compact-loading-game";
+
 const SETTINGS_STORAGE_KEY = "operatorGame.settings.v1";
 const PROGRESS_STORAGE_KEY = "operatorGame.progress.v1";
 const PREFLIGHT_STORAGE_KEY = "operatorGame.preflight.v1";
@@ -20,6 +22,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   gamma: null,
   antiAliasing: null,
   masterVolume: 100,
+  ...Object.fromEntries(AUDIO_CATEGORY_SETTINGS.map(({ key }) => [key, 100])),
 });
 
 export function createEmptyProgress() {
@@ -163,6 +166,9 @@ export function normalizeSettings(source = {}) {
     gamma: source.gamma == null ? null : clampNumber(source.gamma, 0.75, 1.395, 0.93),
     antiAliasing: normalizeQuality(source.antiAliasing, ["fxaa", "smaa", "msaa4", "msaa8"], null),
     masterVolume: clampNumber(source.masterVolume, 0, 100, DEFAULT_SETTINGS.masterVolume),
+    ...Object.fromEntries(AUDIO_CATEGORY_SETTINGS.map(({ key }) => [
+      key, clampNumber(source[key] ?? DEFAULT_SETTINGS[key], 0, 100, DEFAULT_SETTINGS[key]),
+    ])),
   };
 }
 

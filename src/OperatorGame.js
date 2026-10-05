@@ -2625,7 +2625,7 @@ installOperatorGameApi(window, {
   setBaseFov: (degrees) => {
     baseFovDegrees = THREE.MathUtils.clamp(Number(degrees), 50, 105);
     CONFIG.camera.fovDegrees = baseFovDegrees;
-    if (!zoomActive) {
+    if (operatorViewMode === "level" && !zoomActive) {
       camera.fov = baseFovDegrees;
       camera.updateProjectionMatrix();
     }
@@ -2762,6 +2762,7 @@ installOperatorGameApi(window, {
   setAntiAliasingMode,
   getGraphicsMetrics,
   setMasterVolume: (percent) => audioRuntime.setMasterVolume(Number(percent) / 100),
+  setAudioCategoryVolumes: (volumes) => audioRuntime.setUserCategoryVolumes(volumes),
   setPhotometricDebugMode: (enabled) => {
     return photometricPointLightRuntime.setDebugMode(enabled);
   },

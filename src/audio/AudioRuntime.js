@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { AUDIO_CATEGORY_SETTINGS } from "./AudioCategorySettings.js?v=compact-loading-game";
 
 export class AudioRuntime {
   constructor({
@@ -15,15 +16,18 @@ export class AudioRuntime {
     this.groups = groups;
     this.mix = {
       master: masterVolume,
+      music: 1,
       ambience: 1,
       interaction: 1,
       machinery: 1,
       narration: 1,
+      alarms: 1,
       player: 1,
       ui: 1,
       ...mix,
     };
     this.masterVolume = this.mix.master;
+    this.userCategoryVolumes = {};
     this.suspended = Boolean(suspended);
     this.context = null;
     this.masterGain = null;
@@ -541,6 +545,14 @@ export class AudioRuntime {
     this.refreshMix();
   }
 
+  setUserCategoryVolumes(volumes = {}) {
+    AUDIO_CATEGORY_SETTINGS.forEach(({ group }) => {
+      const value = Number(volumes[group] ?? 1);
+      this.userCategoryVolumes[group] = Number.isFinite(value) ? THREE.MathUtils.clamp(value, 0, 1) : 1;
+    });
+    this.refreshMix();
+  }
+
   refreshMix() {
     this.setMasterVolume(this.mix.master ?? this.masterVolume ?? 1);
     this.loops.forEach((state) => {
@@ -686,7 +698,7 @@ export class AudioRuntime {
 
   getSoundMixVolume(soundKey) {
     const category = this.getSoundCategory(soundKey);
-    return this.mix[category] ?? 1;
+    return (this.mix[category] ?? 1) * (this.userCategoryVolumes[category] ?? 1);
   }
 
   getSoundCategory(soundKey) {

@@ -118,7 +118,13 @@ export async function createPhysicsSystem() {
       const indices = geometry.index
         ? new Uint32Array(geometry.index.array)
         : Uint32Array.from({ length: source.count }, (_, index) => index);
-      const collider = world.createCollider(RAPIER.ColliderDesc.trimesh(vertices, indices));
+      const colliderDesc = /^UCX_/i.test(object.name)
+        ? RAPIER.ColliderDesc.convexHull(vertices)
+        : RAPIER.ColliderDesc.trimesh(vertices, indices);
+      if (!colliderDesc) {
+        throw new Error(`[Physics] Invalid convex hull collider "${object.name}" in scene "${key}"`);
+      }
+      const collider = world.createCollider(colliderDesc);
       collider.setEnabled(key === activeSceneKey);
       colliders.push(collider);
       addedCount += 1;

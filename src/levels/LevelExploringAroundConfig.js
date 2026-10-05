@@ -10,11 +10,11 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   assetPath: "assets/mesh/environment/SM_Interior2.glb",
   collisionAssetPath: "assets/mesh/environment/SM_Interior2.glb",
   collision: {
-    meshNameIncludes: ["convcolonly", "UBX_"],
+    meshNameIncludes: ["convcolonly", "UBX_", "UCX_"],
     meshNameExcludes: ["SM_Door2"],
   },
   render: {
-    meshNameExcludes: ["convcolonly", "UBX_", "SM_Door2"],
+    meshNameExcludes: ["convcolonly", "UBX_", "UCX_", "SM_Door2"],
   },
   renderZones: {
     enabled: true,

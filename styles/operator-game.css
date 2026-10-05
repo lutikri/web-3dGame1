@@ -4046,6 +4046,7 @@ html.preflight-boot #app {
 }
 .settings-option strong,
 .settings-option small { display: block; }
+.settings-content [data-settings-page="audio"] .settings-option { min-height: 60px; }
 .settings-option strong { font-size: 18px; }
 .settings-option small { margin-top: 7px; color: var(--facility-muted); font-size: 14px; letter-spacing: 0.05em; }
 .settings-option > output { justify-self: end; color: var(--facility-primary); font-size: 16px; }

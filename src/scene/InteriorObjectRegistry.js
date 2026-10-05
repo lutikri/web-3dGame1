@@ -203,7 +203,7 @@ export function normalizeObjectName(name) {
 }
 
 export function isCollisionHelperMesh(name = "") {
-  return /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(name) || /^UBX_/i.test(name);
+  return /(?:^|_)Coll(?:ider)?(?:$|[._])/i.test(name) || /^U(?:BX|CX)_/i.test(name);
 }
 
 export function ensureSecondUvSet(object) {

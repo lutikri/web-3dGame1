@@ -1,11 +1,15 @@
 import { getGraphicsQualityProfile } from "../../config/GraphicsQualityProfiles.js?v=compact-loading-game";
+import { AUDIO_CATEGORY_SETTINGS } from "../../audio/AudioCategorySettings.js?v=compact-loading-game";
 
 const RANGE_CONTROLS = [
   { key: "fov", input: "#settingFov", value: "#settingFovValue", format: String },
-  { key: "uiScale", input: "#settingUiScale", value: "#settingUiScaleValue", format: (value) => `${value}%` },
   { key: "sensitivity", input: "#settingSensitivity", value: "#settingSensitivityValue", format: (value) => `${value}%` },
   { key: "gamma", input: "#settingGamma", value: "#settingGammaValue", format: (value) => `${Math.round(value / 0.93 * 100)}%` },
   { key: "masterVolume", input: "#settingMasterVolume", value: "#settingMasterVolumeValue", format: (value) => `${value}%` },
+  ...AUDIO_CATEGORY_SETTINGS.map(({ key }) => {
+    const id = `setting${key[0].toUpperCase()}${key.slice(1)}`;
+    return { key, input: `#${id}`, value: `#${id}Value`, format: (value) => `${value}%` };
+  }),
 ];
 
 export function createSettingsPanel({ settings, gameApi, save, root = document, body = document.body }) {
@@ -34,6 +38,7 @@ export function createSettingsPanel({ settings, gameApi, save, root = document, 
     settings.qualityProfile ??= boot.qualityProfile ?? "high";
     settings.gamma ??= boot.displayGamma ?? 0.93;
     settings.antiAliasing ??= defaultAntiAliasing(settings.qualityProfile);
+    AUDIO_CATEGORY_SETTINGS.forEach(({ key }) => { settings[key] ??= 100; });
   }
 
   function wire() {
@@ -108,15 +113,16 @@ export function createSettingsPanel({ settings, gameApi, save, root = document, 
       button.classList.toggle("is-selected", selected);
       button.setAttribute("aria-pressed", String(selected));
     }));
-    const scaleMirror = root.querySelector("#settingUiScaleMirror");
-    if (scaleMirror) scaleMirror.textContent = `${settings.uiScale}%`;
-    body.style.setProperty("--ui-scale", String(settings.uiScale / 100));
+    body.style.setProperty("--ui-scale", "1");
     gameApi.setBaseFov?.(settings.fov);
     gameApi.setMouseSensitivity?.(settings.sensitivity / 100);
     gameApi.setRenderScale?.(settings.renderScale);
     gameApi.setDisplayGamma?.(settings.gamma);
     gameApi.setAntiAliasingMode?.(settings.antiAliasing);
     gameApi.setMasterVolume?.(settings.masterVolume);
+    gameApi.setAudioCategoryVolumes?.(Object.fromEntries(
+      AUDIO_CATEGORY_SETTINGS.map(({ group, key }) => [group, settings[key] / 100]),
+    ));
     gameApi.setShadowQuality?.(settings.shadowQuality);
     gameApi.setGtaoQuality?.(settings.gtaoQuality);
     gameApi.setSsgiQuality?.(settings.ssgiQuality);

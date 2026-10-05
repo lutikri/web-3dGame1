@@ -15,6 +15,7 @@ export class LevelStaticPhysicsRuntime {
     const collisionRoot = new THREE.Group();
     this.panelCollisionMeshes.forEach((source) => {
       const mesh = new THREE.Mesh(source.geometry);
+      mesh.name = source.name;
       source.matrixWorld.decompose(mesh.position, mesh.quaternion, mesh.scale);
       collisionRoot.add(mesh);
     });
@@ -34,6 +35,7 @@ export class LevelStaticPhysicsRuntime {
         if (runtime.dynamicColliderMeshes?.has(source) && !runtime.staticWhileLockedColliderMeshes?.has(source)) return;
         if (!source.geometry) return;
         const mesh = new THREE.Mesh(source.geometry);
+        mesh.name = source.name;
         source.updateWorldMatrix(true, false);
         source.matrixWorld.decompose(mesh.position, mesh.quaternion, mesh.scale);
         collisionRoot.add(mesh);
