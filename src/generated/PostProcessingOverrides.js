@@ -43,7 +43,7 @@ export const POST_PROCESSING_OVERRIDES = {
       },
       "max": {
         "enabled": true,
-        "resolutionScale": 1,
+        "resolutionScale": 0.5,
         "blendIntensity": 0.8,
         "radius": 0.42,
         "distanceExponent": 1.7,
@@ -282,13 +282,13 @@ export const POST_PROCESSING_OVERRIDES = {
   },
   "lensDistortion": {
     "enabled": true,
-    "barrelAmount": -0.013,
-    "fisheyeAmount": 0.01,
+    "barrelAmount": 0,
+    "fisheyeAmount": 0.05,
     "emergencyBarrelBoost": 0.038,
     "emergencyFisheyeBoost": 0.034
   },
   "chromaticAberration": {
     "enabled": true,
-    "amount": 0
+    "amount": 0.0005
   }
 };

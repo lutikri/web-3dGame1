@@ -848,6 +848,11 @@ const itemInteractionRuntime = createItemInteractionRuntime({
     target: item.target?.userData.kind === "briefSheet" ? "brief" : item.icon,
     slotIndex,
   }),
+  onStateChanged: (item, state) => activeLevelSessionRuntime.emit("itemStateChanged", {
+    target: item.icon,
+    state,
+  }),
+  onActivated: (item) => activeLevelSessionRuntime.emit("itemActivated", { target: item.icon }),
   playSoundGroup: playSoundGroupAtObject,
   setHoldProgress: (progress, active) => {
     document.body.style.setProperty("--hold-progress", String(progress * 100));
@@ -1505,6 +1510,11 @@ const renderWarmupRuntime = new RenderWarmupRuntime({
   beginVisibilityWarmup: () => renderZoneRuntime.beginWarmup(),
   acquireForegroundLease: frameSchedulingPolicy.acquireForegroundLease,
   prepare: async () => {
+    await Promise.all([...levelPrefabInstances.values()].map((runtime) =>
+      runtime.serviceTerminal?.renderer.prepare?.({
+        levelId: activeLevelId,
+        language: document.documentElement.lang,
+      })));
     await photometricPointLightRuntime.prepare();
     pointLightPoolRuntime.prepare();
     photometricPointLightRuntime.updateUniforms(1);

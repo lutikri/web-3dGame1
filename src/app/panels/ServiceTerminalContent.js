@@ -1,3 +1,5 @@
+import { LEVEL_DEFINITIONS } from "../../levels/LevelRegistry.js?v=compact-loading-game";
+import { getScheduledGridDemand } from "../../FusionCoreSimulation.js?v=compact-loading-game";
 import {
   getTerminalShiftConfig,
   resolveTerminalShiftId,
@@ -157,13 +159,20 @@ function orderedShiftsThrough(activeShift) {
 }
 
 function localizeAttachment(attachment, locale) {
+  const profile = attachment.sourceLevelId
+    ? LEVEL_DEFINITIONS[attachment.sourceLevelId]?.environment?.shiftProfile
+    : null;
+  const duration = profile?.phases?.at(-1)?.end ?? 0;
   return {
     ...attachment,
     title: localize(attachment.title, locale),
     heading: localize(attachment.heading, locale),
     pages: localize(attachment.pages, locale),
     paragraphs: localize(attachment.paragraphs, locale),
-    points: localize(attachment.points, locale),
+    points: profile
+      ? Array.from({ length: Math.ceil(duration) + 1 }, (_, time) => [Math.min(time, duration), getScheduledGridDemand(Math.min(time, duration), profile)])
+      : localize(attachment.points, locale),
+    ticks: profile ? [0, ...profile.phases.map((phase) => phase.end)] : undefined,
   };
 }
 

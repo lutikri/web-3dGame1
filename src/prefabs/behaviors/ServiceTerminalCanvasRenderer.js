@@ -45,8 +45,11 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   const hitRegions = [];
   const images = new Map();
   let disposed = false;
+  let cachedContent = null;
+  let cachedContentKey = null;
 
   function draw() {
+    if (disposed) return;
     activeContext = context;
     activeHitRegions = hitRegions;
     hitRegions.length = 0;
@@ -130,7 +133,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     text(copy.eyebrow, x, 153, 27, 600, COLORS.muted);
     multiline(copy.title, x, 208, 54, 58, 850, COLORS.ink, leftWidth);
     const summaryY = 341;
-    copy.summary.forEach((entry, index) => text(entry, x, summaryY + index * 32, 22, 500, COLORS.ink));
+    copy.summary.forEach((entry, index) => multiline(entry, x, summaryY + index * 32, 21, 25, 500, COLORS.ink, leftWidth));
 
     let sectionY = 471;
     copy.sections.forEach((section) => {
@@ -290,36 +293,36 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   function drawLoadProfile(documentData, x, width) {
     text(documentData.heading, x, 226, 24, 650, COLORS.muted);
     const chartX = x + 28;
-    const chartY = 340;
     const chartWidth = width - 56;
     const points = documentData.points ?? [];
-    const stepWidth = chartWidth / Math.max(1, points.length - 1);
+    if (!points.length) return;
+    const duration = Math.max(1, points.at(-1)[0]);
+    const maximum = Math.max(1000, ...points.map(([, mw]) => mw));
+    const plotX = (time) => chartX + time / duration * chartWidth;
+    const plotY = (mw) => 618 - mw / maximum * 278;
     line(chartX, 618, chartX + chartWidth, 618, COLORS.rule, 2);
+    line(chartX, 340, chartX, 618, COLORS.rule, 2);
+    text("MW", chartX, 314, 20, 700, COLORS.muted);
+    [0, 500, 1000].forEach((mw) => {
+      line(chartX, plotY(mw), chartX + chartWidth, plotY(mw), COLORS.rule);
+      text(mw, chartX, plotY(mw) - 9, 17, 600, COLORS.muted);
+    });
     context.strokeStyle = COLORS.orange;
-    context.lineWidth = 8;
+    context.lineWidth = 5;
     context.beginPath();
-    points.forEach(([, mw], index) => {
-      const px = chartX + index * stepWidth;
-      const py = 580 - ((mw - 100) / 900) * 235;
+    points.forEach(([time, mw], index) => {
+      const px = plotX(time);
+      const py = plotY(mw);
       if (index === 0) context.moveTo(px, py);
-      else {
-        const previousMw = points[index - 1][1];
-        const previousY = 580 - ((previousMw - 100) / 900) * 235;
-        context.lineTo(px, previousY);
-        context.lineTo(px, py);
-      }
+      else context.lineTo(px, py);
     });
     context.stroke();
-    points.forEach(([time, mw, label], index) => {
-      const px = chartX + index * stepWidth;
-      const py = 580 - ((mw - 100) / 900) * 235;
-      context.fillStyle = COLORS.ink;
-      context.beginPath();
-      context.arc(px, py, 8, 0, Math.PI * 2);
-      context.fill();
-      text(time, px, 662, 18, 700, COLORS.muted, index === 0 ? "left" : index === points.length - 1 ? "right" : "center");
-      text(`${mw} MW`, px, py - 22, 20, 800, COLORS.ink, index === 0 ? "left" : index === points.length - 1 ? "right" : "center");
-      if (index < points.length - 1) multiline(label, px, 721 + (index % 2) * 52, 17, 21, 700, COLORS.ink, stepWidth - 12, index === 0 ? "left" : "center");
+    const ticks = documentData.ticks ?? [0, duration];
+    ticks.forEach((time, index) => {
+      const px = plotX(time);
+      line(px, 618, px, 631, COLORS.rule, 2);
+      const label = `${Math.floor(time / 60)}:${String(time % 60).padStart(2, "0")}`;
+      text(label, px, 662, 18, 700, COLORS.muted, index === 0 ? "left" : index === ticks.length - 1 ? "right" : "center");
     });
   }
 
@@ -383,6 +386,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     const normalized = typeof levelId === "string" && levelId ? levelId : "exploring-around";
     if (state.levelId === normalized) return false;
     state.levelId = normalized;
+    state.activeTab = "brief";
     state.activeDocumentId = null;
     state.guideIndex = 0;
     state.documentScroll = 0;
@@ -412,7 +416,25 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
   }
 
   function content() {
-    return getServiceTerminalContent(state.levelId, state.language);
+    const key = `${state.levelId}:${state.language}`;
+    if (cachedContentKey !== key) {
+      cachedContent = getServiceTerminalContent(state.levelId, state.language);
+      cachedContentKey = key;
+    }
+    return cachedContent;
+  }
+
+  async function prepare({ levelId, language } = {}) {
+    setLevelId(levelId);
+    setLanguage(language);
+    const copy = content();
+    const paths = [copy.assets.logo, copy.assets.siteImage, ...Object.values(copy.assets.icons),
+      ...copy.brief.attachments.flatMap((attachment) => attachment.pages ?? [])];
+    await Promise.all([
+      document.fonts?.ready,
+      ...paths.map((path) => loadImage(path).decode().catch(() => {})),
+    ]);
+    if (!disposed) draw();
   }
 
   function dispose() {
@@ -436,6 +458,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     back,
     setLevelId,
     setLanguage,
+    prepare,
     dispose,
     isDocumentOpen: () => Boolean(state.activeDocumentId),
   };

@@ -29,7 +29,7 @@ test("service terminal content exposes the required data-driven sections in EN a
   assert.equal(russian.brief.attachments[0].pages.length, 2);
   assert.equal(russian.brief.title, "ПЕРВАЯ КВАЛ.\nСМЕНА");
   assert.equal(russian.brief.attachments[0].title, "АРХИВНЫЙ ТЕХ. БРИФ");
-  assert.equal(english.brief.attachments[1].title, "LOAD PROFILE — UNAVAILABLE");
+  assert.equal(english.brief.attachments[1].title, "LOAD PROFILE");
   assert.deepEqual(english.brief.attachments[1].paragraphs, ["UNAVAILABLE"]);
   assert.match(english.brief.sections[0].text, /400, 950, and 100 MW/);
   assert.equal(russian.guide.slides[0].kind, "demandIndicators");
@@ -66,6 +66,24 @@ test("shift reports accumulate canonical events without replay attempts", () => 
   assert.equal(diagnostic.reports.entries.length, 5);
   assert.equal(efficiency.reports.entries.length, 6);
   assert.equal(efficiency.reports.entries.filter(([, event]) => event === "OPERATOR QUALIFICATION SESSION").length, 1);
+});
+
+test("diagnostic load chart uses the real timed demand ramps and fits the shortened brief", () => {
+  const copy = getServiceTerminalContent("unexpected-stuff", "ru");
+  assert.equal(copy.brief.title, "НАДЁЖНОСТЬ\nПРИБОРОВ");
+  assert.equal(copy.brief.attachments[0].title, "АРХ. БРИФ");
+  const chart = copy.brief.attachments.find(({ id }) => id === "load-profile");
+  assert.equal(chart.title, "ПРОФИЛЬ НАГРУЗКИ");
+  assert.deepEqual(chart.ticks, [0, 24, 52, 90, 135, 180]);
+  assert.deepEqual(chart.points[0], [0, 140]);
+  assert.deepEqual(chart.points[24], [24, 140]);
+  assert.ok(chart.points[28][1] > 140 && chart.points[28][1] < 430);
+  assert.deepEqual(chart.points[33], [33, 430]);
+  assert.deepEqual(chart.points[61], [61, 650]);
+  assert.deepEqual(chart.points[99], [99, 850]);
+  assert.deepEqual(chart.points[144], [144, 980]);
+  assert.deepEqual(chart.points.at(-1), [180, 980]);
+  assert.equal(getServiceTerminalContent("exploring-around", "ru").brief.attachments[1].points, undefined);
 });
 
 test("guide pages support zero, one, two, and four-plus authored pages in both languages", () => {

@@ -3,6 +3,61 @@ import test from "node:test";
 
 import { createLevelTutorialRuntime } from "../src/app/LevelTutorialRuntime.js";
 
+test("flashlight hints follow inventory, committed equipment and activation without the qualification tutorial", () => {
+  const previousWindow = globalThis.window;
+  const timers = createTimerWindow();
+  let activeHint = null;
+  let allowed = true;
+  globalThis.window = timers.window;
+  const runtime = createLevelTutorialRuntime({
+    hintQueue: { show: (hint) => { activeHint = hint; }, clear: () => { activeHint = null; } },
+    worldHint: { show() {}, clear() {} },
+    emitThought() {},
+    isAllowed: () => allowed,
+  });
+  const start = () => runtime.start({ levelId: "unexpected-stuff", config: { enabled: false, flashlightHints: true } });
+  const itemEvent = (type, state) => runtime.handleEvent({ type, detail: { target: "flashlight", state } });
+  try {
+    assert.equal(start(), true);
+    timers.runNext();
+    assert.equal(activeHint, null);
+    runtime.handleEvent({ type: "coreStarted" });
+    itemEvent("itemStored");
+    assert.equal(activeHint.id, "flashlight-select");
+    assert.equal(activeHint.tokens.key.label, "TAB");
+    itemEvent("itemStateChanged", "equipped");
+    assert.equal(activeHint.id, "flashlight-activate");
+    assert.equal(activeHint.tokens.key.label, "E");
+    allowed = false;
+    runtime.refresh();
+    assert.equal(activeHint, null);
+    allowed = true;
+    runtime.refresh();
+    assert.equal(activeHint.id, "flashlight-activate");
+    runtime.handleEvent({ type: "narrationStarted", detail: { line: "faultsIntro" } });
+    assert.equal(activeHint, null);
+    runtime.handleEvent({ type: "narrationEnded", detail: { line: "faultsIntro" } });
+    assert.equal(activeHint.id, "flashlight-activate");
+    itemEvent("itemStateChanged", "inventory");
+    assert.equal(activeHint.id, "flashlight-select");
+    itemEvent("itemStateChanged", "world");
+    assert.equal(activeHint, null);
+    itemEvent("itemStored");
+    itemEvent("itemStateChanged", "equipped");
+    itemEvent("itemActivated");
+    assert.equal(activeHint, null);
+    itemEvent("itemStateChanged", "inventory");
+    assert.equal(activeHint, null);
+    start();
+    timers.runNext();
+    itemEvent("itemStored");
+    assert.equal(activeHint.id, "flashlight-select");
+  } finally {
+    runtime.stop();
+    globalThis.window = previousWindow;
+  }
+});
+
 function createTimerWindow() {
   const pending = [];
   return {

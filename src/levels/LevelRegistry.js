@@ -333,6 +333,7 @@ function createUnexpectedStuffConfig() {
     tutorial: {
       ...baseConfig.tutorial,
       enabled: false,
+      flashlightHints: true,
     },
     prefabStatePolicies: [
       ...(baseConfig.prefabStatePolicies ?? []),

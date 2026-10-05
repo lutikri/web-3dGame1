@@ -105,11 +105,14 @@ test("operator movement runtime owns clamped noclip speed", () => {
 });
 
 test("operator movement runtime enters crouch and refuses to stand under an obstruction", () => {
-  const keys = new Set(["ControlLeft"]);
+  const controlOnly = createRuntime({ keys: new Set(["ControlLeft", "ControlRight"]) });
+  controlOnly.runtime.update(1 / 60);
+  assert.equal(controlOnly.runtime.isCrouched(), false);
+  const keys = new Set(["KeyC"]);
   const { runtime } = createRuntime({ keys, blockStanding: true });
   runtime.update(1 / 60);
   assert.equal(runtime.isCrouched(), true);
-  keys.delete("ControlLeft");
+  keys.delete("KeyC");
   runtime.update(1 / 60);
   assert.equal(runtime.isCrouched(), true);
 });

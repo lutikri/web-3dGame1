@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#010805" />
+    <meta name="description" content="BASELOAD is a first-person industrial operations game set inside an aging fusion facility. Play directly in your browser. No download required." />
+    <meta property="og:title" content="Baseload About" />
+    <meta property="og:description" content="A browser game about operating a facility that should have been retired years ago." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/landing/control-booth-1280.webp" />
+    <title>Baseload About</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles/landing.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#about">Skip to about the game</a>
+    <div class="backdrop" aria-hidden="true"></div>
+    <div class="site-column">
+      <header class="site-header" id="top">
+        <h1 class="wordmark" id="game-title"><a href="#top">BASE LOAD</a></h1>
+        <nav aria-label="Page navigation">
+          <a href="#about">ABOUT</a>
+          <a href="#media">MEDIA</a>
+          <a href="#roadmap">DEVELOPMENT</a>
+          <span class="language-switch" role="group" aria-label="Page language"><a href="?lang=en" data-language="en" lang="en" aria-label="English" aria-current="true">EN</a><span aria-hidden="true">/</span><a href="?lang=ru" data-language="ru" lang="ru" aria-label="Русский" aria-current="false">RU</a></span>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="game-title">
+          <div class="intro-copy">
+            <div class="intro-row">
+              <p class="tagline">A browser game about operating a facility<br class="wide-break" /> that should have been retired years ago.</p>
+              <a class="play-button" href="./index.html"><span aria-hidden="true">&gt;</span> PLAY IN BROWSER</a>
+            </div>
+            <p class="play-note">Runs directly in your browser. No download required.</p>
+            <p class="build-note">Desktop · Keyboard + Mouse · In development · Designed for a wide range of hardware</p>
+          </div>
+          <div class="gallery" role="region" aria-roledescription="carousel" aria-label="Gameplay screenshots">
+            <figure class="gallery-frame">
+              <img id="gallery-image" src="./assets/landing/shaft-03-corridor-1280.webp" srcset="./assets/landing/shaft-03-corridor-1280.webp 1280w, ./assets/landing/shaft-03-corridor-2560.webp 2560w" sizes="(max-width: 880px) 100vw, 820px" width="2560" height="1086" fetchpriority="high" alt="A concrete corridor with the posted facility map on the wall." />
+              <span class="frame-corner corner-tl" aria-hidden="true"></span><span class="frame-corner corner-tr" aria-hidden="true"></span>
+              <span class="frame-corner corner-bl" aria-hidden="true"></span><span class="frame-corner corner-br" aria-hidden="true"></span>
+            </figure>
+            <div class="gallery-controls">
+              <button type="button" data-gallery-step="-1" aria-label="Previous screenshot">‹</button>
+              <p class="gallery-status" aria-live="off" aria-atomic="true"><span id="gallery-count">1 / 9</span><span id="gallery-caption">Shaft 03 — Site-12</span></p>
+              <button type="button" data-gallery-step="1" aria-label="Next screenshot">›</button>
+              <button type="button" class="gallery-toggle" aria-label="Pause slideshow" aria-pressed="false">Ⅱ</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" id="about" aria-labelledby="about-title">
+          <div class="reading-width">
+            <h2 id="about-title">WHAT IS BASELOAD?</h2>
+            <p>Baseload is a first-person industrial operations game set inside an aging fusion facility.</p>
+            <p>You are the operator of Site-12. An ordinary workplace, somewhere underground. Old instruments, concrete corridors, a reactor that still needs to run.</p>
+            <p>The facility has been expanded, repaired and partially modernized. Somehow, it is still here. Now it is your place of work.</p>
+          </div>
+          <figure class="wide-screenshot">
+            <img src="./assets/landing/core-observation-1280.webp" srcset="./assets/landing/core-observation-1280.webp 1280w, ./assets/landing/core-observation-2560.webp 2560w" sizes="(max-width: 760px) 100vw, 680px" width="2560" height="1086" loading="lazy" alt="Purple reactor plasma visible through the observation window in Site-12." />
+            <figcaption>Core observation — Site-12</figcaption>
+          </figure>
+        </section>
+
+        <section class="content-section roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
+          <div class="reading-width">
+            <h2 id="roadmap-title">ROAD MAP</h2>
+            <ol class="roadmap-list">
+              <li><h3>NOW — Browser Prototype</h3><p>Playable shifts, reactor operation, system failures, and explorable Site-12 areas.</p></li>
+              <li><h3>NEXT — Facility Expansion</h3><p>More maintenance systems, additional rooms, new shift scenarios, and environmental events.</p></li>
+              <li><h3>THEN — Browser Version Completion</h3><p>Finalized story and lore, complete shift progression, game ending, and roughly <strong>1.5 hours of story-focused playtime</strong>.</p></li>
+              <li><h3>LATER — Full Game</h3><p>A larger Unreal Engine version with a deeper story, expanded facility, stronger atmosphere, and a potential Steam release — <strong>if the project grows beyond the browser version.</strong></p></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="content-section media-section" id="media" aria-labelledby="media-title">
+          <div class="reading-width"><h2 id="media-title">GAME LOOK</h2><p>Actual screenshots from the current browser build.</p></div>
+          <div class="media-grid">
+            <figure><button type="button" data-media="0" aria-label="Enlarge screenshot: Control Booth A"><img src="./assets/landing/control-booth-1280.webp" width="1280" height="543" loading="lazy" alt="The reactor console and analog instruments." /></button><figcaption>Control Booth A</figcaption></figure>
+            <figure><button type="button" data-media="1" aria-label="Enlarge screenshot: Shaft 03"><img src="./assets/landing/shaft-03-corridor-1280.webp" width="1280" height="543" loading="lazy" alt="A dim concrete corridor with the facility map on the wall." /></button><figcaption>Shaft 03</figcaption></figure>
+            <figure><button type="button" data-media="2" aria-label="Enlarge screenshot: Core observation"><img src="./assets/landing/core-observation-1280.webp" width="1280" height="543" loading="lazy" alt="The glowing plasma viewport and observation console." /></button><figcaption>Core observation</figcaption></figure>
+            <figure><button type="button" data-media="3" aria-label="Enlarge screenshot: Reactor controls"><img src="./assets/landing/reactor-controls-1280.webp" width="1280" height="543" loading="lazy" alt="Physical switches and controls beneath the reactor gauges." /></button><figcaption>Reactor controls</figcaption></figure>
+            <figure><button type="button" data-media="4" aria-label="Enlarge screenshot: Site-12 entrance"><img src="./assets/landing/site-12-entrance-1280.webp" width="1280" height="543" loading="lazy" alt="The entrance checkpoint, Terragen sign and old computer." /></button><figcaption>Site-12 entrance</figcaption></figure>
+            <figure><button type="button" data-media="5" aria-label="Enlarge screenshot: Lights out"><img src="./assets/landing/partial-power-loss-1280.webp" width="1280" height="577" loading="lazy" alt="A flashlight illuminates the observation console in the dark." /></button><figcaption>Lights out</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="content-section" id="lore" aria-labelledby="lore-title">
+          <div class="reading-width">
+            <h2 id="lore-title">ABOUT SITE-12 / LORE</h2>
+            <p><strong>TGlobal built much of its industrial network during the late 20th century. Terragen Systems was created to operate part of its power infrastructure.</strong></p>
+            <p>By the 2030s, TGlobal had effectively ceased normal operations. Most of its subsidiaries disappeared. Terragen survived partially.</p>
+            <p>Site-12 is outdated, understaffed and long overdue for modernization, but its generation quota remains in effect.</p>
+            <p><strong>You were hired as one of the few operators still assigned to keep it running.</strong></p>
+            <p>The grid still expects its power.</p>
+          </div>
+        </section>
+
+        <section class="content-section" id="development" aria-labelledby="development-title">
+          <div class="reading-width">
+            <h2 id="development-title">IN DEVELOPMENT</h2>
+            <p><strong>Baseload is a small solo-developed game, currently playable directly in the browser.</strong></p>
+            <p>More systems, areas and shifts are in development.</p>
+            <p>English and Russian supported. Keyboard and mouse required.</p>
+            <a class="play-button secondary-play" href="./index.html"><span aria-hidden="true">&gt;</span> PLAY BASELOAD</a>
+          </div>
+        </section>
+
+        <section class="content-section questions" aria-labelledby="questions-title">
+          <div class="reading-width">
+            <h2 id="questions-title">QUESTIONS &amp; ANSWERS</h2>
+            <details open><summary>IS THIS THE FULL GAME?</summary><p>No. Baseload is in development. The browser build is the current playable version of the project.</p></details>
+            <details open><summary>DO I NEED TO DOWNLOAD ANYTHING?</summary><p>No. Press Play in Browser to open the game. No installation required.</p></details>
+            <details open><summary>CAN I PLAY ON MY PHONE?</summary><p>The current build is designed for a desktop browser with a keyboard and mouse.</p></details>
+            <details open>
+              <summary>WHY A BROWSER GAME?</summary>
+              <p>It started as a small browser test and somehow kept growing. At some point, keeping it there became part of the challenge: how far can a 3D game like this be pushed while still running from a link?</p>
+              <p><strong>So, for now, Baseload stays in the browser.</strong></p>
+            </details>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>© 2026 ARTEM LUT</span><a href="#top">BACK TO TOP ↑</a></footer>
+    </div>
+
+    <dialog class="image-viewer" aria-labelledby="viewer-caption">
+      <div class="viewer-toolbar"><p id="viewer-caption">Gameplay screenshot</p><button class="viewer-close" type="button" aria-label="Close screenshot">CLOSE ×</button></div>
+      <img id="viewer-image" width="2560" height="1086" alt="" />
+      <div class="viewer-controls"><button type="button" data-viewer-step="-1" aria-label="Previous enlarged screenshot">‹</button><span id="viewer-count" aria-live="polite"></span><button type="button" data-viewer-step="1" aria-label="Next enlarged screenshot">›</button></div>
+    </dialog>
+    <script type="module" src="./src/landing/main.js"></script>
+  </body>
+</html>

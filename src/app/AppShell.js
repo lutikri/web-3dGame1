@@ -438,7 +438,9 @@ export function createAppShell({ gameApi }) {
           hideOverlay();
           await gameApi.restartGame?.({ onProgress: setProgress, replayNarration: false });
           activeGameplayLevelId = gameApi.getState?.().activeLevelId ?? activeGameplayLevelId;
-          if (attemptPresentation.startTutorial) maybeStartLevelTutorial(activeGameplayLevelId);
+          if (attemptPresentation.startTutorial || LEVELS[activeGameplayLevelId]?.environment?.tutorial?.flashlightHints) {
+            maybeStartLevelTutorial(activeGameplayLevelId);
+          }
           if (
             attemptPresentation.autoShowBriefing
             && shouldAutoShowLevelBriefing(LEVELS, activeGameplayLevelId)
@@ -733,7 +735,7 @@ export function createAppShell({ gameApi }) {
   function maybeStartLevelTutorial(levelId) {
     levelTutorialRuntime.stop();
     const config = LEVELS[levelId]?.environment?.tutorial;
-    if (config?.enabled) levelTutorialRuntime.start({ levelId, config });
+    if (config?.enabled || config?.flashlightHints) levelTutorialRuntime.start({ levelId, config });
   }
 
   function updateInputLock() {

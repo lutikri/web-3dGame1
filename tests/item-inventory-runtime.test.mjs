@@ -7,6 +7,28 @@ function createItem(id, options = {}) {
   return { id, target: {}, label: id, portable: true, ...options };
 }
 
+test("equipment reports committed selection and successful activation, not preview or failed activation", () => {
+  const events = [];
+  let acceptsActivation = false;
+  const runtime = new ItemInventoryRuntime({
+    onStateChanged: (item, state) => events.push([item.id, state]),
+    onActivated: (item) => events.push([item.id, "activated"]),
+    activateItem: () => acceptsActivation,
+  });
+  const item = runtime.register(createItem("flashlight", { activationMode: "equipment" }));
+  runtime.store(item);
+  runtime.beginSelection();
+  runtime.moveSelection(1);
+  assert.deepEqual(events, [["flashlight", "inventory"]]);
+  runtime.commitSelection();
+  assert.deepEqual(events.at(-1), ["flashlight", "equipped"]);
+  assert.equal(runtime.activateRelevant(), false);
+  assert.deepEqual(events.at(-1), ["flashlight", "equipped"]);
+  acceptsActivation = true;
+  assert.equal(runtime.activateRelevant(), true);
+  assert.deepEqual(events.at(-1), ["flashlight", "activated"]);
+});
+
 test("short primary click grabs while a completed hold stores without also grabbing", () => {
   const transitions = [];
   const runtime = new ItemInventoryRuntime({

@@ -6,7 +6,7 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
 
   function start({ levelId, config } = {}) {
     stop();
-    if (!config?.enabled) return false;
+    if (!config?.enabled && !config?.flashlightHints) return false;
     state = {
       levelId,
       config,
@@ -88,6 +88,30 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
 
   function handleEvent({ type, detail = {} } = {}) {
     if (!state) return;
+    if (state.config.flashlightHints && detail.target === "flashlight") {
+      if (type === "itemStored") state.milestones.add("flashlightStored");
+      if (type === "itemStateChanged") {
+        if (detail.state === "equipped") state.milestones.add("flashlightEquipped");
+        else state.milestones.delete("flashlightEquipped");
+        if (detail.state === "inventory") state.milestones.add("flashlightStored");
+        if (detail.state === "world") state.milestones.delete("flashlightStored");
+      }
+      if (type === "itemActivated" && state.milestones.has("flashlightEquipped")) {
+        state.milestones.add("flashlightActivated");
+      }
+      reconcile();
+    }
+    if (!state.config.enabled) {
+      if (type === "narrationStarted") {
+        state.narrationActive = true;
+        present(null);
+      }
+      if (type === "narrationEnded") {
+        state.narrationActive = false;
+        reconcile();
+      }
+      return;
+    }
     const isBlockingNarration = detail.line === "welcome" || detail.line === state.config.controlBoothNarration;
     if (type === "doorOpened" && detail.target === state.config.entryDoorTarget) complete("entryDoorOpened");
     if (type === "narrationStarted" && isBlockingNarration) {
@@ -144,6 +168,16 @@ export function createLevelTutorialRuntime({ hintQueue, worldHint, emitThought, 
     if (!state) return;
     if (!active() || !state.revealed || state.waitingToAdvance || state.narrationActive) return present(null);
     const done = (id) => state.milestones.has(id);
+    if (state.config.flashlightHints && done("flashlightStored") && !done("flashlightActivated")) {
+      if (done("flashlightEquipped")) {
+        return present("flashlight-activate", "hints.flashlightActivate", { key: { type: "key", label: "E" } });
+      }
+      return present("flashlight-select", "hints.flashlightInventory", {
+        key: { type: "key", label: "TAB" },
+        wheel: { type: "wheel", label: "Mouse wheel" },
+      });
+    }
+    if (!state.config.enabled) return present(null);
     if (done("coreStarted")) return present(null);
     if (!done("lookedAround")) return present("look", "hints.exploringLook", { button: mouseToken("Mouse") });
     if (!done("moved")) return present("move", "hints.exploringMove", { keys: keyTokens(["W", "A", "S", "D"]) });

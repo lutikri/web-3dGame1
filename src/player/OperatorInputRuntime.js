@@ -8,8 +8,7 @@ const MOVEMENT_CODES = new Set([
   "ShiftLeft",
   "ShiftRight",
   "Space",
-  "ControlLeft",
-  "ControlRight",
+  "KeyC",
 ]);
 
 export function createOperatorInputRuntime({

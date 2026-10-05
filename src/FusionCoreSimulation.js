@@ -557,6 +557,10 @@ function getLiveDemand(phase, elapsed, event, shiftProfile = null) {
   return Math.max(0, Math.round(phase.demand + gridWander + event.demandOffset));
 }
 
+export function getScheduledGridDemand(elapsed, shiftProfile = null) {
+  return getLiveDemand(getOperatingTargets(elapsed, shiftProfile), elapsed, getShiftEvent(elapsed, shiftProfile), shiftProfile);
+}
+
 function getShiftEvent(elapsed, shiftProfile = null) {
   if (shiftProfile?.defaultEvents === false) return { demandOffset: 0, coolantEfficiency: 1, fieldPenalty: 0, status: "" };
   if (elapsed >= 62 && elapsed < 76) {

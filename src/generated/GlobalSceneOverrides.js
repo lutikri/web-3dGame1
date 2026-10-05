@@ -319,10 +319,10 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "fixtures": {}
   },
   "camera": {
-    "fovDegrees": 63,
+    "fovDegrees": 55,
     "zoomFovDegrees": 68,
     "zoomDamping": 12,
-    "mouseSensitivity": 0.0023716,
+    "mouseSensitivity": 0.0007174090000000001,
     "pitchLimitDegrees": 72,
     "leanPitchLimitDegrees": 88,
     "walkSpeed": 1.2,

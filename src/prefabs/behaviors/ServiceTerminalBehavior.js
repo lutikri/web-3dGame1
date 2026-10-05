@@ -58,6 +58,8 @@ export function registerServiceTerminalInteraction(levelId, prefabConfig, runtim
   if (prefabConfig?.behavior !== "serviceTerminal") return false;
   const target = runtime?.serviceTerminal?.screen;
   if (!target) return false;
+  runtime.serviceTerminal.renderer.setLevelId?.(levelId);
+  runtime.serviceTerminal.setLanguage?.(globalThis.document?.documentElement?.lang ?? "en");
   const config = prefabConfig.serviceTerminal ?? {};
   target.userData.kind = "serviceTerminal";
   target.userData.levelId = levelId;

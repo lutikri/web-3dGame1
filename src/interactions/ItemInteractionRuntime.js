@@ -15,6 +15,8 @@ export function createItemInteractionRuntime({
   setHoldProgress,
   presentSelector,
   onStored,
+  onStateChanged,
+  onActivated,
   onSpecialViewOpened,
   getLocomotionPresentation = () => ({}),
   playSoundGroup = () => {},
@@ -28,6 +30,8 @@ export function createItemInteractionRuntime({
     setHoldProgress,
     presentSelector,
     onStored,
+    onStateChanged,
+    onActivated,
     onSpecialViewOpened,
   });
 

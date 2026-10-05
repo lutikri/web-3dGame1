@@ -8,6 +8,12 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
+    rolldownOptions: {
+      input: {
+        game: resolve("index.html"),
+        landing: resolve("landing.html"),
+      },
+    },
   },
   plugins: [operatorGameStaticBuild()],
 });

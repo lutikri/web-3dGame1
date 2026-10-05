@@ -26,6 +26,8 @@ export class ItemInventoryRuntime {
     setHoldProgress = () => {},
     presentSelector = () => {},
     onStored = () => {},
+    onStateChanged = () => {},
+    onActivated = () => {},
     onSpecialViewOpened = () => {},
   } = {}) {
     this.capacity = Math.max(1, Math.trunc(capacity));
@@ -38,6 +40,8 @@ export class ItemInventoryRuntime {
     this.setHoldProgress = setHoldProgress;
     this.presentSelector = presentSelector;
     this.onStored = onStored;
+    this.onStateChanged = onStateChanged;
+    this.onActivated = onActivated;
     this.onSpecialViewOpened = onSpecialViewOpened;
 
     this.itemsByTarget = new Map();
@@ -234,7 +238,9 @@ export class ItemInventoryRuntime {
       ? this.activeItem
       : this.grabbedItem ?? targeted;
     if (!item || item.activationMode === "none") return false;
-    return this.activateItem(item) !== false;
+    if (this.activateItem(item) === false) return false;
+    this.onActivated(item);
+    return true;
   }
 
   dropHandled(options = {}) {
@@ -317,6 +323,7 @@ export class ItemInventoryRuntime {
     const previousState = item.state;
     item.state = state;
     this.applyItemState(item, state, { ...context, previousState });
+    this.onStateChanged(item, state, { ...context, previousState });
   }
 
   resolveItem(itemOrId) {

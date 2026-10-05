@@ -49,7 +49,7 @@ export function createOperatorMovementRuntime({
   function update(dt) {
     if (getViewMode() === "menu") return;
     const noclip = getNoclipEnabled();
-    const crouchRequested = !noclip && (keys.has("ControlLeft") || keys.has("ControlRight"));
+    const crouchRequested = !noclip && keys.has("KeyC");
     updateStance(crouchRequested);
     const running = !crouched && (keys.has("ShiftLeft") || keys.has("ShiftRight"));
     const baseSpeed = noclip
@@ -75,7 +75,7 @@ export function createOperatorMovementRuntime({
     if (keys.has("KeyD")) move.add(right);
     if (keys.has("KeyA")) move.sub(right);
     if (noclip && keys.has("Space")) move.y += 1;
-    if (noclip && (keys.has("ControlLeft") || keys.has("ControlRight"))) move.y -= 1;
+    if (noclip && keys.has("KeyC")) move.y -= 1;
 
     const hasMove = move.lengthSq() > 0;
     if (hasMove) move.normalize().multiplyScalar(speed);
