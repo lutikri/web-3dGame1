@@ -53,6 +53,7 @@ const PREFAB_DEFINITIONS = {
     assetPath: "assets/mesh/prefabs/PF_LightPanel1.glb",
     materialKey: "lightPanel1",
     behavior: "lightPanel",
+    kinematicParts: [{ meshName: "SM_Lightpanel1_Door1" }],
     lightPanel: {
       maxDistance: 1.85,
       doorMeshName: "SM_Lightpanel1_Door1",
@@ -811,6 +812,7 @@ const REGISTRY_OWNED_KEYS = new Set([
   "materialOverrides",
   "behavior",
   "interaction",
+  "kinematicParts",
   "serviceTerminal",
   "radio",
   "audio",

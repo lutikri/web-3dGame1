@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { updatePrefabKinematicParts } from "./PrefabPhysicsRegistrar.js?v=compact-loading-game";
 import { updateAnalogClockRuntime } from "./behaviors/AnalogClockBehavior.js?v=compact-loading-game";
 import { updateBarrierGateRuntime } from "./behaviors/BarrierGateBehavior.js?v=compact-loading-game";
 import { updateControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=compact-loading-game";
@@ -116,6 +117,7 @@ export class LevelPrefabUpdateRuntime {
       });
       const event = updateControlPostRuntime(runtime.controlPost, dt, this.getPlayerPosition());
       if (event?.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);
+      updatePrefabKinematicParts(runtime, this.physics);
     });
   };
 

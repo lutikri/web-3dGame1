@@ -45,6 +45,7 @@ test("authored LightPanel GLB declares independent controls, UVs, normals and th
   const { gltf, interactive } = await fixture();
   assert.equal(interactive.length, 8);
   for (const mesh of gltf.meshes) {
+    if (mesh.name?.startsWith("UBX_")) continue;
     for (const primitive of mesh.primitives) {
       assert.ok(Number.isInteger(primitive.attributes.TEXCOORD_0), `${mesh.name}: missing UVs`);
       assert.ok(Number.isInteger(primitive.attributes.NORMAL), `${mesh.name}: missing normals`);

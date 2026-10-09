@@ -101,7 +101,8 @@ export function createPrefabPhysicsRegistrar({
     if (!physics || !config?.enabled) return;
     const prefixes = config.colliderNamePrefixes ?? ["UBX_", "COLL", "Coll"];
     const colliderMeshes = findColliders(runtime, prefixes).filter(
-      (mesh) => !excludedRoots.some((root) => mesh === root || isDescendantOf(mesh, root)),
+      (mesh) => !runtime.dynamicColliderMeshes.has(mesh)
+        && !excludedRoots.some((root) => mesh === root || isDescendantOf(mesh, root)),
     );
     if (!colliderMeshes.length) {
       console.warn(`[RigidPrefab] No colliders found for prefab "${prefabConfig.name}"`, prefixes);
@@ -124,6 +125,20 @@ export function createPrefabPhysicsRegistrar({
       if (savedState) physics.restoreRigidPrefabState(runtime.rigidPrefabKey, savedState);
     }
     return body;
+  }
+
+  function registerKinematicParts(levelId, prefabConfig, runtime) {
+    if (!physics) return;
+    runtime.kinematicParts = (prefabConfig.kinematicParts ?? []).map(({ meshName }) => {
+      const root = runtime.parts.get(meshName);
+      if (!root) throw new Error(`[PrefabPhysics] Missing moving part "${meshName}" in "${prefabConfig.name}"`);
+      const colliderMeshes = (runtime.collisionMeshes ?? []).filter((mesh) => isDescendantOf(mesh, root));
+      if (!colliderMeshes.length) throw new Error(`[PrefabPhysics] No colliders below moving part "${meshName}" in "${prefabConfig.name}"`);
+      const key = `${levelId}:${prefabConfig.name}:part:${meshName}`;
+      physics.createKinematicPrefab({ key, sceneKey: levelId, root, colliderMeshes });
+      colliderMeshes.forEach((mesh) => runtime.dynamicColliderMeshes.add(mesh));
+      return { key, root };
+    });
   }
 
   function registerDeskDrawers(levelId, prefabConfig, runtime) {
@@ -213,6 +228,7 @@ export function createPrefabPhysicsRegistrar({
   }
 
   function register(levelId, prefabConfig, runtime) {
+    registerKinematicParts(levelId, prefabConfig, runtime);
     if (prefabConfig.behavior === "elevator") return registerElevator(levelId, prefabConfig, runtime);
     if (prefabConfig.behavior === "barrierGate") return registerBarrierGate(levelId, prefabConfig, runtime);
     if (prefabConfig.behavior === "deskDrawers") return registerDeskDrawers(levelId, prefabConfig, runtime);
@@ -241,6 +257,12 @@ export function createPrefabPhysicsRegistrar({
       .filter(([, state]) => state));
     if (Object.keys(states).length) savePersistentRigidBodyStates(states);
   }
+}
+
+export function updatePrefabKinematicParts(runtime, physics) {
+  runtime.kinematicParts?.forEach(({ key, root }) => {
+    physics?.updateKinematicPrefab(key, root, { immediate: true });
+  });
 }
 
 function isDescendantOf(object, ancestor) {

@@ -8,6 +8,7 @@ const REGISTRY_OWNED_PREFAB_KEYS = new Set([
   "clock",
   "elevator",
   "interaction",
+  "kinematicParts",
   "radio",
   "prefabType",
 ]);
