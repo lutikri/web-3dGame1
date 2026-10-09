@@ -1,3 +1,5 @@
+import { isLightPanelPowerAvailable } from "../prefabs/behaviors/LightPanelBehavior.js?v=compact-loading-game";
+
 export class LevelBindingRuntime {
   constructor(options) {
     Object.assign(this, options);
@@ -27,6 +29,7 @@ export class LevelBindingRuntime {
     if (!lightConfig || !runtime?.light) return false;
     const wasEnabled = lightConfig.enabled !== false;
     const nextEnabled = Boolean(enabled);
+    if (nextEnabled && !isLightPanelPowerAvailable(this.levelPrefabInstances, levelId, prefabName)) return false;
     lightConfig.enabled = nextEnabled;
     if (nextEnabled && !wasEnabled) {
       this.playSoundAtObject(runtime.root, "LampTurnOn1", { maxDistance: 5 });

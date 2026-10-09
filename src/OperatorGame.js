@@ -41,6 +41,7 @@ import {
   registerStatusViewportInteraction,
 } from "./prefabs/behaviors/StatusViewportBehavior.js?v=compact-loading-game";
 import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=compact-loading-game";
+import { activateLightPanelControl, registerLightPanelInteraction } from "./prefabs/behaviors/LightPanelBehavior.js?v=compact-loading-game";
 import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=compact-loading-game";
 import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=compact-loading-game";
 import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=compact-loading-game";
@@ -1417,6 +1418,7 @@ const prefabPhysicsRegistrar = createPrefabPhysicsRegistrar({
 });
 const levelPrefabUpdateRuntime = new LevelPrefabUpdateRuntime({
   config: CONFIG,
+  setPrefabLightEnabled: (levelId, name, enabled) => levelBindingRuntime.setPrefabLightEnabled(levelId, name, enabled),
   instances: levelPrefabInstances,
   physics: physicsSystem,
   getTime: () => testTime,
@@ -1950,6 +1952,7 @@ function registerPrefabInteraction(...args) {
   itemInteractionRuntime.register(...args);
   registerServiceTerminalInteraction(...args, interactive);
   registerStatusViewportInteraction(...args, interactive);
+  registerLightPanelInteraction(...args, interactive);
   return physicsRuntime;
 }
 
@@ -2403,6 +2406,9 @@ const operatorInputRuntime = createOperatorInputRuntime({
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
     else if (target?.userData.kind === "slidingDrawer") prefabPhysicsRegistrar.toggleDeskDrawer(target);
+    else if (target?.userData.kind === "lightPanelControl" && activateLightPanelControl(target, levelPrefabInstances)) {
+      playSoundGroupAtObject(target, "mechanicalButton", { maxDistance: 3 });
+    }
     else if (target?.userData.kind === "serviceTerminal" || target?.userData.kind === "screenFocus") {
       serviceTerminalInteractionRuntime.activate(target, {
         levelId: activeLevelId,

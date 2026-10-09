@@ -49,6 +49,42 @@ const SERVICE_DOOR_DEFINITION = {
 };
 
 const PREFAB_DEFINITIONS = {
+  LightPanel1: {
+    assetPath: "assets/mesh/prefabs/PF_LightPanel1.glb",
+    materialKey: "lightPanel1",
+    behavior: "lightPanel",
+    lightPanel: {
+      maxDistance: 1.85,
+      doorMeshName: "SM_Lightpanel1_Door1",
+      doorAxis: "y",
+      doorClosedDegrees: -90,
+      doorOpenDegrees: 30,
+      doorDurationSeconds: 0.65,
+      startsOpen: false,
+      switchAxis: "x",
+      switchOffDegrees: 35,
+      switchDurationSeconds: 0.18,
+      masterMeshName: "LightPanel1_SwitchIsolator1",
+      masterAxis: "y",
+      masterOffPosition: 0.057102,
+      masterOnPosition: 0.11769,
+      masterDurationSeconds: 0.25,
+      masterEnabled: true,
+      startsTripped: false,
+      indicatorColor: "#72ff91",
+      indicatorIntensity: 1.5,
+      faultIndicatorColor: "#ff2222",
+      faultBlinkSeconds: 0.8,
+      circuits: {
+        ControlBooth: { meshName: "LightPanel1_Switch_ControlBooth", indicatorName: "LightPanel1_SwitchLight_ControlBooth", label: "CONTROL BOOTH", enabled: true, targets: "", extraTargets: "" },
+        ServiceCorridor: { meshName: "LightPanel1_Switch_ServiceCooridor1", indicatorName: "LightPanel1_SwitchLight_ServiceCorridor", label: "SERVICE CORRIDOR", enabled: true, targets: "", extraTargets: "" },
+        Observation: { meshName: "LightPanel1_Switch_Observation", indicatorName: "LightPanel1_SwitchLight_Observation", label: "OBSERVATION", enabled: true, targets: "", extraTargets: "" },
+        StaffRoom: { meshName: "LightPanel1_Switch_StaffRoom", indicatorName: "LightPanel1_SwitchLight_StaffRoom", label: "STAFF ROOM", enabled: true, targets: "", extraTargets: "" },
+        EntryArea: { meshName: "LightPanel1_Switch_EntryArea", indicatorName: "LightPanel1_SwitchLight_EntryArea", label: "ENTRY AREA", enabled: true, targets: "", extraTargets: "" },
+        ServiceOther: { meshName: "LightPanel1_Switch_ServiceOther", indicatorName: "LightPanel1_SwitchLight_Service", label: "OTHER SERVICE", enabled: true, targets: "", extraTargets: "" },
+      },
+    },
+  },
   plasmaView: {
     assetPath: "assets/mesh/prefabs/PF_plasmaView_Core1.glb",
     materialKey: "controlPost1",
@@ -695,6 +731,9 @@ const PREFAB_DEFINITIONS = {
       grabDistance: 0.82,
       grabOffset: [0, -0.22, 0],
       equippedOffset: [0.25, -0.2, -0.48],
+      equippedDepth: 0.34,
+      aimAtCursor: true,
+      aimDistance: 12,
       rotationOffset: [0, 270, 0],
       equippedMotion: {
         rotationLag: 8,

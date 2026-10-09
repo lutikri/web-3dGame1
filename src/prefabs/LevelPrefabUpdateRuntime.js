@@ -7,6 +7,7 @@ import { updateElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact
 import { updatePlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
 import { updateStatusViewportRuntime } from "./behaviors/StatusViewportBehavior.js?v=compact-loading-game";
 import { updateSuspendedLampRuntime } from "./behaviors/SuspendedLampBehavior.js?v=compact-loading-game";
+import { syncLightPanelPower, updateLightPanelRuntime } from "./behaviors/LightPanelBehavior.js?v=compact-loading-game";
 
 export class LevelPrefabUpdateRuntime {
   constructor(options) {
@@ -107,6 +108,8 @@ export class LevelPrefabUpdateRuntime {
       updatePlasmaViewRuntime(runtime.plasmaView, this.getCoreSnapshot?.(), dt);
       updateStatusViewportRuntime(runtime.statusViewport, this.getCoreSnapshot?.(), dt);
       updateCoreViewportRuntime(runtime.coreViewport, dt);
+      syncLightPanelPower(runtime.lightPanel, levelId, { config: this.config, setLightEnabled: this.setPrefabLightEnabled });
+      updateLightPanelRuntime(runtime.lightPanel, dt);
       updateBarrierGateRuntime(runtime.barrierGate, dt).forEach((event) => {
         if (event.type === "unlockGate") this.#unlockBarrier(runtime, levelId, event);
         else if (event.type === "sound" && event.soundKey) this.#playEvent(runtime, levelId, event);

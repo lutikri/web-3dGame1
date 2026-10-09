@@ -19,6 +19,54 @@ test("grab anchor advances toward the carry point without teleporting", () => {
   assert.deepEqual(next.toArray(), [0.2, 0, 0]);
 });
 
+test("held objects cannot block or push the player, and dropping restores collision", async () => {
+  const physics = await createPhysicsSystem();
+  physics.setActiveScene("room");
+  const root = new THREE.Group();
+  root.position.set(0.6, 0.9, 0);
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 2));
+  root.add(collider);
+  const item = physics.createRigidPrefab({ key: "item", sceneKey: "room", root, colliderMeshes: [collider], density: 1000 });
+  const characterSpec = { eyePosition: new THREE.Vector3(0, 1.6, 0), eyeHeight: 1.6, height: 1.8, radius: 0.3, config: {} };
+  for (const mode of ["equipped", "grabbed"]) {
+    physics.createCharacter(characterSpec);
+    physics.setRigidPrefabMode("item", mode);
+    physics.world.step();
+    const start = { ...item.body.translation() };
+    physics.moveCharacter(new THREE.Vector3(1, 0, 0), 1 / 60);
+    assert.ok(physics.getCharacter().collider.translation().x > 0.99, mode);
+    assert.deepEqual({ ...item.body.translation() }, start);
+    assert.ok(Math.abs(item.body.linvel().x) < 1e-6);
+  }
+  physics.resetRigidPrefab("item");
+  physics.releaseRigidPrefab("item");
+  physics.createCharacter(characterSpec);
+  physics.world.step();
+  physics.moveCharacter(new THREE.Vector3(1, 0, 0), 1 / 60);
+  assert.ok(physics.getCharacter().collider.translation().x < 0.3);
+});
+
+test("cursor ray hits the wall while excluding the player and its flashlight", async () => {
+  const physics = await createPhysicsSystem();
+  const scene = new THREE.Group();
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 0.1));
+  wall.position.set(0, 1.6, -0.7);
+  scene.add(wall);
+  physics.addStaticScene("room", scene);
+  physics.setActiveScene("room");
+  physics.createCharacter({ eyePosition: new THREE.Vector3(0, 1.6, 0), eyeHeight: 1.6, height: 1.8, radius: 0.3, config: {} });
+  const root = new THREE.Group();
+  root.position.set(0, 1.6, -0.4);
+  const collider = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1));
+  root.add(collider);
+  physics.createRigidPrefab({ key: "flashlight", sceneKey: "room", root, colliderMeshes: [collider] });
+  physics.setRigidPrefabMode("flashlight", "equipped");
+  physics.world.step();
+  const hit = physics.raycastWorld(new THREE.Vector3(0, 1.6, 0), new THREE.Vector3(0, 0, -1), 12, "flashlight");
+  assert.ok(Math.abs(hit.z + 0.65) < 1e-6);
+  assert.equal(physics.raycastWorld(new THREE.Vector3(0, 1.6, 0), new THREE.Vector3(0, 0, 1), 12, "flashlight"), null);
+});
+
 test("physical grab drive holds the requested orientation", async () => {
   const physics = await createPhysicsSystem();
   physics.setActiveScene("room");

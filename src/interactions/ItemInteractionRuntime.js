@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
 import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=compact-loading-game";
+import { aimFlashlightPose, createFlashlightAimRuntime, getFlashlightAimPoint, updateFlashlightAim } from "../prefabs/behaviors/FlashlightAimBehavior.js?v=compact-loading-game";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -53,6 +54,7 @@ export function createItemInteractionRuntime({
       target,
       root: runtime.root,
       runtime,
+      config,
       levelId,
       label: config.label ?? prefabConfig.name,
       icon: config.icon ?? "item",
@@ -75,7 +77,10 @@ export function createItemInteractionRuntime({
     const levelItems = itemIdsByLevel.get(levelId) ?? new Set();
     levelItems.add(item.id);
     itemIdsByLevel.set(levelId, levelItems);
-    if (item.activationType === "toggleLight") initializeLightState(item, config.defaultOn);
+    if (item.activationType === "toggleLight") {
+      initializeLightState(item, config.defaultOn);
+      item.data.flashlightAim = createFlashlightAimRuntime(item.root);
+    }
     return true;
   }
 
@@ -123,6 +128,8 @@ export function createItemInteractionRuntime({
   }
 
   function applyItemState(item, state, context) {
+    item.runtime.itemState = state;
+    if (state !== ITEM_STATES.EQUIPPED) updateFlashlightAim(item.data.flashlightAim);
     item.data.equippedSeparationSeconds = 0;
     if (state === ITEM_STATES.GRABBED) {
       camera.updateWorldMatrix(true, false);
@@ -186,6 +193,9 @@ export function createItemInteractionRuntime({
     } else if (state !== ITEM_STATES.GRABBED) {
       setWorldTransform(item.root, pose.position, pose.quaternion);
     }
+    if (state === ITEM_STATES.EQUIPPED && item.state === ITEM_STATES.EQUIPPED) {
+      updateFlashlightAim(item.data.flashlightAim, pose.aimPoint);
+    }
   }
 
   function updateEquippedSeparation(item, targetPosition, dt) {
@@ -208,6 +218,7 @@ export function createItemInteractionRuntime({
     camera.getWorldQuaternion(worldQuaternion);
     if (state === ITEM_STATES.EQUIPPED) {
       cameraOffset.copy(item.equippedOffset);
+      if (Number.isFinite(item.config?.equippedDepth)) cameraOffset.z = -item.config.equippedDepth;
       const presentation = getLocomotionPresentation();
       const sway = item.equippedMotion?.swayScale ?? 0;
       if (sway > 0) {
@@ -223,6 +234,9 @@ export function createItemInteractionRuntime({
     const targetQuaternion = state === ITEM_STATES.GRABBED && item.data.grabRotationOffset
       ? worldQuaternion.clone().multiply(item.data.grabRotationOffset)
       : worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
+    const aimPoint = state === ITEM_STATES.EQUIPPED && item.config?.aimAtCursor && item.data.flashlightAim
+      ? getFlashlightAimPoint(camera, physics, item.runtime.rigidPrefabKey, Math.max(0.25, item.config.aimDistance ?? 12))
+      : null;
     if (state === ITEM_STATES.EQUIPPED && item.equippedMotion) {
       const presentation = getLocomotionPresentation();
       targetQuaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(
@@ -232,6 +246,7 @@ export function createItemInteractionRuntime({
         "YXZ",
       )));
     }
+    if (aimPoint) aimFlashlightPose(item.data.flashlightAim, position, targetQuaternion, aimPoint);
     const lag = item.equippedMotion?.rotationLag ?? 0;
     if (state === ITEM_STATES.EQUIPPED && lag > 0 && !immediate) {
       item.data.handledQuaternion ??= targetQuaternion.clone();
@@ -240,7 +255,7 @@ export function createItemInteractionRuntime({
       item.data.handledQuaternion = targetQuaternion.clone();
     }
     const quaternion = item.data.handledQuaternion.clone();
-    return { position, quaternion, sweepOrigin: worldPosition.clone() };
+    return { position, quaternion, sweepOrigin: worldPosition.clone(), aimPoint };
   }
 
   function getDropPose(item) {

@@ -70,6 +70,10 @@ export function getCoreViewportDebugProperties(prefab) {
   return prefab?.behavior === "coreViewport" && prefab.coreViewport ? prefab.coreViewport : null;
 }
 
+export function getLightPanelDebugProperties(prefab) {
+  return prefab?.behavior === "lightPanel" && prefab.lightPanel ? prefab.lightPanel : null;
+}
+
 export function parseDebugWorkspaceSelection(selectedId = "") {
   const [kind, ...segments] = String(selectedId).split(":");
   if (kind === "material") return { kind, key: segments.join(":") };
@@ -395,6 +399,49 @@ export function createDebugWorkspace({
         addColor(indicator, tuning, "tint", "TINT", apply);
         addNumber(indicator, tuning, "intensity", "EMISSIVE", 0, 12, 0.05, apply);
       });
+    }
+    if (prefab.item && "equippedDepth" in prefab.item) {
+      const equipment = propertiesGui.addFolder("HELD FLASHLIGHT");
+      addNumber(equipment, prefab.item, "equippedDepth", "DISTANCE FROM CAMERA", 0.15, 0.8, 0.01, apply);
+      addBoolean(equipment, prefab.item, "aimAtCursor", "AIM AT CURSOR", apply);
+      addNumber(equipment, prefab.item, "aimDistance", "AIM RANGE", 1, 30, 0.5, apply);
+    }
+    const lightPanel = getLightPanelDebugProperties(prefab);
+    if (lightPanel) {
+      const panel = propertiesGui.addFolder("LIGHT POWER CONTROLLER");
+      addNumber(panel, lightPanel, "maxDistance", "INTERACTION DISTANCE", 0.5, 4, 0.05, apply);
+      addBoolean(panel, lightPanel, "masterEnabled", "MASTER POWER", apply);
+      addBoolean(panel, lightPanel, "startsTripped", "STARTS TRIPPED", apply);
+      const door = panel.addFolder("DOOR");
+      addBoolean(door, lightPanel, "startsOpen", "STARTS OPEN", apply);
+      addSelect(door, lightPanel, "doorAxis", "AXIS", ["x", "y", "z"], apply);
+      addNumber(door, lightPanel, "doorClosedDegrees", "CLOSED OFFSET", -180, 180, 1, apply);
+      addNumber(door, lightPanel, "doorOpenDegrees", "OPEN OFFSET", -180, 180, 1, apply);
+      addNumber(door, lightPanel, "doorDurationSeconds", "TRAVEL SECONDS", 0.05, 3, 0.05, apply);
+      const switches = panel.addFolder("SWITCH MOTION");
+      addSelect(switches, lightPanel, "switchAxis", "ROTATION AXIS", ["x", "y", "z"], apply);
+      addNumber(switches, lightPanel, "switchOffDegrees", "OFF OFFSET", -90, 90, 1, apply);
+      addNumber(switches, lightPanel, "switchDurationSeconds", "ROTATION SECONDS", 0.05, 2, 0.01, apply);
+      addSelect(switches, lightPanel, "masterAxis", "MASTER AXIS", ["x", "y", "z"], apply);
+      addNumber(switches, lightPanel, "masterOffPosition", "MASTER OFF", -1, 1, 0.000001, apply);
+      addNumber(switches, lightPanel, "masterOnPosition", "MASTER ON", -1, 1, 0.000001, apply);
+      addNumber(switches, lightPanel, "masterDurationSeconds", "MASTER SECONDS", 0.05, 2, 0.01, apply);
+      addColor(panel, lightPanel, "indicatorColor", "INDICATOR COLOR", apply);
+      addNumber(panel, lightPanel, "indicatorIntensity", "INDICATOR EMISSIVE", 0, 8, 0.05, apply);
+      addColor(panel, lightPanel, "faultIndicatorColor", "FAULT COLOR", apply);
+      addNumber(panel, lightPanel, "faultBlinkSeconds", "FAULT BLINK SECONDS", 0.1, 4, 0.05, apply);
+      Object.values(lightPanel.circuits).forEach((circuit) => {
+        const folder = panel.addFolder(circuit.label);
+        addBoolean(folder, circuit, "enabled", "BREAKER ON", apply);
+        folder.add(circuit, "targets").name("LAMP NAMES").onFinishChange(() => apply());
+        folder.add(circuit, "extraTargets").name("EXTRA LAMP NAMES").onFinishChange(() => apply());
+      });
+      const material = materialConfigs.lightPanel1;
+      if (material) {
+        const folder = propertiesGui.addFolder("CABINET MATERIAL");
+        MATERIAL_TUNING_KEYS.forEach((key) => addAutoController(folder, material, key,
+          () => applyMaterialConfig?.("lightPanel1")));
+      }
     }
     const coreViewport = getCoreViewportDebugProperties(prefab);
     if (coreViewport) {

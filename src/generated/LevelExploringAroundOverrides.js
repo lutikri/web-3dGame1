@@ -7,7 +7,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
   "collision": {
     "meshNameIncludes": [
       "convcolonly",
-      "UBX_"
+      "UBX_",
+      "UCX_"
     ],
     "meshNameExcludes": [
       "SM_Door2"
@@ -17,6 +18,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     "meshNameExcludes": [
       "convcolonly",
       "UBX_",
+      "UCX_",
       "SM_Door2"
     ]
   },
@@ -688,6 +690,30 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     "startCoreThought": "tutorial-start-core"
   },
   "prefabStatePolicies": [
+    {
+      "prefabTypes": [
+        "LightPanel1"
+      ],
+      "phase": "defaults",
+      "overrides": {
+        "lightPanel": {
+          "circuits": {
+            "ControlBooth": {
+              "targets": "fluorescentLamp_TutorialCabin"
+            },
+            "ServiceCorridor": {
+              "targets": "fluorescentLamp_Corridor1, fluorescentLamp_Corridor2, fluorescentLamp_Corridor3, fluorescentLamp_Corridor4, fluorescentLamp_Corridor5, fluorescentLamp_Corridor6"
+            },
+            "Observation": {
+              "targets": "fluorescentLamp_Observation1"
+            },
+            "EntryArea": {
+              "targets": "fluorescentLamp_EntryHall1, fluorescentLamp_EntryHall2"
+            }
+          }
+        }
+      }
+    },
     {
       "prefabTypes": [
         "bulkheadDoor",
@@ -1587,8 +1613,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "light": {
         "enabled": true,
         "color": "#d9e8ff",
-        "intensity": 9.47,
-        "distance": 2,
+        "intensity": 4.3,
+        "distance": 3.05,
         "decay": 1,
         "localOffset": {
           "x": 0.060629,
@@ -1611,7 +1637,7 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "fluorescentStartup": true,
         "roomLightControlled": false,
         "startupDelaySeconds": 0,
-        "faultyStarterLoop": true,
+        "faultyStarterLoop": false,
         "afterglow": {
           "enabled": true,
           "durationSeconds": 3,
@@ -1649,8 +1675,8 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
     {
       "light": {
         "enabled": true,
-        "color": "#ffffff",
-        "intensity": 2,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
         "distance": 5,
         "decay": 1,
         "localOffset": {
@@ -1688,138 +1714,138 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           "retryChance": 0.35
         }
       },
-      "name": "fluorescentLamp_Exit1",
-      "placementOffset": {
-        "position": {
-          "x": -0.27065798869743807,
-          "y": 2.384185791015625e-7,
-          "z": -0.6928599275623117
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#ffffff",
-        "intensity": 2,
-        "distance": 5,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Exit2",
-      "placementOffset": {
-        "position": {
-          "x": -0.26839770565485277,
-          "y": 2.384185791015625e-7,
-          "z": 0.10971150902748583
-        },
-        "rotation": {
-          "isEuler": true,
-          "_x": 0,
-          "_y": 0,
-          "_z": 0,
-          "_order": "XYZ"
-        },
-        "scale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "light": {
-        "enabled": true,
-        "color": "#ffffff",
-        "intensity": 2,
-        "distance": 3,
-        "decay": 1,
-        "localOffset": {
-          "x": 0.060629,
-          "y": -0.41959,
-          "z": 0
-        },
-        "castShadow": false,
-        "shadowMapSize": 512,
-        "shadowBias": -0.0002,
-        "shadowNormalBias": 0.012,
-        "shadowRadius": 1,
-        "shadowNear": 0.1,
-        "shadowFar": 6,
-        "photometricProfile": {
-          "enabled": true,
-          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
-          "strength": 1,
-          "flipY": true
-        },
-        "fluorescentStartup": true,
-        "roomLightControlled": false,
-        "startupDelaySeconds": 0,
-        "faultyStarterLoop": false,
-        "afterglow": {
-          "enabled": true,
-          "durationSeconds": 3,
-          "initialFactor": 0.2,
-          "exponent": 2.4
-        },
-        "flicker": {
-          "enabled": false,
-          "minIntervalSeconds": 35,
-          "maxIntervalSeconds": 110,
-          "retryChance": 0.35
-        }
-      },
-      "name": "fluorescentLamp_Exit3",
+      "name": "fluorescentLamp_Corridor6",
       "placementOffset": {
         "position": {
           "x": 0,
-          "y": 0.03902741411805177,
-          "z": -0.36736724680068145
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_EntryHall1",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "light": {
+        "enabled": true,
+        "color": "#d9e8ff",
+        "intensity": 1.5,
+        "distance": 5,
+        "decay": 1,
+        "localOffset": {
+          "x": 0.060629,
+          "y": -0.41959,
+          "z": 0
+        },
+        "castShadow": false,
+        "shadowMapSize": 512,
+        "shadowBias": -0.0002,
+        "shadowNormalBias": 0.012,
+        "shadowRadius": 1,
+        "shadowNear": 0.1,
+        "shadowFar": 6,
+        "photometricProfile": {
+          "enabled": true,
+          "path": "assets/runtime-textures/T_Lamp1_LightDistribution_1024_RGBE.hdr",
+          "strength": 1,
+          "flipY": true
+        },
+        "fluorescentStartup": true,
+        "roomLightControlled": false,
+        "startupDelaySeconds": 0,
+        "faultyStarterLoop": false,
+        "afterglow": {
+          "enabled": true,
+          "durationSeconds": 3,
+          "initialFactor": 0.2,
+          "exponent": 2.4
+        },
+        "flicker": {
+          "enabled": false,
+          "minIntervalSeconds": 35,
+          "maxIntervalSeconds": 110,
+          "retryChance": 0.35
+        }
+      },
+      "name": "fluorescentLamp_EntryHall2",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
         },
         "rotation": {
           "isEuler": true,
@@ -2651,6 +2677,92 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         }
       },
       "name": "LampDome1_EntHall2_001",
+      "placementOffset": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "isEuler": true,
+          "_x": 0,
+          "_y": 0,
+          "_z": 0,
+          "_order": "XYZ"
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "lightPanel": {
+        "maxDistance": 1.85,
+        "doorMeshName": "SM_Lightpanel1_Door1",
+        "doorAxis": "y",
+        "doorClosedDegrees": -90,
+        "doorOpenDegrees": 30,
+        "doorDurationSeconds": 0.65,
+        "startsOpen": false,
+        "switchAxis": "x",
+        "switchOffDegrees": 35,
+        "switchDurationSeconds": 0.18,
+        "masterMeshName": "LightPanel1_SwitchIsolator1",
+        "masterAxis": "y",
+        "masterOffPosition": 0.057102,
+        "masterOnPosition": 0.11769,
+        "masterDurationSeconds": 0.25,
+        "masterEnabled": true,
+        "indicatorColor": "#5cff7f",
+        "indicatorIntensity": 0.4,
+        "circuits": {
+          "ControlBooth": {
+            "meshName": "LightPanel1_Switch_ControlBooth",
+            "indicatorName": "LightPanel1_SwitchLight_ControlBooth",
+            "label": "CONTROL BOOTH",
+            "enabled": true,
+            "targets": "fluorescentLamp_TutorialCabin"
+          },
+          "ServiceCorridor": {
+            "meshName": "LightPanel1_Switch_ServiceCooridor1",
+            "indicatorName": "LightPanel1_SwitchLight_ServiceCorridor",
+            "label": "SERVICE CORRIDOR",
+            "enabled": true,
+            "targets": "fluorescentLamp_Corridor1, fluorescentLamp_Corridor2, fluorescentLamp_Corridor3, fluorescentLamp_Corridor4, fluorescentLamp_Corridor5, fluorescentLamp_Corridor6"
+          },
+          "Observation": {
+            "meshName": "LightPanel1_Switch_Observation",
+            "indicatorName": "LightPanel1_SwitchLight_Observation",
+            "label": "OBSERVATION",
+            "enabled": true,
+            "targets": "fluorescentLamp_Observation1"
+          },
+          "StaffRoom": {
+            "meshName": "LightPanel1_Switch_StaffRoom",
+            "indicatorName": "LightPanel1_SwitchLight_StaffRoom",
+            "label": "STAFF ROOM",
+            "enabled": true,
+            "targets": ""
+          },
+          "EntryArea": {
+            "meshName": "LightPanel1_Switch_EntryArea",
+            "indicatorName": "LightPanel1_SwitchLight_EntryArea",
+            "label": "ENTRY AREA",
+            "enabled": true,
+            "targets": "fluorescentLamp_EntryHall1, fluorescentLamp_EntryHall2"
+          },
+          "ServiceOther": {
+            "meshName": "LightPanel1_Switch_ServiceOther",
+            "indicatorName": "LightPanel1_SwitchLight_Service",
+            "label": "OTHER SERVICE",
+            "enabled": true,
+            "targets": ""
+          }
+        }
+      },
+      "name": "LightPanel1_Instance01",
       "placementOffset": {
         "position": {
           "x": 0,

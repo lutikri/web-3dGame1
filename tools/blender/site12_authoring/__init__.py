@@ -4,7 +4,7 @@ from __future__ import annotations
 bl_info = {
     "name": "TGLOBAL Site-12 Authoring",
     "author": "TGLOBAL ST / Codex",
-    "version": (0, 3, 1),
+    "version": (0, 4, 0),
     "blender": (4, 3, 0),
     "location": "View3D > Sidebar > TGLOBAL",
     "description": "Site-12 level, prefab, collider, validation and GLB export tools",
@@ -602,6 +602,60 @@ def convert_object_to_rigid_prefab(
     return instance, definition
 
 
+def new_prefab_defaults(instance):
+    if instance is None or instance.type != "EMPTY" or instance.instance_type != "COLLECTION" or instance.instance_collection is None:
+        raise ValueError("Select a collection instance Empty to register as a prefab")
+    definition = instance.instance_collection
+    named_type, named_id = _prefab_marker_parts(re.sub(r"\.(\d+)$", r"_\1", instance.name))
+    prefab_type = definition.get("tg_prefab_type") or instance.get("tg_prefab_type") or named_type
+    if not prefab_type:
+        prefab_type = re.sub(r"\.(\d+)$", "", definition.name).removeprefix("PF_").removeprefix("SM_").removesuffix("_FIN")
+    prefab_type = _safe_identifier(prefab_type, "NewPrefab1")
+    instance_id = _safe_identifier(instance.get("tg_instance_id") or named_id or "Instance01", "Instance01")
+    asset_path = definition.get("tg_asset_path", "")
+    filename = str(asset_path).replace("\\", "/").rsplit("/", 1)[-1] if asset_path else f"PF_{prefab_type}.glb"
+    return prefab_type, instance_id, filename
+
+
+def register_collection_prefab(instance, *, scene=None, prefab_type="", instance_id="", asset_filename=""):
+    inferred_type, inferred_id, inferred_filename = new_prefab_defaults(instance)
+    prefab_type = str(prefab_type or inferred_type).strip()
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9]*", prefab_type):
+        raise ValueError("Prefab Type must start with a letter and contain only letters and numbers")
+    instance_id = _safe_identifier(instance_id or inferred_id, "Instance01")
+    asset_filename = str(asset_filename or inferred_filename).strip()
+    if not re.fullmatch(r"[A-Za-z0-9_-]+\.glb", asset_filename):
+        raise ValueError("Asset Filename must be a .glb filename without folders or spaces")
+    definition = instance.instance_collection
+    if definition.get("tg_prefab_type") not in (None, "", prefab_type):
+        raise ValueError(f'Definition "{definition.name}" is already registered as {definition.get("tg_prefab_type")}')
+    if instance in list(_iter_collection_objects(definition)):
+        raise ValueError("A prefab definition cannot contain its own placement instance")
+    if not any(obj.type == "MESH" for obj in _iter_collection_objects(definition)):
+        raise ValueError(f'Definition "{definition.name}" has no meshes to export')
+    stable_name = f"PF_{prefab_type}_{instance_id}"
+    conflict = bpy.data.objects.get(stable_name)
+    if conflict and conflict != instance:
+        raise ValueError(f'Object "{stable_name}" already exists; choose a unique Instance ID')
+
+    scene = scene or bpy.context.scene
+    original_world = instance.matrix_world.copy()
+    collections = setup_scene_collections(scene, reparent_legacy=False)
+    _reparent_collection(definition, collections["prefab_library"])
+    _link_object(collections["placement"], instance)
+    _unlink_object_except(instance, [collections["placement"]])
+    instance.name = stable_name
+    instance.matrix_world = original_world
+    instance["tg_kind"] = "prefab_instance"
+    instance["tg_prefab_type"] = prefab_type
+    instance["tg_instance_id"] = instance_id
+    instance["tg_marker_name"] = stable_name
+    definition["tg_kind"] = "prefab_definition"
+    definition["tg_prefab_type"] = prefab_type
+    definition["tg_asset_path"] = f"assets/mesh/prefabs/{asset_filename}"
+    return instance, definition
+
+
 def migrate_legacy_prefab_instance(instance, *, marker=None, scene=None, prefab_type="", instance_id=""):
     if instance is None or instance.type != "EMPTY" or instance.instance_type != "COLLECTION" or instance.instance_collection is None:
         raise ValueError("Select a legacy collection instance Empty")
@@ -760,7 +814,9 @@ def _make_export_marker(instance, marker_collection):
     marker_name = _canonical_prefab_marker_name(instance.name, prefab_type, instance_id)
     marker = bpy.data.objects.new(marker_name, None)
     marker.empty_display_type = "PLAIN_AXES"
-    marker.matrix_world = instance.matrix_world.copy()
+    # Collection instances display source coordinates relative to this offset.
+    # The standalone GLB keeps source coordinates, so the marker carries it.
+    marker.matrix_world = instance.matrix_world @ Matrix.Translation(-instance.instance_collection.instance_offset)
     for key in instance.keys():
         if key != "_RNA_UI":
             marker[key] = instance[key]
@@ -848,6 +904,11 @@ def export_level(scene, filepath):
     if placement is None:
         raise ValueError("Prefab placement collection is missing")
 
+    unregistered = [obj.name for obj in _iter_collection_objects(placement)
+                    if obj.instance_type == "COLLECTION" and obj.get("tg_kind") != "prefab_instance"]
+    if unregistered:
+        raise ValueError("Unregistered prefab instances: " + ", ".join(unregistered) + ". Select each and use Register as Prefab")
+
     _repaired, conflicts = repair_prefab_instance_names(scene)
     if conflicts:
         names = ", ".join(f"{source} -> {target}" for source, target in conflicts)
@@ -918,7 +979,10 @@ def validate_scene(scene):
     if placement:
         for obj in _iter_collection_objects(placement):
             if obj.get("tg_kind") != "prefab_instance":
-                warnings.append(f"{obj.name}: placement object has no prefab_instance metadata")
+                if obj.instance_type == "COLLECTION":
+                    errors.append(f"{obj.name}: unregistered prefab; use Register as Prefab before exporting")
+                else:
+                    warnings.append(f"{obj.name}: placement object has no prefab_instance metadata")
                 continue
             if obj.type != "EMPTY" or obj.instance_type != "COLLECTION" or obj.instance_collection is None:
                 errors.append(f"{obj.name}: prefab placement must be a collection instance Empty")
@@ -1296,6 +1360,47 @@ class SITE12_OT_ReturnToLevel(Operator):
         return {"FINISHED"}
 
 
+class SITE12_OT_RegisterPrefab(Operator):
+    bl_idname = "site12.register_prefab"
+    bl_label = "Register as Prefab"
+    bl_description = "Register a collection instance and its source collection for prefab and level marker export"
+    bl_options = {"REGISTER", "UNDO"}
+
+    prefab_type: StringProperty(name="Prefab Type", default="")
+    instance_id: StringProperty(name="Instance ID", default="")
+    asset_filename: StringProperty(name="Asset Filename", default="")
+
+    @classmethod
+    def poll(cls, context):
+        active = context.active_object
+        return bool(active and active.type == "EMPTY" and active.instance_type == "COLLECTION" and active.instance_collection)
+
+    def invoke(self, context, _event):
+        self.prefab_type, self.instance_id, self.asset_filename = new_prefab_defaults(context.active_object)
+        return context.window_manager.invoke_props_dialog(self, width=440)
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.prop(self, "prefab_type")
+        layout.prop(self, "instance_id")
+        layout.prop(self, "asset_filename")
+        layout.label(text="Level export writes a placement marker.")
+        layout.label(text="Export Active Prefab GLB writes the source meshes.")
+
+    def execute(self, context):
+        try:
+            instance, _definition = register_collection_prefab(
+                context.active_object, scene=context.scene, prefab_type=self.prefab_type,
+                instance_id=self.instance_id, asset_filename=self.asset_filename,
+            )
+        except ValueError as error:
+            self.report({"ERROR"}, str(error))
+            return {"CANCELLED"}
+        validate_scene(context.scene)
+        self.report({"INFO"}, f"Registered {instance.name}; ready for prefab and level export")
+        return {"FINISHED"}
+
+
 class SITE12_OT_MigrateLegacyPrefab(Operator):
     bl_idname = "site12.migrate_legacy_prefab"
     bl_label = "Adopt Legacy Instance"
@@ -1370,7 +1475,9 @@ class SITE12_OT_ExportActivePrefab(Operator):
             return {"CANCELLED"}
         prefab_type = definition.get("tg_prefab_type") or definition.name.removeprefix("PF_")
         directory = bpy.path.abspath(context.scene.site12_authoring.prefab_output_dir)
-        filepath = os.path.join(directory, f"SM_{prefab_type}.glb")
+        asset_path = str(definition.get("tg_asset_path", "")).replace("\\", "/")
+        filename = asset_path.rsplit("/", 1)[-1] if asset_path else f"SM_{prefab_type}.glb"
+        filepath = os.path.join(directory, filename)
         try:
             export_prefab_definition(definition, filepath)
         except Exception as error:
@@ -1428,6 +1535,8 @@ class SITE12_PT_Authoring(Panel):
             box.label(text=f"Type: {definition.get('tg_prefab_type', definition.name)}")
             if instance:
                 box.label(text=f"Instance: {instance.name}")
+                if not definition.get("tg_asset_path") or definition.get("tg_kind") != "prefab_definition":
+                    box.operator("site12.register_prefab", icon="ADD")
                 if "tg_start_locked" in instance:
                     box.prop(instance, '["tg_start_locked"]', text="Start Locked")
                 if "tg_persistent" in instance:
@@ -1444,6 +1553,7 @@ class SITE12_PT_Authoring(Panel):
             if active and active.type == "MESH":
                 layout.operator("site12.create_box_collider", icon="MESH_CUBE")
             if active and active.type == "EMPTY" and active.instance_type == "COLLECTION":
+                layout.operator("site12.register_prefab", icon="ADD")
                 layout.operator("site12.migrate_legacy_prefab", icon="LINKED")
 
         box = layout.box()
@@ -1468,6 +1578,7 @@ CLASSES = (
     SITE12_OT_RepairPrefabNames,
     SITE12_OT_OpenPrefabDefinition,
     SITE12_OT_ReturnToLevel,
+    SITE12_OT_RegisterPrefab,
     SITE12_OT_MigrateLegacyPrefab,
     SITE12_OT_Validate,
     SITE12_OT_ExportLevel,

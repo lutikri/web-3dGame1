@@ -1,9 +1,12 @@
+import json
 import os
+import struct
 import sys
 import tempfile
 from pathlib import Path
 
 import bpy
+from mathutils import Euler, Matrix, Vector
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -151,6 +154,94 @@ def main():
     assert_true(("PF_Chair1_TestChair.001", "PF_Chair1_TestChair_001") in repaired, f"Blender numeric suffix was not repaired: {repaired}")
     assert_true(migrated_chair.name == "PF_Chair1_TestChair_001", "repaired prefab name is not GLB-safe")
     assert_true(migrated_chair.get("tg_marker_name") == migrated_chair.name, "marker metadata was not synchronized")
+
+    # A newly placed collection instance has no legacy marker or metadata.
+    # Register it through the same operator shown in the sidebar.
+    panel_definition = bpy.data.collections.new("PF_LightPanel1")
+    collections["work"].children.link(panel_definition)
+    panel_mesh = mesh.copy()
+    panel_door = bpy.data.objects.new("SM_Lightpanel1_Door1", panel_mesh)
+    panel_definition.objects.link(panel_door)
+    panel_door.location = (0.2, -0.1, 0.3)
+    panel_door.rotation_euler.z = 1.5707963267948966
+    panel_material = bpy.data.materials.new("LightPanel1")
+    panel_mesh.materials.append(panel_material)
+    panel_definition.instance_offset = (0.25, 0.35, 0.45)
+    panel_instance = bpy.data.objects.new("PF_LightPanel1", None)
+    panel_instance.instance_type = "COLLECTION"
+    panel_instance.instance_collection = panel_definition
+    collections["placement"].objects.link(panel_instance)
+    panel_instance.matrix_world = Matrix.LocRotScale(
+        Vector((1.0, 2.0, 3.0)), Euler((0.1, 0.2, 0.3)).to_quaternion(), Vector((1.2, 0.8, 1.1)),
+    )
+    bpy.context.view_layer.update()
+    original_panel_world = panel_instance.matrix_world.copy()
+    original_door_matrix = panel_door.matrix_world.copy()
+    inferred = site12_authoring.new_prefab_defaults(panel_instance)
+    assert_true(inferred == ("LightPanel1", "Instance01", "PF_LightPanel1.glb"), f"new prefab inference is wrong: {inferred}")
+    panel_instance.name = "PF_LightPanel1.001"
+    assert_true(site12_authoring.new_prefab_defaults(panel_instance) == ("LightPanel1", "Item_001", "PF_LightPanel1.glb"), "duplicated unregistered prefab type was inferred incorrectly")
+    panel_instance.name = "PF_LightPanel1"
+    errors, _warnings = site12_authoring.validate_scene(scene)
+    assert_true(any("unregistered prefab" in error for error in errors), "unregistered prefab was only a warning")
+    try:
+        site12_authoring.export_level(scene, level_output)
+    except ValueError as error:
+        assert_true("Register as Prefab" in str(error), "unregistered export error has no repair action")
+    else:
+        raise AssertionError("level export silently omitted an unregistered collection instance")
+
+    bpy.ops.object.select_all(action="DESELECT")
+    panel_instance.select_set(True)
+    bpy.context.view_layer.objects.active = panel_instance
+    result = bpy.ops.site12.register_prefab(prefab_type="LightPanel1", instance_id="Main", asset_filename="PF_LightPanel1.glb")
+    assert_true(result == {"FINISHED"}, "new prefab operator failed")
+    assert_true(panel_instance.name == "PF_LightPanel1_Main", "new prefab stable marker name is wrong")
+    assert_true(panel_instance.get("tg_marker_name") == panel_instance.name, "new prefab marker metadata is stale")
+    assert_true(panel_instance.matrix_world == original_panel_world, "registration changed the placement transform")
+    assert_true(panel_door.matrix_world == original_door_matrix, "registration changed source part transforms")
+    assert_true(panel_door.name == "SM_Lightpanel1_Door1" and panel_door.data == panel_mesh, "registration changed source mesh identity")
+    assert_true(panel_mesh.materials[0] == panel_material, "registration changed source material assignment")
+    assert_true(panel_definition.name in collections["prefab_library"].children, "new definition was not registered in the prefab library")
+    assert_true(panel_definition.name not in collections["work"].children, "new definition remained linked in the level")
+    assert_true(panel_definition.get("tg_asset_path") == "assets/mesh/prefabs/PF_LightPanel1.glb", "new prefab asset filename was not stored")
+    errors, warnings = site12_authoring.validate_scene(scene)
+    assert_true(not errors and not any(panel_instance.name in warning for warning in warnings), "registered prefab still fails validation")
+
+    conflict_instance = bpy.data.objects.new("AnotherPanel", None)
+    conflict_instance.instance_type = "COLLECTION"
+    conflict_instance.instance_collection = panel_definition
+    collections["work"].objects.link(conflict_instance)
+    try:
+        site12_authoring.register_collection_prefab(conflict_instance, scene=scene, instance_id="Main")
+    except ValueError as error:
+        assert_true("unique Instance ID" in str(error), "duplicate ID error was not actionable")
+    else:
+        raise AssertionError("duplicate prefab ID was accepted")
+    assert_true(conflict_instance.get("tg_kind") is None, "failed registration mutated the conflicting instance")
+
+    with tempfile.TemporaryDirectory(prefix="site12_new_prefab_") as output_dir:
+        scene.site12_authoring.prefab_output_dir = output_dir
+        result = bpy.ops.site12.export_active_prefab()
+        assert_true(result == {"FINISHED"}, "new active prefab export failed")
+        panel_output = Path(output_dir) / "PF_LightPanel1.glb"
+        assert_true(panel_output.is_file(), "active export ignored the registered PF filename")
+        assert_true(not (Path(output_dir) / "SM_LightPanel1.glb").exists(), "active export wrote the old SM filename")
+        marker_output = str(Path(output_dir) / "level.glb")
+        site12_authoring.export_level(scene, marker_output)
+        data = Path(marker_output).read_bytes()
+        json_length = struct.unpack_from("<I", data, 12)[0]
+        exported = json.loads(data[20:20 + json_length])
+        panel_markers = [node for node in exported["nodes"] if node.get("name") == "PF_LightPanel1_Main"]
+        assert_true(len(panel_markers) == 1, "level export did not contain exactly one panel marker")
+        marker = panel_markers[0]
+        assert_true("mesh" not in marker, "level prefab marker contains mesh geometry")
+        assert_true(marker["extras"]["tg_kind"] == "prefab_marker", "export marker role is incorrect")
+        expected_position = (original_panel_world @ Matrix.Translation(-panel_definition.instance_offset)).translation
+        runtime_position = (expected_position.x, expected_position.z, -expected_position.y)
+        assert_true(all(abs(a - b) < 1e-5 for a, b in zip(marker["translation"], runtime_position)), "collection offset was lost in marker export")
+        assert_true(not any(node.get("name") == "SM_Lightpanel1_Door1" for node in exported["nodes"]), "prefab source meshes leaked into the level export")
+    print("[Site12NewPrefabSmoke] PASS")
 
     bpy.ops.import_scene.gltf(filepath=level_output)
     exported_rigids = {

@@ -279,6 +279,36 @@ const LEVEL_EXPLORING_AROUND_DEFAULTS = {
   },
   prefabStatePolicies: [
     {
+      prefabTypes: ["LightPanel1"],
+      overrides: { lightPanel: {
+        startsTripped: true,
+        masterEnabled: true,
+        circuits: {
+          StaffRoom: { targets: "fluorescentLamp_StaffRoom1, fluorescentLamp_StaffRoom2" },
+          ServiceOther: { targets: "fluorescentLamp_PowerHall1, fluorescentLamp_PowerHall2, fluorescentLamp_1" },
+        },
+      } },
+    },
+    {
+      prefabTypes: ["fluorescentLamp", "LampDesk1", "LampDome1"],
+      overrides: { light: { enabled: false } },
+    },
+    {
+      prefabTypes: ["LightPanel1"],
+      phase: "defaults",
+      overrides: {
+        lightPanel: {
+          circuits: {
+            ControlBooth: { targets: "fluorescentLamp_TutorialCabin", extraTargets: "LampDesk1_1" },
+            ServiceCorridor: { targets: "fluorescentLamp_Corridor1, fluorescentLamp_Corridor2, fluorescentLamp_Corridor3, fluorescentLamp_Corridor4, fluorescentLamp_Corridor5, fluorescentLamp_Corridor6" },
+            Observation: { targets: "fluorescentLamp_Observation1", extraTargets: "LampDesk1_LampDeskLocalObservation" },
+            EntryArea: { targets: "fluorescentLamp_EntryHall1, fluorescentLamp_EntryHall2", extraTargets: "LampDome1_EntHall1, LampDome1_EntHall2_001" },
+            ServiceOther: { extraTargets: "LampDome1_CaveMain1_001, LampDome1_CaveMain1_002" },
+          },
+        },
+      },
+    },
+    {
       prefabTypes: ["bulkheadDoor", "DoorBulk1"],
       state: { latched: true },
       exceptions: {

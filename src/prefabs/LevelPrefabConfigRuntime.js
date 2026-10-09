@@ -6,6 +6,7 @@ import { applyCoreViewportConfig } from "./behaviors/CoreViewportBehavior.js?v=c
 import { resetElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact-loading-game";
 import { applyPlasmaViewConfig } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
 import { applyStatusViewportConfig } from "./behaviors/StatusViewportBehavior.js?v=compact-loading-game";
+import { applyLightPanelConfig } from "./behaviors/LightPanelBehavior.js?v=compact-loading-game";
 
 export class LevelPrefabConfigRuntime {
   constructor(options) {
@@ -22,8 +23,11 @@ export class LevelPrefabConfigRuntime {
     }
     const runtime = this.instances.get(`${levelId}:${prefabName}`);
     if (!prefab || !runtime) return false;
-    this.#applyTransform(runtime, prefab);
-    if (runtime.rigidPrefabKey) this.physics?.resetRigidPrefab(runtime.rigidPrefabKey, runtime.root, true);
+    const handled = runtime.itemState === "equipped" || runtime.itemState === "grabbed";
+    if (!handled) {
+      this.#applyTransform(runtime, prefab);
+      if (runtime.rigidPrefabKey) this.physics?.resetRigidPrefab(runtime.rigidPrefabKey, runtime.root, true);
+    }
     resetElevatorRuntime(runtime.elevator);
     this.#applyBarrier(runtime, prefab, levelId, structural);
     if (runtime.controlPost) {
@@ -33,6 +37,7 @@ export class LevelPrefabConfigRuntime {
     if (runtime.plasmaView) applyPlasmaViewConfig(runtime.plasmaView, prefab.plasma);
     if (runtime.statusViewport) applyStatusViewportConfig(runtime.statusViewport, prefab.statusViewport);
     if (runtime.coreViewport) applyCoreViewportConfig(runtime.coreViewport, prefab.coreViewport);
+    if (runtime.lightPanel) applyLightPanelConfig(runtime.lightPanel, prefab.lightPanel);
     runtime.elevatorCagePhysicsDisabled = false;
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorCagePhysicsKey, true);
     this.physics?.setKinematicPrefabEnabled(runtime.elevatorDoorPhysicsKey, true);

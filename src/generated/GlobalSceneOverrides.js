@@ -219,6 +219,15 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "emissive": "#ffffff",
       "emissiveIntensity": 0.04
     },
+    "lightPanel1": {
+      "color": "#dedede",
+      "roughness": 1,
+      "metalness": 1,
+      "normalScale": 1,
+      "aoMapIntensity": 1,
+      "emissive": "#000000",
+      "emissiveIntensity": 0
+    },
     "coreViewport1": {
       "color": "#ffffff",
       "roughness": 1,

@@ -6,6 +6,7 @@ import { createBriefSheetRuntime } from "./behaviors/BriefSheetBehavior.js?v=com
 import { createControlPostRuntime } from "./behaviors/ControlPostBehavior.js?v=compact-loading-game";
 import { createCoreViewportRuntime } from "./behaviors/CoreViewportBehavior.js?v=compact-loading-game";
 import { createElevatorRuntime } from "./behaviors/ElevatorBehavior.js?v=compact-loading-game";
+import { createLightPanelRuntime } from "./behaviors/LightPanelBehavior.js?v=compact-loading-game";
 import { createNarratorRadioRuntime } from "./behaviors/NarratorRadioBehavior.js?v=compact-loading-game";
 import { createPlasmaViewRuntime } from "./behaviors/PlasmaViewBehavior.js?v=compact-loading-game";
 import { createServiceTerminalRuntime } from "./behaviors/ServiceTerminalBehavior.js?v=compact-loading-game";
@@ -55,6 +56,7 @@ export function createPrefabRuntimeFactory({
       const sourceMaterial = materials.interiorCustom[materialKey] ?? materials.interior;
       const materialConfig = config.interior.specialMaterials?.[materialKey] ?? {};
       const shouldClone = prefabConfig.behavior === "briefSheet"
+        || (prefabConfig.behavior === "lightPanel" && object.name.startsWith("LightPanel1_SwitchLight_"))
         || Boolean(prefabConfig.light) || materialKey !== prefabConfig.materialKey;
       object.material = shouldClone ? sourceMaterial.clone() : sourceMaterial;
       if (shouldClone) photometricLights.resetClonedMaterial(object.material);
@@ -122,7 +124,9 @@ export function createPrefabRuntimeFactory({
   }
 
   function attachBehavior(runtime, prefabConfig) {
-    if (prefabConfig.behavior === "analogClock" && prefabConfig.clock?.enabled !== false) {
+    if (prefabConfig.behavior === "lightPanel") {
+      runtime.lightPanel = createLightPanelRuntime(runtime.parts, prefabConfig.lightPanel, prefabConfig.name);
+    } else if (prefabConfig.behavior === "analogClock" && prefabConfig.clock?.enabled !== false) {
       runtime.clock = createAnalogClockRuntime(runtime.parts, prefabConfig.clock);
     } else if (prefabConfig.behavior === "elevator") {
       runtime.elevator = createElevatorRuntime(runtime.root, runtime.parts, prefabConfig.elevator);

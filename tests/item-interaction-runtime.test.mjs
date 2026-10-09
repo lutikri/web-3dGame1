@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as THREE from "three";
+import { createPrefabInstance } from "../src/prefabs/PrefabRegistry.js";
 
 import { createItemInteractionRuntime } from "../src/interactions/ItemInteractionRuntime.js";
 
@@ -239,4 +240,46 @@ test("equipped motion applies locomotion sway and rotation lag without changing 
   assert.ok(latestPosition.x > 0.25);
   assert.ok(latestPosition.y < -0.2);
   assert.ok(latestPosition.z < -0.48);
+});
+
+test("equipped flashlight moves back, converges on the cursor hit, and restores its beam on drop", () => {
+  const root = new THREE.Group();
+  const spot = new THREE.SpotLight();
+  spot.position.set(-0.053824, 0, 0);
+  spot.target.position.set(-4.053824, 0, 0);
+  root.add(spot, spot.target);
+  const camera = new THREE.PerspectiveCamera();
+  camera.position.y = 1.6;
+  const hit = new THREE.Vector3(0, 1.6, -0.55);
+  const rays = [];
+  const prefab = createPrefabInstance("FlashLight", { name: "flashlight" });
+  const runtime = createItemInteractionRuntime({
+    interactive: [], camera,
+    physics: { raycastWorld: (...args) => { rays.push(args); return hit.clone(); } },
+  });
+  runtime.register("room", prefab, { root, parts: new Map() });
+  runtime.beginPrimary(root);
+  runtime.update(0.6);
+  runtime.releasePrimary();
+  runtime.beginSelection();
+  runtime.moveSelection(1);
+  runtime.commitSelection();
+  runtime.update(0);
+  assert.ok(Math.abs(root.position.z + 0.34) < 1e-6);
+  assert.deepEqual(rays[0][0].toArray(), [0, 1.6, 0]);
+  assert.ok(rays[0][1].distanceTo(new THREE.Vector3(0, 0, -1)) < 1e-6);
+  assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(hit) < 1e-6);
+  const beam = hit.clone().sub(spot.getWorldPosition(new THREE.Vector3())).normalize();
+  const barrel = new THREE.Vector3(-1, 0, 0).applyQuaternion(root.quaternion);
+  assert.ok(barrel.dot(beam) > 0.999);
+  prefab.item.equippedDepth = 0.3;
+  runtime.update(1 / 60);
+  assert.ok(Math.abs(root.position.z + 0.3) < 1e-6);
+  prefab.item.aimAtCursor = false;
+  runtime.update(1 / 60);
+  assert.deepEqual(spot.target.position.toArray(), [-4.053824, 0, 0]);
+  prefab.item.aimAtCursor = true;
+  runtime.update(1 / 60);
+  runtime.dropHandled();
+  assert.deepEqual(spot.target.position.toArray(), [-4.053824, 0, 0]);
 });

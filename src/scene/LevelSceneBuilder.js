@@ -269,9 +269,13 @@ function nowMilliseconds() {
 }
 
 function resolveLevelPrefabs(prefabs, pendingPrefabOverrides, statePolicies) {
+  // Authored room bindings provide defaults; saved artist tuning wins over
+  // them. Mandatory startup policies (e.g. locked doors) still run last.
+  const defaults = (statePolicies ?? []).filter((policy) => policy.phase === "defaults");
+  const enforced = (statePolicies ?? []).filter((policy) => policy.phase !== "defaults");
   return applyPrefabStatePolicies(
-    applyPrefabOverrideEntries(prefabs, pendingPrefabOverrides),
-    statePolicies,
+    applyPrefabOverrideEntries(applyPrefabStatePolicies(prefabs, defaults), pendingPrefabOverrides),
+    enforced,
   );
 }
 

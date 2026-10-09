@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+const PLAYER_COLLISION_GROUPS = (0x0002 << 16) | 0xfffb;
+const HELD_COLLISION_GROUPS = (0x0004 << 16) | 0xfffd;
+
 export function computeLimitedGrabAnchorPosition(current, target, dt, maxSpeed = 2.2) {
   const next = new THREE.Vector3(current.x, current.y, current.z);
   const offset = new THREE.Vector3(
@@ -164,6 +167,7 @@ export async function createPhysicsSystem() {
     const collider = world.createCollider(
       RAPIER.ColliderDesc.capsule(halfSegment, radius)
         .setTranslation(center.x, center.y, center.z)
+        .setCollisionGroups(PLAYER_COLLISION_GROUPS)
         .setFriction(0),
     );
     const controller = world.createCharacterController(config.controllerOffset ?? 0.01);
@@ -194,7 +198,7 @@ export async function createPhysicsSystem() {
       y: externalVertical + (desiredVertical > 0 ? desiredVertical : Math.min(desiredVertical, -0.001)),
       z: horizontalDelta.z,
     };
-    character.controller.computeColliderMovement(character.collider, desired);
+    character.controller.computeColliderMovement(character.collider, desired, undefined, PLAYER_COLLISION_GROUPS);
     const movement = character.controller.computedMovement();
     const current = character.collider.translation();
     character.collider.setTranslation({
@@ -727,6 +731,7 @@ export async function createPhysicsSystem() {
       body,
       colliders,
       initialBodyType: bodyType,
+      initialCollisionGroups: colliders.map((collider) => collider.collisionGroups()),
       initialPosition: { x: rootPosition.x, y: rootPosition.y, z: rootPosition.z },
       initialRotation: {
         x: rootQuaternion.x,
@@ -890,6 +895,9 @@ export async function createPhysicsSystem() {
   function setRigidPrefabMode(key, mode) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
+    prefab.colliders.forEach((collider, index) => collider.setCollisionGroups(
+      mode === "equipped" || mode === "grabbed" ? HELD_COLLISION_GROUPS : prefab.initialCollisionGroups[index],
+    ));
     if (mode === "inventory") {
       removeRigidPrefabGrabConstraint(prefab);
       prefab.body.setEnabled(false);
@@ -1082,6 +1090,7 @@ export async function createPhysicsSystem() {
   function resetRigidPrefab(key, root = null, updateInitial = false) {
     const prefab = rigidPrefabs.get(key);
     if (!prefab) return false;
+    prefab.colliders.forEach((collider, index) => collider.setCollisionGroups(prefab.initialCollisionGroups[index]));
     if (root) {
       root.updateWorldMatrix(true, true);
       const position = new THREE.Vector3();
@@ -1261,6 +1270,13 @@ export async function createPhysicsSystem() {
     });
   }
 
+  function raycastWorld(origin, direction, maxDistance, excludeRigidPrefabKey = null) {
+    const ray = new RAPIER.Ray(origin, direction);
+    const hit = world.castRay(ray, maxDistance, true, undefined, undefined,
+      character?.collider, rigidPrefabs.get(excludeRigidPrefabKey)?.body);
+    return hit ? new THREE.Vector3().copy(origin).addScaledVector(direction, hit.timeOfImpact) : null;
+  }
+
   return {
     get world() {
       return world;
@@ -1269,6 +1285,7 @@ export async function createPhysicsSystem() {
     appendStaticScene,
     setActiveScene,
     createCharacter,
+    raycastWorld,
     configureCharacter,
     setCharacterDimensions,
     moveCharacter,

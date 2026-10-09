@@ -720,6 +720,29 @@ export const CONFIG = {
         emissive: "#ffffff",
         emissiveIntensity: 0.04,
       },
+      lightPanel1: {
+        materialNames: ["LightPanel1", "M_LightPanel1"],
+        namePrefixes: ["SM_Lightpanel1", "LightPanel1_"],
+        maps: {
+          preview: {
+            baseColor: "assets/runtime-textures/T_LightPanel1_BaseColor_Interactive_Preview_1024_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_LightPanel1_Normal_Interactive_Preview_1024_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_LightPanel1_OcclusionRoughnessMetallic_Interactive_Preview_1024_ETC1S.ktx2",
+          },
+          full: {
+            baseColor: "assets/runtime-textures/T_LightPanel1_BaseColor_Interactive_Full_ETC1S.ktx2",
+            normal: "assets/runtime-textures/T_LightPanel1_Normal_Interactive_Full_ETC1S.ktx2",
+            orm: "assets/runtime-textures/T_LightPanel1_OcclusionRoughnessMetallic_Interactive_Full_ETC1S.ktx2",
+          },
+        },
+        color: "#ffffff",
+        roughness: 1,
+        metalness: 1,
+        normalScale: 1,
+        aoMapIntensity: 1,
+        emissive: "#000000",
+        emissiveIntensity: 0,
+      },
       coreViewport1: {
         materialNames: ["M_CoreViewport1"],
         namePrefixes: ["SM_CoreViewport1"],

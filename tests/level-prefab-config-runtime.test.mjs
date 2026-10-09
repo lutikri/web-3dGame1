@@ -4,6 +4,25 @@ import test from "node:test";
 import * as THREE from "three";
 import { LevelPrefabConfigRuntime } from "../src/prefabs/LevelPrefabConfigRuntime.js";
 
+test("live held-item tuning preserves its physical pose and collision mode", () => {
+  const root = new THREE.Group();
+  root.position.set(0.25, 1.4, -0.34);
+  const placed = { root, parts: new Map(), rigidPrefabKey: "room:flashlight" };
+  const runtime = new LevelPrefabConfigRuntime({
+    config: { levelEnvironments: { room: { prefabs: [{ name: "flashlight", position: new THREE.Vector3(5, 0, 0) }] } } },
+    instances: new Map([["room:flashlight", placed]]),
+    physics: {
+      resetRigidPrefab() { assert.fail("held item must retain its physics state"); },
+      setKinematicPrefabEnabled() {},
+    },
+  });
+  for (const state of ["equipped", "grabbed"]) {
+    placed.itemState = state;
+    assert.equal(runtime.apply("room", "flashlight"), true);
+    assert.deepEqual(root.position.toArray(), [0.25, 1.4, -0.34]);
+  }
+});
+
 test("level prefab config runtime applies transforms and light state", () => {
   const root = new THREE.Group();
   const part = new THREE.Group();
