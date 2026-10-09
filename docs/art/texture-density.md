@@ -5,22 +5,27 @@ NORMAL RANGE: ~850–1400 px/m
 
 Asset               Source TD @ 4K     Recommended     Final TD
 ------------------------------------------------------------------
-Details1            2102.99 px/m       2K              1051.50 px/m
-Elevator             928.00 px/m       4K               928.00 px/m
-Barrier             3861.59 px/m       1K               965.40 px/m
-Control Post        1301.05 px/m       4K              1301.05 px/m
-Radio1              8876.04 px/m       512             1109.51 px/m
-Door2               1219.44 px/m       4K              1219.44 px/m
-DoorLamp2           1405.82 px/m       4K              1405.82 px/m
-Pipes1              1993.29 px/m       2K               996.65 px/m
-Beams               1848.66 px/m       2K               924.33 px/m
-Trim2Tiles           987.49 px/m       4K               987.49 px/m
-Trim1Concrete       1376.28 px/m       4K              1376.28 px/m
-Desk1               1389.66 px/m       4K              1389.66 px/m
-Terminal1           3518.61 px/m       1K               879.65 px/m
+Details1             2102.99 px/m       2K             1051.50 px/m
+Elevator              928.00 px/m       4K              928.00 px/m
+Barrier              3861.59 px/m       1K              965.40 px/m
+Control Post         1301.05 px/m       4K             1301.05 px/m
+Radio1               8876.04 px/m       512            1109.51 px/m
+Door2                1219.44 px/m       4K             1219.44 px/m
+DoorLamp2            1405.82 px/m       4K             1405.82 px/m
+Pipes1               1993.29 px/m       2K              996.65 px/m
+Beams                1848.66 px/m       2K              924.33 px/m
+Trim2Tiles            987.49 px/m       4K              987.49 px/m
+Trim1Concrete        1376.28 px/m       4K             1376.28 px/m
+Desk1                1389.66 px/m       4K             1389.66 px/m
+Terminal1            3518.61 px/m       1K              879.65 px/m
+LightPanel1_LP       4498.16 px/m*      1K             1124.54 px/m
 ------------------------------------------------------------------
 
-FINAL TEXTURE SIZES
+* Main/important elements on LightPanel1_LP:
+  2099.17 px/m @ 1K
+
+
+  FINAL TEXTURE SIZES
 
 Details1          = 2048x2048
 Elevator          = 4096x4096
@@ -35,3 +40,4 @@ Trim2Tiles        = 4096x4096
 Trim1Concrete     = 4096x4096
 Desk1             = 4096x4096
 Terminal1         = 1024x1024
+LightPanel1_LP    = 1024x1024

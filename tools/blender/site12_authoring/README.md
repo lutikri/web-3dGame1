@@ -23,6 +23,7 @@ The development install is a directory junction from Blender's user add-on direc
 - **Duplicate RB** makes a second placed RB hierarchy with a new stable ID. Its visual and collider mesh data remain linked to the source, while its transform and physics tags are independent.
 - **Migrate Legacy Prefabs** replaces the old `PF_` marker + hidden `SceneBuild_Inst` preview pairs with one visible authoritative collection instance. Unsupported markers remain untouched and are reported.
 - **Repair Prefab Names** makes the selected level's prefab IDs GLB-safe (`.001` becomes `_001`) and synchronizes stale marker metadata after artist renames.
+- **Register as Prefab** registers a selected collection instance and its source definition. The dialog infers the prefab type, lets you choose a stable instance ID and GLB filename, and preserves placement, source mesh names, hierarchy, materials, and collection offset. The source definition becomes part of `TGLOBAL_PREFABS`. Use this for new collection instances such as `PF_LightPanel1`.
 - **Adopt Legacy Instance** migrates a selected legacy collection instance plus its selected/nearby `PF_` Empty. The instance becomes authoritative and the old marker is archived outside level export.
 - **Edit Prefab Source** switches from a selected level instance to its real meshes in the `TGLOBAL_PREFABS` scene. **Return to Level** selects the originating instance again.
 - **Validate Site-12 Scene** reports malformed instances, duplicate IDs, missing colliders, and incomplete `RB_` roots.
@@ -32,6 +33,17 @@ The development install is a directory junction from Blender's user add-on direc
 The exporter uses GLB, Y-up, Draco mesh compression and custom-property extras. Prefabs keep lightweight placeholder material slots because runtime materials own their textures; cameras, lights, and animations are disabled.
 
 The `.blend` collection is the editable source. Files under `assets/mesh/prefabs/` are runtime build outputs. Level export and prefab export are intentionally separate: level export writes static level geometry, `RB_` bodies, and temporary `PF_` markers, while **Export Active Prefab GLB** writes the selected prefab definition.
+
+## Registering a new collection prefab
+
+1. Select the collection instance in the level and press **Register as Prefab** in the `TGLOBAL` sidebar.
+2. For the light controller, use Type `LightPanel1`, an Instance ID such as `Main`, and Asset Filename `PF_LightPanel1.glb`.
+3. Press **Export Active Prefab GLB** to write the meshes to the configured Prefab Output folder. Registration's asset filename is used exactly.
+4. Press **Validate + Export Level GLB** to write the `PF_LightPanel1_Main` placement Empty. Source meshes are excluded from the level GLB; collection offsets are included in the marker transform.
+
+Level export blocks unregistered collection instances instead of silently omitting them. Registration configures Blender authoring metadata; the game's `PrefabRegistry.js` must also define the type and runtime behavior. `LightPanel1` is already defined there.
+
+After updating the add-on files, use Blender's **Reload Scripts**, or save your work and restart Blender, to load the new action.
 
 ## Unique level rigid bodies
 
