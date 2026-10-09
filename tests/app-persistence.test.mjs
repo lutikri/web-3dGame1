@@ -29,7 +29,10 @@ function createStorage(initial = {}) {
 
 test("app persistence normalizes invalid settings", () => {
   const storage = createStorage({
-    "operatorGame.settings.v1": JSON.stringify({ fov: 500, uiScale: "bad", shadowQuality: "ultra" }),
+    "operatorGame.settings.v1": JSON.stringify({
+      fov: 500, uiScale: "bad", shadowQuality: "ultra",
+      musicVolume: 500, ambienceVolume: -5, alarmsVolume: "bad",
+    }),
   });
   assert.deepEqual(loadSettings(storage), {
     fov: 95,
@@ -45,6 +48,14 @@ test("app persistence normalizes invalid settings", () => {
     gamma: null,
     antiAliasing: null,
     masterVolume: 100,
+    musicVolume: 100,
+    ambienceVolume: 0,
+    interactionVolume: 100,
+    machineryVolume: 100,
+    speechVolume: 100,
+    alarmsVolume: 100,
+    playerVolume: 100,
+    uiVolume: 100,
   });
 });
 
