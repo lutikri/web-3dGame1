@@ -95,13 +95,19 @@ export function registerLightPanelInteraction(levelId, prefabConfig, runtime, in
   return true;
 }
 
-export function activateLightPanelControl(target, instances) {
+export function activateLightPanelControl(target, instances, { playSound = () => {}, playSoundGroup = () => {} } = {}) {
   const panel = instances.get(target?.userData.levelPrefabKey)?.lightPanel;
   if (!panel) return false;
   const action = target.userData.lightPanelAction;
-  if (action === "door") panel.door.open = !panel.door.open;
+  const audio = panel.config.audio ?? {};
+  let soundKey;
+  if (action === "door") {
+    panel.door.open = !panel.door.open;
+    soundKey = panel.door.open ? audio.doorOpenSoundKey : audio.doorCloseSoundKey;
+  }
   else if (action === "master") {
     panel.config.masterEnabled = !panel.config.masterEnabled;
+    soundKey = panel.config.masterEnabled ? audio.masterOnSoundKey : audio.masterOffSoundKey;
     // Cycling the isolator restores every breaker and retries failed starters.
     if (panel.config.masterEnabled) {
       Object.values(panel.config.circuits).forEach((circuit) => { circuit.enabled = true; });
@@ -114,7 +120,9 @@ export function activateLightPanelControl(target, instances) {
     if (!circuit) return false;
     circuit.enabled = !circuit.enabled;
     panel.powerDirty = true;
+    playSoundGroup(target, "mechanicalButton", { levelId: target.userData.levelId, maxDistance: 3 });
   } else return false;
+  if (soundKey) playSound(target, soundKey, { levelId: target.userData.levelId });
   return true;
 }
 

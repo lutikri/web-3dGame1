@@ -61,6 +61,7 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
   const prefabInstances = new Map([
     ["room:LampA", { root: {}, light: {}, controlPost: null }],
     ["room:ClockA", { root: {}, light: null, controlPost: null }],
+    ["room:Panel", { root: {}, lightPanel: { config: { masterEnabled: true, startsTripped: true, audio: { humSoundKey: "ElectricalBoxHum1" } } } }],
   ]);
   const runtime = new SceneAudioRuntime({
     config: {
@@ -103,6 +104,24 @@ test("scene audio runtime composes panel, movement, prefab, and core loops", () 
   assert.ok(attached.some(([id, , state]) => id === "announcements" && state.active));
   assert.ok(attached.some(([id, , soundKey, active]) => id === "prefab:room:ClockA:loop" && soundKey === "Clock1_loop" && active));
   assert.ok(loops.some(([id, active]) => id === "Footsteps1_Walk1" && active));
+  const hum = () => attached.filter(([id]) => id === "lightPanel:room:Panel:hum").at(-1);
+  assert.equal(hum()[2], "ElectricalBoxHum1");
+  assert.equal(hum()[3], true, "a tripped breaker does not stop the powered panel's hum");
+  assert.equal(hum()[1], prefabInstances.get("room:Panel").root);
+  const panel = prefabInstances.get("room:Panel").lightPanel;
+  panel.config.masterEnabled = false;
+  runtime.update(0.016);
+  assert.equal(hum()[3], false);
+  panel.config.masterEnabled = true;
+  runtime.setPresentationBlocked(true);
+  runtime.update(0.016);
+  assert.equal(hum()[3], false);
+  runtime.setPresentationBlocked(false);
+  runtime.update(0.016);
+  assert.equal(hum()[3], true);
+  runtime.getActiveLevelId = () => "foreign";
+  runtime.update(0.016);
+  assert.equal(hum()[3], false, "panel hum is inactive outside its owning level");
 });
 
 test("scene audio stays inactive behind presentation curtains and suppresses hidden lamp startup", () => {

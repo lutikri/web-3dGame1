@@ -130,6 +130,7 @@ test("artist tuning exposes, applies and round-trips controller state and circui
   tuning.masterOnPosition = 0.13;
   tuning.startsOpen = true;
   tuning.circuits.StaffRoom.targets = "futureLamp";
+  tuning.audio.humSoundKey = "Clock1_loop";
   applyLightPanelConfig(panel, tuning);
   assert.equal(panel.door.open, true);
   updateLightPanelRuntime(panel, 1);
@@ -139,7 +140,33 @@ test("artist tuning exposes, applies and round-trips controller state and circui
   applyPrefabOverrideEntries([restored], snapshot.prefabs);
   assert.equal(restored.lightPanel.switchOffDegrees, 22);
   assert.equal(restored.lightPanel.circuits.StaffRoom.targets, "futureLamp");
+  assert.equal(restored.lightPanel.audio.humSoundKey, "Clock1_loop");
   assert.equal(snapshot.prefabs[0].behavior, undefined);
+});
+
+test("panel actions play their dedicated positional sounds once and retain breaker clicks", async () => {
+  const { panel, instances } = await fixture();
+  const sounds = [];
+  const groups = [];
+  const playback = {
+    playSound: (...args) => sounds.push(args),
+    playSoundGroup: (...args) => groups.push(args),
+  };
+  for (const mesh of [panel.door.mesh, panel.door.mesh, panel.master.mesh, panel.master.mesh]) {
+    assert.equal(activateLightPanelControl(mesh, instances, playback), true);
+  }
+  assert.deepEqual(sounds.map(([, key]) => key), [
+    "ElectricalBoxLatchOpen1", "ElectricalBoxLatchClose1", "CircuitBreakerOff1", "CircuitBreakerOn1",
+  ]);
+  assert.deepEqual(sounds.map(([mesh]) => mesh), [panel.door.mesh, panel.door.mesh, panel.master.mesh, panel.master.mesh]);
+  assert.ok(sounds.every(([, , options]) => options.levelId === "room"));
+  assert.equal(groups.length, 0, "master and door do not also play a generic click");
+  activateLightPanelControl(panel.circuits.get("ControlBooth").mesh, instances, playback);
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0][1], "mechanicalButton");
+  assert.equal(sounds.length, 4);
+  assert.equal(activateLightPanelControl({ userData: { levelPrefabKey: "missing" } }, instances, playback), false);
+  assert.equal(sounds.length, 4);
 });
 
 test("every bound lamp exists in the interior export and unfinished circuits stay unbound", async () => {

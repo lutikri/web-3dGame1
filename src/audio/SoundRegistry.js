@@ -51,6 +51,11 @@ export const SOUND_REGISTRY = {
   ButtonFlashlight5: { path: "assets/sounds/interaction/ButtonFlashlight5.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
   ButtonFlashlight6: { path: "assets/sounds/interaction/ButtonFlashlight6.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
   ButtonFlashlight7: { path: "assets/sounds/interaction/ButtonFlashlight7.ogg", volume: 0.46, refDistance: 0.35, maxDistance: 2.4 },
+  CircuitBreakerOff1: { path: "assets/sounds/interaction/CircuitBreakerOff1.ogg", volume: 0.6, refDistance: 0.5, maxDistance: 3 },
+  CircuitBreakerOn1: { path: "assets/sounds/interaction/CircuitBreakerOn1.ogg", volume: 0.6, refDistance: 0.5, maxDistance: 3 },
+  ElectricalBoxLatchClose1: { path: "assets/sounds/interaction/ElectricalBoxLatchClose1.ogg", volume: 0.55, refDistance: 0.5, maxDistance: 3 },
+  ElectricalBoxLatchOpen1: { path: "assets/sounds/interaction/ElectricalBoxLatchOpen1.ogg", volume: 0.55, refDistance: 0.5, maxDistance: 3 },
+  ElectricalBoxHum1: { path: "assets/sounds/machinery/ElectricalBoxHum1.ogg", loop: true, volume: 0.16, refDistance: 0.4, maxDistance: 3, fadeSeconds: 0.2 },
   ControlPostAlert1: { mixGroup: "alarms", path: "assets/sounds/interaction/ControlPostAlert1.ogg", volume: 0.62, refDistance: 0.55, maxDistance: 2.4 },
   ControlPostBuzzLoop1: {
     path: "assets/sounds/machinery/ControlPostBuzzLoop1.ogg",

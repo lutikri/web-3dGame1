@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { collectLevelSoundKeys } from "../src/audio/LevelSoundCatalog.js";
+import { createPrefabInstance } from "../src/prefabs/PrefabRegistry.js";
+import { SOUND_REGISTRY } from "../src/audio/SoundRegistry.js";
+import { readFileSync } from "node:fs";
 
 test("level sound catalog combines runtime, panel and prefab capabilities", () => {
   const registry = Object.fromEntries([
@@ -15,6 +18,20 @@ test("level sound catalog combines runtime, panel and prefab capabilities", () =
 
 test("level sound catalog filters unregistered sound keys", () => {
   assert.deepEqual(collectLevelSoundKeys({ levelId: "empty", soundRegistry: {}, environment: null }), []);
+});
+
+test("panel audio is preloaded from its live sound assignments and resolves to converted Ogg files", () => {
+  const panel = createPrefabInstance("LightPanel1", { name: "Panel" });
+  const sounds = Object.values(panel.lightPanel.audio);
+  const keys = collectLevelSoundKeys({ environment: { prefabs: [panel] }, soundRegistry: SOUND_REGISTRY });
+  sounds.forEach((key) => {
+    assert.ok(keys.includes(key));
+    const bytes = readFileSync(new URL(`../${SOUND_REGISTRY[key].path}`, import.meta.url));
+    assert.equal(bytes.subarray(0, 4).toString(), "OggS");
+  });
+  assert.equal(SOUND_REGISTRY.ElectricalBoxHum1.loop, true);
+  panel.lightPanel.audio.humSoundKey = "Clock1_loop";
+  assert.ok(collectLevelSoundKeys({ environment: { prefabs: [panel] }, soundRegistry: SOUND_REGISTRY }).includes("Clock1_loop"));
 });
 
 test("level sound catalog preloads tutorial presentation audio", () => {

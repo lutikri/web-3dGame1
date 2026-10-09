@@ -72,6 +72,13 @@ const PREFAB_DEFINITIONS = {
       masterDurationSeconds: 0.25,
       masterEnabled: true,
       startsTripped: false,
+      audio: {
+        masterOnSoundKey: "CircuitBreakerOn1",
+        masterOffSoundKey: "CircuitBreakerOff1",
+        doorOpenSoundKey: "ElectricalBoxLatchOpen1",
+        doorCloseSoundKey: "ElectricalBoxLatchClose1",
+        humSoundKey: "ElectricalBoxHum1",
+      },
       indicatorColor: "#72ff91",
       indicatorIntensity: 1.5,
       faultIndicatorColor: "#ff2222",

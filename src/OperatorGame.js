@@ -2406,8 +2406,10 @@ const operatorInputRuntime = createOperatorInputRuntime({
     else if (target?.userData.kind === "doorLatchHandle") toggleDoorLatchHandle(target);
     else if (target?.userData.kind === "hingedDoor") toggleHingedDoor(target);
     else if (target?.userData.kind === "slidingDrawer") prefabPhysicsRegistrar.toggleDeskDrawer(target);
-    else if (target?.userData.kind === "lightPanelControl" && activateLightPanelControl(target, levelPrefabInstances)) {
-      playSoundGroupAtObject(target, "mechanicalButton", { maxDistance: 3 });
+    else if (target?.userData.kind === "lightPanelControl") {
+      activateLightPanelControl(target, levelPrefabInstances, {
+        playSound: playSoundAtObject, playSoundGroup: playSoundGroupAtObject,
+      });
     }
     else if (target?.userData.kind === "serviceTerminal" || target?.userData.kind === "screenFocus") {
       serviceTerminalInteractionRuntime.activate(target, {

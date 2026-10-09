@@ -432,6 +432,21 @@ export function createDebugWorkspace({
       addNumber(panel, lightPanel, "indicatorIntensity", "INDICATOR EMISSIVE", 0, 8, 0.05, apply);
       addColor(panel, lightPanel, "faultIndicatorColor", "FAULT COLOR", apply);
       addNumber(panel, lightPanel, "faultBlinkSeconds", "FAULT BLINK SECONDS", 0.1, 4, 0.05, apply);
+      if (lightPanel.audio) {
+        const sounds = panel.addFolder("SOUNDS");
+        Object.keys(lightPanel.audio).forEach((key) => {
+          addSelect(sounds, lightPanel.audio, key, key, Object.keys(soundRegistry).sort(naturalCompare), () => {
+            apply();
+            rebuildProperties();
+          });
+        });
+        [...new Set(Object.values(lightPanel.audio))].forEach((soundKey) => {
+          const sound = soundRegistry[soundKey];
+          if (!sound) return;
+          const tuning = sounds.addFolder(soundKey);
+          AUDIO_TUNING_KEYS.forEach((key) => addAutoController(tuning, sound, key, () => applyAudioMix?.(soundKey)));
+        });
+      }
       Object.values(lightPanel.circuits).forEach((circuit) => {
         const folder = panel.addFolder(circuit.label);
         addBoolean(folder, circuit, "enabled", "BREAKER ON", apply);

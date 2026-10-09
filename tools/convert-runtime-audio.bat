@@ -27,9 +27,9 @@ function Get-AudioCategory($name) {
   if ($name -like "Ambience_*" -or $name -like "AmbienceLoop_*" -or $name -like "Menu_*") { return "ambience" }
   if ($name -like "UI_*") { return "ui" }
   if ($name -like "Message*" -or $name -like "Radio*") { return "narration" }
-  if ($name -like "FusionCore_*" -or $name -like "Core1_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "SFX_Panel1_*" -or $name -like "ControlPostBuzz*" -or $name -like "Clock*") { return "machinery" }
+  if ($name -like "FusionCore_*" -or $name -like "Core1_*" -or $name -like "Lamp*" -or $name -like "Panel1_*" -or $name -like "SFX_Panel1_*" -or $name -like "ControlPostBuzz*" -or $name -like "Clock*" -or $name -like "ElectricalBoxHum*") { return "machinery" }
   if ($name -like "Footsteps*") { return "player" }
-  if ($name -like "Button*" -or $name -like "Panel_Knob*" -or $name -like "Door*" -or $name -like "Drawer*" -or $name -like "Motor*" -or $name -like "MetalPipe*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*") { return "interaction" }
+  if ($name -like "Button*" -or $name -like "Panel_Knob*" -or $name -like "Door*" -or $name -like "Drawer*" -or $name -like "Motor*" -or $name -like "MetalPipe*" -or $name -like "Beep*" -or $name -like "ControlPostAlert*" -or $name -like "CircuitBreaker*" -or $name -like "ElectricalBoxLatch*") { return "interaction" }
   return "misc"
 }
 
@@ -40,6 +40,10 @@ function Get-AudioFilter($name) {
 
 $quality = 4
 $sources = Get-ChildItem -LiteralPath $sourceDir -File -Filter "*.wav" | Sort-Object Name
+if ($env:AUDIO_SOURCE_NAMES) {
+  $selectedNames = $env:AUDIO_SOURCE_NAMES.Split(",")
+  $sources = $sources | Where-Object { $_.Name -in $selectedNames }
+}
 
 if ($sources.Count -eq 0) {
   Write-Host "No .wav files found in $sourceDir"

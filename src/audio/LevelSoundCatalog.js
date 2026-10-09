@@ -38,6 +38,7 @@ export function collectLevelSoundKeys({ levelId, environment, runtimeSoundKeys =
     if (sound.file) keys.add(sound.file);
   });
   (environment?.prefabs ?? []).forEach((prefab) => {
+    Object.values(prefab.lightPanel?.audio ?? {}).filter(Boolean).forEach((key) => keys.add(key));
     if (prefab.light) LAMP_SOUNDS.forEach((key) => keys.add(key));
     if (prefab.radio) RADIO_SOUNDS.forEach((key) => keys.add(key));
     if (prefab.prefabType === "bulkheadDoor") BULKHEAD_SOUNDS.forEach((key) => keys.add(key));

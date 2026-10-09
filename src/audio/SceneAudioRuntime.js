@@ -115,6 +115,11 @@ export class SceneAudioRuntime {
           });
       }
       const prefabLoop = prefab?.audio;
+      const panel = runtime.lightPanel;
+      if (panel?.config.audio?.humSoundKey) {
+        this.audio.setAttachedLoop(`lightPanel:${key}:hum`, runtime.root, panel.config.audio.humSoundKey,
+          !presentationBlocked && levelId === displayedLevelId && Boolean(panel.config.masterEnabled), { levelId });
+      }
       if (prefabLoop?.loopSoundKey) {
         this.audio.setAttachedLoop(`prefab:${key}:loop`, runtime.root, prefabLoop.loopSoundKey,
           !presentationBlocked && levelId === displayedLevelId, {
