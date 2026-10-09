@@ -5,10 +5,10 @@ export function createFlashlightAimRuntime(root) {
   root.updateWorldMatrix(true, true);
   root.traverse((light) => {
     if (!light.isSpotLight || light.userData.prefabLightMarker) return;
-    spots.push({ light, targetPosition: light.target.position.clone() });
+    spots.push(light);
   });
   if (!spots.length) return null;
-  return { root, spots, inverseAimDistance: null };
+  return { root, light: spots[0], inverseAimDistance: null };
 }
 
 export function getFlashlightAimPoint(runtime, camera, physics, key, config, dt, immediate = false) {
@@ -30,21 +30,31 @@ export function getFlashlightAimPoint(runtime, camera, physics, key, config, dt,
   return origin.clone().addScaledVector(direction, 1 / runtime.inverseAimDistance);
 }
 
-export function updateFlashlightAim(runtime, target = null, aimFrame = null) {
-  if (!runtime) return;
-  if (!target) runtime.inverseAimDistance = null;
+export function resetFlashlightAim(runtime) {
+  if (runtime) runtime.inverseAimDistance = null;
+}
+
+export function aimFlashlightPose(runtime, position, quaternion, target, config) {
   runtime.root.updateWorldMatrix(true, true);
-  let animatedTarget = target;
-  if (target && aimFrame) {
-    // Converge from the neutral carry pose, then move the beam with the actual
-    // flashlight. World-locking the target would cancel hand sway and turn lag.
-    const neutralMatrix = new THREE.Matrix4().compose(aimFrame.position, aimFrame.quaternion,
-      runtime.root.getWorldScale(new THREE.Vector3()));
-    animatedTarget = runtime.root.localToWorld(target.clone().applyMatrix4(neutralMatrix.invert()));
-  }
-  runtime.spots.forEach(({ light, targetPosition }) => {
-    if (animatedTarget) light.target.position.copy(light.target.parent.worldToLocal(animatedTarget.clone()));
-    else light.target.position.copy(targetPosition);
-    light.target.updateWorldMatrix(true, false);
-  });
+  const scale = runtime.root.getWorldScale(new THREE.Vector3());
+  const emitter = runtime.root.worldToLocal(runtime.light.getWorldPosition(new THREE.Vector3()));
+  const forward = runtime.root.worldToLocal(runtime.light.target.getWorldPosition(new THREE.Vector3()))
+    .sub(emitter).multiply(scale).normalize();
+  emitter.multiply(scale);
+  const offset = target.clone().sub(position);
+  const axialOffset = emitter.dot(forward);
+  const perpendicularSq = Math.max(0, emitter.lengthSq() - axialOffset * axialOffset);
+  if (offset.lengthSq() <= perpendicularSq) return;
+
+  // Solve for a point on the authored beam axis, including the emitter's
+  // offset from the grip. Only the body rotates; the spotlight stays rigid.
+  const travel = Math.sqrt(offset.lengthSq() - perpendicularSq) - axialOffset;
+  if (travel <= 0) return;
+  const from = emitter.addScaledVector(forward, travel).normalize().applyQuaternion(quaternion);
+  const to = offset.normalize();
+  const correction = new THREE.Quaternion().setFromUnitVectors(from, to);
+  const angle = from.angleTo(to);
+  const limit = THREE.MathUtils.degToRad(Math.max(0, config.aimMaxAngleDegrees ?? 70));
+  if (angle > limit) correction.slerp(new THREE.Quaternion(), 1 - limit / angle);
+  quaternion.premultiply(correction).normalize();
 }

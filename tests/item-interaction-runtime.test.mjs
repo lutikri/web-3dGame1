@@ -3,6 +3,16 @@ import assert from "node:assert/strict";
 import * as THREE from "three";
 import { createPrefabInstance } from "../src/prefabs/PrefabRegistry.js";
 
+function flashlightDirection(spot) {
+  return spot.target.getWorldPosition(new THREE.Vector3()).sub(spot.getWorldPosition(new THREE.Vector3())).normalize();
+}
+
+function assertBeamFollowsBody(root, spot) {
+  root.updateWorldMatrix(true, true);
+  const barrel = new THREE.Vector3(-1, 0, 0).transformDirection(root.matrixWorld);
+  assert.ok(flashlightDirection(spot).dot(barrel) > 0.999999, "light must always point along the flashlight's barrel");
+}
+
 import { createItemInteractionRuntime } from "../src/interactions/ItemInteractionRuntime.js";
 
 function createFixture({ activationType = "none", rigidPosition = new THREE.Vector3(0, 1.6, -0.48) } = {}) {
@@ -242,7 +252,7 @@ test("equipped motion applies locomotion sway and rotation lag without changing 
   assert.ok(latestPosition.z < -0.48);
 });
 
-test("equipped flashlight moves back, converges on the cursor hit, and restores its beam on drop", () => {
+test("equipped flashlight turns toward cursor depth with a rigid beam and bounded wrist rotation", () => {
   const root = new THREE.Group();
   const spot = new THREE.SpotLight();
   spot.position.set(-0.053824, 0, 0);
@@ -268,20 +278,38 @@ test("equipped flashlight moves back, converges on the cursor hit, and restores 
   assert.ok(Math.abs(root.position.z + 0.34) < 1e-6);
   assert.deepEqual(rays[0][0].toArray(), [0, 1.6, 0]);
   assert.ok(rays[0][1].distanceTo(new THREE.Vector3(0, 0, -1)) < 1e-6);
-  assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(hit) < 1e-6);
+  assertBeamFollowsBody(root, spot);
+  assert.ok(flashlightDirection(spot).dot(hit.clone().sub(spot.getWorldPosition(new THREE.Vector3())).normalize()) > 0.999999);
+  const authoredTarget = spot.target.position.clone();
   const closePose = root.quaternion.clone();
   hit.set(0, 1.6, -12);
   camera.rotation.y = THREE.MathUtils.degToRad(3);
   const direction = camera.getWorldDirection(new THREE.Vector3());
   hit.copy(camera.position).addScaledVector(direction, 12);
   runtime.update(1 / 60);
-  assert.ok(root.quaternion.angleTo(closePose) < THREE.MathUtils.degToRad(1), "depth change must not turn the physical body");
-  const aim = spot.target.getWorldPosition(new THREE.Vector3()).sub(camera.position);
-  assert.ok(aim.length() > 0.55 && aim.length() < 0.75, "near-to-far convergence changes smoothly");
-  assert.ok(aim.clone().normalize().angleTo(direction) > THREE.MathUtils.degToRad(1), "beam follows the flashlight's turn lag");
-  for (let frame = 0; frame < 120; frame += 1) runtime.update(1 / 60);
-  assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(hit) < 0.001);
+  assert.ok(root.quaternion.angleTo(closePose) < THREE.MathUtils.degToRad(3), "near-to-far wrist rotation must be smooth");
+  assertBeamFollowsBody(root, spot);
+  assert.ok(spot.target.position.distanceTo(authoredTarget) < 1e-6, "the spotlight has no independent steering");
+  for (let frame = 0; frame < 120; frame += 1) {
+    const previous = root.quaternion.clone();
+    runtime.update(1 / 60);
+    assert.ok(root.quaternion.angleTo(previous) < THREE.MathUtils.degToRad(3), "no rotation jump while convergence changes");
+    assertBeamFollowsBody(root, spot);
+  }
+  assert.ok(root.quaternion.angleTo(closePose) > THREE.MathUtils.degToRad(20), "the body visibly turns with its beam as depth changes");
+  assert.ok(flashlightDirection(spot).angleTo(hit.clone().sub(spot.getWorldPosition(new THREE.Vector3())).normalize()) < 0.001);
   camera.rotation.y = 0;
+  prefab.item.aimMaxAngleDegrees = 35;
+  hit.set(0, 1.6, -0.05);
+  const carryRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, THREE.MathUtils.degToRad(270), 0));
+  for (let frame = 0; frame < 120; frame += 1) {
+    const previous = root.quaternion.clone();
+    runtime.update(1 / 60);
+    assert.ok(root.quaternion.angleTo(previous) < THREE.MathUtils.degToRad(5), "far-to-near wrist rotation must remain smooth");
+    assert.ok(root.quaternion.angleTo(carryRotation) <= THREE.MathUtils.degToRad(35) + 1e-6, "a surface behind the hand must not reverse the flashlight");
+    assertBeamFollowsBody(root, spot);
+  }
+  assert.ok(Math.abs(root.quaternion.angleTo(carryRotation) - THREE.MathUtils.degToRad(35)) < 0.001, "live wrist tuning limits close-surface convergence");
   prefab.item.equippedDepth = 0.3;
   runtime.update(1 / 60);
   assert.ok(Math.abs(root.position.z + 0.3) < 1e-6);
@@ -326,14 +354,16 @@ for (const { name, motion, yaw } of [
     runtime.update(0);
     const localAim = spot.target.position.clone();
     const orientation = root.quaternion.clone();
-    assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(cursorHit()) < 1e-6);
+    assertBeamFollowsBody(root, spot);
+    assert.ok(flashlightDirection(spot).dot(cursorHit().sub(spot.getWorldPosition(new THREE.Vector3())).normalize()) > 0.999999);
 
     presentation = motion;
     camera.rotation.y = yaw;
     runtime.update(1 / 60);
     assert.ok(root.quaternion.angleTo(orientation) > 1e-6, "the flashlight body moves");
     assert.ok(spot.target.position.distanceTo(localAim) < 1e-6, "aim compensation must not cancel the body's motion");
-    assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(cursorHit()) > 1e-5, "the beam moves with the hand instead of staying locked to the cursor");
+    assertBeamFollowsBody(root, spot);
+    assert.ok(flashlightDirection(spot).angleTo(cursorHit().sub(spot.getWorldPosition(new THREE.Vector3())).normalize()) > 1e-5, "the beam moves with the hand instead of staying locked to the cursor");
     assert.equal(runtime.getSnapshot().activeItemId, "room:flashlight");
   });
 }

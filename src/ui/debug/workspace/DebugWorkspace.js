@@ -406,6 +406,7 @@ export function createDebugWorkspace({
       addBoolean(equipment, prefab.item, "aimAtCursor", "AIM AT CURSOR", apply);
       addNumber(equipment, prefab.item, "aimDistance", "AIM RANGE", 1, 30, 0.5, apply);
       addNumber(equipment, prefab.item, "aimSmoothingSeconds", "AIM RESPONSE SECONDS", 0, 0.5, 0.01, apply);
+      addNumber(equipment, prefab.item, "aimMaxAngleDegrees", "MAX WRIST ANGLE", 0, 85, 1, apply);
     }
     const lightPanel = getLightPanelDebugProperties(prefab);
     if (lightPanel) {

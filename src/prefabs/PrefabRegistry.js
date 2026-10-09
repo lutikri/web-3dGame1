@@ -735,6 +735,7 @@ const PREFAB_DEFINITIONS = {
       aimAtCursor: true,
       aimDistance: 12,
       aimSmoothingSeconds: 0.12,
+      aimMaxAngleDegrees: 70,
       rotationOffset: [0, 270, 0],
       equippedMotion: {
         rotationLag: 8,

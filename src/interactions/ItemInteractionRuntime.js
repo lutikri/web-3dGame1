@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=compact-loading-game";
-import { createFlashlightAimRuntime, getFlashlightAimPoint, updateFlashlightAim } from "../prefabs/behaviors/FlashlightAimBehavior.js?v=compact-loading-game";
+import { aimFlashlightPose, createFlashlightAimRuntime, getFlashlightAimPoint, resetFlashlightAim } from "../prefabs/behaviors/FlashlightAimBehavior.js?v=compact-loading-game";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -129,7 +129,7 @@ export function createItemInteractionRuntime({
 
   function applyItemState(item, state, context) {
     item.runtime.itemState = state;
-    if (state !== ITEM_STATES.EQUIPPED) updateFlashlightAim(item.data.flashlightAim);
+    if (state !== ITEM_STATES.EQUIPPED) resetFlashlightAim(item.data.flashlightAim);
     item.data.equippedSeparationSeconds = 0;
     if (state === ITEM_STATES.GRABBED) {
       camera.updateWorldMatrix(true, false);
@@ -193,9 +193,6 @@ export function createItemInteractionRuntime({
     } else if (state !== ITEM_STATES.GRABBED) {
       setWorldTransform(item.root, pose.position, pose.quaternion);
     }
-    if (state === ITEM_STATES.EQUIPPED && item.state === ITEM_STATES.EQUIPPED) {
-      updateFlashlightAim(item.data.flashlightAim, pose.aimPoint, pose.aimFrame);
-    }
   }
 
   function updateEquippedSeparation(item, targetPosition, dt) {
@@ -233,21 +230,25 @@ export function createItemInteractionRuntime({
       cameraOffset.set(item.grabOffset.x, item.grabOffset.y, -item.grabDistance).applyQuaternion(worldQuaternion);
     }
     const position = worldPosition.clone().add(cameraOffset);
+    const authoredRotation = new THREE.Quaternion().setFromEuler(item.rotationOffset);
     const targetQuaternion = state === ITEM_STATES.GRABBED && item.data.grabRotationOffset
       ? worldQuaternion.clone().multiply(item.data.grabRotationOffset)
-      : worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
-    const aimFrame = aimPosition ? { position: aimPosition, quaternion: targetQuaternion.clone() } : null;
+      : worldQuaternion.clone().multiply(authoredRotation);
     const aimPoint = state === ITEM_STATES.EQUIPPED && item.config?.aimAtCursor && item.data.flashlightAim
       ? getFlashlightAimPoint(item.data.flashlightAim, camera, physics, item.runtime.rigidPrefabKey, item.config, dt, immediate)
       : null;
+    if (aimPoint) aimFlashlightPose(item.data.flashlightAim, aimPosition, targetQuaternion, aimPoint, item.config);
     if (state === ITEM_STATES.EQUIPPED && item.equippedMotion) {
       const presentation = getLocomotionPresentation();
-      targetQuaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(
+      const handRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(
         (presentation.equipmentPitch ?? 0) * (item.equippedMotion.rotationScale ?? 1),
         (presentation.equipmentYaw ?? 0) * (item.equippedMotion.rotationScale ?? 1),
         (presentation.equipmentRoll ?? 0) * (item.equippedMotion.rotationScale ?? 1),
         "YXZ",
-      )));
+      ));
+      // The body rig's pitch/yaw/roll are in view space, before the authored
+      // model-axis correction. Apply them to the body and its attached light.
+      targetQuaternion.multiply(authoredRotation.clone().invert()).multiply(handRotation).multiply(authoredRotation);
     }
     const lag = item.equippedMotion?.rotationLag ?? 0;
     if (state === ITEM_STATES.EQUIPPED && lag > 0 && !immediate) {
@@ -257,7 +258,7 @@ export function createItemInteractionRuntime({
       item.data.handledQuaternion = targetQuaternion.clone();
     }
     const quaternion = item.data.handledQuaternion.clone();
-    return { position, quaternion, sweepOrigin: worldPosition.clone(), aimPoint, aimFrame };
+    return { position, quaternion, sweepOrigin: worldPosition.clone() };
   }
 
   function getDropPose(item) {
