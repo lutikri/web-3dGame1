@@ -30,12 +30,20 @@ export function getFlashlightAimPoint(runtime, camera, physics, key, config, dt,
   return origin.clone().addScaledVector(direction, 1 / runtime.inverseAimDistance);
 }
 
-export function updateFlashlightAim(runtime, target = null) {
+export function updateFlashlightAim(runtime, target = null, aimFrame = null) {
   if (!runtime) return;
   if (!target) runtime.inverseAimDistance = null;
   runtime.root.updateWorldMatrix(true, true);
+  let animatedTarget = target;
+  if (target && aimFrame) {
+    // Converge from the neutral carry pose, then move the beam with the actual
+    // flashlight. World-locking the target would cancel hand sway and turn lag.
+    const neutralMatrix = new THREE.Matrix4().compose(aimFrame.position, aimFrame.quaternion,
+      runtime.root.getWorldScale(new THREE.Vector3()));
+    animatedTarget = runtime.root.localToWorld(target.clone().applyMatrix4(neutralMatrix.invert()));
+  }
   runtime.spots.forEach(({ light, targetPosition }) => {
-    if (target) light.target.position.copy(light.target.parent.worldToLocal(target.clone()));
+    if (animatedTarget) light.target.position.copy(light.target.parent.worldToLocal(animatedTarget.clone()));
     else light.target.position.copy(targetPosition);
     light.target.updateWorldMatrix(true, false);
   });

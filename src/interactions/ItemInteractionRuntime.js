@@ -194,7 +194,7 @@ export function createItemInteractionRuntime({
       setWorldTransform(item.root, pose.position, pose.quaternion);
     }
     if (state === ITEM_STATES.EQUIPPED && item.state === ITEM_STATES.EQUIPPED) {
-      updateFlashlightAim(item.data.flashlightAim, pose.aimPoint);
+      updateFlashlightAim(item.data.flashlightAim, pose.aimPoint, pose.aimFrame);
     }
   }
 
@@ -216,9 +216,11 @@ export function createItemInteractionRuntime({
     camera.updateWorldMatrix(true, false);
     camera.getWorldPosition(worldPosition);
     camera.getWorldQuaternion(worldQuaternion);
+    let aimPosition = null;
     if (state === ITEM_STATES.EQUIPPED) {
       cameraOffset.copy(item.equippedOffset);
       if (Number.isFinite(item.config?.equippedDepth)) cameraOffset.z = -item.config.equippedDepth;
+      aimPosition = worldPosition.clone().add(cameraOffset.clone().applyQuaternion(worldQuaternion));
       const presentation = getLocomotionPresentation();
       const sway = item.equippedMotion?.swayScale ?? 0;
       if (sway > 0) {
@@ -234,6 +236,7 @@ export function createItemInteractionRuntime({
     const targetQuaternion = state === ITEM_STATES.GRABBED && item.data.grabRotationOffset
       ? worldQuaternion.clone().multiply(item.data.grabRotationOffset)
       : worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
+    const aimFrame = aimPosition ? { position: aimPosition, quaternion: targetQuaternion.clone() } : null;
     const aimPoint = state === ITEM_STATES.EQUIPPED && item.config?.aimAtCursor && item.data.flashlightAim
       ? getFlashlightAimPoint(item.data.flashlightAim, camera, physics, item.runtime.rigidPrefabKey, item.config, dt, immediate)
       : null;
@@ -254,7 +257,7 @@ export function createItemInteractionRuntime({
       item.data.handledQuaternion = targetQuaternion.clone();
     }
     const quaternion = item.data.handledQuaternion.clone();
-    return { position, quaternion, sweepOrigin: worldPosition.clone(), aimPoint };
+    return { position, quaternion, sweepOrigin: worldPosition.clone(), aimPoint, aimFrame };
   }
 
   function getDropPose(item) {

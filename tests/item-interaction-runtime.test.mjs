@@ -278,7 +278,7 @@ test("equipped flashlight moves back, converges on the cursor hit, and restores 
   assert.ok(root.quaternion.angleTo(closePose) < THREE.MathUtils.degToRad(1), "depth change must not turn the physical body");
   const aim = spot.target.getWorldPosition(new THREE.Vector3()).sub(camera.position);
   assert.ok(aim.length() > 0.55 && aim.length() < 0.75, "near-to-far convergence changes smoothly");
-  assert.ok(aim.clone().normalize().dot(direction) > 0.999999, "camera aim stays immediate");
+  assert.ok(aim.clone().normalize().angleTo(direction) > THREE.MathUtils.degToRad(1), "beam follows the flashlight's turn lag");
   for (let frame = 0; frame < 120; frame += 1) runtime.update(1 / 60);
   assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(hit) < 0.001);
   camera.rotation.y = 0;
@@ -293,3 +293,47 @@ test("equipped flashlight moves back, converges on the cursor hit, and restores 
   runtime.dropHandled();
   assert.deepEqual(spot.target.position.toArray(), [-4.053824, 0, 0]);
 });
+
+for (const { name, motion, yaw } of [
+  { name: "idle tremor", motion: { equipmentSide: 0.00015, equipmentVertical: -0.0001, equipmentPitch: 0.0004, equipmentRoll: 0.0006 }, yaw: 0 },
+  { name: "running sway", motion: { equipmentSide: 0.025, equipmentVertical: -0.035, equipmentForward: 0.02, equipmentPitch: 0.04, equipmentRoll: 0.06 }, yaw: 0 },
+  { name: "turn inertia", motion: {}, yaw: THREE.MathUtils.degToRad(30) },
+]) {
+  test(`cursor aiming preserves the flashlight beam's ${name}`, () => {
+    const root = new THREE.Group();
+    const spot = new THREE.SpotLight();
+    spot.position.set(-0.053824, 0, 0);
+    spot.target.position.set(-4.053824, 0, 0);
+    root.add(spot, spot.target);
+    const camera = new THREE.PerspectiveCamera();
+    camera.position.y = 1.6;
+    let presentation = {};
+    const cursorHit = () => camera.getWorldPosition(new THREE.Vector3())
+      .addScaledVector(camera.getWorldDirection(new THREE.Vector3()), 6);
+    const runtime = createItemInteractionRuntime({
+      interactive: [], camera,
+      getLocomotionPresentation: () => presentation,
+      physics: { raycastWorld: cursorHit },
+    });
+    const prefab = createPrefabInstance("FlashLight", { name: "flashlight" });
+    runtime.register("room", prefab, { root, parts: new Map() });
+    runtime.beginPrimary(root);
+    runtime.update(0.6);
+    runtime.releasePrimary();
+    runtime.beginSelection();
+    runtime.moveSelection(1);
+    runtime.commitSelection();
+    runtime.update(0);
+    const localAim = spot.target.position.clone();
+    const orientation = root.quaternion.clone();
+    assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(cursorHit()) < 1e-6);
+
+    presentation = motion;
+    camera.rotation.y = yaw;
+    runtime.update(1 / 60);
+    assert.ok(root.quaternion.angleTo(orientation) > 1e-6, "the flashlight body moves");
+    assert.ok(spot.target.position.distanceTo(localAim) < 1e-6, "aim compensation must not cancel the body's motion");
+    assert.ok(spot.target.getWorldPosition(new THREE.Vector3()).distanceTo(cursorHit()) > 1e-5, "the beam moves with the hand instead of staying locked to the cursor");
+    assert.equal(runtime.getSnapshot().activeItemId, "room:flashlight");
+  });
+}
