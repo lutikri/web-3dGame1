@@ -207,8 +207,8 @@ test("instrument reliability shift reuses the facility with its own brief, intro
   );
   assert.ok(environment.narration.randomSpeech.lines.every((line) => line.shift === "unexpected-stuff"));
   const failedLights = environment.prefabStatePolicies.at(-1);
-  assert.equal(failedLights.overrides.light.enabled, false);
-  assert.deepEqual(failedLights.prefabTypes, ["fluorescentLamp"]);
+  assert.equal(failedLights.overrides.lightPanel.startsTripped, true);
+  assert.deepEqual(failedLights.prefabTypes, ["LightPanel1"]);
   assert.equal(environment.lighting.ambientIntensity, 0);
   assert.equal(environment.lighting.pointLights.fill.intensity, 0);
   assert.ok(environment.lighting.pointLights.LampFan.intensity > 0);

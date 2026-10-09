@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import { ItemInventoryRuntime, ITEM_STATES } from "./ItemInventoryRuntime.js?v=compact-loading-game";
-import { aimFlashlightPose, createFlashlightAimRuntime, getFlashlightAimPoint, updateFlashlightAim } from "../prefabs/behaviors/FlashlightAimBehavior.js?v=compact-loading-game";
+import { createFlashlightAimRuntime, getFlashlightAimPoint, updateFlashlightAim } from "../prefabs/behaviors/FlashlightAimBehavior.js?v=compact-loading-game";
 
 const worldPosition = new THREE.Vector3();
 const worldQuaternion = new THREE.Quaternion();
@@ -235,7 +235,7 @@ export function createItemInteractionRuntime({
       ? worldQuaternion.clone().multiply(item.data.grabRotationOffset)
       : worldQuaternion.clone().multiply(new THREE.Quaternion().setFromEuler(item.rotationOffset));
     const aimPoint = state === ITEM_STATES.EQUIPPED && item.config?.aimAtCursor && item.data.flashlightAim
-      ? getFlashlightAimPoint(camera, physics, item.runtime.rigidPrefabKey, Math.max(0.25, item.config.aimDistance ?? 12))
+      ? getFlashlightAimPoint(item.data.flashlightAim, camera, physics, item.runtime.rigidPrefabKey, item.config, dt, immediate)
       : null;
     if (state === ITEM_STATES.EQUIPPED && item.equippedMotion) {
       const presentation = getLocomotionPresentation();
@@ -246,7 +246,6 @@ export function createItemInteractionRuntime({
         "YXZ",
       )));
     }
-    if (aimPoint) aimFlashlightPose(item.data.flashlightAim, position, targetQuaternion, aimPoint);
     const lag = item.equippedMotion?.rotationLag ?? 0;
     if (state === ITEM_STATES.EQUIPPED && lag > 0 && !immediate) {
       item.data.handledQuaternion ??= targetQuaternion.clone();

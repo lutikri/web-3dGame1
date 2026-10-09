@@ -7,6 +7,7 @@ import { parsePrefabMarkerName } from "../src/prefabs/PrefabMarkerResolver.js";
 import { createLevelOverrideSnapshot } from "../src/levels/LevelConfigSerialization.js";
 import { applyPrefabOverrideEntries, applyPrefabStatePolicies } from "../src/levels/LevelConfigOverrides.js";
 import { LEVEL_EXPLORING_AROUND_CONFIG } from "../src/levels/LevelExploringAroundConfig.js";
+import { LEVEL_DEFINITIONS } from "../src/levels/LevelRegistry.js";
 import { LevelBindingRuntime } from "../src/levels/LevelBindingRuntime.js";
 import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
 import { getLightPanelDebugProperties } from "../src/ui/debug/workspace/DebugWorkspace.js";
@@ -140,7 +141,7 @@ test("artist tuning exposes, applies and round-trips controller state and circui
   assert.equal(snapshot.prefabs[0].behavior, undefined);
 });
 
-test("every bound lamp exists in the interior export including staff and power halls", async () => {
+test("every bound lamp exists in the interior export and unfinished circuits stay unbound", async () => {
   const { panel } = await fixture();
   const bytes = readFileSync(new URL("../assets/mesh/environment/SM_Interior2.glb", import.meta.url));
   assert.equal(bytes.readUInt32LE(8), bytes.length);
@@ -149,8 +150,9 @@ test("every bound lamp exists in the interior export including staff and power h
   for (const target of Object.values(panel.config.circuits).flatMap((circuit) => [circuit.targets, circuit.extraTargets].join(",").split(",").map((name) => name.trim()).filter(Boolean))) {
     assert.ok(names.has(`PF_${target}`), `Missing lamp marker: ${target}`);
   }
-  assert.match(panel.config.circuits.StaffRoom.targets, /StaffRoom1/);
-  assert.match(panel.config.circuits.ServiceOther.targets, /PowerHall1/);
+  assert.equal(panel.config.circuits.StaffRoom.targets, "");
+  assert.equal(panel.config.circuits.ServiceOther.targets, "");
+  assert.ok(Object.values(panel.config.circuits).every((circuit) => circuit.extraTargets === ""));
 });
 
 test("missing cabinet controls fail loudly", () => {
@@ -201,16 +203,46 @@ test("tripped breakers blink red, block room buttons, and require an isolator cy
   assert.equal(lamp.light.enabled, false);
 });
 
-test("saved on states cannot override the level's initial power failure", () => {
-  const panel = createPrefabInstance("LightPanel1", { name: "panel" });
-  const lamp = createPrefabInstance("fluorescentLamp", { name: "fluorescentLamp_TutorialCabin" });
-  const desk = createPrefabInstance("LampDesk1", { name: "LampDesk1_1" });
-  const dome = createPrefabInstance("LampDome1", { name: "LampDome1_EntHall1" });
-  applyPrefabStatePolicies([panel, lamp, desk, dome], LEVEL_EXPLORING_AROUND_CONFIG.prefabStatePolicies);
-  assert.equal(panel.lightPanel.startsTripped, true);
-  assert.equal(lamp.light.enabled, false);
-  assert.equal(desk.light.enabled, false);
-  assert.equal(dome.light.enabled, false);
+test("qualification starts powered; reliability only trips lamps in the panel's resolved saved circuits", async () => {
+  const { applyLevelOverrides } = await import("../src/levels/LevelConfigOverrides.js");
+  const names = ["LightPanel1_Main", "fluorescentLamp_TutorialCabin", "fluorescentLamp_Custom",
+    "fluorescentLamp_Observation1", "fluorescentLamp_StaffRoom1", "LampDesk1_1", "LampDome1_EntHall1", "redBulkLamp_Exit1"];
+  for (const levelId of ["exploring-around", "unexpected-stuff"]) {
+    const tripped = levelId === "unexpected-stuff";
+    const config = {
+      assetPath: "level.glb", collisionAssetPath: "level.glb", prefabs: [],
+      prefabStatePolicies: LEVEL_DEFINITIONS[levelId].environment.prefabStatePolicies,
+    };
+    applyLevelOverrides(config, { prefabs: [{ name: names[0], lightPanel: {
+      startsTripped: !tripped, circuits: { ControlBooth: { targets: "fluorescentLamp_Custom" } },
+    } }, ...names.slice(1).map((name) => ({ name, light: { enabled: true } }))] });
+    const initialLights = new Map();
+    const builder = createLevelSceneBuilder({
+      scene: new THREE.Scene(), collisionDebugMaterial: new THREE.MeshBasicMaterial(),
+      isCollisionVisible: () => false, registerEnvironmentObject() {},
+      registerPrefabInteraction() {}, applyPrefabConfig() {}, appendPanelPhysics() {},
+      environmentModels: new Map(), collisionModels: new Map(), prefabInstances: new Map(),
+      createPrefabRuntime: (root, prefab) => {
+        if (prefab.light) initialLights.set(prefab.name, prefab.light.enabled);
+        return { root, ready: Promise.resolve() };
+      },
+      loadSceneAsset: async (path) => {
+        const root = new THREE.Group();
+        if (path === "level.glb") names.forEach((name) => {
+          const marker = new THREE.Object3D();
+          marker.name = `PF_${name}`;
+          root.add(marker);
+        });
+        return root;
+      },
+    });
+    await builder.build({}, levelId, config);
+    assert.equal(config.prefabs.find((prefab) => prefab.lightPanel).lightPanel.startsTripped, tripped);
+    for (const name of names.slice(1)) {
+      const connected = ["fluorescentLamp_Custom", "fluorescentLamp_Observation1"].includes(name);
+      assert.equal(initialLights.get(name), !(tripped && connected), `${levelId}: ${name}`);
+    }
+  }
 });
 
 test("level-authored circuit defaults allow saved bindings to win when a marker is loaded", async () => {

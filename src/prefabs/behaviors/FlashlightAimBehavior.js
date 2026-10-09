@@ -7,34 +7,32 @@ export function createFlashlightAimRuntime(root) {
     if (!light.isSpotLight || light.userData.prefabLightMarker) return;
     spots.push({ light, targetPosition: light.target.position.clone() });
   });
-  const light = spots[0]?.light;
-  if (!light) return null;
-  const emitter = root.worldToLocal(light.getWorldPosition(new THREE.Vector3()));
-  const forward = root.worldToLocal(light.target.getWorldPosition(new THREE.Vector3())).sub(emitter).normalize();
-  return { root, spots, emitter, forward };
+  if (!spots.length) return null;
+  return { root, spots, inverseAimDistance: null };
 }
 
-export function getFlashlightAimPoint(camera, physics, key, distance) {
+export function getFlashlightAimPoint(runtime, camera, physics, key, config, dt, immediate = false) {
   const origin = camera.getWorldPosition(new THREE.Vector3());
   const direction = camera.getWorldDirection(new THREE.Vector3());
-  return physics.raycastWorld?.(origin, direction, distance, key)
-    ?? origin.addScaledVector(direction, distance);
-}
-
-export function aimFlashlightPose(runtime, position, quaternion, target) {
-  // A swept carry pose can be nearer the camera than the requested pose.
-  // Keep the model facing forward when the requested emitter is past a wall.
-  for (let iteration = 0; iteration < 3; iteration += 1) {
-    const emitter = runtime.emitter.clone().applyQuaternion(quaternion).add(position);
-    const direction = target.clone().sub(emitter).normalize();
-    const forward = runtime.forward.clone().applyQuaternion(quaternion);
-    if (direction.dot(forward) <= 0) return;
-    quaternion.premultiply(new THREE.Quaternion().setFromUnitVectors(forward, direction)).normalize();
+  const distance = Math.max(0.25, config.aimDistance ?? 12);
+  const hit = physics.raycastWorld?.(origin, direction, distance, key);
+  const depth = hit ? Math.max(0.01, hit.clone().sub(origin).dot(direction)) : distance;
+  const inverseDistance = 1 / depth;
+  const response = Math.max(0, config.aimSmoothingSeconds ?? 0.12);
+  if (runtime.inverseAimDistance == null || immediate || response === 0) {
+    runtime.inverseAimDistance = inverseDistance;
+  } else {
+    // Parallax depends on inverse depth. Smoothing depth directly still snaps
+    // the beam when a nearby surface is replaced by a distant hit or the sky.
+    runtime.inverseAimDistance = THREE.MathUtils.lerp(runtime.inverseAimDistance, inverseDistance,
+      1 - Math.exp(-Math.max(0, dt) / response));
   }
+  return origin.clone().addScaledVector(direction, 1 / runtime.inverseAimDistance);
 }
 
 export function updateFlashlightAim(runtime, target = null) {
   if (!runtime) return;
+  if (!target) runtime.inverseAimDistance = null;
   runtime.root.updateWorldMatrix(true, true);
   runtime.spots.forEach(({ light, targetPosition }) => {
     if (target) light.target.position.copy(light.target.parent.worldToLocal(target.clone()));

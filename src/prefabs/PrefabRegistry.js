@@ -734,6 +734,7 @@ const PREFAB_DEFINITIONS = {
       equippedDepth: 0.34,
       aimAtCursor: true,
       aimDistance: 12,
+      aimSmoothingSeconds: 0.12,
       rotationOffset: [0, 270, 0],
       equippedMotion: {
         rotationLag: 8,

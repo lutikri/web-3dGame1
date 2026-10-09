@@ -15,6 +15,22 @@ function getCircuitTargets(circuit) {
     .split(",").map((name) => name.trim()).filter(Boolean);
 }
 
+export function applyLightPanelStartupPower(prefabs) {
+  const lamps = new Map(prefabs.filter((prefab) => prefab.light).map((prefab) => [prefab.name, prefab]));
+  prefabs.forEach((prefab) => {
+    const panel = prefab.behavior === "lightPanel" ? prefab.lightPanel : null;
+    if (!panel) return;
+    Object.values(panel.circuits).forEach((circuit) => {
+      if (panel.masterEnabled && circuit.enabled && !panel.startsTripped) return;
+      getCircuitTargets(circuit).forEach((name) => {
+        const lamp = lamps.get(name);
+        if (lamp) lamp.light.enabled = false;
+      });
+    });
+  });
+  return prefabs;
+}
+
 export function createLightPanelRuntime(parts, config, prefabName) {
   const requirePart = (name) => {
     const mesh = parts.get(name);

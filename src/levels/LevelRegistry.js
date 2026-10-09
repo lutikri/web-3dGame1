@@ -338,8 +338,8 @@ function createUnexpectedStuffConfig() {
     prefabStatePolicies: [
       ...(baseConfig.prefabStatePolicies ?? []),
       {
-        prefabTypes: ["fluorescentLamp"],
-        overrides: { light: { enabled: false } },
+        prefabTypes: ["LightPanel1"],
+        overrides: { lightPanel: { startsTripped: true } },
       },
     ],
     lighting: {

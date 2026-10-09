@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { applyLightPanelStartupPower } from "../prefabs/behaviors/LightPanelBehavior.js?v=compact-loading-game";
 import {
   mergeMarkerPrefabs,
   resolveNestedPrefabMarkers,
@@ -273,10 +274,10 @@ function resolveLevelPrefabs(prefabs, pendingPrefabOverrides, statePolicies) {
   // them. Mandatory startup policies (e.g. locked doors) still run last.
   const defaults = (statePolicies ?? []).filter((policy) => policy.phase === "defaults");
   const enforced = (statePolicies ?? []).filter((policy) => policy.phase !== "defaults");
-  return applyPrefabStatePolicies(
+  return applyLightPanelStartupPower(applyPrefabStatePolicies(
     applyPrefabOverrideEntries(applyPrefabStatePolicies(prefabs, defaults), pendingPrefabOverrides),
     enforced,
-  );
+  ));
 }
 
 export function isolatePrefabRoot(prefab, rootName, preservedNames = []) {
