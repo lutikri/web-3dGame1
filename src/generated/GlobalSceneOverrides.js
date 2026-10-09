@@ -331,7 +331,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "fovDegrees": 85,
     "zoomFovDegrees": 68,
     "zoomDamping": 12,
-    "mouseSensitivity": 0.0007909434225000003,
+    "mouseSensitivity": 0.0008304905936250003,
     "pitchLimitDegrees": 72,
     "leanPitchLimitDegrees": 88,
     "walkSpeed": 1.2,

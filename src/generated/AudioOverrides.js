@@ -168,7 +168,7 @@ export const AUDIO_OVERRIDES = {
       "fadeSeconds": 0.35
     },
     "Core1_DefaultLoop1": {
-      "volume": 0.64
+      "volume": 1.03
     },
     "Core1_Panel1_AlarmCoreStall": {
       "volume": 0.5
@@ -192,7 +192,7 @@ export const AUDIO_OVERRIDES = {
       "volume": 0.43
     },
     "Core1_Stress_Loop": {
-      "volume": 0.34
+      "volume": 1.32
     },
     "Core1_Trip1": {
       "volume": 0.9
@@ -271,7 +271,7 @@ export const AUDIO_OVERRIDES = {
       "volume": 0.7
     },
     "FusionCore_Working1": {
-      "volume": 0.46,
+      "volume": 1.16,
       "fadeSeconds": 1.4
     },
     "LampConstantBuzz1": {
