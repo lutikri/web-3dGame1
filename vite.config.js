@@ -2,12 +2,14 @@ import { cpSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
+const deploymentBase = process.env.DEPLOY_BASE_PATH || "/";
+
 export default defineConfig({
-  base: "/web-3dGame1/",
+  base: deploymentBase,
   publicDir: false,
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
     rolldownOptions: {
       input: {
         game: resolve("index.html"),

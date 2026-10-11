@@ -5,6 +5,10 @@ import viteConfig from "../vite.config.js";
 
 test("local static development keeps dependency versions aligned with the production build", async () => {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const githubPagesWorkflow = await readFile(
+    new URL("../.github/workflows/deploy-pages.yml", import.meta.url),
+    "utf8",
+  );
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   );
@@ -22,8 +26,10 @@ test("local static development keeps dependency versions aligned with the produc
   assert.equal(packageJson.dependencies["realism-effects"], "^1.1.2");
   assert.equal(packageJson.scripts.build, "vite build");
 
-  assert.equal(viteConfig.base, "/web-3dGame1/");
+  assert.equal(viteConfig.base, "/");
+  assert.equal(viteConfig.build.sourcemap, false);
   assert.equal(viteConfig.publicDir, false);
+  assert.match(githubPagesWorkflow, /DEPLOY_BASE_PATH:\s*\/web-3dGame1\//);
   const productionHtml = viteConfig.plugins[0].transformIndexHtml.handler(html);
   assert.doesNotMatch(productionHtml, /type="importmap"/);
   assert.doesNotMatch(productionHtml, /cdn\.jsdelivr|esm\.sh/);

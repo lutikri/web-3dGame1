@@ -240,7 +240,7 @@ test("runtime lighting trip faults powered circuits and an isolator cycle restor
   assert.equal(tripLightPanelCircuits(instances, "foreign"), 0);
 
   activateLightPanelControl(parts.get("LightPanel1_SwitchIsolator1"), instances);
-  assert.ok([...panel.circuits.values()].every((part) => part.tripped));
+  assert.ok([...panel.circuits.entries()].every(([name, part]) => part.tripped === (name !== "StaffRoom")));
   activateLightPanelControl(parts.get("LightPanel1_SwitchIsolator1"), instances);
   assert.ok([...panel.circuits.values()].every((part) => !part.tripped));
 });

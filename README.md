@@ -2,7 +2,7 @@
 
 > A first-person fusion-reactor operator game built for the browser.
 
-[**Play the development build**](https://lutikri.github.io/web-3dGame1/) · [Game design](docs/game/README.md) · [Project structure](docs/project-structure.md)
+[**Play Baseload**](https://baseloadgame.com/) · [Game design](docs/game/README.md) · [Project structure](docs/project-structure.md)
 
 > [!WARNING]
 > **Active development build.** Content, balance, performance, saves, and presentation may change. The reactor will probably remain contained. Probably.
@@ -134,6 +134,26 @@ npm run check
 npm run build
 ```
 
+## Production deployment
+
+The production site is built for Cloudflare Pages at `https://baseloadgame.com/`.
+Connect the GitHub repository to Cloudflare Pages with these settings:
+
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Build command | `npm run check && npm run build` |
+| Build output directory | `dist` |
+| Root directory | repository root |
+
+The default Vite base path is `/`, which is correct for the `pages.dev` preview
+and the production custom domain. The legacy GitHub Pages workflow supplies
+`DEPLOY_BASE_PATH=/web-3dGame1/` only for its subdirectory deployment.
+
+Production source maps are disabled. Cloudflare environment variables must be
+configured in the Pages dashboard; local `.env*` and `.dev.vars*` files are
+ignored and must not be committed.
+
 Runtime lifecycle smoke test:
 
 ```text
@@ -154,7 +174,8 @@ Expected browser-console result: `[RuntimeSmoke] PASS`.
 | `source-assets/` | Editable and heavyweight source art; excluded from deployment |
 | `docs/` | Architecture and canonical game-design documentation |
 
-After JavaScript module changes, stamp import URLs before deployment so GitHub Pages does not mix cached module revisions:
+For a legacy GitHub Pages release after JavaScript module changes, stamp import
+URLs so that host does not mix cached module revisions:
 
 ```bash
 npm run stamp-modules -- <short-revision-name>
