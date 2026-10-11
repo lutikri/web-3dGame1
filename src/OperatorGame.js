@@ -41,7 +41,11 @@ import {
   registerStatusViewportInteraction,
 } from "./prefabs/behaviors/StatusViewportBehavior.js?v=compact-loading-game";
 import { createServiceTerminalInteractionRuntime } from "./prefabs/behaviors/ServiceTerminalInteractionRuntime.js?v=compact-loading-game";
-import { activateLightPanelControl, registerLightPanelInteraction } from "./prefabs/behaviors/LightPanelBehavior.js?v=compact-loading-game";
+import {
+  activateLightPanelControl,
+  registerLightPanelInteraction,
+  tripLightPanelCircuits,
+} from "./prefabs/behaviors/LightPanelBehavior.js?v=compact-loading-game";
 import { BulkheadExitRuntime } from "./interactions/BulkheadExitRuntime.js?v=compact-loading-game";
 import { createItemInteractionRuntime } from "./interactions/ItemInteractionRuntime.js?v=compact-loading-game";
 import { createInventorySelectorView } from "./interactions/InventorySelectorView.js?v=compact-loading-game";
@@ -827,6 +831,7 @@ const serviceTerminalInteractionRuntime = createServiceTerminalInteractionRuntim
     zoomActive = false;
   },
   getLanguage: () => document.documentElement.lang,
+  playClick: () => audioRuntime.playRandom("serviceTerminalClick", { scope: "ui" }),
   onLanguageChange: (language) => serviceTerminalOpener?.({ language }),
   onBriefViewed: ({ levelId }) => activeLevelSessionRuntime.emit("briefOpened", {
     target: "terminal",
@@ -1345,6 +1350,11 @@ const operatorPanelRuntime = new OperatorPanelRuntime({
       playSoundAtObject(panelModel, "Core1_Pulse", { maxDistance: 20 });
     },
     onLightRestart: triggerRoomLightBoot,
+    onLightPanelTrip: (request) => tripLightPanelCircuits(
+      levelPrefabInstances,
+      getLevelEnvironmentId(activeLevelId),
+      request,
+    ),
     updateThoughts: updateOperatorThoughts,
     updateRecorder: updateShiftRecorder,
     evaluateCompletion: (snapshot, _inputs, dt) => powerQualificationRuntime.isEnabled()

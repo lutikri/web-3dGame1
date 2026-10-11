@@ -199,7 +199,8 @@ export function createServiceTerminalPanel({
         <h1>${escapeHtml(slide.title)}</h1>
         ${(slide.copy ?? []).map((paragraph) => `<p class="terminal-guide-copy">${escapeHtml(paragraph)}</p>`).join("")}
         <div class="terminal-guide-diagram" aria-label="${escapeHtml(slide.title)}">
-          ${(slide.visual ?? []).map((label, index) => `<span><b>${String(index + 1).padStart(2, "0")}</b>${escapeHtml(label)}</span>`).join("")}
+          ${(slide.definitions?.length ? slide.definitions : (slide.visual ?? []).map((label, index) => [String(index + 1).padStart(2, "0"), label]))
+            .map(([label, detail]) => `<span><b>${escapeHtml(label)}</b>${escapeHtml(detail)}</span>`).join("")}
         </div>
         <nav class="terminal-guide-controls">
           <button type="button" data-terminal-guide-step="-1" ${guideIndex === 0 ? "disabled" : ""}>‹ ${escapeHtml(copy.guide.previous)}</button>

@@ -182,6 +182,7 @@ function createInitialState() {
     averageEfficiency: 0,
     efficiencySamples: 0,
     debugForcedOutcome: null,
+    demandScheduleSeed: Math.random() * Math.PI * 2,
     completionMode: "timed",
     durationSeconds: TOTAL_TIME,
   };
@@ -219,7 +220,7 @@ function updateRunningState(state, dt, controls) {
   const pulse = canChargeIgnition && state.ignitionHold >= 0.5 ? 1 : 0;
   if (!pulseHeld) state.pulseLatched = false;
   const event = getShiftEvent(state.elapsed, shiftProfile);
-  const demand = getLiveDemand(operatingTargets, state.elapsed, event, shiftProfile);
+  const demand = getLiveDemand(operatingTargets, state.elapsed, event, shiftProfile, state.demandScheduleSeed);
   const quenchPressure =
     coolant > 0.68 && fuel < 0.24
       ? 0.25 + clamp((coolant - 0.68) / 0.32, 0, 1) * clamp((0.24 - fuel) / 0.14, 0, 1) * 1.35
@@ -549,11 +550,15 @@ function pickStatus(state, phase, tempLow, tempHigh, event) {
   return "PARAMETERS DRIFTING";
 }
 
-function getLiveDemand(phase, elapsed, event, shiftProfile = null) {
+function getLiveDemand(phase, elapsed, event, shiftProfile = null, scheduleSeed = 0) {
   if (Number.isFinite(shiftProfile?.demandOverride)) return Math.max(0, shiftProfile.demandOverride);
   const wander = shiftProfile?.demandWander ?? { enabled: true, amount: 1 };
   const wanderAmount = wander.enabled === false ? 0 : Number(wander.amount ?? 1);
-  const gridWander = (Math.sin(elapsed * 0.19) * 18 + Math.sin(elapsed * 0.071 + 1.2) * 12) * wanderAmount;
+  const phaseOffset = wander.randomized ? Number(scheduleSeed) || 0 : 0;
+  const gridWander = (
+    Math.sin(elapsed * 0.19 + phaseOffset) * 18
+    + Math.sin(elapsed * 0.071 + 1.2 + phaseOffset * 0.47) * 12
+  ) * wanderAmount;
   return Math.max(0, Math.round(phase.demand + gridWander + event.demandOffset));
 }
 

@@ -40,11 +40,15 @@ test("registered playable levels have isolated prefab names", () => {
   });
 });
 
-test("environment aliases resolve without duplicating environment objects", () => {
-  assert.equal(getLevelEnvironmentId("freeplay"), "intro-shift");
-  assert.strictEqual(
+test("freeplay owns an isolated facility environment", () => {
+  assert.equal(getLevelEnvironmentId("freeplay"), "freeplay");
+  assert.notStrictEqual(
     LEVEL_DEFINITIONS.freeplay.environment,
-    LEVEL_DEFINITIONS["intro-shift"].environment,
+    LEVEL_DEFINITIONS["exploring-around"].environment,
+  );
+  assert.equal(
+    LEVEL_DEFINITIONS.freeplay.environment.assetPath,
+    LEVEL_DEFINITIONS["exploring-around"].environment.assetPath,
   );
 });
 
@@ -54,20 +58,33 @@ test("deprecated elevator prototype is not a playable assignment", () => {
   assert.equal(getPlayableLevels().some((level) => level.id === "intro-elevator"), false);
 });
 
-test("registry owns the three-shift assignment progression", () => {
+test("registry exposes two tutorials and freeplay while retaining hidden story assignment three", () => {
   const assignments = Object.values(LEVEL_DEFINITIONS)
     .filter((level) => level.assignment)
     .sort((a, b) => a.assignment.order - b.assignment.order);
-  assert.deepEqual(assignments.map((level) => level.id), ["exploring-around", "unexpected-stuff", "fuel-problems"]);
-  assert.deepEqual(assignments[0].assignment.unlockAfter, []);
-  assert.deepEqual(assignments[1].assignment.unlockAfter, ["exploring-around"]);
-  assert.deepEqual(assignments[2].assignment.unlockAfter, ["exploring-around"]);
+  const publicAssignments = assignments.filter((level) => level.assignment.public !== false);
+  assert.deepEqual(publicAssignments.map((level) => level.id), ["exploring-around", "unexpected-stuff", "freeplay"]);
+  assert.equal(LEVEL_DEFINITIONS["fuel-problems"].assignment.public, false);
+  assert.deepEqual(publicAssignments[0].assignment.unlockAfter, []);
+  assert.deepEqual(publicAssignments[1].assignment.unlockAfter, ["exploring-around"]);
+  assert.deepEqual(publicAssignments[2].assignment.unlockAfter, ["exploring-around", "unexpected-stuff"]);
   assignments.forEach((level) => {
     assert.match(level.assignment.reference, /^OP-[A-Z]+\/\d{3}$/);
     assert.equal(level.assignment.facility, "SITE-12");
     assert.ok(level.assignment.sectorKey);
     assert.ok(level.assignment.clearanceKey);
   });
+});
+
+test("freeplay runs for ten minutes with wandering demand and randomized incidents", () => {
+  const environment = LEVEL_DEFINITIONS.freeplay.environment;
+  assert.equal(environment.shiftProfile.durationSeconds, 600);
+  assert.equal(environment.shiftProfile.phases.at(-1).end, 600);
+  assert.equal(environment.shiftProfile.demandWander.enabled, true);
+  assert.equal(environment.shiftProfile.demandWander.randomized, true);
+  assert.equal(environment.session.objectives[0].seconds, 600);
+  assert.equal(environment.diagnostics.randomTimeline.length, 4);
+  assert.ok(environment.diagnostics.randomTimeline.every((group) => group.pool.length >= 3));
 });
 
 test("exploring around completes only after the shift and authored bulkhead exit", () => {
@@ -206,9 +223,30 @@ test("instrument reliability shift reuses the facility with its own brief, intro
     ["lore-difficulties", "lore-modernization", "work-supervision", "structure-noises"],
   );
   assert.ok(environment.narration.randomSpeech.lines.every((line) => line.shift === "unexpected-stuff"));
-  const failedLights = environment.prefabStatePolicies.at(-1);
-  assert.equal(failedLights.overrides.lightPanel.startsTripped, true);
-  assert.deepEqual(failedLights.prefabTypes, ["LightPanel1"]);
+  const lightPanelPolicies = environment.prefabStatePolicies
+    .filter((policy) => policy.prefabTypes?.includes("LightPanel1"));
+  assert.equal(lightPanelPolicies.some((policy) => policy.overrides?.lightPanel?.startsTripped === true), true);
+  assert.deepEqual(environment.diagnostics.initialFaults.lamps, [{
+    id: "over-demand-off-at-start",
+    type: "lampFault",
+    name: "LightCase1_Light_OverDemand",
+    force: "off",
+    failColors: ["all"],
+    durationSeconds: 45,
+  }]);
+  assert.deepEqual(environment.diagnostics.initialFaults.gauges, [{
+    id: "plasma-temp-needle-off-at-start",
+    type: "gaugeFault",
+    key: "plasmaTemp",
+    maxRatio: 0,
+    durationSeconds: 45,
+  }]);
+  assert.deepEqual(environment.diagnostics.initialRandomFaults, []);
+  assert.deepEqual(environment.diagnostics.timeline.map(({ id }) => id), [
+    "critical-temperature-lighting-trip",
+    "coolant-sticky-midshift",
+  ]);
+  assert.deepEqual(environment.diagnostics.randomTimeline.flatMap(({ pool }) => pool.map(({ atSeconds }) => atSeconds)), [118, 118, 118]);
   assert.equal(environment.lighting.ambientIntensity, 0);
   assert.equal(environment.lighting.pointLights.fill.intensity, 0);
   assert.ok(environment.lighting.pointLights.LampFan.intensity > 0);

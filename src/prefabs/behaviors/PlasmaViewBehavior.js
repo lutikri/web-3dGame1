@@ -390,6 +390,12 @@ function createPlasmaMaterial(sharedUniforms, layer) {
     blending: layer === 0 ? THREE.NormalBlending : THREE.AdditiveBlending,
     side: THREE.DoubleSide,
     toneMapped: true,
+    stencilWrite: true,
+    stencilRef: 1,
+    stencilFunc: THREE.AlwaysStencilFunc,
+    stencilFail: THREE.KeepStencilOp,
+    stencilZFail: THREE.KeepStencilOp,
+    stencilZPass: THREE.ReplaceStencilOp,
   });
 }
 

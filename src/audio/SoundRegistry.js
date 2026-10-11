@@ -153,6 +153,7 @@ export const SOUND_REGISTRY = {
   UI_Hint1: { path: "assets/sounds/ui/UI_Hint1.ogg", volume: 0.46 },
   UI_Hint2: { path: "assets/sounds/ui/UI_Hint2.ogg", volume: 0.46 },
   UI_LevelIntro1: { path: "assets/sounds/ui/UI_LevelIntro1.ogg", volume: 0.58 },
+  UI_ServiceTerminalClick1: { path: "assets/sounds/ui/UI_ServiceTerminalClick1.ogg", volume: 0.62 },
   UI_PaperSlide1: { path: "assets/sounds/ui/UI_PaperSlide1.ogg", volume: 0.42 },
   UI_PaperSlide2: { path: "assets/sounds/ui/UI_PaperSlide2.ogg", volume: 0.42 },
   UI_PaperSlide3: { path: "assets/sounds/ui/UI_PaperSlide3.ogg", volume: 0.42 },
@@ -167,6 +168,7 @@ export const SOUND_GROUPS = {
   lampConstantBuzz: ["LampConstantBuzz1", "LampConstantBuzz2"],
   paperSlide: ["UI_PaperSlide1", "UI_PaperSlide2", "UI_PaperSlide3", "UI_PaperSlide4"],
   tutorialHint: ["UI_Hint2"],
+  serviceTerminalClick: ["UI_ServiceTerminalClick1"],
   panelKnobTick: ["Panel_KnobTick1", "Panel_KnobTick2", "Panel_KnobTick3"],
   flashlightToggle: [
     "ButtonFlashlight1", "ButtonFlashlight2", "ButtonFlashlight3", "ButtonFlashlight4",

@@ -11,6 +11,35 @@ function applyLevelMaterialTuning(materials, tuning) {
   return materials;
 }
 
+function createScreenGlassMaterialConfig({ materialName, meshName, tuning = {} }) {
+  return {
+    maskAsAlphaMap: true,
+    alphaMapContrast: 2.3,
+    color: "#34302f",
+    roughness: 0.58,
+    metalness: 0,
+    normalScale: 1,
+    aoMapIntensity: 1,
+    emissive: "#000000",
+    emissiveIntensity: 0,
+    transparent: true,
+    opacity: 0.55,
+    depthTest: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    castShadow: false,
+    receiveShadow: false,
+    ...tuning,
+    materialNames: [materialName],
+    ...(meshName ? { meshNames: [meshName] } : {}),
+    maps: {
+      initial: {
+        mask: "assets/runtime-textures/T_Terminal1_ScreenDirt1_Interactive_Preview_1024.png",
+      },
+    },
+  };
+}
+
 function applyKnownConfigOverrides(target, overrides) {
   if (!target || !overrides || typeof overrides !== "object") return target;
   Object.entries(overrides).forEach(([key, value]) => {
@@ -262,31 +291,10 @@ export const CONFIG = {
         castShadow: false,
         receiveShadow: false,
       },
-      terminalScreenGlass: {
-        materialNames: ["M_TerminalScreenGlass"],
-        meshNames: ["SM_Terminal_ScreenGlass"],
-        maps: {
-          initial: {
-            mask: "assets/runtime-textures/T_Terminal1_ScreenDirt1_Interactive_Preview_1024.png",
-          },
-        },
-        maskAsAlphaMap: true,
-        alphaMapContrast: 2.3,
-        color: "#34302f",
-        roughness: 0.58,
-        metalness: 0,
-        normalScale: 1,
-        aoMapIntensity: 1,
-        emissive: "#000000",
-        emissiveIntensity: 0,
-        transparent: true,
-        opacity: 0.55,
-        depthTest: true,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-        castShadow: false,
-        receiveShadow: false,
-      },
+      terminalScreenGlass: createScreenGlassMaterialConfig({
+        materialName: "M_TerminalScreenGlass",
+        meshName: "SM_Terminal_ScreenGlass",
+      }),
       briefPaper: {
         materialNames: ["M_Brief", "M_Brief.001"],
         meshNames: ["SM_Brief1"],
@@ -743,6 +751,10 @@ export const CONFIG = {
         emissive: "#000000",
         emissiveIntensity: 0,
       },
+      coreViewportGlass1: createScreenGlassMaterialConfig({
+        materialName: "M_CoreViewportGlass1",
+        tuning: GLOBAL_SCENE_OVERRIDES.materials?.coreViewportGlass1,
+      }),
       coreViewport1: {
         materialNames: ["M_CoreViewport1"],
         namePrefixes: ["SM_CoreViewport1"],

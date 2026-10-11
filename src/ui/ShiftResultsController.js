@@ -18,6 +18,7 @@ const REPORT_COPY_FAMILY_BY_LEVEL = Object.freeze({
   "exploring-around": "qualification",
   "unexpected-stuff": "reliability",
   "fuel-problems": "cost",
+  freeplay: "freeplay",
 });
 
 export class ShiftResultsController {

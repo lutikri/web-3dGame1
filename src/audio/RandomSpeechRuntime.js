@@ -80,7 +80,8 @@ export class RandomSpeechRuntime {
 }
 
 function resolveLocalizedLine(line, language) {
-  return line?.[language] ?? line?.en ?? line?.ru ?? null;
+  const locale = String(language ?? "").toLowerCase().startsWith("ru") ? "ru" : "en";
+  return line?.[locale] ?? null;
 }
 
 function matchesShift(shift, levelId) {

@@ -5,6 +5,7 @@ export const TERMINAL_SHIFT_ID_BY_LEVEL = Object.freeze({
   "exploring-around": "qualification",
   "unexpected-stuff": "diagnostic",
   "fuel-problems": "efficiency",
+  freeplay: "freeplay",
 });
 
 export const TERMINAL_STATIC_REPORTS = Object.freeze([
@@ -162,6 +163,20 @@ export const TERMINAL_SHIFT_CONFIG = Object.freeze({
           ),
           cards: localized(["PRESS TEST", "CHECK LAMPS", "CROSS-CHECK"], ["НАЖАТЬ TEST", "ПРОВЕРИТЬ ЛАМПЫ", "СОПОСТАВИТЬ"]),
         },
+        {
+          id: "lighting-distribution",
+          kind: "lightingProcedure",
+          title: localized("LIGHTING DISTRIBUTION", "РАСПРЕДЕЛЕНИЕ ОСВЕЩЕНИЯ"),
+          lead: localized(
+            "In emergency modes or during sudden load changes, the protection system may disconnect part of the normal lighting.",
+            "В аварийных режимах или при резком изменении нагрузки часть штатного освещения может быть отключена системой защиты.",
+          ),
+          definitions: [
+            ["01 — INSPECT", localized("If lighting is lost, inspect the LIGHT DISTRIBUTION PANEL in CORRIDOR A. Check panel breakers and indicators.", "При потере освещения проверьте шкаф LIGHT DISTRIBUTION PANEL в CORRIDOR A. Проверьте состояние автоматов и индикаторов панели.")],
+            ["02 — ISOLATE", localized("Before restoring power, set the MASTER ISOLATOR to OFF.", "Перед восстановлением питания переведите MASTER ISOLATOR в положение OFF.")],
+            ["03 — RESTORE", localized("After inspection, return the MASTER ISOLATOR to ON and reset the disconnected circuits.", "После завершения проверки верните MASTER ISOLATOR в положение ON и выполните сброс отключённых цепей.")],
+          ],
+        },
       ],
     },
     report: { date: "02.05.2037", event: localized("INSTRUMENT RELIABILITY RUN", "ПРОВЕРКА НАДЁЖНОСТИ ПРИБОРОВ") },
@@ -181,9 +196,63 @@ export const TERMINAL_SHIFT_CONFIG = Object.freeze({
     archiveEntries: [],
   },
 
+  freeplay: {
+    id: "freeplay",
+    order: 3,
+    date: "PUBLIC BUILD",
+    time: "10:00",
+    site: "SITE-12",
+    shaft: "SHAFT 03",
+    brief: {
+      title: localized("FREE SHIFT\nPUBLIC BUILD", "СВОБОДНАЯ СМЕНА\nПУБЛИЧНАЯ ВЕРСИЯ"),
+      purpose: localized("Open operating session while subsequent scheduled shifts remain in development.", "Свободная рабочая сессия, пока последующие плановые смены находятся в разработке."),
+      objective: localized("Operate FCU-16 for ten minutes under a variable grid schedule.", "Управляйте FCU-16 десять минут при переменном графике нагрузки сети."),
+      success: localized("Complete the shift without a critical reactor event.", "Завершите смену без критического события реактора."),
+      conditions: localized("Grid demand and equipment incidents are randomized for each session.", "Запрос сети и происшествия с оборудованием меняются в каждой сессии."),
+      attachments: [
+        {
+          id: "load-profile",
+          icon: "guide",
+          title: localized("VARIABLE LOAD PROFILE", "ПЕРЕМЕННЫЙ ПРОФИЛЬ НАГРУЗКИ"),
+          type: "loadProfile",
+          heading: localized("FCU-16 / FREE SHIFT", "FCU-16 / СВОБОДНАЯ СМЕНА"),
+          sourceLevelId: "freeplay",
+        },
+      ],
+    },
+    guide: {
+      pages: [
+        {
+          id: "free-shift-operation",
+          title: localized("FREE SHIFT OPERATION", "РАБОТА В СВОБОДНОЙ СМЕНЕ"),
+          body: localized(
+            ["Follow live grid demand, cross-check abnormal indications, and respond to equipment incidents as they occur."],
+            ["Следуйте текущему запросу сети, перепроверяйте аномальные показания и реагируйте на происшествия с оборудованием."],
+          ),
+          cards: localized(["TRACK LOAD", "VERIFY", "RESPOND"], ["СЛЕДИТЬ", "ПРОВЕРЯТЬ", "РЕАГИРОВАТЬ"]),
+        },
+      ],
+    },
+    report: null,
+    notices: [
+      {
+        id: "scheduled-shifts-in-development",
+        date: "PUBLIC BUILD",
+        title: localized("SUBSEQUENT SHIFTS IN DEVELOPMENT", "ПОСЛЕДУЮЩИЕ СМЕНЫ В РАЗРАБОТКЕ"),
+        body: localized(
+          ["The two operator tutorial shifts are available in this build.", "A free operating shift is provided while additional assignments are in development."],
+          ["В этой версии доступны две учебные смены оператора.", "Пока дополнительные задания находятся в разработке, доступна свободная рабочая смена."],
+        ),
+        status: localized("STATUS: PUBLIC BUILD", "СТАТУС: ПУБЛИЧНАЯ ВЕРСИЯ"),
+        severity: "info",
+      },
+    ],
+    archiveEntries: [],
+  },
+
   efficiency: {
     id: "efficiency",
-    order: 3,
+    order: 4,
     date: "07.05.2037",
     time: "21:40",
     site: "SITE-12",

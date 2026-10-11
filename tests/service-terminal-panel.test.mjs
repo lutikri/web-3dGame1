@@ -44,17 +44,23 @@ test("terminal content follows the active shift with fixed dates and shift-speci
   const qualification = getServiceTerminalContent("exploring-around", "en");
   const diagnostic = getServiceTerminalContent("unexpected-stuff", "en");
   const efficiency = getServiceTerminalContent("fuel-problems", "ru");
+  const freeplay = getServiceTerminalContent("freeplay", "ru");
 
   assert.equal(resolveTerminalShiftId("exploring-around"), "qualification");
   assert.equal(resolveTerminalShiftId("unexpected-stuff"), "diagnostic");
   assert.equal(resolveTerminalShiftId("fuel-problems"), "efficiency");
+  assert.equal(resolveTerminalShiftId("freeplay"), "freeplay");
   assert.deepEqual(qualification.shift, { id: "qualification", date: "30.04.2037", time: "13:30", site: "SITE-12", shaft: "SHAFT 03" });
   assert.equal(diagnostic.shift.date, "02.05.2037");
-  assert.equal(diagnostic.guide.slides.length, 2);
+  assert.equal(diagnostic.guide.slides.length, 3);
   assert.equal(diagnostic.guide.slides[0].title, "INSTRUMENT RELIABILITY");
+  assert.equal(diagnostic.guide.slides[2].title, "LIGHTING DISTRIBUTION");
+  assert.match(diagnostic.guide.slides[2].definitions[0][1], /LIGHT DISTRIBUTION PANEL/);
   assert.equal(efficiency.shift.time, "21:40");
   assert.equal(efficiency.guide.slides.length, 2);
   assert.equal(efficiency.guide.slides[0].title, "УПРАВЛЕНИЕ ТОПЛИВНОЙ СМЕСЬЮ");
+  assert.equal(freeplay.shift.date, "PUBLIC BUILD");
+  assert.equal(freeplay.brief.attachments[0].points.at(-1)[0], 600);
 });
 
 test("shift reports accumulate canonical events without replay attempts", () => {

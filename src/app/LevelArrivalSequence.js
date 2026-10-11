@@ -18,6 +18,10 @@ const ARRIVAL_COPY = {
     title: { en: "OPERATING COST TRIAL", ru: "ИСПЫТАНИЕ ЗАТРАТ" },
     subtitle: { en: "FUEL ECONOMY EVALUATION", ru: "ОЦЕНКА РАСХОДА ТОПЛИВА" },
   },
+  freeplay: {
+    title: { en: "FREE SHIFT", ru: "СВОБОДНАЯ СМЕНА" },
+    subtitle: { en: "PUBLIC BUILD / VARIABLE OPERATIONS", ru: "ПУБЛИЧНАЯ ВЕРСИЯ / СВОБОДНЫЙ РЕЖИМ" },
+  },
 };
 
 const SYSTEM_COPY = {

@@ -13,7 +13,7 @@ import { createLevelSceneBuilder } from "../src/scene/LevelSceneBuilder.js";
 import { getLightPanelDebugProperties } from "../src/ui/debug/workspace/DebugWorkspace.js";
 import {
   activateLightPanelControl, applyLightPanelConfig, createLightPanelRuntime,
-  registerLightPanelInteraction, syncLightPanelPower, updateLightPanelRuntime,
+  registerLightPanelInteraction, syncLightPanelPower, tripLightPanelCircuits, updateLightPanelRuntime,
 } from "../src/prefabs/behaviors/LightPanelBehavior.js";
 
 async function fixture({ tripped = false } = {}) {
@@ -231,7 +231,21 @@ test("tripped breakers blink red, block room buttons, and require an isolator cy
   assert.equal(lamp.light.enabled, false);
 });
 
-test("qualification starts powered; reliability only trips lamps in the panel's resolved saved circuits", async () => {
+test("runtime lighting trip faults powered circuits and an isolator cycle restores them", async () => {
+  const { panel, parts, instances } = await fixture();
+  panel.config.circuits.StaffRoom.enabled = false;
+  assert.equal(tripLightPanelCircuits(instances, "room"), panel.circuits.size - 1);
+  assert.ok([...panel.circuits.entries()].every(([name, part]) => part.tripped === (name !== "StaffRoom")));
+  assert.equal(panel.powerDirty, true);
+  assert.equal(tripLightPanelCircuits(instances, "foreign"), 0);
+
+  activateLightPanelControl(parts.get("LightPanel1_SwitchIsolator1"), instances);
+  assert.ok([...panel.circuits.values()].every((part) => part.tripped));
+  activateLightPanelControl(parts.get("LightPanel1_SwitchIsolator1"), instances);
+  assert.ok([...panel.circuits.values()].every((part) => !part.tripped));
+});
+
+test("qualification starts powered; reliability starts tripped with resolved saved light-panel circuits", async () => {
   const { applyLevelOverrides } = await import("../src/levels/LevelConfigOverrides.js");
   const names = ["LightPanel1_Main", "fluorescentLamp_TutorialCabin", "fluorescentLamp_Custom",
     "fluorescentLamp_Observation1", "fluorescentLamp_StaffRoom1", "LampDesk1_1", "LampDome1_EntHall1", "redBulkLamp_Exit1"];

@@ -694,6 +694,17 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
       "prefabTypes": [
         "LightPanel1"
       ],
+      "overrides": {
+        "lightPanel": {
+          "startsTripped": false,
+          "masterEnabled": true
+        }
+      }
+    },
+    {
+      "prefabTypes": [
+        "LightPanel1"
+      ],
       "phase": "defaults",
       "overrides": {
         "lightPanel": {
@@ -1247,6 +1258,11 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
           -0.2,
           -0.48
         ],
+        "equippedDepth": 0.34,
+        "aimAtCursor": true,
+        "aimDistance": 12,
+        "aimSmoothingSeconds": 0.12,
+        "aimMaxAngleDegrees": 70,
         "rotationOffset": [
           0,
           270,
@@ -2715,50 +2731,66 @@ export const LEVEL_EXPLORING_AROUND_OVERRIDES = {
         "masterOnPosition": 0.11769,
         "masterDurationSeconds": 0.25,
         "masterEnabled": true,
+        "startsTripped": false,
+        "audio": {
+          "masterOnSoundKey": "CircuitBreakerOn1",
+          "masterOffSoundKey": "CircuitBreakerOff1",
+          "doorOpenSoundKey": "ElectricalBoxLatchOpen1",
+          "doorCloseSoundKey": "ElectricalBoxLatchClose1",
+          "humSoundKey": "ElectricalBoxHum1"
+        },
         "indicatorColor": "#5cff7f",
         "indicatorIntensity": 0.4,
+        "faultIndicatorColor": "#ff2222",
+        "faultBlinkSeconds": 0.8,
         "circuits": {
           "ControlBooth": {
             "meshName": "LightPanel1_Switch_ControlBooth",
             "indicatorName": "LightPanel1_SwitchLight_ControlBooth",
             "label": "CONTROL BOOTH",
             "enabled": true,
-            "targets": "fluorescentLamp_TutorialCabin"
+            "targets": "fluorescentLamp_TutorialCabin",
+            "extraTargets": ""
           },
           "ServiceCorridor": {
             "meshName": "LightPanel1_Switch_ServiceCooridor1",
             "indicatorName": "LightPanel1_SwitchLight_ServiceCorridor",
             "label": "SERVICE CORRIDOR",
             "enabled": true,
-            "targets": "fluorescentLamp_Corridor1, fluorescentLamp_Corridor2, fluorescentLamp_Corridor3, fluorescentLamp_Corridor4, fluorescentLamp_Corridor5, fluorescentLamp_Corridor6"
+            "targets": "fluorescentLamp_Corridor1, fluorescentLamp_Corridor2, fluorescentLamp_Corridor3, fluorescentLamp_Corridor4, fluorescentLamp_Corridor5, fluorescentLamp_Corridor6",
+            "extraTargets": ""
           },
           "Observation": {
             "meshName": "LightPanel1_Switch_Observation",
             "indicatorName": "LightPanel1_SwitchLight_Observation",
             "label": "OBSERVATION",
             "enabled": true,
-            "targets": "fluorescentLamp_Observation1"
+            "targets": "fluorescentLamp_Observation1",
+            "extraTargets": ""
           },
           "StaffRoom": {
             "meshName": "LightPanel1_Switch_StaffRoom",
             "indicatorName": "LightPanel1_SwitchLight_StaffRoom",
             "label": "STAFF ROOM",
             "enabled": true,
-            "targets": ""
+            "targets": "",
+            "extraTargets": ""
           },
           "EntryArea": {
             "meshName": "LightPanel1_Switch_EntryArea",
             "indicatorName": "LightPanel1_SwitchLight_EntryArea",
             "label": "ENTRY AREA",
             "enabled": true,
-            "targets": "fluorescentLamp_EntryHall1, fluorescentLamp_EntryHall2"
+            "targets": "fluorescentLamp_EntryHall1, fluorescentLamp_EntryHall2",
+            "extraTargets": ""
           },
           "ServiceOther": {
             "meshName": "LightPanel1_Switch_ServiceOther",
             "indicatorName": "LightPanel1_SwitchLight_Service",
             "label": "OTHER SERVICE",
             "enabled": true,
-            "targets": ""
+            "targets": "",
+            "extraTargets": ""
           }
         }
       },

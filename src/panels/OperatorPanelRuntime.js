@@ -43,8 +43,10 @@ export class OperatorPanelRuntime {
     const pulseCount = snapshot.ignitionPulseCount ?? 0;
     if (pulseCount > this.observedIgnitionPulseCount) tick.onIgnitionPulse();
     this.observedIgnitionPulseCount = pulseCount;
-    tick.diagnostics.update(dt);
+    tick.diagnostics.update(dt, snapshot);
     if (tick.diagnostics.consumeLightRestartRequest()) tick.onLightRestart();
+    const lightPanelTrip = tick.diagnostics.consumeLightPanelTripRequest?.();
+    if (lightPanelTrip) tick.onLightPanelTrip?.(lightPanelTrip);
     tick.updateRecorder(dt, snapshot, inputs);
     snapshot = tick.evaluateCompletion?.(snapshot, inputs, dt) ?? snapshot;
     tick.setSnapshot(snapshot);

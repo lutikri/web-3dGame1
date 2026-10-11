@@ -9,6 +9,7 @@ import {
 test("arrival config follows shift metadata and localization", () => {
   const qualification = getLevelArrivalConfig("exploring-around", "en");
   const diagnostic = getLevelArrivalConfig("unexpected-stuff", "ru");
+  const freeplay = getLevelArrivalConfig("freeplay", "en");
 
   assert.deepEqual(qualification, {
     shiftId: "qualification",
@@ -22,6 +23,8 @@ test("arrival config follows shift metadata and localization", () => {
   });
   assert.equal(diagnostic.dateTime, "02 МАЙ 2037   06:00");
   assert.equal(diagnostic.title, "НАДЁЖНОСТЬ ПРИБОРОВ");
+  assert.equal(freeplay.dateTime, "PUBLIC BUILD   10:00");
+  assert.equal(freeplay.title, "FREE SHIFT");
 });
 
 test("arrival sequence releases input before its title finishes", async () => {

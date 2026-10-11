@@ -5,6 +5,7 @@ import { validateLevelEnvironmentConfig } from "./LevelConfigSchema.js?v=compact
 
 const LEVEL_UNEXPECTED_STUFF_CONFIG = createUnexpectedStuffConfig();
 const LEVEL_COST_OF_RUNNING_CONFIG = createCostOfRunningConfig();
+const LEVEL_FREEPLAY_CONFIG = createFreeplayConfig();
 
 export const LEVEL_DEFINITIONS = {
   "intro-elevator": {
@@ -38,12 +39,15 @@ export const LEVEL_DEFINITIONS = {
       order: 1,
       unlockAfter: [],
       titleKey: "assignments.qualification.title",
+      subjectKey: "assignments.applicationApproved",
       documentTitleKey: "assignments.qualification.documentTitle",
       summaryKey: "assignments.qualification.summary",
       reference: "OP-QUAL/001",
       facility: "SITE-12",
       sectorKey: "assignments.localOperations",
       clearanceKey: "assignments.assigned",
+      date: "01.05.2036",
+      time: "06:42",
     },
     environment: LEVEL_EXPLORING_AROUND_CONFIG,
   },
@@ -66,11 +70,13 @@ export const LEVEL_DEFINITIONS = {
       order: 2,
       unlockAfter: ["exploring-around"],
       titleKey: "assignments.reliability.title",
+      subjectKey: "assignments.operationsSubject",
       summaryKey: "assignments.reliability.summary",
       reference: "OP-REL/002",
       facility: "SITE-12",
       sectorKey: "assignments.localOperations",
       clearanceKey: "assignments.assigned",
+      date: "02.05.2036",
     },
     briefingImage: {
       en: ["assets/ui/briefings/T_Brief_InstrumentReabilityCheckEN.png"],
@@ -88,6 +94,7 @@ export const LEVEL_DEFINITIONS = {
     assignment: {
       order: 3,
       unlockAfter: ["exploring-around"],
+      public: false,
       titleKey: "assignments.cost.title",
       summaryKey: "assignments.cost.summary",
       reference: "OP-COST/003",
@@ -148,10 +155,22 @@ export const LEVEL_DEFINITIONS = {
     id: "freeplay",
     title: "FREEPLAY",
     mode: "freeplay",
-    description: "Loose target mode placeholder using the current shift for now.",
+    description: "Ten-minute free shift with wandering demand and randomized incidents.",
     playable: true,
-    environmentId: "intro-shift",
-    environment: LEVEL_INTRO_SHIFT_CONFIG,
+    assignment: {
+      order: 3,
+      unlockAfter: ["exploring-around", "unexpected-stuff"],
+      titleKey: "assignments.freeplay.title",
+      subjectKey: "assignments.developmentSubject",
+      documentTitleKey: "assignments.freeplay.documentTitle",
+      summaryKey: "assignments.freeplay.summary",
+      reference: "OP-FREE/003",
+      facility: "SITE-12",
+      sectorKey: "assignments.localOperations",
+      clearanceKey: "assignments.assigned",
+      dateKey: "assignments.freeplay.date",
+    },
+    environment: LEVEL_FREEPLAY_CONFIG,
   },
   competitive: {
     id: "competitive",
@@ -358,96 +377,34 @@ function createUnexpectedStuffConfig() {
         durationSeconds: 10,
       },
       initialFaults: {
-        lamps: [],
-        gauges: [],
+        lamps: [
+          {
+            id: "over-demand-off-at-start",
+            type: "lampFault",
+            name: "LightCase1_Light_OverDemand",
+            force: "off",
+            failColors: ["all"],
+            durationSeconds: 45,
+          },
+        ],
+        gauges: [
+          {
+            id: "plasma-temp-needle-off-at-start",
+            type: "gaugeFault",
+            key: "plasmaTemp",
+            maxRatio: 0,
+            durationSeconds: 45,
+          },
+        ],
         knobs: [],
       },
-      initialRandomFaults: [
-        {
-          count: 1,
-          pool: [
-            {
-              id: "plasma-temp-stuck-at-sixty",
-              type: "gaugeFault",
-              key: "plasmaTemp",
-              delaySeconds: 2.6,
-              maxRatio: 0.6,
-              noiseDegrees: 0.18,
-              durationSeconds: 145,
-            },
-            {
-              id: "containment-stuck-at-sixty",
-              type: "gaugeFault",
-              key: "containment",
-              delaySeconds: 2,
-              maxRatio: 0.62,
-              noiseDegrees: 0.16,
-              durationSeconds: 145,
-            },
-            {
-              id: "power-output-stuck-at-sixty",
-              type: "gaugeFault",
-              key: "powerOutput",
-              delaySeconds: 2.2,
-              maxRatio: 0.6,
-              noiseDegrees: 0.2,
-              durationSeconds: 145,
-            },
-          ],
-        },
-        {
-          count: 1,
-          pool: [
-            {
-              id: "under-demand-amber-missing",
-              type: "lampFault",
-              name: "LightCase1_Light_UnderDemand",
-              failColors: ["amber"],
-              material: "amber",
-              blink: true,
-              blinkFrequency: 6,
-              durationSeconds: 145,
-            },
-            {
-              id: "over-demand-red-missing",
-              type: "lampFault",
-              name: "LightCase1_Light_OverDemand",
-              failColors: ["red"],
-              material: "amber",
-              blink: true,
-              blinkFrequency: 5,
-              durationSeconds: 145,
-            },
-            {
-              id: "efficiency-green-missing",
-              type: "lampFault",
-              name: "LightCase1_Light_ReactionEfficiency",
-              failColors: ["green"],
-              material: "green",
-              blink: true,
-              blinkFrequency: 9,
-              durationSeconds: 145,
-            },
-            {
-              id: "fuel-quality-green-missing",
-              type: "lampFault",
-              name: "LightCase1_Light_FuelQuality",
-              failColors: ["green"],
-              material: "amber",
-              blink: true,
-              blinkFrequency: 4,
-              durationSeconds: 145,
-            },
-          ],
-        },
-      ],
+      initialRandomFaults: [],
       timeline: [
         {
-          id: "bus-dip-1",
-          type: "blackout",
-          atSeconds: 65,
-          durationSeconds: 0.6,
-          restartLights: true,
+          id: "critical-temperature-lighting-trip",
+          type: "lightPanelTrip",
+          atSeconds: 110,
+          when: { modes: ["running"], warning: "tempCritical" },
         },
         {
           id: "coolant-sticky-midshift",
@@ -460,51 +417,6 @@ function createUnexpectedStuffConfig() {
         },
       ],
       randomTimeline: [
-        {
-          count: 1,
-          pool: [
-            {
-              id: "under-demand-false-positive",
-              type: "lampFault",
-              atSeconds: 48,
-              durationSeconds: 120,
-              name: "LightCase1_Light_UnderDemand",
-              material: "amber",
-              blink: true,
-              blinkFrequency: 7,
-            },
-            {
-              id: "over-demand-false-positive",
-              type: "lampFault",
-              atSeconds: 54,
-              durationSeconds: 120,
-              name: "LightCase1_Light_OverDemand",
-              material: "amber",
-              blink: true,
-              blinkFrequency: 6,
-            },
-            {
-              id: "efficiency-lamp-dirty-contact",
-              type: "lampFault",
-              atSeconds: 62,
-              durationSeconds: 120,
-              name: "LightCase1_Light_ReactionEfficiency",
-              material: "green",
-              blink: true,
-              blinkFrequency: 11,
-            },
-            {
-              id: "fuel-quality-false-warning",
-              type: "lampFault",
-              atSeconds: 70,
-              durationSeconds: 120,
-              name: "LightCase1_Light_FuelQuality",
-              material: "amber",
-              blink: true,
-              blinkFrequency: 5,
-            },
-          ],
-        },
         {
           count: 1,
           pool: [
@@ -724,6 +636,93 @@ function createCostOfRunningConfig() {
           waves: [
             { property: "heatPerFuelFactor", amplitude: 0.2, frequency: 0.16, seed: 7.3 },
             { property: "temperatureBias", amplitude: 14, frequency: 0.19, seed: 2.9 },
+          ],
+        },
+      ],
+    },
+  };
+}
+
+function createFreeplayConfig() {
+  const baseConfig = cloneConfigValue(LEVEL_EXPLORING_AROUND_CONFIG);
+  return {
+    ...baseConfig,
+    saveKind: "freeplay",
+    session: {
+      completion: "all",
+      objectives: [
+        { id: "operate-core", type: "survive", seconds: 600 },
+        {
+          id: "exit-complex",
+          type: "event",
+          event: "doorUnlocked",
+          target: "DoorBulk1_4",
+          blockedStopDegrees: 5,
+        },
+      ],
+      bindings: baseConfig.session?.bindings ?? [],
+    },
+    shiftProfile: {
+      completionMode: "timed",
+      durationSeconds: 600,
+      powerQualification: null,
+      defaultEvents: false,
+      transitionSeconds: 14,
+      demandWander: { enabled: true, randomized: true, amount: 2.4 },
+      phases: [
+        { name: "FREE SHIFT / STARTUP", start: 0, end: 80, temp: [70, 118], powerTemp: [88, 138], output: [260, 620], containmentMin: 68, demand: 420 },
+        { name: "FREE SHIFT / LOW LOAD", start: 80, end: 190, temp: [92, 138], powerTemp: [110, 154], output: [430, 780], containmentMin: 64, demand: 590 },
+        { name: "FREE SHIFT / VARIABLE LOAD", start: 190, end: 330, temp: [108, 151], powerTemp: [128, 165], output: [560, 910], containmentMin: 60, demand: 735 },
+        { name: "FREE SHIFT / HIGH LOAD", start: 330, end: 470, temp: [124, 160], powerTemp: [145, 172], output: [720, 1060], containmentMin: 56, demand: 895 },
+        { name: "FREE SHIFT / HANDOVER", start: 470, end: 600, temp: [104, 148], powerTemp: [126, 162], output: [500, 880], containmentMin: 62, demand: 700 },
+      ],
+    },
+    triggerSequences: (baseConfig.triggerSequences ?? []).map((sequence) => {
+      if (!["WelcomeEntry", "ControlBooth"].includes(sequence.name)) return sequence;
+      const { narration: _narration, ...withoutNarration } = sequence;
+      return withoutNarration;
+    }),
+    tutorial: {
+      ...baseConfig.tutorial,
+      enabled: false,
+      flashlightHints: false,
+    },
+    diagnostics: {
+      selfTest: { durationSeconds: 10 },
+      initialFaults: { lamps: [], gauges: [], knobs: [] },
+      initialRandomFaults: [],
+      timeline: [],
+      randomTimeline: [
+        {
+          count: 1,
+          pool: [
+            { id: "freeplay-early-blackout", type: "blackout", atSeconds: 76, durationSeconds: 0.7, restartLights: true },
+            { id: "freeplay-early-demand-lamp", type: "lampFault", atSeconds: 94, durationSeconds: 85, name: "LightCase1_Light_UnderDemand", material: "amber", blink: true, blinkFrequency: 7 },
+            { id: "freeplay-early-output-lag", type: "gaugeFault", atSeconds: 113, durationSeconds: 90, key: "powerOutput", delaySeconds: 2.1, noiseDegrees: 1.1 },
+          ],
+        },
+        {
+          count: 1,
+          pool: [
+            { id: "freeplay-mid-containment-offset", type: "gaugeFault", atSeconds: 202, durationSeconds: 105, key: "containment", offsetRatio: -0.09, noiseDegrees: 0.8 },
+            { id: "freeplay-mid-efficiency-lamp", type: "lampFault", atSeconds: 229, durationSeconds: 110, name: "LightCase1_Light_ReactionEfficiency", material: "green", blink: true, blinkFrequency: 9 },
+            { id: "freeplay-mid-coolant-sticky", type: "knobFault", atSeconds: 257, durationSeconds: 120, name: "Control_Knob_CoolantFlow", sensitivity: 0.08, exercisePercent: 90 },
+          ],
+        },
+        {
+          count: 1,
+          pool: [
+            { id: "freeplay-late-blackout", type: "blackout", atSeconds: 358, durationSeconds: 0.8, restartLights: true },
+            { id: "freeplay-late-output-offset", type: "gaugeFault", atSeconds: 391, durationSeconds: 115, key: "powerOutput", offsetRatio: 0.1, noiseDegrees: 1.3 },
+            { id: "freeplay-late-over-demand-lamp", type: "lampFault", atSeconds: 424, durationSeconds: 105, name: "LightCase1_Light_OverDemand", material: "amber", blink: true, blinkFrequency: 6 },
+          ],
+        },
+        {
+          count: 1,
+          pool: [
+            { id: "freeplay-handover-heat-sink", type: "gaugeFault", atSeconds: 489, durationSeconds: 75, key: "heatSinkCapacity", offsetRatio: 0.1, noiseDegrees: 0.9 },
+            { id: "freeplay-handover-fuel-lamp", type: "lampFault", atSeconds: 513, durationSeconds: 70, name: "LightCase1_Light_FuelQuality", material: "amber", blink: true, blinkFrequency: 5 },
+            { id: "freeplay-handover-field-sticky", type: "knobFault", atSeconds: 538, durationSeconds: 80, name: "Control_Knob_MagneticField", sensitivity: 0.12, exercisePercent: 75 },
           ],
         },
       ],

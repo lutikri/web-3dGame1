@@ -44,6 +44,8 @@ test("menu UI sounds resolve to converted UI assets", () => {
   assert.equal(SOUND_REGISTRY.Menu_Click1.path, "assets/sounds/ui/Menu_Click1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_Hover1.path, "assets/sounds/ui/Menu_Hover1.ogg");
   assert.equal(SOUND_REGISTRY.Menu_SetupComlete1.path, "assets/sounds/ui/Menu_SetupComlete1.ogg");
+  assert.equal(SOUND_REGISTRY.UI_ServiceTerminalClick1.path, "assets/sounds/ui/UI_ServiceTerminalClick1.ogg");
+  assert.deepEqual(SOUND_GROUPS.serviceTerminalClick, ["UI_ServiceTerminalClick1"]);
   assert.ok(SOUND_REGISTRY.Menu_Click1.volume >= 0 && SOUND_REGISTRY.Menu_Click1.volume <= 2);
   assert.ok(SOUND_REGISTRY.Menu_Hover1.volume >= 0 && SOUND_REGISTRY.Menu_Hover1.volume <= 2);
   assert.equal(SOUND_REGISTRY.DrawerMetal_Open1.path, "assets/sounds/interaction/DrawerMetal_Open1.ogg");

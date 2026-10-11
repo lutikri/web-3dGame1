@@ -228,6 +228,17 @@ export const GLOBAL_SCENE_OVERRIDES = {
       "emissive": "#000000",
       "emissiveIntensity": 0
     },
+    "coreViewportGlass1": {
+      "color": "#6e6e6e",
+      "roughness": 0.61,
+      "metalness": 0,
+      "normalScale": 0.825,
+      "aoMapIntensity": 1.035,
+      "emissive": "#000000",
+      "emissiveIntensity": 0,
+      "opacity": 0.64,
+      "alphaMapContrast": 1.11
+    },
     "coreViewport1": {
       "color": "#ffffff",
       "roughness": 1,
@@ -331,7 +342,7 @@ export const GLOBAL_SCENE_OVERRIDES = {
     "fovDegrees": 85,
     "zoomFovDegrees": 68,
     "zoomDamping": 12,
-    "mouseSensitivity": 0.0008304905936250003,
+    "mouseSensitivity": 0.0008720151233062504,
     "pitchLimitDegrees": 72,
     "leanPitchLimitDegrees": 88,
     "walkSpeed": 1.2,

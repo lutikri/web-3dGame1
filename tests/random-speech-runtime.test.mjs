@@ -86,3 +86,29 @@ test("random speech waits while authored narration is active", async () => {
   await Promise.resolve();
   assert.equal(playCalls, 0);
 });
+
+test("random speech never falls back to Russian while the game is in English", async () => {
+  const played = [];
+  const runtime = new RandomSpeechRuntime({
+    getActiveLevelId: () => "unexpected-stuff",
+    getLevelConfig: () => ({
+      narration: {
+        randomSpeech: {
+          enabled: true,
+          checkIntervalSeconds: 1,
+          chance: 1,
+          lines: [{ id: "ru-only", weight: 1, ru: { soundKey: "RussianLine", duration: 1 } }],
+        },
+      },
+    }),
+    getShiftElapsed: () => 60,
+    getCoreSnapshot: () => ({ mode: "running" }),
+    getLanguage: () => "en-US",
+    playNarration: async (...args) => { played.push(args); return true; },
+    random: () => 0,
+  });
+
+  runtime.update(1);
+  await Promise.resolve();
+  assert.deepEqual(played, []);
+});

@@ -53,6 +53,7 @@ function createHarness() {
       intersectObject: () => rayHits,
     },
     getLanguage: () => "en",
+    playClick: () => calls.push("click"),
     setPlayerEnabled: (enabled) => playerStates.push(enabled),
     requestPointerLock: () => { pointerLockRequests += 1; },
     now: () => currentTime,
@@ -80,11 +81,13 @@ test("in-world terminal click is accepted only through a screen UV hit", () => {
   assert.equal(harness.runtime.getPhase(), "active");
   assert.equal(harness.runtime.activate(harness.target, { levelId: "exploring-around" }), true);
   assert.deepEqual(harness.calls.find((call) => Array.isArray(call) && call[0] === "activate"), ["activate", 400, 675]);
+  assert.equal(harness.calls.filter((call) => call === "click").length, 1);
 
   harness.calls.length = 0;
   harness.setHits([]);
   assert.equal(harness.runtime.activate(harness.target), false);
   assert.equal(harness.calls.some((call) => Array.isArray(call) && call[0] === "activate"), false);
+  assert.equal(harness.calls.includes("click"), false);
 });
 
 test("generic screens share focus transitions, right-click exit, and re-entry cooldown", () => {

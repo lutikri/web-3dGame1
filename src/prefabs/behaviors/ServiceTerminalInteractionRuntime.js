@@ -15,6 +15,7 @@ export function createServiceTerminalInteractionRuntime({
   getLanguage = () => "en",
   onBriefViewed = () => {},
   onLanguageChange = () => {},
+  playClick = () => {},
   exitPointerLock = () => globalThis.document?.exitPointerLock?.(),
   requestPointerLock = () => {},
   setPlayerEnabled = () => {},
@@ -88,6 +89,7 @@ export function createServiceTerminalInteractionRuntime({
     focusedRequest = request;
     const result = runtime.renderer.activateAt(hit.pixel.x, hit.pixel.y);
     if (!result) return false;
+    playClick();
     if (result.type === "language") onLanguageChange(result.language);
     const briefKey = `${request.levelId ?? ""}:${request.prefabName ?? ""}`;
     if (!reportedBriefs.has(briefKey)) {

@@ -29,6 +29,10 @@ test("plasma view builds core, halo and a local reactor light from one authored 
   assert.equal(runtime.light.parent, root);
   assert.equal(core.material.name, "M_PlasmaView_Core");
   assert.equal(runtime.halo.material.name, "M_PlasmaView_Halo");
+  assert.equal(core.material.stencilWrite, true);
+  assert.equal(core.material.stencilRef, 1);
+  assert.equal(core.material.stencilZPass, THREE.ReplaceStencilOp);
+  assert.equal(runtime.halo.material.stencilWrite, true);
   assert.equal(runtime.uniforms.uFlowSpeed.value, 38);
   assert.equal(runtime.uniforms.uCoreGain.value, 1.15);
   assert.equal(runtime.uniforms.uHaloGain.value, 0.14);

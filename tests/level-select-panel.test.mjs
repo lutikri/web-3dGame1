@@ -1,17 +1,27 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { getAssignedLevels, getTerminalScale, isAssignedShift, shouldClearMailSelection } from "../src/app/panels/LevelSelectPanel.js";
+import { formatAssignmentDate, getAssignedLevels, getAssignmentMailbox, getTerminalScale, isAssignedShift, shouldClearMailSelection } from "../src/app/panels/LevelSelectPanel.js";
 
-test("assigned shifts expose only the three ordered GDD assignments", () => {
+test("assigned shifts expose the two tutorials and public free shift while hiding story assignment three", () => {
   const levels = {
-    freeplay: { id: "freeplay", playable: true },
+    freeplay: { id: "freeplay", playable: true, assignment: { order: 3, unlockAfter: ["qualification", "reliability"] } },
     qualification: { id: "qualification", playable: true, assignment: { order: 1, unlockAfter: [] } },
-    cost: { id: "cost", playable: true, assignment: { order: 3, unlockAfter: ["qualification"] } },
+    cost: { id: "cost", playable: true, assignment: { order: 3, unlockAfter: ["qualification"], public: false } },
     reliability: { id: "reliability", playable: true, assignment: { order: 2, unlockAfter: ["qualification"] } },
   };
 
-  assert.deepEqual(getAssignedLevels(levels).map((level) => level.id), ["qualification", "reliability", "cost"]);
+  assert.deepEqual(getAssignedLevels(levels).map((level) => level.id), ["qualification", "reliability", "freeplay"]);
+});
+
+test("completed shifts move from inbox to archive and assignment dates keep authored precision", () => {
+  const level = { id: "qualification" };
+  const progress = { completedLevels: {} };
+  assert.equal(getAssignmentMailbox(level, progress), "inbox");
+  progress.completedLevels.qualification = true;
+  assert.equal(getAssignmentMailbox(level, progress), "archive");
+  assert.equal(formatAssignmentDate({ date: "01.05.2036", time: "06:42" }), "01.05.2036 / 06:42");
+  assert.equal(formatAssignmentDate({ dateKey: "freeplay" }, (key) => `translated:${key}`), "translated:freeplay");
 });
 
 test("qualification unlocks both later assignments only after successful completion", () => {

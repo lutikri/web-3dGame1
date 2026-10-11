@@ -38,7 +38,7 @@ export function createAppShell({ gameApi }) {
   const routeLoadingStatus = document.querySelector("#routeLoadingStatus");
   const routeLoadingBarFill = document.querySelector("#routeLoadingBarFill");
   const uiAudio = createUiAudioInteractionRuntime({
-    root: overlay,
+    root: document,
     isAudioUnlocked: () => gameApi.isAudioUnlocked?.(),
     playHover: () => gameApi.playSoundGroup?.("menuHover"),
     playClick: () => gameApi.playSoundGroup?.("menuClick"),

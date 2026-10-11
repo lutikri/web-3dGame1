@@ -11,6 +11,7 @@ import { BloomResolutionPass } from "./BloomResolutionPass.js?v=compact-loading-
 import {
   bindGtaoToComposerDepth,
   configureGtaoContactAo,
+  configureGtaoExclusionMask,
   createComposerTarget,
 } from "./GtaoContactAo.js?v=compact-loading-game";
 import { applyGtaoPreset } from "./PostProcessingPresets.js?v=compact-loading-game";
@@ -86,6 +87,7 @@ export class PostProcessingRuntime {
       configureGtaoGeometryCoverage(this.gtaoPass);
       configureGtaoContactAo(this.gtaoPass, gtao);
       bindGtaoToComposerDepth(this.gtaoPass);
+      configureGtaoExclusionMask(this.gtaoPass);
       this.gtaoPass.output = GTAOPass.OUTPUT.Default;
       applyGtaoPreset(this.gtaoPass, gtao);
       this.composer.addPass(this.gtaoPass);

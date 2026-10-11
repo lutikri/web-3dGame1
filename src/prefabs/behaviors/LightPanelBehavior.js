@@ -159,6 +159,27 @@ export function isLightPanelPowerAvailable(instances, levelId, prefabName) {
   return true;
 }
 
+export function tripLightPanelCircuits(instances, levelId, { prefabName, circuitNames } = {}) {
+  const requestedCircuits = circuitNames ? new Set(circuitNames) : null;
+  let trippedCount = 0;
+  for (const [key, runtime] of instances) {
+    if (!key.startsWith(`${levelId}:`) || !runtime.lightPanel) continue;
+    if (prefabName && key !== `${levelId}:${prefabName}`) continue;
+    const panel = runtime.lightPanel;
+    if (!panel.config.masterEnabled) continue;
+    const previousTripCount = trippedCount;
+    panel.circuits.forEach((part, name) => {
+      if (requestedCircuits && !requestedCircuits.has(name)) return;
+      const circuit = panel.config.circuits[name];
+      if (!circuit?.enabled || part.tripped) return;
+      trippedCount += 1;
+      part.tripped = true;
+    });
+    if (trippedCount > previousTripCount) panel.powerDirty = true;
+  }
+  return trippedCount;
+}
+
 export function updateLightPanelRuntime(runtime, dt) {
   if (!runtime) return;
   const config = runtime.config;

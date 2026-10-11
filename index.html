@@ -197,9 +197,13 @@
             <dl class="main-menu-record">
               <dt>OPERATOR RECORD</dt><dd>ACTIVE</dd>
               <dt>FACILITY</dt><dd>SITE-12</dd>
-              <dt>LAST SESSION</dt><dd data-main-menu-last-session>26.07.2026 06:42</dd>
+              <dt>LAST SESSION</dt><dd data-main-menu-last-session>30.04.2036</dd>
               <dt>GAME VERSION</dt><dd data-game-version></dd>
             </dl>
+          </div>
+          <div class="main-menu-community" aria-label="Community and project links">
+            <span>COMMUNITY&nbsp; / &nbsp;DISCORD</span>
+            <span>PROJECT&nbsp;&nbsp;&nbsp; / &nbsp;ITCH.IO</span>
           </div>
         </section>
         <section id="levelSelectPanel" class="app-panel level-panel operations-mail" data-app-panel="level-select" hidden>
@@ -210,30 +214,30 @@
           <div class="operations-mail-body">
             <aside class="operations-inbox">
               <div class="operations-inbox-heading">
-                <strong>INBOX</strong>
-                <span data-mail-inbox-count>01</span>
+                <button class="is-active" data-mailbox-view="inbox" type="button" aria-pressed="true">INBOX <span data-mail-inbox-count>01</span></button>
+                <button data-mailbox-view="archive" type="button" aria-pressed="false">ARCHIVE <span data-mail-archive-count>00</span></button>
               </div>
               <div class="assignment-list" aria-label="Assigned shifts">
               <button class="assignment-card" data-level-id="exploring-around" type="button">
-                <span class="mail-subject"><i></i><span data-i18n="assignments.applicationApproved">APPLICATION APPROVED</span></span>
-                <strong data-i18n="assignments.qualification.cardTitle">FIRST OPERATOR QUALIFICATION SHIFT</strong>
-                <span class="mail-date">26.07.2026 / 06:42</span>
+                <span class="mail-subject"><i></i><span data-assignment-subject data-i18n="assignments.applicationApproved">APPLICATION APPROVED</span></span>
+                <strong data-assignment-title data-i18n="assignments.qualification.cardTitle">FIRST OPERATOR QUALIFICATION SHIFT</strong>
+                <span class="mail-date" data-assignment-date>01.05.2036 / 06:42</span>
                 <span data-assignment-status hidden>ASSIGNED</span>
               </button>
               <button class="assignment-card is-locked" data-level-id="unexpected-stuff" type="button" disabled>
-                <span class="mail-subject"><i></i><span>TERRAGEN SYSTEMS / OPERATIONS</span></span>
-                <strong data-i18n="assignments.reliability.title">INSTRUMENT RELIABILITY CHECK</strong>
-                <span class="mail-date">ASSIGNMENT 002</span>
+                <span class="mail-subject"><i></i><span data-assignment-subject>TERRAGEN SYSTEMS / OPERATIONS</span></span>
+                <strong data-assignment-title data-i18n="assignments.reliability.title">INSTRUMENT RELIABILITY CHECK</strong>
+                <span class="mail-date" data-assignment-date>02.05.2036</span>
                 <span data-assignment-status hidden>- NOT ASSIGNED -</span>
               </button>
-              <button class="assignment-card is-locked" data-level-id="fuel-problems" type="button" disabled>
-                <span class="mail-subject"><i></i><span>TERRAGEN SYSTEMS / OPERATIONS</span></span>
-                <strong data-i18n="assignments.cost.title">COST OF RUNNING TRIAL</strong>
-                <span class="mail-date">ASSIGNMENT 003</span>
+              <button class="assignment-card is-locked" data-level-id="freeplay" type="button" disabled>
+                <span class="mail-subject"><i></i><span data-assignment-subject>TERRAGEN SYSTEMS / DEVELOPMENT</span></span>
+                <strong data-assignment-title data-i18n="assignments.freeplay.title">FREE SHIFT</strong>
+                <span class="mail-date" data-assignment-date>PUBLIC BUILD / FREEPLAY</span>
                 <span data-assignment-status hidden>- NOT ASSIGNED -</span>
               </button>
               </div>
-              <div class="operations-inbox-empty"><span>—</span><span data-i18n="assignments.noMore">NO MORE ASSIGNMENTS</span></div>
+              <div class="operations-inbox-empty"><span>—</span><span data-mailbox-empty data-i18n="assignments.noMore">NO MORE ASSIGNMENTS</span></div>
             </aside>
             <article class="assignment-detail">
               <p class="assignment-empty" data-assignment-empty data-i18n="assignments.nothingSelected">- NOTHING SELECTED -</p>
@@ -241,7 +245,7 @@
                 <p class="mail-letterhead">TERRAGEN SYSTEMS<br>OPERATIONS DIVISION</p>
                 <p class="mail-reference">REF: <span data-assignment-detail-reference></span><br>STATUS: <span data-assignment-detail-status></span></p>
                 <hr>
-                <p class="mail-kicker" data-i18n="assignments.applicationApproved">APPLICATION APPROVED</p>
+                <p class="mail-kicker" data-assignment-detail-subject data-i18n="assignments.applicationApproved">APPLICATION APPROVED</p>
                 <h2 data-assignment-detail-title></h2>
                 <p class="mail-copy" data-assignment-detail-summary></p>
                 <dl class="mail-facts">
@@ -255,7 +259,7 @@
           </div>
           <footer class="operations-mail-footer">
             <button class="operations-mail-key-action" data-app-action="main-menu" type="button"><kbd>ESC</kbd><span data-i18n="actions.mainMenu">MAIN MENU</span></button>
-            <span>OPERATIONS MAIL / INBOX 01</span>
+            <span data-mailbox-footer>OPERATIONS MAIL / INBOX 01</span>
             <button class="operations-mail-key-action" data-start-selected-shift type="button" disabled><kbd>ENTER</kbd><span data-i18n="assignments.open">OPEN</span></button>
           </footer>
         </section>
@@ -275,10 +279,11 @@
             <span>BASE LOAD / <span data-i18n="credits.title">CREDITS</span></span>
             <button data-app-action="main-menu" type="button" aria-label="Back" data-i18n="actions.back">BACK</button>
           </div>
-          <div class="dossier-card">
-            <span>BASE LOAD</span>
-            <strong data-i18n="credits.development">DEVELOPMENT BUILD</strong>
-            <p data-i18n="credits.placeholder">Full credits will be added during production.</p>
+          <div class="credits-window">
+            <section><span>DEVELOPMENT</span><strong>ARTEM LUT</strong><p>Game design, programming, 3D art, sound design, UI &amp; writing</p></section>
+            <section><span>TECHNOLOGY</span><strong>Three.js / TypeScript / WebGL</strong></section>
+            <section><span>ADDITIONAL CREDITS</span><strong>Soundly Library</strong></section>
+            <footer><strong>BASELOAD — INDEPENDENTLY DEVELOPED</strong><span>© 2026 ARTEM LUT</span></footer>
           </div>
         </section>
         <section id="pausePanel" class="app-panel pause-panel" data-app-panel="pause" hidden>

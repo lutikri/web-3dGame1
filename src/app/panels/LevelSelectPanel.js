@@ -4,8 +4,13 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
   const detailEmpty = root.querySelector("[data-assignment-empty]");
   const detailContent = root.querySelector("[data-assignment-details]");
   const detailTitle = root.querySelector("[data-assignment-detail-title]");
+  const detailSubject = root.querySelector("[data-assignment-detail-subject]");
   const detailSummary = root.querySelector("[data-assignment-detail-summary]");
   const inboxCount = root.querySelector("[data-mail-inbox-count]");
+  const archiveCount = root.querySelector("[data-mail-archive-count]");
+  const mailboxEmpty = root.querySelector("[data-mailbox-empty]");
+  const mailboxFooter = root.querySelector("[data-mailbox-footer]");
+  const mailboxButtons = [...root.querySelectorAll("[data-mailbox-view]")];
   const detailReference = root.querySelector("[data-assignment-detail-reference]");
   const detailStatus = root.querySelector("[data-assignment-detail-status]");
   const detailFacility = root.querySelector("[data-assignment-detail-facility]");
@@ -13,6 +18,7 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
   const detailClearance = root.querySelector("[data-assignment-detail-clearance]");
   const view = root.defaultView ?? globalThis.window;
   let selectedLevelId = null;
+  let mailboxView = "inbox";
   let wired = false;
   let viewportObserver = null;
 
@@ -41,6 +47,11 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
         select(card.dataset.levelId);
         return;
       }
+      const mailboxButton = event.target.closest("[data-mailbox-view]");
+      if (mailboxButton) {
+        setMailboxView(mailboxButton.dataset.mailboxView);
+        return;
+      }
       if (shouldClearMailSelection({
         insidePane: Boolean(event.target.closest(".operations-inbox, .assignment-detail")),
         insideLetter: Boolean(event.target.closest(".mail-letter")),
@@ -65,6 +76,7 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
 
   function show() {
     updateScale();
+    mailboxView = "inbox";
     clearSelection();
     refresh();
   }
@@ -76,33 +88,60 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
   }
 
   function refresh() {
-    let assignedCount = 0;
+    const counts = { inbox: 0, archive: 0 };
     root.querySelectorAll("[data-level-id]").forEach((node) => {
       const levelId = node.dataset.levelId;
       const level = levels[levelId];
       const completed = Boolean(progress.completedLevels[levelId]);
       const finished = Boolean(progress.finishedLevels[levelId]);
       const assigned = isUnlocked(levelId);
-      if (assigned) assignedCount += 1;
-      node.hidden = !assigned;
+      const mailbox = getAssignmentMailbox(level, progress);
+      if (assigned) counts[mailbox] += 1;
+      const visible = assigned && mailbox === mailboxView;
+      node.hidden = !visible;
       node.classList.toggle("is-selected", levelId === selectedLevelId);
       node.classList.toggle("is-complete", completed);
       node.classList.toggle("is-finished", finished && !completed);
       node.classList.toggle("is-assigned", assigned);
       node.classList.toggle("is-locked", !assigned);
       node.dataset.completion = completed ? "complete" : finished ? "attempted" : "";
-      if ("disabled" in node) node.disabled = !assigned;
+      if ("disabled" in node) node.disabled = !visible;
       const status = node.querySelector("[data-assignment-status]");
-      if (status) status.textContent = translate(assigned ? "assignments.assigned" : "assignments.notAssigned");
+      if (status) status.textContent = translate(completed ? "assignments.completed" : assigned ? "assignments.assigned" : "assignments.notAssigned");
+      const subject = node.querySelector("[data-assignment-subject]");
+      if (subject) subject.textContent = translate(level?.assignment?.subjectKey ?? "assignments.operationsSubject");
+      const title = node.querySelector("[data-assignment-title]");
+      if (title) title.textContent = translate(level?.assignment?.titleKey) || level?.title || levelId;
+      const date = node.querySelector("[data-assignment-date]");
+      if (date) date.textContent = formatAssignmentDate(level?.assignment, translate);
       node.setAttribute("aria-label", `${translate(level?.assignment?.titleKey) || level?.title || levelId} — ${status?.textContent ?? ""}`);
     });
-    if (inboxCount) inboxCount.textContent = String(assignedCount).padStart(2, "0");
-    if (selectedLevelId && !isUnlocked(selectedLevelId)) clearSelection();
+    if (inboxCount) inboxCount.textContent = String(counts.inbox).padStart(2, "0");
+    if (archiveCount) archiveCount.textContent = String(counts.archive).padStart(2, "0");
+    if (mailboxEmpty) mailboxEmpty.textContent = translate(mailboxView === "archive" ? "assignments.archiveEmpty" : "assignments.noMore");
+    if (mailboxFooter) mailboxFooter.textContent = `OPERATIONS MAIL / ${mailboxView.toUpperCase()} ${String(counts[mailboxView]).padStart(2, "0")}`;
+    mailboxButtons.forEach((button) => {
+      const active = button.dataset.mailboxView === mailboxView;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    if (selectedLevelId) {
+      const selected = levels[selectedLevelId];
+      if (!isUnlocked(selectedLevelId) || getAssignmentMailbox(selected, progress) !== mailboxView) clearSelection();
+    }
+  }
+
+  function setMailboxView(nextView) {
+    if (!["inbox", "archive"].includes(nextView) || nextView === mailboxView) return false;
+    mailboxView = nextView;
+    clearSelection();
+    refresh();
+    return true;
   }
 
   function select(levelId) {
     const level = levels[levelId];
-    if (!level?.assignment || !isUnlocked(levelId)) return false;
+    if (!level?.assignment || !isUnlocked(levelId) || getAssignmentMailbox(level, progress) !== mailboxView) return false;
     selectedLevelId = levelId;
     root.querySelectorAll("[data-level-id]").forEach((node) => {
       node.classList.toggle("is-selected", node.dataset.levelId === levelId);
@@ -110,6 +149,7 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
     if (detailEmpty) detailEmpty.hidden = true;
     if (detailContent) detailContent.hidden = false;
     if (detailTitle) detailTitle.textContent = translate(level.assignment.documentTitleKey ?? level.assignment.titleKey);
+    if (detailSubject) detailSubject.textContent = translate(level.assignment.subjectKey ?? "assignments.operationsSubject");
     if (detailSummary) detailSummary.textContent = translate(level.assignment.summaryKey);
     if (detailReference) detailReference.textContent = level.assignment.reference;
     if (detailStatus) detailStatus.textContent = translate("assignments.approved");
@@ -146,7 +186,7 @@ export function createLevelSelectPanel({ levels, progress, translate = (key) => 
     viewportObserver = null;
   }
 
-  return { wire, show, refresh, select, clearSelection, isUnlocked, validate, updateScale, dispose, getSelectedLevelId: () => selectedLevelId };
+  return { wire, show, refresh, select, clearSelection, isUnlocked, setMailboxView, validate, updateScale, dispose, getSelectedLevelId: () => selectedLevelId, getMailboxView: () => mailboxView };
 }
 
 export function getTerminalScale(viewportWidth, viewportHeight) {
@@ -161,12 +201,21 @@ export function shouldClearMailSelection({ insidePane, insideLetter = false, ins
 
 export function getAssignedLevels(levels) {
   return Object.values(levels)
-    .filter((level) => level.playable && level.assignment)
+    .filter((level) => level.playable && level.assignment && level.assignment.public !== false)
     .sort((a, b) => a.assignment.order - b.assignment.order);
 }
 
 export function isAssignedShift(level, progress) {
-  if (!level?.playable || !level.assignment) return false;
+  if (!level?.playable || !level.assignment || level.assignment.public === false) return false;
   const requirements = level.assignment.unlockAfter ?? [];
   return requirements.length === 0 || requirements.every((levelId) => Boolean(progress.completedLevels[levelId]));
+}
+
+export function getAssignmentMailbox(level, progress) {
+  return progress?.completedLevels?.[level?.id] ? "archive" : "inbox";
+}
+
+export function formatAssignmentDate(assignment, translate = (key) => key) {
+  if (assignment?.dateKey) return translate(assignment.dateKey);
+  return [assignment?.date, assignment?.time].filter(Boolean).join(" / ") || "—";
 }

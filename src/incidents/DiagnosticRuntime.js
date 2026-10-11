@@ -13,6 +13,7 @@ export class DiagnosticRuntime {
     this.selfTestCompleted = false;
     this.blackout = null;
     this.lightRestartPending = false;
+    this.lightPanelTripPending = null;
     this.faults = {
       lamps: new Map(),
       gauges: new Map(),
@@ -33,6 +34,7 @@ export class DiagnosticRuntime {
     this.selfTestCompleted = false;
     this.blackout = null;
     this.lightRestartPending = false;
+    this.lightPanelTripPending = null;
 
     const diagnostics = this.config.diagnostics ?? {};
     const initialOptions = { startOnTimeline: true, revealAfterSelfTest: true };
@@ -73,11 +75,12 @@ export class DiagnosticRuntime {
     this.timelineStarted = false;
   }
 
-  update(dt) {
+  update(dt, snapshot = {}) {
     if (this.timelineStarted) {
       this.elapsed += dt;
       this.events.forEach((event) => {
         if (event.triggered || this.elapsed < Number(event.atSeconds ?? event.at ?? 0)) return;
+        if (!matchesEventCondition(event.when, snapshot)) return;
         event.triggered = true;
         this.triggerEvent(event);
       });
@@ -105,6 +108,13 @@ export class DiagnosticRuntime {
         duration: Math.max(0.05, Number(event.durationSeconds ?? 0.6)),
         remaining: Math.max(0.05, Number(event.durationSeconds ?? 0.6)),
         restartLights: event.restartLights !== false,
+      };
+      return;
+    }
+    if (event.type === "lightPanelTrip") {
+      this.lightPanelTripPending = {
+        prefabName: event.prefabName,
+        circuitNames: event.circuitNames,
       };
       return;
     }
@@ -184,6 +194,13 @@ export class DiagnosticRuntime {
     if (!this.lightRestartPending) return false;
     this.lightRestartPending = false;
     return true;
+  }
+
+  consumeLightPanelTripRequest() {
+    if (!this.lightPanelTripPending) return null;
+    const request = this.lightPanelTripPending;
+    this.lightPanelTripPending = null;
+    return request;
   }
 
   createSelfTestSnapshot(baseSnapshot) {
@@ -283,6 +300,7 @@ export class DiagnosticRuntime {
       selfTestCompleted: this.selfTestCompleted,
       blackout: this.blackout ? { ...this.blackout, factor: this.getBlackoutFactor() } : null,
       lightRestartPending: this.lightRestartPending,
+      lightPanelTripPending: this.lightPanelTripPending ? { ...this.lightPanelTripPending } : null,
       faults: {
         lamps: Object.fromEntries(this.faults.lamps),
         gauges: Object.fromEntries(this.faults.gauges),
@@ -295,6 +313,14 @@ export class DiagnosticRuntime {
     if (!fault) return false;
     return !fault.revealAfterSelfTest || this.selfTestCompleted || this.timelineStarted;
   }
+}
+
+function matchesEventCondition(condition, snapshot) {
+  if (!condition) return true;
+  const modes = condition.modes ?? (condition.mode ? [condition.mode] : null);
+  if (modes && !modes.includes(snapshot?.mode)) return false;
+  const warnings = condition.warnings ?? (condition.warning ? [condition.warning] : []);
+  return warnings.every((warning) => Boolean(snapshot?.warning?.[warning]));
 }
 
 function selectRandomTimelineEvents(groups) {

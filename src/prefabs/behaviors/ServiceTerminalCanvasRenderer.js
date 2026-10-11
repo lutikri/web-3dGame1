@@ -179,6 +179,7 @@ export function createServiceTerminalCanvasRenderer({ config = {}, prefabName = 
     }
 
     if (slide.kind === "demandIndicators") drawDemandIndicators(x, width);
+    else if (slide.kind === "lightingProcedure") drawLightingProcedure(slide, x, width);
     else if (slide.kind === "indicatorDefinitions") drawIndicatorDefinitions(slide, x, width);
     else drawGuideCards(slide, x, width);
 
@@ -619,6 +620,18 @@ function drawIndicatorDefinitions(slide, x, width) {
   });
   line(x, 646, x + width, 646, COLORS.rule, 2);
   text(slide.note, x, 681, 18, 650, COLORS.muted);
+}
+
+function drawLightingProcedure(slide, x, width) {
+  (slide.definitions ?? []).forEach(([step, definition], index) => {
+    const cardY = 352 + index * 108;
+    activeContext.fillStyle = index % 2 ? "#e8e8e5" : COLORS.white;
+    activeContext.fillRect(x, cardY, width, 94);
+    activeContext.strokeStyle = COLORS.rule;
+    activeContext.strokeRect(x, cardY, width, 94);
+    text(step, x + 22, cardY + 34, 20, 850, COLORS.orange);
+    multiline(definition, x + 260, cardY + 31, 18, 23, 550, COLORS.ink, width - 286);
+  });
 }
 
 export function bindServiceTerminalCanvasContext(renderer) {

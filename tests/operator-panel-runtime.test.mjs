@@ -13,8 +13,12 @@ test("operator panel runtime composes one simulation and presentation tick", () 
       simulation: { update: () => ({ mode: "running", elapsed: 2, ignitionPulseCount: 1 }) },
       fuelBlend: { update: () => "blend" },
       diagnostics: {
-        update: () => calls.push("diagnostics"),
+        update: (_dt, value) => {
+          assert.equal(value.elapsed, 2);
+          calls.push("diagnostics");
+        },
         consumeLightRestartRequest: () => false,
+        consumeLightPanelTripRequest: () => ({}),
         createSelfTestSnapshot: (value) => value,
         getBlackoutFactor: () => 1,
       },
@@ -32,6 +36,7 @@ test("operator panel runtime composes one simulation and presentation tick", () 
       areNeedlesFrozen: () => false,
       onIgnitionPulse: () => calls.push("pulse"),
       onLightRestart: () => {},
+      onLightPanelTrip: () => calls.push("light-trip"),
       updateThoughts: () => {}, updateRecorder: () => {},
       evaluateCompletion: (value) => {
         calls.push("evaluate");
@@ -44,5 +49,5 @@ test("operator panel runtime composes one simulation and presentation tick", () 
   assert.equal(snapshot.elapsed, 2);
   assert.equal(snapshot.evaluated, true);
   assert.equal(lamp.material, "red");
-  assert.deepEqual(calls, ["pulse", "diagnostics", "evaluate", "screen", "controls", "gauge", "lamp-scale"]);
+  assert.deepEqual(calls, ["pulse", "diagnostics", "light-trip", "evaluate", "screen", "controls", "gauge", "lamp-scale"]);
 });

@@ -79,13 +79,29 @@ test("service terminal exposes authored PBR body and adjustable masked glass mat
   assert.equal(terminalScreenGlass.maskOverlay, undefined);
 });
 
-test("core viewport uses its authored PBR texture set", () => {
-  const { coreViewport1 } = CONFIG.interior.specialMaterials;
+test("core viewport uses its authored PBR texture set and independent terminal-style glass", () => {
+  const { coreViewport1, coreViewportGlass1, terminalScreenGlass } = CONFIG.interior.specialMaterials;
 
   assert.deepEqual(coreViewport1.materialNames, ["M_CoreViewport1"]);
   assert.match(coreViewport1.maps.preview.baseColor, /T_CoreViewport1_BaseColor/);
   assert.match(coreViewport1.maps.preview.normal, /T_CoreViewport1_Normal/);
   assert.match(coreViewport1.maps.preview.orm, /T_CoreViewport1_OcclusionRoughnessMetallic/);
+  assert.deepEqual(coreViewportGlass1.materialNames, ["M_CoreViewportGlass1"]);
+  assert.equal(coreViewportGlass1.maps.initial.mask, terminalScreenGlass.maps.initial.mask);
+  assert.equal(coreViewportGlass1.maskAsAlphaMap, true);
+  assert.equal(coreViewportGlass1.transparent, true);
+  assert.equal(coreViewportGlass1.depthWrite, false);
+
+  const factory = createInteriorMaterialFactory({
+    panelConfig: {},
+    specialMaterials: { terminalScreenGlass, coreViewportGlass1 },
+    getPanelTextureMaps: () => null,
+    setupMaskOverlay: () => {},
+    updateMaskOverlay: () => {},
+    patchMaterial: () => {},
+  });
+  const materials = factory.createCustomMaterials();
+  assert.notEqual(materials.coreViewportGlass1, materials.terminalScreenGlass);
 });
 
 test("cheap dirty glass binds a contrasted transparency mask instead of tinting the full screen", () => {

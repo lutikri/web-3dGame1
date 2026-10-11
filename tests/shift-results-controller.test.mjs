@@ -106,4 +106,9 @@ test("shift report copy follows the active assignment instead of always describi
     summary: "results.summary.cost.failed",
     comment: "results.comment.cost.failed",
   });
+  assert.deepEqual(getShiftResultsCopyKeys("freeplay", "complete"), {
+    title: "results.title.freeplay.complete",
+    summary: "results.summary.freeplay.complete",
+    comment: "results.comment.freeplay.complete",
+  });
 });

@@ -7,6 +7,7 @@ import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import {
   bindGtaoToComposerDepth,
   configureGtaoContactAo,
+  configureGtaoExclusionMask,
   createComposerTarget,
 } from "../src/postprocessing/GtaoContactAo.js";
 
@@ -43,4 +44,58 @@ test("composer render targets expose reusable depth-stencil textures", () => {
   assert.equal(target.depthTexture.format, THREE.DepthStencilFormat);
   assert.equal(target.samples, 4);
   target.dispose();
+});
+
+test("GTAO exclusion blends in place against the stencil produced by visible plasma", () => {
+  const camera = new THREE.PerspectiveCamera();
+  const calls = [];
+  const gtaoMaterial = {
+    uniforms: {
+      cameraNear: { value: 0 },
+      cameraFar: { value: 0 },
+      cameraProjectionMatrix: { value: new THREE.Matrix4() },
+      cameraProjectionMatrixInverse: { value: new THREE.Matrix4() },
+      cameraWorldMatrix: { value: new THREE.Matrix4() },
+    },
+  };
+  const pdMaterial = {
+    uniforms: { cameraProjectionMatrixInverse: { value: new THREE.Matrix4() } },
+  };
+  const blendMaterial = new THREE.MeshBasicMaterial();
+  blendMaterial.uniforms = { intensity: { value: 0 }, tDiffuse: { value: null } };
+  const gtaoRenderTarget = {};
+  const pdRenderTarget = { texture: {} };
+  const pass = {
+    camera,
+    output: 0,
+    blendIntensity: 0.65,
+    depthTexture: null,
+    gtaoMaterial,
+    gtaoRenderTarget,
+    pdMaterial,
+    pdRenderTarget,
+    blendMaterial,
+    _renderGBuffer: false,
+    setGBuffer(depthTexture) {
+      this.depthTexture = depthTexture;
+    },
+    renderPass: (renderer, material, target) => calls.push([material, target]),
+    render: () => calls.push("gtao"),
+  };
+  const readBuffer = { depthTexture: {} };
+
+  assert.equal(configureGtaoExclusionMask(pass), true);
+  pass.render({}, {}, readBuffer);
+
+  assert.equal(pass.needsSwap, false);
+  assert.equal(pass.depthTexture, readBuffer.depthTexture);
+  assert.equal(blendMaterial.stencilFunc, THREE.NotEqualStencilFunc);
+  assert.equal(blendMaterial.stencilRef, 1);
+  assert.equal(blendMaterial.uniforms.intensity.value, 0.65);
+  assert.deepEqual(calls, [
+    [gtaoMaterial, gtaoRenderTarget],
+    [pdMaterial, pdRenderTarget],
+    [blendMaterial, readBuffer],
+  ]);
+  blendMaterial.dispose();
 });
