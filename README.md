@@ -136,18 +136,21 @@ npm run build
 
 ## Production deployment
 
-The production site is built for Cloudflare Pages at `https://baseloadgame.com/`.
-Connect the GitHub repository to Cloudflare Pages with these settings:
+Production uses two Cloudflare Pages projects connected to this repository. This
+keeps the lightweight landing page at `https://baseloadgame.com/` and the game at
+`https://play.baseloadgame.com/` without hostname-dependent runtime code.
 
-| Setting | Value |
-| --- | --- |
-| Production branch | `main` |
-| Build command | `npm run check && npm run build` |
-| Build output directory | `dist` |
-| Root directory | repository root |
+| Project | Custom domain | Production branch | Build command | Build output |
+| --- | --- | --- | --- | --- |
+| Landing | `baseloadgame.com` | `main` | `npm run build:landing` | `dist-landing` |
+| Game | `play.baseloadgame.com` | `main` | `npm run build:game` | `dist-game` |
 
-The default Vite base path is `/`, which is correct for the `pages.dev` preview
-and the production custom domain. The legacy GitHub Pages workflow supplies
+Use the repository root for both projects. Cloudflare automatically deploys new
+commits from `main`. The landing production build rewrites its play buttons to
+`https://play.baseloadgame.com/`; local development still links to `index.html`.
+
+The default Vite base path is `/`, which is correct for both `pages.dev` previews
+and the production custom domains. The legacy GitHub Pages workflow supplies
 `DEPLOY_BASE_PATH=/web-3dGame1/` only for its subdirectory deployment.
 
 Production source maps are disabled. Cloudflare environment variables must be

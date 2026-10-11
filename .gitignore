@@ -9,6 +9,7 @@ server-*.log
 server-*.err.log
 node_modules/
 dist/
+dist-*/
 .vite/
 .wrangler/
 coverage/

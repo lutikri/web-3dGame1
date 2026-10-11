@@ -3,6 +3,8 @@
   "scripts": {
     "dev": "node scripts/dev-server.cjs",
     "build": "vite build",
+    "build:game": "vite build --mode game",
+    "build:landing": "vite build --mode landing",
     "audio:audit": "node scripts/audit-runtime-audio.mjs --label before",
     "audio:audit:runtime": "node scripts/audit-runtime-audio.mjs --root assets/sounds --report-root source-assets/audio/runtime-sources/reports --label after",
     "audio:normalize": "node scripts/normalize-runtime-audio.mjs",

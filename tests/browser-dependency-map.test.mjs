@@ -25,12 +25,26 @@ test("local static development keeps dependency versions aligned with the produc
   assert.equal(packageJson.dependencies.postprocessing, "^6.36.3");
   assert.equal(packageJson.dependencies["realism-effects"], "^1.1.2");
   assert.equal(packageJson.scripts.build, "vite build");
+  assert.equal(packageJson.scripts["build:game"], "vite build --mode game");
+  assert.equal(packageJson.scripts["build:landing"], "vite build --mode landing");
 
-  assert.equal(viteConfig.base, "/");
-  assert.equal(viteConfig.build.sourcemap, false);
-  assert.equal(viteConfig.publicDir, false);
+  const productionConfig = viteConfig({ mode: "production" });
+  const gameConfig = viteConfig({ mode: "game" });
+  const landingConfig = viteConfig({ mode: "landing" });
+
+  assert.equal(productionConfig.base, "/");
+  assert.equal(productionConfig.build.sourcemap, false);
+  assert.equal(productionConfig.publicDir, false);
+  assert.equal(productionConfig.build.outDir, "dist");
+  assert.equal(gameConfig.build.outDir, "dist-game");
+  assert.equal(landingConfig.build.outDir, "dist-landing");
   assert.match(githubPagesWorkflow, /DEPLOY_BASE_PATH:\s*\/web-3dGame1\//);
-  const productionHtml = viteConfig.plugins[0].transformIndexHtml.handler(html);
+  const productionHtml = productionConfig.plugins[0].transformIndexHtml.handler(html);
   assert.doesNotMatch(productionHtml, /type="importmap"/);
   assert.doesNotMatch(productionHtml, /cdn\.jsdelivr|esm\.sh/);
+
+  const landingHtml = await readFile(new URL("../landing.html", import.meta.url), "utf8");
+  const deployedLandingHtml = landingConfig.plugins[0].transformIndexHtml.handler(landingHtml);
+  assert.match(deployedLandingHtml, /href="https:\/\/play\.baseloadgame\.com\/"/);
+  assert.doesNotMatch(deployedLandingHtml, /href="\.\/index\.html"/);
 });
